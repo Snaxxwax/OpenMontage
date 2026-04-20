@@ -16,6 +16,22 @@ Unlike explainer research (which focuses on facts, data, and content gaps), cine
 | User input | Subject, mood hints, footage situation, references | Research scope |
 | Tools | Web search, web fetch | Research execution |
 
+## Research Execution Path
+
+If `config.yaml` enables a `research_agent`, use it as the first-pass researcher and
+keep this director as the reviewer and synthesizer.
+
+- Preferred configuration in this repo: `research_agent.provider = gemini_cli`
+- Invoke Gemini CLI in headless mode using the configured executable, optional model,
+  approval mode, and output format
+- Give Gemini one full search batch at a time so it can synthesize visual, audio, and
+  subject-depth findings into a single direction set
+- Require source URLs, publisher names, and concrete publication dates in every batch response
+- The main agent remains responsible for rejecting weak sources, verifying critical claims,
+  and writing the final `research_brief`
+- If Gemini CLI is unavailable or fails auth, fall back to native web search and state
+  that fallback before continuing
+
 ## Process
 
 ### Step 0: Check for Reference Video Context

@@ -14,14 +14,15 @@ Everything you need to know about every provider in OpenMontage — setup instru
 | 2 | **$0** | Google API key | TTS with 700+ voices (1M chars/month free) + $300 new account credit |
 | 3 | **$0** | ElevenLabs | Premium TTS + music + SFX (10K chars/month free) |
 | 4 | **$0** | Piper (local install) | Fully offline TTS — no API key, no cost, no network |
-| 5 | **~$0.03/image** | fal.ai | FLUX images + Kling/Veo/MiniMax video + Recraft — broad single-key image + video coverage |
-| 6 | **~$0.04/image** | OpenAI | DALL-E 3 images + OpenAI TTS |
-| 7 | **~$0.04/image** | Google Imagen | Imagen 4 images (shares the Google API key) |
-| 8 | **$12/month** | Runway | Gen-4 video — highest quality AI video |
-| 9 | **pay-as-you-go** | HeyGen | Avatar videos, multi-model video gateway |
-| 10 | **pay-as-you-go** | Suno | Full song generation with vocals and lyrics |
-| 11 | **$0 + GPU** | Local video gen | WAN 2.1, Hunyuan, CogVideo, LTX — free, offline |
-| 12 | **$0 + GPU** | Local Diffusion | Stable Diffusion images — free, offline |
+| 5 | **$0 + GPU** | Fish Speech server | High-quality local GPU TTS with reference-voice prompting |
+| 6 | **~$0.03/image** | fal.ai | FLUX images + Kling/Veo/MiniMax video + Recraft — broad single-key image + video coverage |
+| 7 | **~$0.04/image** | OpenAI | DALL-E 3 images + OpenAI TTS |
+| 8 | **~$0.04/image** | Google Imagen | Imagen 4 images (shares the Google API key) |
+| 9 | **$12/month** | Runway | Gen-4 video — highest quality AI video |
+| 10 | **pay-as-you-go** | HeyGen | Avatar videos, multi-model video gateway |
+| 11 | **pay-as-you-go** | Suno | Full song generation with vocals and lyrics |
+| 12 | **$0 + GPU** | Local video gen | WAN 2.1, Hunyuan, CogVideo, LTX — free, offline |
+| 13 | **$0 + GPU** | Local Diffusion | Stable Diffusion images — free, offline |
 
 ### Environment Variable Summary
 
@@ -39,6 +40,9 @@ GOOGLE_API_KEY=              # Google TTS + Google Imagen
 ELEVENLABS_API_KEY=          # TTS, music, sound effects (10K chars/month free)
 OPENAI_API_KEY=              # OpenAI TTS + DALL-E 3 images
 XAI_API_KEY=                 # xAI Grok image generation/editing + Grok video generation
+FISH_SPEECH_BASE_URL=        # Local Fish Speech server (optional)
+FISH_SPEECH_API_KEY=         # Bearer token for local Fish Speech server (optional)
+FISH_SPEECH_DEFAULT_REFERENCE_ID=  # Saved Fish reference voice ID (optional)
 
 # MULTI-MODEL GATEWAY (one key, 6+ tools)
 FAL_KEY=                     # FLUX, Recraft, Kling, Veo, MiniMax video
@@ -156,6 +160,45 @@ No subscription — pure pay-as-you-go, no minimum spend.
 | Scale | $330/mo | 2,000,000 | Priority support |
 
 **Free tier:** 10,000 characters/month (roughly 2-3 minutes of narration). API access included. Music generation and sound effects also available on free tier with limited credits.
+
+---
+
+### Fish Speech — Local GPU TTS Server
+
+> **Best local quality path if you have a real GPU.** Fish Speech runs as a separate local server and OpenMontage can talk to it over HTTP as `fish_speech_tts`.
+
+**Tools unlocked:** `fish_speech_tts`
+**Env vars:** `FISH_SPEECH_BASE_URL`, `FISH_SPEECH_API_KEY` (optional), `FISH_SPEECH_DEFAULT_REFERENCE_ID` (optional)
+
+#### Setup
+
+1. Follow Fish Speech's official install docs for a separate runtime:
+   - `https://speech.fish.audio/install/`
+   - `https://speech.fish.audio/server/`
+2. Start the local API server, for example:
+   - `python tools/api_server.py --llama-checkpoint-path checkpoints/s2-pro --decoder-checkpoint-path checkpoints/s2-pro/codec.pth --listen 0.0.0.0:8080`
+3. Point OpenMontage at it:
+   - `FISH_SPEECH_BASE_URL=http://127.0.0.1:8080`
+4. Optionally set:
+   - `FISH_SPEECH_API_KEY=...` if your server uses bearer auth
+   - `FISH_SPEECH_DEFAULT_REFERENCE_ID=my-speaker` for a default saved narrator voice
+
+#### Notes
+
+- Fish Speech's current official docs target Python `3.12`.
+- The official install page recommends a GPU with `24GB` VRAM for inference.
+- This integration keeps Fish Speech out of the main OpenMontage venv and talks to the local server instead.
+
+#### What it's best for
+
+- local narration without cloud API cost
+- reference-voice prompting with saved `reference_id`s
+- multilingual local speech when a dedicated GPU box is available
+
+#### Pricing
+
+- Local inference only. No per-request API cost inside OpenMontage.
+- Hardware and power cost are yours.
 
 ---
 

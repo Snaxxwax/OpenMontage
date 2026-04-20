@@ -141,9 +141,18 @@ class TranscriptFetcher(BaseTool):
             from youtube_transcript_api import YouTubeTranscriptApi
 
             ytt = YouTubeTranscriptApi()
+            transcript_list = ytt.list(video_id)
 
-            # Fetch transcript using the instance-based API (v1.0+)
-            transcript_result = ytt.fetch(video_id, languages=languages)
+            transcript = None
+            if include_auto:
+                try:
+                    transcript = transcript_list.find_manually_created_transcript(languages)
+                except Exception:
+                    transcript = transcript_list.find_transcript(languages)
+            else:
+                transcript = transcript_list.find_manually_created_transcript(languages)
+
+            transcript_result = transcript.fetch()
 
             # Build segments and full text from snippets
             segments = []
@@ -159,14 +168,8 @@ class TranscriptFetcher(BaseTool):
             full_text = " ".join(full_text_parts)
             word_count = len(full_text.split())
 
-            # Get auto-generated status and language from the result
-            is_auto = getattr(transcript_result, "is_generated", False)
-            detected_lang = getattr(transcript_result, "language", languages[0])
-            # If language is an object, get the code
-            if hasattr(detected_lang, "code"):
-                detected_lang = detected_lang.code
-            elif not isinstance(detected_lang, str):
-                detected_lang = languages[0]
+            is_auto = getattr(transcript, "is_generated", False)
+            detected_lang = getattr(transcript, "language_code", languages[0]) or languages[0]
 
             elapsed = time.time() - start
 

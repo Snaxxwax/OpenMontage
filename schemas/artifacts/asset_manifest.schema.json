@@ -39,6 +39,53 @@
       }
     },
     "total_cost_usd": { "type": "number", "minimum": 0 },
+    "quality_gate": {
+      "type": "object",
+      "properties": {
+        "passed": { "type": "boolean" },
+        "fallback_video_count": { "type": "integer", "minimum": 0 },
+        "total_video_count": { "type": "integer", "minimum": 0 },
+        "fallback_runtime_seconds": { "type": "number", "minimum": 0 },
+        "total_video_runtime_seconds": { "type": "number", "minimum": 0 },
+        "fallback_runtime_ratio": { "type": "number", "minimum": 0, "maximum": 1 },
+        "max_consecutive_fallback_scenes": { "type": "integer", "minimum": 0 },
+        "thresholds": {
+          "type": "object",
+          "properties": {
+            "max_fallback_runtime_ratio": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "max_consecutive_fallback_scenes": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "max_fallback_runtime_ratio",
+            "max_consecutive_fallback_scenes"
+          ],
+          "additionalProperties": false
+        },
+        "blocked_reasons": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": [
+        "passed",
+        "fallback_video_count",
+        "total_video_count",
+        "fallback_runtime_seconds",
+        "total_video_runtime_seconds",
+        "fallback_runtime_ratio",
+        "max_consecutive_fallback_scenes",
+        "thresholds",
+        "blocked_reasons"
+      ],
+      "additionalProperties": false
+    },
     "metadata": { "type": "object" }
   },
   "additionalProperties": false

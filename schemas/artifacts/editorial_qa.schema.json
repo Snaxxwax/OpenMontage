@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/artifacts/editorial_qa",
+  "title": "Editorial QA",
+  "description": "Structured editorial review of the script against the approved title promise, temporal adaptation policy, and citation/compliance requirements.",
+  "type": "object",
+  "required": ["version", "status", "recommended_action", "checks"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "status": {
+      "type": "string",
+      "enum": ["pass", "review", "fail"]
+    },
+    "recommended_action": {
+      "type": "string",
+      "enum": ["proceed", "revise_script", "revisit_proposal", "await_human"]
+    },
+    "checks": {
+      "type": "object",
+      "required": [
+        "title_alignment",
+        "temporal_alignment",
+        "citation_coverage",
+        "compliance"
+      ],
+      "properties": {
+        "title_alignment": {
+          "type": "object",
+          "required": [
+            "anchor_title",
+            "script_title",
+            "similarity_score",
+            "policy_compliant",
+            "issues"
+          ],
+          "properties": {
+            "anchor_title": { "type": "string" },
+            "script_title": { "type": "string" },
+            "similarity_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "policy_compliant": { "type": "boolean" },
+            "issues": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        },
+        "temporal_alignment": {
+          "type": "object",
+          "required": [
+            "temporal_update_policy",
+            "allowed_scope_respected",
+            "issues"
+          ],
+          "properties": {
+            "temporal_update_policy": {
+              "type": "string",
+              "enum": ["none", "supporting_facts_only", "re-angle_allowed"]
+            },
+            "current_date_basis": {
+              "type": "string",
+              "format": "date"
+            },
+            "allowed_scope_respected": { "type": "boolean" },
+            "issues": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        },
+        "citation_coverage": {
+          "type": "object",
+          "required": [
+            "total_sections",
+            "sections_with_sources",
+            "coverage_ratio",
+            "issues"
+          ],
+          "properties": {
+            "total_sections": { "type": "integer", "minimum": 0 },
+            "sections_with_sources": { "type": "integer", "minimum": 0 },
+            "coverage_ratio": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unsupported_claims": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "issues": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        },
+        "compliance": {
+          "type": "object",
+          "required": [
+            "topic_risk",
+            "outcome_overstatement_detected",
+            "issues"
+          ],
+          "properties": {
+            "topic_risk": {
+              "type": "string",
+              "enum": ["low", "medium", "high"]
+            },
+            "financial_advice_disclaimer_present": { "type": "boolean" },
+            "outcome_overstatement_detected": { "type": "boolean" },
+            "issues": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "issues_found": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": false
+}

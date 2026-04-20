@@ -51,6 +51,10 @@ EP_STATE:
 
 Same as standard EP: Initialize → Execute stages serially (research → proposal → script → scene_plan → assets → edit → compose → publish) → Final QA.
 
+When `config.yaml -> research_agent.provider` is enabled, the research stage should
+delegate first-pass external scanning to that agent (Gemini CLI in this repo) and then
+convert the returned findings into the canonical `research_brief`.
+
 Each stage: PREPARE → SPAWN DIRECTOR → REVIEW → GATE DECISION (pass / revise / send-back).
 
 ### User-Facing Decision Flow

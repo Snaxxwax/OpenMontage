@@ -83,6 +83,7 @@ stages:
       - research_brief
     produces:
       - proposal_packet
+      - intent_contract
       - decision_log
     tools_available: []
     checkpoint_required: true
@@ -90,6 +91,7 @@ stages:
     review_focus:
       - Concept options are genuinely different (structure, hook, audience)
       - Each concept is grounded in research findings, not generic
+      - Editorial intent contract separates fixed title promise from allowed current-date updates
       - Production plan reflects actual tool availability from preflight
       - Cost estimate is itemized and honest
       - Quality/cost tradeoffs are clearly presented
@@ -97,6 +99,7 @@ stages:
       - "Concept differentiation from reference (if reference-driven)"
     success_criteria:
       - Schema-valid proposal_packet with at least 3 concept_options
+      - Schema-valid intent_contract with temporal update policy and explicit must_keep/can_change lists
       - selected_concept references a valid concept_id
       - cost_estimate has itemized line_items with per-tool costs
       - approval.status is "approved" or "approved_with_changes" before proceeding
@@ -117,10 +120,12 @@ stages:
     skill: pipelines/explainer/script-director
     required_artifacts_in:
       - proposal_packet
+      - intent_contract
     optional_artifacts_in:
       - research_brief
     produces:
       - script
+      - editorial_qa
     tools_available: []
     checkpoint_required: true
     human_approval_default: true
@@ -128,10 +133,14 @@ stages:
       - "Word count within +/-10% of duration target from selected concept"
       - "Enhancement cue density: 1 per 8-10 seconds"
       - "Narrative arc: hook -> setup -> build -> climax -> landing"
+      - Title promise still matches approved intent contract
+      - Current-date updates stay within the allowed temporal policy
       - Speaker directions present for TTS
       - Script incorporates research data points and cited facts
     success_criteria:
       - Schema-valid script with enhancement_cues per section
+      - Schema-valid editorial_qa with status=pass and recommended_action=proceed
+      - At least 80% of script sections carry source_ref
       - Total duration matches selected concept target within 10%
 
   - name: scene_plan
@@ -187,8 +196,11 @@ stages:
       - Narration covers all script sections
       - Total cost within approved budget from proposal_packet
       - Image style consistency across all generated visuals
+      - Fallback/placeholder visuals stay below the configured runtime threshold
+      - No more than 2 fallback scenes appear consecutively
     success_criteria:
       - Schema-valid asset_manifest with all required assets generated
+      - asset_manifest includes a passing quality_gate for video assets
       - All file paths resolve to existing files
 
   - name: edit

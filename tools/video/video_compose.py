@@ -145,6 +145,7 @@ class VideoCompose(BaseTool):
     _REMOTION_COMPONENTS = [
         "text_card", "stat_card", "callout", "comparison",
         "progress", "chart", "bar_chart", "line_chart", "pie_chart", "kpi_grid",
+        "europe_map", "usa_states_map",
     ]
 
     best_for = [
@@ -236,6 +237,31 @@ class VideoCompose(BaseTool):
                 return ToolResult(success=False, error=f"Unknown operation: {operation}")
         except Exception as e:
             return ToolResult(success=False, error=str(e))
+
+        if operation in {"compose", "remotion_render"}:
+            output_path_raw = inputs.get("output_path")
+            edit_decisions = inputs.get("edit_decisions")
+            if result.success and output_path_raw and isinstance(edit_decisions, dict):
+                output_path = Path(str(output_path_raw))
+                if output_path.exists():
+                    final_review = self._run_final_review(output_path, edit_decisions)
+                    if result.data is None:
+                        result.data = {}
+                    result.data["final_review"] = final_review
+                    result.data["final_review_status"] = final_review["status"]
+
+                    if final_review["status"] == "fail":
+                        return ToolResult(
+                            success=False,
+                            error=(
+                                "Post-render self-review FAILED. The output is not presentable.\n"
+                                + "\n".join(
+                                    f"  • {issue}"
+                                    for issue in final_review.get("issues_found", [])
+                                )
+                            ),
+                            data=result.data,
+                        )
 
         result.duration_seconds = round(time.time() - start, 2)
         return result
@@ -442,6 +468,7 @@ class VideoCompose(BaseTool):
 
     _REMOTION_SCENE_TYPES = {
         "text_card", "stat_card", "callout", "comparison", "progress", "chart",
+        "europe_map", "usa_states_map",
     }
 
     # Maps renderer_family (set at proposal stage) to Remotion composition ID.
@@ -936,7 +963,7 @@ class VideoCompose(BaseTool):
                 pass
 
         try:
-            self.run_command(cmd, timeout=600)
+            self.run_command(cmd, timeout=600, cwd=composer_dir)
         except Exception as e:
             return ToolResult(success=False, error=f"Remotion render failed: {e}")
         finally:

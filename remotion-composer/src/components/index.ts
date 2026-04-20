@@ -10,5 +10,7 @@ export { StatReveal } from "./StatReveal";
 export { HeroTitle } from "./HeroTitle";
 export { ParticleOverlay } from "./ParticleOverlay";
 export { AnimeScene } from "./AnimeScene";
+export { EuropeMap } from "./maps/EuropeMap";
+export { UsaStatesMap } from "./maps/UsaStatesMap";
 export type { ParticleType } from "./ParticleOverlay";
 export type { CameraMotion, AnimeSceneProps } from "./AnimeScene";

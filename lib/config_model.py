@@ -32,6 +32,20 @@ class LLMConfig(BaseModel):
     max_tokens: int = 4096
 
 
+class ResearchAgentConfig(BaseModel):
+    provider: Optional[str] = None
+    executable: str = "gemini"
+    model: Optional[str] = None
+    prompt_mode: str = "headless"
+    approval_mode: str = "plan"
+    output_format: str = "text"
+
+
+class RoutingConfig(BaseModel):
+    video_providers_allowed: list[str] = Field(default_factory=list)
+    tts_providers_allowed: list[str] = Field(default_factory=list)
+
+
 class BudgetConfig(BaseModel):
     mode: BudgetMode = BudgetMode.WARN
     total_usd: float = 10.0
@@ -66,6 +80,8 @@ class OpenMontageConfig(BaseModel):
     """Top-level runtime configuration."""
 
     llm: LLMConfig = Field(default_factory=LLMConfig)
+    research_agent: ResearchAgentConfig = Field(default_factory=ResearchAgentConfig)
+    routing: RoutingConfig = Field(default_factory=RoutingConfig)
     budget: BudgetConfig = Field(default_factory=BudgetConfig)
     checkpoint: CheckpointConfig = Field(default_factory=CheckpointConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)

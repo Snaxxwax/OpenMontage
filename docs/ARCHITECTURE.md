@@ -340,9 +340,21 @@ Each tool's `agent_skills[]` field links Layer 1 to Layers 2 and 3. For example:
 
 ```yaml
 llm:
-  provider: anthropic
+  provider: ollama
+  model: qwen3-coder:latest
   temperature: 0.7
   max_tokens: 4096
+
+research_agent:
+  provider: gemini_cli
+  executable: gemini
+  model: null
+  prompt_mode: headless
+  approval_mode: plan
+  output_format: text
+
+routing:
+  video_providers_allowed: [pexels, pixabay]
 
 budget:
   mode: warn
@@ -372,12 +384,20 @@ paths:
 
 All config is validated via Pydantic models in `lib/config_model.py`.
 
+`research_agent` is optional. When enabled, the stage director can delegate first-pass
+research gathering to Gemini CLI in headless read-only mode and then synthesize the
+canonical `research_brief` locally.
+
+`routing.video_providers_allowed` is a hard allowlist enforced by `video_selector`.
+Use it to lock the system to stock-only video providers for low-cost documentary flows.
+
 ### Environment Variables (.env)
 
 | Variable | Used By | Purpose |
 |----------|---------|---------|
 | `ELEVENLABS_API_KEY` | elevenlabs_tts, music_gen | TTS, music, sound effects |
 | `OPENAI_API_KEY` | openai_tts, openai_image | TTS fallback, DALL-E 3 |
+| `OPENROUTER_API_KEY` | agent runtime / compatible LLM gateway | OpenRouter-hosted chat model access |
 | `XAI_API_KEY` | grok_image, grok_video | Grok image editing/generation, Grok video generation |
 | `FAL_KEY` | flux_image, kling_video, veo_video, minimax_video, recraft_image | fal.ai hosted models (FLUX, Veo, Kling, MiniMax, Recraft) |
 | `HEYGEN_API_KEY` | heygen_video | Multi-provider video generation |

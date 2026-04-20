@@ -232,9 +232,34 @@ try:
 except Exception as e:
     check("Proposal packet validates against schema", False, str(e))
 
+intent_contract = {
+    "version": "1.0",
+    "anchor_title": "AI Video Production in 60 Seconds",
+    "anchor_hook": "What if creating a professional video took less time than making your morning coffee?",
+    "target_audience": "Creators and marketers",
+    "temporal_update_policy": "supporting_facts_only",
+    "must_keep": [
+        "AI video production framing",
+        "60-second promise",
+    ],
+    "can_change": [
+        "current tool names",
+        "fresh examples",
+    ],
+}
+
+try:
+    validate_artifact("intent_contract", intent_contract)
+    check("Intent contract validates against schema", True)
+except Exception as e:
+    check("Intent contract validates against schema", False, str(e))
+
 cp_path = write_checkpoint(
     PIPELINE_DIR, PROJECT_ID, "proposal", "completed",
-    artifacts={"proposal_packet": proposal_packet},
+    artifacts={
+        "proposal_packet": proposal_packet,
+        "intent_contract": intent_contract,
+    },
     pipeline_type="animated-explainer",
     style_playbook="clean-professional",
 )
@@ -267,6 +292,7 @@ script = {
             "start_seconds": start,
             "end_seconds": end,
             "speaker_directions": "Confident, engaging tone",
+            "source_ref": f"https://example.com/{sid}",
             "enhancement_cues": [
                 {"type": "overlay", "description": f"Visual for {label} section", "timestamp_seconds": start + 2},
             ],
@@ -281,9 +307,51 @@ try:
 except Exception as e:
     check("Script validates against schema", False, str(e))
 
+editorial_qa = {
+    "version": "1.0",
+    "status": "pass",
+    "recommended_action": "proceed",
+    "checks": {
+        "title_alignment": {
+            "anchor_title": intent_contract["anchor_title"],
+            "script_title": script["title"],
+            "similarity_score": 1.0,
+            "policy_compliant": True,
+            "issues": [],
+        },
+        "temporal_alignment": {
+            "temporal_update_policy": intent_contract["temporal_update_policy"],
+            "allowed_scope_respected": True,
+            "issues": [],
+        },
+        "citation_coverage": {
+            "total_sections": len(script["sections"]),
+            "sections_with_sources": len(script["sections"]),
+            "coverage_ratio": 1.0,
+            "issues": [],
+        },
+        "compliance": {
+            "topic_risk": "low",
+            "financial_advice_disclaimer_present": False,
+            "outcome_overstatement_detected": False,
+            "issues": [],
+        },
+    },
+    "issues_found": [],
+}
+
+try:
+    validate_artifact("editorial_qa", editorial_qa)
+    check("Editorial QA validates against schema", True)
+except Exception as e:
+    check("Editorial QA validates against schema", False, str(e))
+
 write_checkpoint(
     PIPELINE_DIR, PROJECT_ID, "script", "completed",
-    artifacts={"script": script},
+    artifacts={
+        "script": script,
+        "editorial_qa": editorial_qa,
+    },
     pipeline_type="animated-explainer",
 )
 check("Completed stages", get_completed_stages(PIPELINE_DIR, PROJECT_ID) == ["research", "proposal", "script"])  # research, proposal and script in pipeline order
@@ -564,15 +632,26 @@ render_report = {
     "render_time_seconds": compose_result.duration_seconds,
 }
 
+final_review = compose_result.data.get("final_review") if compose_result.data else None
+
 try:
     validate_artifact("render_report", render_report)
     check("Render report validates against schema", True)
 except Exception as e:
     check("Render report validates against schema", False, str(e))
 
+try:
+    validate_artifact("final_review", final_review)
+    check("Final review validates against schema", True)
+except Exception as e:
+    check("Final review validates against schema", False, str(e))
+
 write_checkpoint(
     PIPELINE_DIR, PROJECT_ID, "compose", "completed",
-    artifacts={"render_report": render_report},
+    artifacts={
+        "render_report": render_report,
+        "final_review": final_review,
+    },
     pipeline_type="animated-explainer",
     cost_snapshot=tracker.cost_snapshot(),
 )

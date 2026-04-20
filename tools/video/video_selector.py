@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 
 from tools.base_tool import BaseTool, ToolResult, ToolRuntime, ToolStability, ToolStatus, ToolTier
+from lib.config_model import OpenMontageConfig
 
 
 class VideoSelector(BaseTool):
@@ -37,6 +38,15 @@ class VideoSelector(BaseTool):
         "user-facing recommendation flows",
         "switching between cloud, local, and stock video tools",
     ]
+
+    @staticmethod
+    def _configured_provider_allowlist() -> set[str]:
+        """Hard allowlist from config.yaml for operator-level provider locks."""
+        try:
+            cfg = OpenMontageConfig.load()
+        except Exception:
+            return set()
+        return {provider.strip() for provider in cfg.routing.video_providers_allowed if provider.strip()}
 
     input_schema = {
         "type": "object",
@@ -139,9 +149,21 @@ class VideoSelector(BaseTool):
 
         task_context = self._prepare_task_context(inputs)
         candidates = self._providers()
+        config_allowlist = self._configured_provider_allowlist()
+        requested_preferred = str(inputs.get("preferred_provider", "auto"))
+
+        if config_allowlist and requested_preferred != "auto" and requested_preferred not in config_allowlist:
+            return ToolResult(
+                success=False,
+                error=(
+                    f"Provider '{requested_preferred}' is blocked by config routing.video_providers_allowed. "
+                    f"Allowed providers: {sorted(config_allowlist)}"
+                ),
+            )
 
         # Rank mode — return scored provider rankings without generating
         if inputs.get("operation") == "rank":
+            candidates = self._filter_candidates(inputs, candidates)
             rankings = rank_providers(candidates, task_context)
             return ToolResult(
                 success=True,
@@ -203,7 +225,14 @@ class VideoSelector(BaseTool):
         from lib.scoring import rank_providers, ProviderScore
 
         preferred = inputs.get("preferred_provider", "auto")
-        allowed = set(inputs.get("allowed_providers") or [])
+        input_allowed = {provider for provider in (inputs.get("allowed_providers") or []) if provider}
+        config_allowed = self._configured_provider_allowlist()
+
+        if config_allowed and input_allowed:
+            allowed = config_allowed & input_allowed
+        else:
+            allowed = config_allowed or input_allowed
+
         if allowed:
             candidates = [tool for tool in candidates if tool.provider in allowed]
         candidates = self._filter_candidates(inputs, candidates)
@@ -283,6 +312,10 @@ class VideoSelector(BaseTool):
         inputs: dict[str, object],
         candidates: list[BaseTool],
     ) -> list[BaseTool]:
+        config_allowed = self._configured_provider_allowlist()
+        if config_allowed:
+            candidates = [tool for tool in candidates if tool.provider in config_allowed]
+
         operation = inputs.get("operation", "text_to_video")
         if operation == "rank":
             return candidates

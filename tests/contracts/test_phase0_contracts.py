@@ -117,6 +117,22 @@ def sample_artifact(name: str) -> dict:
             },
             "approval": {"status": "approved"},
         }
+    if name == "intent_contract":
+        return {
+            "version": "1.0",
+            "anchor_title": "AI Video Production in 60 Seconds",
+            "anchor_hook": "What if video production took less than a minute?",
+            "target_audience": "Creators and marketers",
+            "temporal_update_policy": "supporting_facts_only",
+            "must_keep": [
+                "AI video production framing",
+                "Speed/automation value proposition",
+            ],
+            "can_change": [
+                "current examples",
+                "tool availability",
+            ],
+        }
     if name == "brief":
         return {
             "version": "1.0",
@@ -139,8 +155,42 @@ def sample_artifact(name: str) -> dict:
                     "text": "Hello world",
                     "start_seconds": 0,
                     "end_seconds": 10,
+                    "source_ref": "https://example.com/source",
                 }
             ],
+        }
+    if name == "editorial_qa":
+        return {
+            "version": "1.0",
+            "status": "pass",
+            "recommended_action": "proceed",
+            "checks": {
+                "title_alignment": {
+                    "anchor_title": "Test Script",
+                    "script_title": "Test Script",
+                    "similarity_score": 1.0,
+                    "policy_compliant": True,
+                    "issues": [],
+                },
+                "temporal_alignment": {
+                    "temporal_update_policy": "supporting_facts_only",
+                    "allowed_scope_respected": True,
+                    "issues": [],
+                },
+                "citation_coverage": {
+                    "total_sections": 1,
+                    "sections_with_sources": 1,
+                    "coverage_ratio": 1.0,
+                    "issues": [],
+                },
+                "compliance": {
+                    "topic_risk": "low",
+                    "financial_advice_disclaimer_present": False,
+                    "outcome_overstatement_detected": False,
+                    "issues": [],
+                },
+            },
+            "issues_found": [],
         }
     if name == "scene_plan":
         return {
@@ -165,8 +215,24 @@ def sample_artifact(name: str) -> dict:
                     "path": "assets/clip.mp4",
                     "source_tool": "ffmpeg",
                     "scene_id": "scene-1",
+                    "duration_seconds": 10,
+                    "provider": "pixabay",
                 }
             ],
+            "quality_gate": {
+                "passed": True,
+                "fallback_video_count": 0,
+                "total_video_count": 1,
+                "fallback_runtime_seconds": 0,
+                "total_video_runtime_seconds": 10,
+                "fallback_runtime_ratio": 0,
+                "max_consecutive_fallback_scenes": 0,
+                "thresholds": {
+                    "max_fallback_runtime_ratio": 0.2,
+                    "max_consecutive_fallback_scenes": 2,
+                },
+                "blocked_reasons": [],
+            },
         }
     if name == "edit_decisions":
         return {
@@ -191,6 +257,57 @@ def sample_artifact(name: str) -> dict:
                     "duration_seconds": 60,
                 }
             ],
+        }
+    if name == "final_review":
+        return {
+            "version": "1.0",
+            "output_path": "renders/output.mp4",
+            "status": "pass",
+            "checks": {
+                "technical_probe": {
+                    "valid_container": True,
+                    "duration_seconds": 60,
+                    "resolution": "1920x1080",
+                    "fps": 30,
+                    "has_audio": True,
+                    "codec": "h264",
+                    "file_size_bytes": 1000000,
+                    "issues": [],
+                },
+                "visual_spotcheck": {
+                    "frames_sampled": 4,
+                    "frame_paths": ["f1.png", "f2.png", "f3.png", "f4.png"],
+                    "black_frames_detected": False,
+                    "broken_overlays": False,
+                    "missing_assets": False,
+                    "unreadable_text": False,
+                    "issues": [],
+                },
+                "audio_spotcheck": {
+                    "narration_present": True,
+                    "music_present": False,
+                    "unexpected_silence": False,
+                    "clipping_detected": False,
+                    "mix_intelligible": True,
+                    "issues": [],
+                },
+                "promise_preservation": {
+                    "delivery_promise_honored": True,
+                    "renderer_family_used": "explainer-data",
+                    "motion_ratio_actual": 0.6,
+                    "silent_downgrade_detected": False,
+                    "issues": [],
+                },
+                "subtitle_check": {
+                    "subtitles_expected": True,
+                    "subtitles_present": True,
+                    "coverage_ratio": 1.0,
+                    "timing_drift_detected": False,
+                    "issues": [],
+                },
+            },
+            "issues_found": [],
+            "recommended_action": "present_to_user",
         }
     if name == "publish_log":
         return {
@@ -255,11 +372,20 @@ class TestConfig:
     def test_load_defaults(self):
         config = OpenMontageConfig()
         assert config.llm.provider == "anthropic"
+        assert config.research_agent.provider is None
+        assert config.research_agent.prompt_mode == "headless"
+        assert config.routing.video_providers_allowed == []
         assert config.budget.mode.value == "warn"
         assert config.checkpoint.policy.value == "guided"
 
     def test_load_from_yaml(self):
         config = OpenMontageConfig.load()
+        assert config.llm.provider == "ollama"
+        assert config.llm.model == "qwen3-coder:latest"
+        assert config.research_agent.provider is None
+        assert config.research_agent.executable == "gemini"
+        assert config.research_agent.approval_mode == "plan"
+        assert config.routing.video_providers_allowed == ["pexels", "pixabay"]
         assert config.budget.total_usd == 10.0
 
 
@@ -282,6 +408,12 @@ class TestSchemas:
 
     def test_video_analysis_brief_validates(self):
         validate_artifact("video_analysis_brief", sample_artifact("video_analysis_brief"))
+
+    def test_intent_contract_validates(self):
+        validate_artifact("intent_contract", sample_artifact("intent_contract"))
+
+    def test_editorial_qa_validates(self):
+        validate_artifact("editorial_qa", sample_artifact("editorial_qa"))
 
 
 # ---- Checkpoint ----
@@ -345,12 +477,109 @@ class TestCheckpoint:
             "completed",
             {
                 "proposal_packet": sample_artifact("proposal_packet"),
+                "intent_contract": sample_artifact("intent_contract"),
                 "video_analysis_brief": sample_artifact("video_analysis_brief"),
             },
         )
         cp = read_checkpoint(tmp_path, "proj", "proposal")
         assert cp is not None
         assert "video_analysis_brief" in cp["artifacts"]
+
+    def test_proposal_requires_intent_contract(self, tmp_path):
+        with pytest.raises(CheckpointValidationError):
+            write_checkpoint(
+                tmp_path,
+                "proj",
+                "proposal",
+                "completed",
+                {"proposal_packet": sample_artifact("proposal_packet")},
+            )
+
+    def test_script_requires_editorial_qa(self, tmp_path):
+        with pytest.raises(CheckpointValidationError):
+            write_checkpoint(
+                tmp_path,
+                "proj",
+                "script",
+                "completed",
+                {"script": sample_artifact("script")},
+            )
+
+    def test_script_editorial_qa_must_pass(self, tmp_path):
+        editorial_qa = sample_artifact("editorial_qa")
+        editorial_qa["status"] = "review"
+        editorial_qa["recommended_action"] = "await_human"
+        with pytest.raises(CheckpointValidationError):
+            write_checkpoint(
+                tmp_path,
+                "proj",
+                "script",
+                "completed",
+                {
+                    "script": sample_artifact("script"),
+                    "editorial_qa": editorial_qa,
+                },
+            )
+
+    def test_assets_quality_gate_rejects_fallback_heavy_manifest(self, tmp_path):
+        asset_manifest = sample_artifact("asset_manifest")
+        asset_manifest["assets"] = [
+            {
+                "id": "asset-1",
+                "type": "video",
+                "path": "assets/fallback1.mp4",
+                "source_tool": "project_recovery",
+                "scene_id": "scene-1",
+                "duration_seconds": 8,
+                "provider": "local_fallback",
+                "generation_summary": "Stock query failed; generated local fallback card.",
+            },
+            {
+                "id": "asset-2",
+                "type": "video",
+                "path": "assets/fallback2.mp4",
+                "source_tool": "project_recovery",
+                "scene_id": "scene-2",
+                "duration_seconds": 8,
+                "provider": "local_fallback",
+                "generation_summary": "Stock query failed; generated local fallback card.",
+            },
+        ]
+        asset_manifest["quality_gate"] = {
+            "passed": False,
+            "fallback_video_count": 2,
+            "total_video_count": 2,
+            "fallback_runtime_seconds": 16,
+            "total_video_runtime_seconds": 16,
+            "fallback_runtime_ratio": 1.0,
+            "max_consecutive_fallback_scenes": 2,
+            "thresholds": {
+                "max_fallback_runtime_ratio": 0.2,
+                "max_consecutive_fallback_scenes": 1,
+            },
+            "blocked_reasons": [
+                "Fallback runtime ratio 100.0% exceeds threshold 20%",
+                "Fallback run length 2 exceeds threshold 1",
+            ],
+        }
+        with pytest.raises(CheckpointValidationError):
+            write_checkpoint(
+                tmp_path,
+                "proj",
+                "assets",
+                "completed",
+                {"asset_manifest": asset_manifest},
+            )
+
+    def test_compose_requires_passing_final_review(self, tmp_path):
+        with pytest.raises(CheckpointValidationError):
+            write_checkpoint(
+                tmp_path,
+                "proj",
+                "compose",
+                "completed",
+                {"render_report": sample_artifact("render_report")},
+            )
 
 
 # ---- Pipeline manifests ----

@@ -18,6 +18,7 @@ from tools.base_tool import (
     Determinism,
     ExecutionMode,
     ResourceProfile,
+    ResumeSupport,
     ToolResult,
     ToolStability,
     ToolStatus,
@@ -119,7 +120,7 @@ class VideoDownloader(BaseTool):
     )
     idempotency_key_fields = ["url", "format", "max_resolution"]
     side_effects = ["downloads media files to output_dir"]
-    resume_support_value = "from_start"
+    resume_support = ResumeSupport.FROM_START
     user_visible_verification = [
         "Check downloaded file plays correctly",
         "Verify resolution matches requested max",
@@ -192,18 +193,6 @@ class VideoDownloader(BaseTool):
         # Step 1: Always get metadata first
         metadata = self._extract_metadata(url)
 
-        # Check duration limit
-        duration = metadata.get("duration", 0)
-        if duration and duration > max_duration:
-            return ToolResult(
-                success=False,
-                error=(
-                    f"Video is {duration}s, exceeds max_duration_seconds={max_duration}. "
-                    f"Increase the limit or use a shorter video."
-                ),
-                data={"metadata": metadata, "platform": platform},
-            )
-
         if dl_format == "metadata_only":
             return ToolResult(
                 success=True,
@@ -215,6 +204,18 @@ class VideoDownloader(BaseTool):
                     "platform": platform,
                 },
                 duration_seconds=round(time.time() - start, 2),
+            )
+
+        # Check duration limit
+        duration = metadata.get("duration", 0)
+        if duration and duration > max_duration:
+            return ToolResult(
+                success=False,
+                error=(
+                    f"Video is {duration}s, exceeds max_duration_seconds={max_duration}. "
+                    f"Increase the limit or use a shorter video."
+                ),
+                data={"metadata": metadata, "platform": platform},
             )
 
         video_path = None
@@ -271,6 +272,7 @@ class VideoDownloader(BaseTool):
             "noplaylist": True,
             "quiet": True,
             "no_warnings": True,
+            "noprogress": True,
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
@@ -316,6 +318,7 @@ class VideoDownloader(BaseTool):
             "noplaylist": True,
             "quiet": True,
             "no_warnings": True,
+            "noprogress": True,
         }
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
@@ -336,6 +339,7 @@ class VideoDownloader(BaseTool):
             "noplaylist": True,
             "quiet": True,
             "no_warnings": True,
+            "noprogress": True,
         }
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:

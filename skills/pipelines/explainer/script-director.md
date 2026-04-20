@@ -10,8 +10,10 @@ The script is the backbone of the video. Every visual, every scene, every audio 
 
 | Layer | Resource | Purpose |
 |-------|----------|---------|
-| Schema | `schemas/artifacts/script.schema.json` | Artifact validation |
+| Schema | `schemas/artifacts/script.schema.json` | Script artifact validation |
+| Schema | `schemas/artifacts/editorial_qa.schema.json` | Editorial QA validation |
 | Prior artifact | `proposal_packet` | Selected concept with title, hook, key_points, core_message, tone, narrative_structure, duration |
+| Prior artifact | `intent_contract` | Fixed campaign promise and temporal adaptation rules |
 | Prior artifact | `research_brief` (optional but high-value) | Data points, audience insights, expert quotes — ground the script in real facts |
 | Playbook | Active style playbook from `proposal_packet.selected_concept.suggested_playbook` | Voice style, pacing rules |
 | Layer 3 | TTS provider skills (check `agent_skills` on the selected TTS tool) | TTS capabilities for speaker directions |
@@ -35,6 +37,12 @@ Then read the `research_brief` for grounding material:
 - **`audience_insights.common_questions`** — address these directly in the script where they naturally fit.
 - **`expert_voices`** — quotable experts add authority. Use sparingly — one or two per script.
 - **`trending.recent_developments`** — if timely, reference them to make the content feel current.
+
+Then read the `intent_contract` and treat it as a hard boundary:
+- `anchor_title` is the promise the script must preserve
+- `temporal_update_policy` tells you whether freshness can change supporting facts only, or the framing itself
+- `must_keep` cannot be dropped
+- `can_change` are the only freshness levers you may pull without re-approval
 
 **The research_brief is your cheat sheet.** Every fact, every surprising stat, every misconception is pre-verified and sourced. Use them. A script that cites "73% of developers..." (from research) is more compelling than one that says "many developers..."
 
@@ -167,6 +175,18 @@ Read the active style playbook and verify:
 
 ### Step 6: Self-Evaluate
 
+Before submitting, also create `editorial_qa`:
+- `title_alignment`: compare `intent_contract.anchor_title` and `script.title`
+- `temporal_alignment`: confirm the script stayed within `temporal_update_policy`
+- `citation_coverage`: count how many sections include `source_ref`
+- `compliance`: flag high-risk finance/legal/medical topics and note disclaimer posture
+
+Hard rules:
+- `editorial_qa.status` must be `pass`
+- `recommended_action` must be `proceed`
+- At least 80% of script sections must include `source_ref`
+- If policy is `supporting_facts_only`, do not silently replace the original title promise with a fresher angle
+
 Score your script (1-5):
 
 | Criterion | Question |
@@ -183,7 +203,7 @@ If any dimension scores below 3, revise before submitting.
 
 ### Step 7: Submit
 
-Call `handle_explainer_script(state, {"script": script_json})` to validate and persist.
+Call `handle_explainer_script(state, {"script": script_json, "editorial_qa": editorial_qa_json})` to validate and persist.
 
 ### Mid-Production Fact Verification
 

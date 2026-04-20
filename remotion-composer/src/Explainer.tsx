@@ -18,12 +18,22 @@ function resolveAsset(src: string): string {
     return src;
   }
   // Strip any file:// prefix
-  const clean = src.replace(/^file:\/\/\/?/, "");
-  // Absolute paths (Unix: /foo, Windows: C:\foo or C:/foo) — convert to file:// URI
-  // staticFile() only accepts relative paths within public/, so absolute paths must bypass it
+  let clean = src.replace(/^file:\/\/\/?/, "");
+
+  const projectRoot = "/home/pop/OpenMontage";
+
+  // If absolute path within project, make relative to root
+  if (clean.startsWith(projectRoot)) {
+    clean = clean.substring(projectRoot.length).replace(/^\//, "");
+  }
+
+  // If path is still absolute (starts with / or drive letter), it's outside project
   if (clean.startsWith("/") || /^[A-Za-z]:[\\/]/.test(clean)) {
     return `file:///${clean.replace(/\\/g, "/")}`;
   }
+
+  // Otherwise treat as relative to public/
+  // Use staticFile() which is the standard Remotion way to handle public assets
   return staticFile(clean);
 }
 import { TextCard } from "./components/TextCard";
@@ -40,6 +50,8 @@ import { SectionTitle } from "./components/SectionTitle";
 import { StatReveal } from "./components/StatReveal";
 import { HeroTitle } from "./components/HeroTitle";
 import { AnimeScene } from "./components/AnimeScene";
+import { EuropeMap } from "./components/maps/EuropeMap";
+import { UsaStatesMap } from "./components/maps/UsaStatesMap";
 import type { CameraMotion } from "./components/AnimeScene";
 import type { ParticleType } from "./components/ParticleOverlay";
 import { resolveTheme, type ThemeConfig, DEFAULT_THEME } from "./Root";
@@ -225,6 +237,10 @@ interface Cut {
   progressSegments?: any[];
   // Hero title props (when used as scene, not overlay)
   heroSubtitle?: string;
+  countryValues?: Record<string, number>;
+  highlightedCountryNames?: string[];
+  stateValues?: Record<string, number>;
+  highlightedStateIds?: string[];
   // Styling overrides
   backgroundColor?: string;
   backgroundImage?: string; // AI-generated or stock image rendered behind the component
@@ -594,6 +610,34 @@ const SceneRenderer: React.FC<{ cut: Cut; theme: ThemeConfig }> = ({ cut, theme 
           segments={cut.progressSegments} backgroundColor={cut.backgroundColor || theme.surfaceColor}
         />
       </AbsoluteFill>
+    );
+  }
+  if (cut.type === "europe_map") {
+    return maybeWrapWithBgImage(
+      <EuropeMap
+        title={cut.title}
+        subtitle={cut.subtitle}
+        countryValues={cut.countryValues}
+        highlightedCountryNames={cut.highlightedCountryNames}
+        backgroundColor={bgColor}
+        textColor={textColor}
+        mutedTextColor={theme.mutedTextColor}
+        colorStops={cut.chartColors || theme.chartColors}
+      />
+    );
+  }
+  if (cut.type === "usa_states_map") {
+    return maybeWrapWithBgImage(
+      <UsaStatesMap
+        title={cut.title}
+        subtitle={cut.subtitle}
+        stateValues={cut.stateValues}
+        highlightedStateIds={cut.highlightedStateIds}
+        backgroundColor={bgColor}
+        textColor={textColor}
+        mutedTextColor={theme.mutedTextColor}
+        colorStops={cut.chartColors || theme.chartColors}
+      />
     );
   }
 

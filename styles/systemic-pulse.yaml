@@ -1,0 +1,156 @@
+identity:
+  name: "The Systemic Pulse"
+  category: vector-doodle-hybrid
+  mood: intelligent, curious, slightly playful, authoritative
+  pace: measured
+  best_for: "Hidden Systems explainers — geopolitics, infrastructure, economic power, tech sovereignty. Long-form educational content modeled on Kurzgesagt + OverSimplified."
+
+visual_language:
+  color_palette:
+    background: "#0F1623"         # Deep Navy — primary scene background
+    surface: "#1C2333"            # Elevated surface — panels, cards, secondary BG
+    primary: "#3ECFB2"            # Mint — primary accent, titles, key icons
+    accent: "#FF2D6B"             # Electric Pink — danger, money, power, emphasis
+    warm: "#FFB347"               # Amber — economic/financial data, highlights
+    cool: "#4DB8FF"               # Electric Blue — tech, infrastructure, networks
+    text: "#E8EAED"               # Near-white — all body text
+    muted: "#5A6478"              # Cool Gray — secondary labels, captions
+    charcoal: "#2D3142"           # Charcoal — character fills, mid-tones
+  composition: "Clear foreground subject, minimal midground, flat or gradient-free background. Strong use of negative space. Infographic-forward: information density over decoration."
+  texture: "Zero texture. Hard vector edges, clean flat color blocks, geometric shapes only. Subtle drop shadow for depth (never gradient fills). Stickman/rounded-geometric character style."
+
+typography:
+  headings:
+    font: "Manrope"
+    weight: 800
+    tracking: "-0.02em"
+  body:
+    font: "Manrope"
+    weight: 400
+    line_height: 1.6
+  code:
+    font: "Fira Code"
+    weight: 400
+  stat_card:
+    font: "Manrope"
+    weight: 800
+    size_multiplier: 3.5
+  scale_system: "major_third"
+  weight_matrix:
+    title: 800
+    heading: 700
+    body: 400
+    caption: 300
+
+motion:
+  transitions: [cut, fade, slide-up, wipe-right]
+  animation_style: "spring(1, 70, 14), snappy but not bouncy, professional easing"
+  pacing_rules:
+    min_scene_hold_seconds: 2.5
+    max_scene_hold_seconds: 9
+    text_card_hold_seconds: 3.5
+    stat_card_hold_seconds: 3.0
+    transition_duration_seconds: 0.4
+    humor_beat_interval_seconds: 50
+  entrance: "fade-up (opacity 0->1, translateY 12->0 over 0.4s)"
+  exit: "fade (opacity 1->0 over 0.3s)"
+
+audio:
+  voice_style: "clear, measured, slightly dry — authoritative but not stiff. Slight irony on absurd facts. Emphasis on key system names and numbers."
+  music_mood: "minimal electronic, low-key ambient pulse, subtle tension builds for stakes moments, no vocals"
+  music_volume: 0.10
+  sfx_style: "clean UI clicks on icon reveals, subtle whoosh on scene transitions, cash register or data-ping on key stats"
+  ducking_threshold_db: -4
+
+asset_generation:
+  # Prepend this to every image prompt sent to ComfyUI / FLUX
+  image_prompt_prefix: >
+    flat vector illustration, clean hard geometric edges, deep navy blue background (#0F1623),
+    mint green (#3ECFB2) and electric pink (#FF2D6B) as primary accents, amber (#FFB347) for
+    economic data highlights, bold color blocking, zero texture, zero gradients, zero noise,
+    educational motion-graphics aesthetic, Kurzgesagt-inspired infographic style,
+    strong negative space, bold readable shapes, single unified scene composition,
+  image_negative_prompt: >
+    photorealistic, 3D render, CGI, watercolor, oil painting, sketch, pencil drawing,
+    noisy, grainy, busy cluttered background, too many colors, gradient mesh fills,
+    lens flare, bokeh, realistic lighting, shadows, glow effects, neon glow,
+    white background, light background, pastel, desaturated, vintage, retro
+  scene_type: "vector_explainer"
+  default_particles: null
+  default_vignette: false
+
+  # These rules are enforced at every asset generation call
+  consistency_anchors:
+    - "Deep Navy (#0F1623) background in every scene — never white, never light"
+    - "Mint (#3ECFB2) is the primary accent for icons, titles, and positive/neutral elements"
+    - "Electric Pink (#FF2D6B) reserved for power, money, danger, and emphasis moments"
+    - "Amber (#FFB347) only for economic/financial/data elements"
+    - "Electric Blue (#4DB8FF) only for tech, network, and infrastructure elements"
+    - "Zero gradients, zero textures — hard vector edges only"
+    - "Characters use Charcoal (#2D3142) fills with Mint or Pink accents"
+    - "Maximum 4 colors on screen at once (not counting background)"
+    - "All shapes are geometric — rounded rectangles, circles, clean polygons"
+    - "Negative space is intentional — no filler details"
+
+  multi_image_per_scene: false
+  images_per_scene: 1
+
+  # FLUX-specific sampling parameters for this style
+  flux_defaults:
+    steps: 25
+    guidance: 3.5
+    width: 1024
+    height: 576   # 16:9 for video frames
+
+overlays:
+  stat_card:
+    bg: "#1C2333"
+    border: "#3ECFB2"
+    radius: 8
+    shadow: "0 4px 24px rgba(0,0,0,0.4)"
+  key_term:
+    bg: "#1C2333"
+    text: "#3ECFB2"
+    radius: 4
+  emphasis_term:
+    bg: "#2A0F18"
+    text: "#FF2D6B"
+    radius: 4
+  data_callout:
+    bg: "#1C2333"
+    text: "#FFB347"
+    radius: 4
+  code_block:
+    bg: "#0F1623"
+    text: "#E8EAED"
+    highlight: "#3ECFB2"
+  network_node:
+    fill: "#2D3142"
+    stroke: "#3ECFB2"
+    stroke_width: 2
+    radius: 40
+
+quality_rules:
+  - "Every image must use Deep Navy (#0F1623) as the background"
+  - "Primary accent (Mint) must appear in every frame"
+  - "Maximum 4 colors on screen simultaneously"
+  - "All shapes are geometric — reject any realistic or textured outputs"
+  - "Text contrast ratio minimum 7:1 against background"
+  - "No white or light backgrounds — reject and regenerate"
+  - "Character fills use Charcoal (#2D3142), never skin tones"
+  - "Zero photorealistic elements"
+
+chart_palette:
+  - "#3ECFB2"   # Mint — primary series
+  - "#FF2D6B"   # Electric Pink — secondary series
+  - "#FFB347"   # Amber — tertiary / economic
+  - "#4DB8FF"   # Electric Blue — quaternary / tech
+  - "#E8EAED"   # Near-white — labels
+  - "#5A6478"   # Muted Gray — grid lines
+
+color_rules:
+  harmony_type: "split-complementary"
+  contrast_validation: true
+  colorblind_safe: true
+  background_always: "#0F1623"
+  reject_if_light_background: true

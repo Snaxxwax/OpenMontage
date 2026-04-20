@@ -100,7 +100,9 @@ EP_STATE:
 For each stage in order: `research → proposal → script → scene_plan → assets → edit → compose → publish`
 
 **Pre-production stages (research, proposal)** run before any money is spent:
-- **research** gathers topic data AND animation technique references via web search — zero cost
+- **research** delegates first-pass external scanning to the configured research agent
+  (Gemini CLI in this repo) and synthesizes the returned findings into `research_brief`
+  — zero direct tool cost
 - **proposal** presents concepts with animation mode selection and costs to the user — zero cost, but contains the **approval gate**
 - The pipeline MUST NOT proceed past proposal without `approval.status == "approved"` or `"approved_with_changes"`
 

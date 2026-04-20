@@ -1,10 +1,26 @@
 # OpenMontage - Global Configuration
 
 llm:
-  provider: anthropic            # anthropic | openai | gemini | openrouter | ollama | mistral | minimax
-  model: null                    # null = use provider default
+  provider: ollama               # anthropic | openai | gemini | openrouter | ollama | mistral | minimax
+  model: qwen3-coder:latest      # best tested local fit: clean completions, long context, tool support
   temperature: 0.7
   max_tokens: 4096
+
+research_agent:
+  provider: null                 # null = use native pipeline web research
+  executable: gemini
+  model: null
+  prompt_mode: headless
+  approval_mode: plan
+  output_format: text
+
+routing:
+  video_providers_allowed:
+    - pexels
+    - pixabay
+  tts_providers_allowed:
+    - fish_speech
+    - elevenlabs
 
 budget:
   mode: warn                     # observe | warn | cap

@@ -160,6 +160,8 @@ Assemble all generated assets into the manifest:
 }
 ```
 
+If video assets are present, add a `quality_gate` section that records fallback counts, fallback runtime ratio, consecutive fallback runs, thresholds used, and whether the manifest passes.
+
 ### Step 7: Verify All Assets
 
 **Existence check:**
@@ -173,6 +175,8 @@ Assemble all generated assets into the manifest:
 - [ ] Images match the playbook's style (review consistency anchors)
 - [ ] Diagrams are legible and complete
 - [ ] Total cost within budget
+- [ ] Fallback runtime ratio stays within threshold
+- [ ] No fallback run exceeds the consecutive-scene threshold
 
 ### Step 8: Self-Evaluate
 
@@ -191,6 +195,7 @@ If any dimension scores below 3, fix before proceeding.
 ### Step 9: Submit
 
 Validate the asset_manifest against the schema and persist via checkpoint.
+If the manifest includes video assets, it must also include a passing `quality_gate` block documenting fallback ratios and consecutive fallback runs.
 
 ### Mid-Production Fact Verification
 

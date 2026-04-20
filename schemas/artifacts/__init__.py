@@ -13,8 +13,10 @@ SCHEMA_DIR = Path(__file__).parent
 ARTIFACT_NAMES = [
     "research_brief",
     "proposal_packet",
+    "intent_contract",
     "brief",
     "script",
+    "editorial_qa",
     "scene_plan",
     "asset_manifest",
     "edit_decisions",
