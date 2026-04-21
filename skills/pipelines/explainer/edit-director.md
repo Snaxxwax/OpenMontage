@@ -58,6 +58,74 @@ Each cut defines what visual is shown and when:
 - `overlay` — text cards, stat cards, key terms (on top of primary)
 - `background` — solid color or texture behind everything
 
+### Step 2b: Word-Timestamp-Driven Beat Assembly
+
+If `artifacts/word_timestamps.json` exists in the project, use it to resolve `visual_beats` from the scene plan into precise overlay timing.
+
+**If `word_timestamps.json` is missing:** Log a warning and skip beat assembly — beats will be omitted from this render. Do not fail the stage.
+
+**Process:**
+
+1. Load `{project}/artifacts/word_timestamps.json`. Extract `words` array (format: `[{word, startMs, endMs}]`).
+
+2. For each scene in the `scene_plan` that has `visual_beats[]`:
+   - For each beat in `visual_beats[]`:
+     - **If `word_trigger` is present:** resolve `start_seconds = words[word_trigger.word_index].startMs / 1000 + (word_trigger.offset_seconds || 0)`. Validate that `word_trigger.word_index` is within `[0, words.length - 1]` — if out of range, skip the beat and log a warning.
+     - **If no `word_trigger`:** use `beat.start_seconds` directly from the scene plan.
+     - `end_seconds = start_seconds + (beat.end_seconds - beat.start_seconds)` — preserve the beat's planned duration.
+
+3. For each resolved beat, produce an overlay entry in `edit_decisions.overlays[]`:
+   ```json
+   {
+     "asset_id": "beat-{beat.id}",
+     "type": "{beat.micro_component_type}",
+     "start_seconds": 22.47,
+     "end_seconds": 24.97,
+     "position": { "x": 0, "y": 0, "width": 1920, "height": 1080 },
+     "word_trigger": { "word_index": 48, "offset_seconds": 0 },
+     "micro_component_props": { "from": 0, "to": 73, "suffix": "%", "color": "#F59E0B" }
+   }
+   ```
+
+4. Also set `continuous_camera: true` on cuts whose corresponding scene has `hero_moment: true` or whose duration exceeds 8 seconds. This instructs the Remotion compositor to wrap the cut in the `ContinuousCamera` component.
+
+**Beat assembly validation checklist (add to Step 6):**
+- [ ] Every `word_trigger.word_index` is within range of the `words` array
+- [ ] No two beat overlays of the same type have overlapping `start_seconds`/`end_seconds`
+- [ ] `data_counter` beats have `micro_component_props.to` defined and non-null
+- [ ] `kinetic_highlight` beats have `micro_component_props.text` defined
+- [ ] `connecting_line` beats have `x1`, `y1`, `x2`, `y2` all defined
+
+**Overlay positioning rules — MANDATORY:**
+
+The video is 1920×1080. Captions render at the bottom (y ≈ 920–1000). Overlays must not collide with captions or with each other.
+
+**Caption safe zone**: Keep all overlay text within `y: 100` to `y: 820`. Never place overlay text below y=820 — it will overlap the caption strip.
+
+**Simultaneous overlays must use distinct y positions.** If multiple overlays are active at the same time (staggered reveals, build-up lists), assign them to different vertical slots:
+
+| Slot | y position | Use |
+|------|-----------|-----|
+| top | 180 | First item in a build-up sequence |
+| mid-top | 350 | Second item |
+| mid | 520 | Third item |
+| mid-low | 650 | Fourth item (rare) |
+| center | 440 | Solo emphasis overlay (nothing else active) |
+
+**Staggered reveal pattern** (e.g., "EQUIFAX. / EXPERIAN. / TRANSUNION." appearing in sequence):
+- Each word gets its own overlay entry
+- Start times may overlap briefly (0.5–1s stagger) to create a "build-up" feel
+- **Each must have a distinct `y` position** so they stack vertically instead of colliding
+- Set `width` to the actual text width estimate (not full canvas): ~600–900px centered horizontally (`x: 510–660`)
+
+**Full-canvas position `{x:0, y:0, width:1920, height:1080}`** is only valid for:
+- Overlays with no text (pure SVG shapes/lines)
+- `hero_title` type (intentionally fills the frame)
+
+Do not use full-canvas position for any `kinetic_highlight` or `data_counter` with text — it defaults to center and causes stacking collisions when multiple overlays fire simultaneously.
+
+**Critical: `word_index` is GLOBAL.** It is a position in the merged word list across ALL narration sections (produced by Asset Director Step 3b). It is NOT a per-section index. Off-by-one errors from treating section-local indices as global are the #1 failure mode in beat assembly.
+
 ### Step 3: Configure Subtitles
 
 Subtitles are mandatory for all explainer content:
@@ -83,6 +151,8 @@ Use the playbook's typography for font choices.
 
 ### Step 4: Configure Audio Layers
 
+Music should be **per-scene targeted cues**, not a single long background track. Map each music cue and SFX asset from the asset manifest to its timeline position.
+
 ```json
 {
   "audio": {
@@ -92,25 +162,41 @@ Use the playbook's typography for font choices.
         { "asset_id": "narration-s2", "start_seconds": 10 }
       ]
     },
-    "music": {
-      "asset_id": "music-bg",
-      "volume": 0.08,
-      "fade_in_seconds": 2,
-      "fade_out_seconds": 3,
-      "ducking": {
-        "enabled": true,
-        "threshold_db": -3,
-        "reduction_db": -8,
-        "attack_ms": 200,
-        "release_ms": 500
+    "music_cues": [
+      {
+        "asset_id": "music-cue-intro",
+        "start_seconds": 0,
+        "end_seconds": 8,
+        "volume": 0.28,
+        "fade_in_seconds": 1.0,
+        "fade_out_seconds": 1.5,
+        "label": "intro-swell"
+      },
+      {
+        "asset_id": "music-cue-tension",
+        "start_seconds": 22,
+        "end_seconds": 40,
+        "volume": 0.18,
+        "fade_in_seconds": 1.5,
+        "fade_out_seconds": 2.0,
+        "label": "tension-pulse"
       }
-    },
-    "sfx": []
+    ],
+    "sfx": [
+      { "asset_id": "sfx-typewriter", "start_seconds": 1.2, "volume": 0.7, "label": "typewriter-click" },
+      { "asset_id": "sfx-paper", "start_seconds": 14.0, "volume": 0.5, "label": "paper-rustle" }
+    ]
   }
 }
 ```
 
-**Music ducking**: Music volume drops when narration plays, rises during pauses. Use playbook's `audio.ducking_threshold_db`.
+**Volume guidance**:
+- Music cues under narration: 0.15–0.25 (narration must always be intelligible)
+- Music cues in silence/transition: 0.3–0.45
+- SFX punctuation: 0.5–0.8
+- SFX ambient beds: 0.2–0.35
+
+**Do not** use a single long music track for the whole video. Silence between cues is intentional and creates rhythm — not every second needs music.
 
 ### Step 5: Apply Pacing Rules
 
@@ -132,12 +218,19 @@ Adjust cut timing if any violates these rules.
 **Asset references:**
 - [ ] Every cut's `source` references a valid asset_id from the manifest
 - [ ] Every narration segment references a valid audio asset
-- [ ] Music asset exists
+- [ ] Every `music_cues[].asset_id` references a valid asset in the manifest
+- [ ] Every `sfx[].asset_id` references a valid asset in the manifest
 
 **Audio sync:**
 - [ ] Narration segments are ordered and non-overlapping
 - [ ] Narration timing aligns with corresponding visual cuts
-- [ ] Music ducking is configured
+- [ ] Music cue `end_seconds > start_seconds` for every cue
+- [ ] No two music cues overlap in time (they may butt-join but not overlap)
+
+**Overlay positioning:**
+- [ ] No two simultaneous overlays share the same `y` position
+- [ ] No overlay text positioned below y=820 (caption safe zone)
+- [ ] Full-canvas `{x:0,y:0,w:1920,h:1080}` only used for text-free SVG overlays or hero_title
 
 **Subtitles:**
 - [ ] Subtitles enabled

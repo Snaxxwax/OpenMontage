@@ -210,6 +210,67 @@ Score (1-5):
 
 If any dimension scores below 3, revise.
 
+### Step 7b: Visual Beat Protocol (mandatory for 10-minute documentary format)
+
+Every scene with `end_seconds - start_seconds > 3` MUST be decomposed into `visual_beats[]`. Scenes without beats will fail the `cut_density` QC gate in `lib/slideshow_risk.py`.
+
+**Beat decomposition rules:**
+- Maximum 5 seconds per beat (the 4.5s average threshold is enforced by `check_cut_density`)
+- A 10s scene needs ≥2 beats; a 30s scene needs ≥6 beats
+- Each beat names a specific `micro_component_type` — never use `"none"` for `hero_moment: true` scenes
+- Use `word_trigger` when the beat should snap to a specific spoken word
+
+**Micro-component menu:**
+
+| Type | When to Use | Example `component_props` |
+|------|-------------|--------------------------|
+| `kinetic_highlight` | Emphasize a key term being spoken | `{ "text": "quantum", "style": "underline", "color": "#22D3EE" }` |
+| `data_counter` | Animate a statistic into frame | `{ "from": 0, "to": 47, "suffix": "%", "color": "#F59E0B" }` |
+| `connecting_line` | Draw a relationship between two concepts | `{ "x1": 200, "y1": 300, "x2": 800, "y2": 600, "style": "arrow" }` |
+| `camera_motion` | Force a camera motion change mid-scene | `{ "animation": "pan-right" }` |
+| `image_cut` | Cut to a new background image | `{ "source": "<asset-id>" }` |
+| `text_flash` | Brief kinetic text pop (≤2s) | `{ "text": "FACT:", "color": "#EF4444" }` |
+
+**Example: 12-second scene decomposed into 3 beats:**
+```json
+"visual_beats": [
+  {
+    "id": "beat-s3-1",
+    "start_seconds": 15.0,
+    "end_seconds": 18.5,
+    "micro_component_type": "camera_motion",
+    "component_props": { "animation": "zoom-in" },
+    "word_trigger": { "word_index": 42, "offset_seconds": -0.2 }
+  },
+  {
+    "id": "beat-s3-2",
+    "start_seconds": 18.5,
+    "end_seconds": 21.0,
+    "micro_component_type": "data_counter",
+    "component_props": { "from": 0, "to": 73, "suffix": "%", "color": "#F59E0B" },
+    "word_trigger": { "word_index": 48 }
+  },
+  {
+    "id": "beat-s3-3",
+    "start_seconds": 21.0,
+    "end_seconds": 27.0,
+    "micro_component_type": "kinetic_highlight",
+    "component_props": { "text": "vector similarity", "style": "underline", "color": "#22D3EE" },
+    "word_trigger": { "word_index": 55 }
+  }
+]
+```
+
+**Critical: `word_index` is GLOBAL.** It refers to the position in the merged word list across ALL narration sections combined (written by Step 3b of the Asset Director), NOT a per-section index. Off-by-one from treating section-local indices as global is the #1 failure mode.
+
+**Beat validation checklist (add to Step 7 self-eval):**
+- [ ] Every scene >3s has `visual_beats[]` populated
+- [ ] No single beat has `end_seconds - start_seconds > 5`
+- [ ] `micro_component_type` is never `"none"` for `hero_moment: true` scenes
+- [ ] `word_trigger.word_index` is an integer ≥ 0
+- [ ] `data_counter` beats have `component_props.to` defined
+- [ ] `kinetic_highlight` beats have `component_props.text` defined
+
 ### Step 8: Submit
 
 Call `handle_explainer_scene_plan(state, {"scene_plan": scene_plan_json})` to validate and persist.

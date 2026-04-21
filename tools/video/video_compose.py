@@ -146,6 +146,7 @@ class VideoCompose(BaseTool):
         "text_card", "stat_card", "callout", "comparison",
         "progress", "chart", "bar_chart", "line_chart", "pie_chart", "kpi_grid",
         "europe_map", "usa_states_map",
+        "kinetic_highlight", "data_counter", "connecting_line",
     ]
 
     best_for = [
@@ -469,6 +470,7 @@ class VideoCompose(BaseTool):
     _REMOTION_SCENE_TYPES = {
         "text_card", "stat_card", "callout", "comparison", "progress", "chart",
         "europe_map", "usa_states_map",
+        "kinetic_highlight", "data_counter", "connecting_line",
     }
 
     # Maps renderer_family (set at proposal stage) to Remotion composition ID.
@@ -560,7 +562,7 @@ class VideoCompose(BaseTool):
                 "surfaceColor": surface,
                 "textColor": text,
                 "mutedTextColor": muted,
-                "headingFont": typo.get("heading", {}).get("font", "Inter"),
+                "headingFont": typo.get("headings", {}).get("font", "Inter"),
                 "bodyFont": typo.get("body", {}).get("font", "Inter"),
                 "monoFont": typo.get("code", {}).get("font", "JetBrains Mono"),
                 "chartColors": chart_colors[:6],
@@ -809,6 +811,10 @@ class VideoCompose(BaseTool):
             }
             if profile:
                 remotion_inputs["profile"] = profile
+            # Pass through optional render tuning
+            for key in ("timeout_seconds", "concurrency"):
+                if key in inputs:
+                    remotion_inputs[key] = inputs[key]
             render_result = self._remotion_render(remotion_inputs)
 
             # Governance: NEVER silently fall back to FFmpeg when Remotion fails.
@@ -897,7 +903,7 @@ class VideoCompose(BaseTool):
                 error="edit_decisions or composition_data required for remotion_render",
             )
 
-        output_path = Path(inputs.get("output_path", "renders/remotion_output.mp4"))
+        output_path = Path(inputs.get("output_path", "renders/remotion_output.mp4")).resolve()
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         # Deep-copy props so we don't mutate the original
@@ -926,8 +932,56 @@ class VideoCompose(BaseTool):
             if theme_config:
                 props["themeConfig"] = theme_config
 
+        # Auto-inject word_timestamps for word-synced beat components.
+        # Discovers word_timestamps.json from the project artifacts directory.
+        if "word_timestamps" not in props:
+            wt_candidates = [
+                output_path.parent / "artifacts" / "word_timestamps.json",
+                output_path.parent.parent / "artifacts" / "word_timestamps.json",
+            ]
+            # Also check explicit path from composition metadata
+            explicit_path = (
+                composition_data.get("word_timestamps_path")
+                or composition_data.get("metadata", {}).get("word_timestamps_path")
+            )
+            if explicit_path:
+                project_root = output_path.parent.parent.resolve()
+                resolved = (project_root / explicit_path).resolve()
+                if resolved.is_relative_to(project_root):
+                    wt_candidates.insert(0, resolved)
+                else:
+                    import logging as _logging
+                    _logging.getLogger("video_compose").warning(
+                        "word_timestamps_path %r is outside project directory — ignored", explicit_path
+                    )
+
+            for candidate in wt_candidates:
+                if candidate.exists():
+                    try:
+                        with open(candidate, encoding="utf-8") as _f:
+                            wt_data = json.load(_f)
+                        raw_words = wt_data.get("words", wt_data.get("word_timestamps", []))
+                        # Normalize to {word, startMs, endMs} — transcriber outputs seconds
+                        normalized = []
+                        for w in raw_words:
+                            if "startMs" in w:
+                                normalized.append(w)
+                            else:
+                                normalized.append({
+                                    "word": w.get("word", ""),
+                                    "startMs": round(float(w.get("start", 0)) * 1000),
+                                    "endMs": round(float(w.get("end", 0)) * 1000),
+                                })
+                        props["word_timestamps"] = normalized
+                    except Exception as _e:
+                        import logging as _logging
+                        _logging.getLogger("video_compose").warning(
+                            "Could not load word_timestamps from %s: %s", candidate, _e
+                        )
+                    break  # use first found
+
         # Write props to temp file for Remotion CLI
-        props_path = output_path.parent / ".remotion_props.json"
+        props_path = (output_path.parent / ".remotion_props.json").resolve()
         with open(props_path, "w", encoding="utf-8") as f:
             json.dump(props, f)
 
@@ -962,10 +1016,30 @@ class VideoCompose(BaseTool):
             except (ImportError, ValueError):
                 pass
 
+        # Optional render tuning
+        if inputs.get("concurrency") is not None:
+            try:
+                cmd.extend(["--concurrency", str(int(inputs["concurrency"]))])
+            except Exception:
+                pass
+
+        timeout_seconds = int(inputs.get("timeout_seconds") or 3600)
         try:
-            self.run_command(cmd, timeout=600, cwd=composer_dir)
+            self.run_command(cmd, timeout=timeout_seconds, cwd=composer_dir)
         except Exception as e:
-            return ToolResult(success=False, error=f"Remotion render failed: {e}")
+            details = ""
+            try:
+                import subprocess as _subprocess
+                if isinstance(e, _subprocess.CalledProcessError):
+                    stdout = (e.stdout or "").strip()
+                    stderr = (e.stderr or "").strip()
+                    if stdout:
+                        details += f"\n\n[stdout]\n{stdout[-4000:]}"
+                    if stderr:
+                        details += f"\n\n[stderr]\n{stderr[-4000:]}"
+            except Exception:
+                pass
+            return ToolResult(success=False, error=f"Remotion render failed: {e}{details}")
         finally:
             if props_path.exists():
                 props_path.unlink()
@@ -1516,8 +1590,8 @@ class VideoCompose(BaseTool):
         if playbook:
             typo = playbook.get("typography", {})
             colors = playbook.get("visual_language", {}).get("color_palette", {})
-            if typo.get("body", {}).get("family"):
-                resolved["font"] = typo["body"]["family"]
+            if typo.get("body", {}).get("font"):
+                resolved["font"] = typo["body"]["font"]
             if colors.get("text"):
                 resolved["primary_color"] = colors["text"]
             if colors.get("background"):

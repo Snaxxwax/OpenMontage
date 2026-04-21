@@ -172,6 +172,7 @@ stages:
       - proposal_packet
     produces:
       - asset_manifest
+      - word_timestamps
     required_tools:
       - tts_selector
       - image_selector
@@ -189,11 +190,30 @@ stages:
       - code_snippet
       - music_gen
       - math_animate
+    sub_stages:
+      - name: word_timestamp_extraction
+        description: "Run transcriber on narration audio to extract word-level timestamps for beat assembly"
+        condition: "narration_audio_generated"
+        required_tools:
+          - transcriber
+        produces:
+          - word_timestamps
+        produces_artifact_paths:
+          - "{project}/artifacts/word_timestamps.json"
+        review_focus:
+          - "word_timestamps.json exists on disk"
+          - "Word count plausible (matches narration word count ± 10%)"
+          - "startMs values are monotonically increasing"
+          - "No word has endMs - startMs > 2000"
+        success_criteria:
+          - "artifacts/word_timestamps.json present"
+          - "word_count > 0"
     checkpoint_required: true
     human_approval_default: false
     review_focus:
       - All asset files exist on disk
       - Narration covers all script sections
+      - word_timestamps.json generated after TTS (Step 3b)
       - Total cost within approved budget from proposal_packet
       - Image style consistency across all generated visuals
       - Fallback/placeholder visuals stay below the configured runtime threshold
@@ -210,6 +230,7 @@ stages:
       - asset_manifest
     optional_artifacts_in:
       - script
+      - word_timestamps
     produces:
       - edit_decisions
     tools_available: []

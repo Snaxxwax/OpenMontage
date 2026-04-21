@@ -144,41 +144,62 @@ class Transcriber(BaseTool):
             device = "cpu"
             compute_type = "int8"
 
-        model = WhisperModel(model_size, device=device, compute_type=compute_type)
+        def _load_model(selected_device: str, selected_compute: str) -> "WhisperModel":
+            return WhisperModel(model_size, device=selected_device, compute_type=selected_compute)
 
-        # Transcribe
-        segments_iter, info = model.transcribe(
-            str(input_path),
-            language=language,
-            word_timestamps=True,
-            vad_filter=True,
-        )
+        def _transcribe(model: "WhisperModel"):
+            return model.transcribe(
+                str(input_path),
+                language=language,
+                word_timestamps=True,
+                vad_filter=True,
+            )
 
-        segments = []
-        word_timestamps = []
+        def _is_gpu_lib_error(exc: BaseException) -> bool:
+            message = str(exc)
+            return any(token in message for token in ("libcublas", "CUDA", "cudnn", "cuDNN", "cublas"))
 
-        for seg in segments_iter:
-            seg_data = {
-                "id": seg.id,
-                "start": round(seg.start, 3),
-                "end": round(seg.end, 3),
-                "text": seg.text.strip(),
-            }
+        def _run_once(selected_device: str, selected_compute: str):
+            model = _load_model(selected_device, selected_compute)
+            segments_iter, info = _transcribe(model)
 
-            if seg.words:
-                words = []
-                for w in seg.words:
-                    word_entry = {
-                        "word": w.word,
-                        "start": round(w.start, 3),
-                        "end": round(w.end, 3),
-                        "probability": round(w.probability, 3),
-                    }
-                    words.append(word_entry)
-                    word_timestamps.append(word_entry)
-                seg_data["words"] = words
+            segments = []
+            word_timestamps = []
 
-            segments.append(seg_data)
+            for seg in segments_iter:
+                seg_data = {
+                    "id": seg.id,
+                    "start": round(seg.start, 3),
+                    "end": round(seg.end, 3),
+                    "text": seg.text.strip(),
+                }
+
+                if seg.words:
+                    words = []
+                    for w in seg.words:
+                        word_entry = {
+                            "word": w.word,
+                            "start": round(w.start, 3),
+                            "end": round(w.end, 3),
+                            "probability": round(w.probability, 3),
+                        }
+                        words.append(word_entry)
+                        word_timestamps.append(word_entry)
+                    seg_data["words"] = words
+
+                segments.append(seg_data)
+
+            return segments, word_timestamps, info
+
+        try:
+            segments, word_timestamps, info = _run_once(device, compute_type)
+        except RuntimeError as exc:
+            if device == "cuda" and _is_gpu_lib_error(exc):
+                device = "cpu"
+                compute_type = "int8"
+                segments, word_timestamps, info = _run_once(device, compute_type)
+            else:
+                raise
 
         detected_language = language or info.language
         duration = info.duration

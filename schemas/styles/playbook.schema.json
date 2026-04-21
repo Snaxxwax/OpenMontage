@@ -13,16 +13,16 @@
         "name": { "type": "string" },
         "category": {
           "type": "string",
-          "enum": ["motion-graphics", "whiteboard", "cinematic", "minimalist", "retro", "custom"]
+          "description": "Visual style category. Common values: motion-graphics, whiteboard, cinematic, minimalist, retro, custom, animated-documentary. Open-ended to support channel-specific styles."
         },
         "mood": { "type": "string" },
         "pace": {
           "type": "string",
-          "enum": ["slow", "deliberate", "moderate", "fast", "rapid"]
+          "description": "Pacing character. Common values: slow, deliberate, moderate, measured, fast, rapid. Open-ended to support channel-specific pacing descriptors."
         },
         "best_for": { "type": "string" }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "visual_language": {
       "type": "object",
@@ -32,18 +32,30 @@
           "type": "object",
           "required": ["primary", "accent", "background", "text"],
           "properties": {
-            "primary": { "type": "array", "items": { "type": "string" } },
-            "accent": { "type": "array", "items": { "type": "string" } },
+            "primary": {
+              "description": "Primary accent color(s). String or array of hex strings.",
+              "oneOf": [
+                { "type": "string" },
+                { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+              ]
+            },
+            "accent": {
+              "description": "Secondary accent color(s). String or array of hex strings.",
+              "oneOf": [
+                { "type": "string" },
+                { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+              ]
+            },
             "background": { "type": "string" },
             "text": { "type": "string" },
             "muted": { "type": "string" }
           },
-          "additionalProperties": false
+          "additionalProperties": { "type": "string", "description": "Additional named semantic colors (e.g. surface, danger, charcoal, warm, cool)" }
         },
         "composition": { "type": "string" },
         "texture": { "type": "string" }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "typography": {
       "type": "object",
@@ -75,10 +87,10 @@
             "body": { "type": "integer", "minimum": 100, "maximum": 900 },
             "caption": { "type": "integer", "minimum": 100, "maximum": 900 }
           },
-          "additionalProperties": false
+          "additionalProperties": true
         }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "motion": {
       "type": "object",
@@ -99,12 +111,12 @@
             "stat_card_hold_seconds": { "type": "number", "minimum": 1 },
             "transition_duration_seconds": { "type": "number", "minimum": 0.1 }
           },
-          "additionalProperties": false
+          "additionalProperties": true
         },
         "entrance": { "type": "string" },
         "exit": { "type": "string" }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "audio": {
       "type": "object",
@@ -143,7 +155,7 @@
           "minItems": 1
         }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "overlays": {
       "type": "object",
@@ -152,7 +164,7 @@
         "key_term": { "$ref": "#/$defs/overlay_style" },
         "code_block": { "$ref": "#/$defs/overlay_style" }
       },
-      "additionalProperties": false
+      "additionalProperties": { "$ref": "#/$defs/overlay_style" }
     },
     "quality_rules": {
       "type": "array",
@@ -225,7 +237,7 @@
         "line_height": { "type": "number" },
         "size_multiplier": { "type": "number" }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     },
     "overlay_style": {
       "type": "object",
@@ -237,7 +249,7 @@
         "shadow": { "type": "string" },
         "highlight": { "type": "string" }
       },
-      "additionalProperties": false
+      "additionalProperties": true
     }
   }
 }

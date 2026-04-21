@@ -6,7 +6,7 @@
   "type": "object",
   "required": ["version", "scenes"],
   "properties": {
-    "version": { "type": "string", "const": "1.0" },
+    "version": { "type": "string", "enum": ["1.0", "1.1"] },
     "style_playbook": { "type": "string", "description": "Name of the active style playbook" },
     "scenes": {
       "type": "array",
@@ -83,6 +83,38 @@
                 "source": { "type": "string", "enum": ["generate", "source", "provided", "record"] }
               },
               "required": ["type", "description", "source"]
+            }
+          },
+          "visual_beats": {
+            "type": "array",
+            "description": "Sub-scene visual events, each ≤5s. Mandatory for scenes >3s in documentary format. The ≤5s constraint is enforced by check_cut_density() and director skill checklists.",
+            "items": {
+              "type": "object",
+              "required": ["id", "start_seconds", "end_seconds", "micro_component_type"],
+              "properties": {
+                "id": { "type": "string" },
+                "start_seconds": { "type": "number", "minimum": 0 },
+                "end_seconds": { "type": "number", "minimum": 0 },
+                "micro_component_type": {
+                  "type": "string",
+                  "enum": ["kinetic_highlight", "data_counter", "connecting_line", "image_cut", "camera_motion", "text_flash", "none"]
+                },
+                "component_props": {
+                  "type": "object",
+                  "description": "Type-specific props forwarded verbatim to the Remotion micro-component"
+                },
+                "word_trigger": {
+                  "type": "object",
+                  "description": "Snap beat start to a specific word in the merged word_timestamps list. word_index is a GLOBAL index across all narration sections.",
+                  "required": ["word_index"],
+                  "properties": {
+                    "word_index": { "type": "integer", "minimum": 0 },
+                    "offset_seconds": { "type": "number", "default": 0 }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
             }
           }
         },

@@ -52,9 +52,14 @@ import { HeroTitle } from "./components/HeroTitle";
 import { AnimeScene } from "./components/AnimeScene";
 import { EuropeMap } from "./components/maps/EuropeMap";
 import { UsaStatesMap } from "./components/maps/UsaStatesMap";
+import { KineticHighlight } from "./components/KineticHighlight";
+import { DataCounter } from "./components/DataCounter";
+import { ConnectingLine } from "./components/ConnectingLine";
+import { ContinuousCamera } from "./components/ContinuousCamera";
 import type { CameraMotion } from "./components/AnimeScene";
 import type { ParticleType } from "./components/ParticleOverlay";
 import { resolveTheme, type ThemeConfig, DEFAULT_THEME } from "./Root";
+import { useAudioData } from "@remotion/media-utils";
 
 // Load Space Grotesk font for cinematic typography
 const { fontFamily } = loadFont("normal", {
@@ -94,7 +99,7 @@ function shiftColor(hex: string, amount: number): string {
   return `rgb(${clamp(r + (255 - r) * amount)}, ${clamp(g + (255 - g) * amount)}, ${clamp(b + (255 - b) * amount)})`;
 }
 
-const AnimatedBackground: React.FC<{ theme: ThemeConfig }> = ({ theme }) => {
+const AnimatedBackground: React.FC<{ theme: ThemeConfig; audioLoudness?: number }> = ({ theme, audioLoudness = 0 }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
@@ -123,12 +128,14 @@ const AnimatedBackground: React.FC<{ theme: ThemeConfig }> = ({ theme }) => {
   // Floating orbs — derived from theme chart colors with low opacity
   const orbColors = theme.chartColors.slice(0, 5);
   const orbOpacity = light ? 0.06 : 0.08;
+  // audioLoudness (0-1) creates a subtle pulse on orbs — max 15% size increase
+  const loudnessMult = 1 + audioLoudness * 0.15;
   const orbs = [
-    { x: 20, y: 30, size: 300, color: orbColors[0] || primary, speedX: 7, speedY: 11 },
-    { x: 70, y: 60, size: 250, color: orbColors[1] || accent, speedX: 9, speedY: 8 },
-    { x: 40, y: 80, size: 200, color: orbColors[2] || primary, speedX: 13, speedY: 6 },
-    { x: 80, y: 20, size: 350, color: orbColors[3] || accent, speedX: 11, speedY: 14 },
-    { x: 10, y: 70, size: 180, color: orbColors[4] || primary, speedX: 8, speedY: 10 },
+    { x: 20, y: 30, size: 300 * loudnessMult, color: orbColors[0] || primary, speedX: 7, speedY: 11 },
+    { x: 70, y: 60, size: 250 * loudnessMult, color: orbColors[1] || accent, speedX: 9, speedY: 8 },
+    { x: 40, y: 80, size: 200 * loudnessMult, color: orbColors[2] || primary, speedX: 13, speedY: 6 },
+    { x: 80, y: 20, size: 350 * loudnessMult, color: orbColors[3] || accent, speedX: 11, speedY: 14 },
+    { x: 10, y: 70, size: 180 * loudnessMult, color: orbColors[4] || primary, speedX: 8, speedY: 10 },
   ];
 
   // Grid and overlay colors adapt to light vs dark backgrounds
@@ -266,16 +273,23 @@ interface Cut {
   vignette?: boolean;
   lightingFrom?: string;
   lightingTo?: string;
+  /** Wrap this cut in ContinuousCamera to guarantee pixel motion via animation cycling */
+  continuous_camera?: boolean;
 }
 
 interface Overlay {
-  type: "section_title" | "stat_reveal" | "hero_title";
-  in_seconds: number;
-  out_seconds: number;
-  text: string;
+  /** Overlay type. Omit for legacy overlays predating micro-component routing. */
+  type?: "section_title" | "stat_reveal" | "hero_title" | "kinetic_highlight" | "data_counter" | "connecting_line";
+  start_seconds: number;
+  end_seconds: number;
+  text?: string;
   subtitle?: string;
   accentColor?: string;
-  position?: string;
+  position?: string | { x: number; y: number; width?: number; height?: number };
+  /** Props forwarded verbatim to kinetic_highlight / data_counter / connecting_line */
+  micro_component_props?: Record<string, unknown>;
+  /** Snap overlay to a word in the global word_timestamps list */
+  word_trigger?: { word_index: number; offset_seconds?: number };
 }
 
 interface AudioLayer {
@@ -283,17 +297,36 @@ interface AudioLayer {
   volume?: number;
 }
 
+interface MusicCue {
+  src: string;
+  start_seconds: number;
+  end_seconds: number;
+  volume?: number;
+  fadeInSeconds?: number;
+  fadeOutSeconds?: number;
+}
+
+interface SfxCue {
+  src: string;
+  start_seconds: number;
+  volume?: number;
+}
+
 interface AudioConfig {
   narration?: AudioLayer;
+  /** Single background music track (legacy / whole-video underscore). */
   music?: AudioLayer & {
     fadeInSeconds?: number;
     fadeOutSeconds?: number;
-    /** Start playback from this offset in seconds (skip quiet intros).
-     *  Use the audio_energy tool to find the optimal offset. */
+    /** Start playback from this offset in seconds (skip quiet intros). */
     offsetSeconds?: number;
     /** Loop the music if it's shorter than the video duration. */
     loop?: boolean;
   };
+  /** Per-scene music cues: each plays only within its time window with fade in/out. */
+  music_cues?: MusicCue[];
+  /** Spot sound effects: each plays from start_seconds for its natural duration. */
+  sfx?: SfxCue[];
 }
 
 export interface ExplainerProps {
@@ -302,6 +335,10 @@ export interface ExplainerProps {
   overlays?: Overlay[];
   captions?: WordCaption[];
   audio?: AudioConfig;
+  /** Flat merged word list from word_timestamps.json — used for beat-synced captions and overlays */
+  word_timestamps?: WordCaption[];
+  /** Enable useAudioData() to bind narration loudness to background animations. Default false. */
+  audioReactive?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -685,10 +722,52 @@ const SceneRenderer: React.FC<{ cut: Cut; theme: ThemeConfig }> = ({ cut, theme 
 // ---------------------------------------------------------------------------
 
 const OverlayRenderer: React.FC<{ overlay: Overlay }> = ({ overlay }) => {
+  const mp = overlay.micro_component_props || {};
+
+  if (overlay.type === "kinetic_highlight") {
+    return (
+      <KineticHighlight
+        text={overlay.text || (mp.text as string | undefined)}
+        color={(mp.color as string | undefined)}
+        style={(mp.style as "box" | "underline" | "circle" | undefined)}
+        thickness={(mp.thickness as number | undefined)}
+        fontSize={(mp.fontSize as number | undefined)}
+        position={(mp.position as any)}
+      />
+    );
+  }
+  if (overlay.type === "data_counter") {
+    return (
+      <DataCounter
+        from={(mp.from as number | undefined)}
+        to={(mp.to as number) ?? 0}
+        suffix={(mp.suffix as string | undefined)}
+        prefix={(mp.prefix as string | undefined)}
+        color={(mp.color as string | undefined)}
+        fontSize={(mp.fontSize as number | undefined)}
+        position={(mp.position as { x: number; y: number } | undefined)}
+        label={(mp.label as string | undefined)}
+      />
+    );
+  }
+  if (overlay.type === "connecting_line") {
+    return (
+      <ConnectingLine
+        x1={(mp.x1 as number) ?? 0}
+        y1={(mp.y1 as number) ?? 0}
+        x2={(mp.x2 as number) ?? 960}
+        y2={(mp.y2 as number) ?? 540}
+        color={(mp.color as string | undefined)}
+        thickness={(mp.thickness as number | undefined)}
+        label={(mp.label as string | undefined)}
+        style={(mp.style as "straight" | "curved" | "arrow" | undefined)}
+      />
+    );
+  }
   if (overlay.type === "section_title") {
     return (
       <SectionTitle
-        title={overlay.text}
+        title={overlay.text || ""}
         subtitle={overlay.subtitle}
         accentColor={overlay.accentColor}
         position={(overlay.position as any) || "top-left"}
@@ -698,7 +777,7 @@ const OverlayRenderer: React.FC<{ overlay: Overlay }> = ({ overlay }) => {
   if (overlay.type === "stat_reveal") {
     return (
       <StatReveal
-        stat={overlay.text}
+        stat={overlay.text || ""}
         label={overlay.subtitle}
         accentColor={overlay.accentColor}
         position={(overlay.position as any) || "bottom-right"}
@@ -706,7 +785,20 @@ const OverlayRenderer: React.FC<{ overlay: Overlay }> = ({ overlay }) => {
     );
   }
   if (overlay.type === "hero_title") {
-    return <HeroTitle title={overlay.text} subtitle={overlay.subtitle} />;
+    return <HeroTitle title={overlay.text || ""} subtitle={overlay.subtitle} />;
+  }
+  // Legacy: no type — fall back on position-based heuristic (backward compat)
+  if (!overlay.type) {
+    if (overlay.text) {
+      return (
+        <SectionTitle
+          title={overlay.text}
+          subtitle={overlay.subtitle}
+          accentColor={overlay.accentColor}
+          position={(overlay.position as any) || "top-left"}
+        />
+      );
+    }
   }
   return null;
 };
@@ -716,34 +808,61 @@ const OverlayRenderer: React.FC<{ overlay: Overlay }> = ({ overlay }) => {
 // ---------------------------------------------------------------------------
 
 export const Explainer: React.FC<ExplainerProps> = (props) => {
-  const { cuts, overlays, captions, audio } = props;
+  const { cuts, overlays, captions, audio, word_timestamps, audioReactive } = props;
   const { fps, durationInFrames } = useVideoConfig();
 
   // Resolve theme from props — playbook name, theme name, or custom themeConfig
   const theme = resolveTheme(props as Record<string, unknown>);
 
+  // useAudioData must be called unconditionally (React Rules of Hooks).
+  // Use a local silent placeholder when no narration is provided to avoid
+  // network fetches and TypeError in older @remotion/media-utils versions.
+  const narrationSrc = audioReactive && audio?.narration?.src
+    ? resolveAsset(audio.narration.src)
+    : null;
+  const audioData = useAudioData(narrationSrc || staticFile("silence.mp3"));
+  // Extract loudness only if we have real data and reactivity is enabled
+  const audioLoudness = (audioReactive && audioData?.dataArray)
+    ? Math.max(...Array.from(audioData.dataArray.slice(0, 10))) / 255
+    : 0;
+
+  // Effective captions: prefer explicit captions; fall back to word_timestamps
+  const effectiveCaptions =
+    captions && captions.length > 0 ? captions : (word_timestamps ?? []);
+
   return (
     <AbsoluteFill style={{ background: theme.backgroundColor, fontFamily: theme.headingFont || fontFamily }}>
       {/* Layer 0: Animated gradient background — driven by theme */}
-      <AnimatedBackground theme={theme} />
+      <AnimatedBackground theme={theme} audioLoudness={audioLoudness} />
 
       {/* Layer 1: Visual scenes */}
-      {cuts.map((cut) => {
+      {cuts.map((cut, sceneIndex) => {
         const from = Math.round(cut.in_seconds * fps);
         const duration = Math.round((cut.out_seconds - cut.in_seconds) * fps);
 
         return (
           <Sequence key={cut.id} from={from} durationInFrames={duration}>
-            <SceneRenderer cut={cut} theme={theme} />
+            {cut.continuous_camera ? (
+              <ContinuousCamera
+                sceneIndex={sceneIndex}
+                overrideAnimation={
+                  (cut.transform?.animation || cut.animation) as any
+                }
+              >
+                <SceneRenderer cut={cut} theme={theme} />
+              </ContinuousCamera>
+            ) : (
+              <SceneRenderer cut={cut} theme={theme} />
+            )}
           </Sequence>
         );
       })}
 
       {/* Layer 2: Overlays (section titles, stat reveals, hero titles) */}
       {overlays?.map((overlay, i) => {
-        const from = Math.round(overlay.in_seconds * fps);
+        const from = Math.round(overlay.start_seconds * fps);
         const duration = Math.round(
-          (overlay.out_seconds - overlay.in_seconds) * fps
+          (overlay.end_seconds - overlay.start_seconds) * fps
         );
 
         return (
@@ -753,10 +872,10 @@ export const Explainer: React.FC<ExplainerProps> = (props) => {
         );
       })}
 
-      {/* Layer 3: Captions (word-by-word highlight) */}
-      {captions && captions.length > 0 && (
+      {/* Layer 3: Captions — use explicit captions or word_timestamps as fallback */}
+      {effectiveCaptions.length > 0 && (
         <CaptionOverlay
-          words={captions}
+          words={effectiveCaptions}
           wordsPerPage={6}
           fontSize={42}
           highlightColor={theme.captionHighlightColor}
@@ -798,6 +917,45 @@ export const Explainer: React.FC<ExplainerProps> = (props) => {
           }}
         />
       )}
+
+      {/* Layer 4: Audio — per-scene music cues */}
+      {audio?.music_cues?.map((cue, i) => {
+        const cueFrom = Math.round(cue.start_seconds * fps);
+        const cueDuration = Math.round((cue.end_seconds - cue.start_seconds) * fps);
+        const baseVol = cue.volume ?? 0.25;
+        const fadeInDur = (cue.fadeInSeconds ?? 1) * fps;
+        const fadeOutDur = (cue.fadeOutSeconds ?? 1.5) * fps;
+        return (
+          <Sequence key={`music-cue-${i}`} from={cueFrom} durationInFrames={cueDuration}>
+            <Audio
+              src={resolveAsset(cue.src)}
+              volume={(f) => {
+                const fadeIn = interpolate(f, [0, fadeInDur], [0, baseVol], {
+                  extrapolateLeft: "clamp",
+                  extrapolateRight: "clamp",
+                });
+                const fadeOut = interpolate(
+                  f,
+                  [cueDuration - fadeOutDur, cueDuration],
+                  [baseVol, 0],
+                  { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+                );
+                return Math.min(fadeIn, fadeOut);
+              }}
+            />
+          </Sequence>
+        );
+      })}
+
+      {/* Layer 4: Audio — spot sound effects */}
+      {audio?.sfx?.map((sfx, i) => {
+        const sfxFrom = Math.round(sfx.start_seconds * fps);
+        return (
+          <Sequence key={`sfx-${i}`} from={sfxFrom} durationInFrames={durationInFrames - sfxFrom}>
+            <Audio src={resolveAsset(sfx.src)} volume={sfx.volume ?? 1} />
+          </Sequence>
+        );
+      })}
     </AbsoluteFill>
   );
 };

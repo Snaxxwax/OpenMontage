@@ -1,6 +1,6 @@
 """Slideshow risk scorer.
 
-Scores a video plan across 6 dimensions that reliably predict whether
+Scores a video plan across 7 dimensions that reliably predict whether
 the output will feel like a slideshow rather than directed video.
 
 Each dimension is scored 0-5 (lower is better):
@@ -10,6 +10,7 @@ Each dimension is scored 0-5 (lower is better):
   - weak_shot_intent: no explicit reason for framing or reveal rhythm
   - typography_overreliance: too much of the video is text-first
   - unsupported_cinematic_claims: cinematic label without structure
+  - cut_density: average seconds per visual change (fail if > 4.5s avg)
 
 Verdict:
   < 2.0: strong
@@ -56,6 +57,7 @@ def score_slideshow_risk(
         "weak_shot_intent": _score_weak_intent(scenes),
         "typography_overreliance": _score_typography(scenes),
         "unsupported_cinematic_claims": _score_cinematic_claims(scenes, renderer_family),
+        "cut_density": _score_cut_density_from_scenes(scenes, edit_decisions),
     }
 
     scores = [d["score"] for d in dimensions.values()]
@@ -243,3 +245,104 @@ def _score_cinematic_claims(
     reason = "; ".join(issues) if issues else "Cinematic claims supported by structure"
 
     return {"score": round(score, 1), "reason": reason}
+
+
+def check_cut_density(
+    edit_decisions: dict[str, Any],
+    threshold_seconds: float = 4.5,
+) -> dict[str, Any]:
+    """Check average seconds-per-visual-change from edit_decisions.
+
+    A visual change is any cut boundary or overlay entry point.
+
+    Args:
+        edit_decisions: Full edit_decisions artifact.
+        threshold_seconds: Fail if avg seconds/change exceeds this. Default 4.5.
+
+    Returns:
+        {"score": float, "verdict": str, "avg_seconds_per_change": float,
+         "change_count": int, "reason": str}
+    """
+    cuts = edit_decisions.get("cuts", [])
+    overlays = edit_decisions.get("overlays", [])
+
+    if not cuts:
+        return {
+            "score": 5.0,
+            "verdict": "fail",
+            "avg_seconds_per_change": 9999.0,
+            "change_count": 0,
+            "reason": "No cuts found in edit_decisions",
+        }
+
+    # Collect all visual-change timestamps: cut in/out points + overlay entry points
+    change_times: list[float] = []
+    for cut in cuts:
+        change_times.append(float(cut.get("in_seconds", 0)))
+        change_times.append(float(cut.get("out_seconds", 0)))
+    for overlay in overlays:
+        change_times.append(float(overlay.get("start_seconds", 0)))
+
+    change_times = sorted(set(change_times))
+
+    if len(change_times) < 2:
+        total_duration = max(
+            (float(c.get("out_seconds", 0)) for c in cuts), default=1.0
+        )
+        return {
+            "score": 5.0,
+            "verdict": "fail",
+            "avg_seconds_per_change": total_duration,
+            "change_count": 1,
+            "reason": "Only one visual change point found",
+        }
+
+    gaps = [change_times[i + 1] - change_times[i] for i in range(len(change_times) - 1)]
+    avg_gap = sum(gaps) / len(gaps)
+
+    score = min(5.0, (avg_gap / threshold_seconds) * 4.0)
+
+    if avg_gap > threshold_seconds:
+        verdict = "fail"
+    elif avg_gap > threshold_seconds * 0.75:
+        verdict = "revise"
+    elif avg_gap > threshold_seconds * 0.5:
+        verdict = "acceptable"
+    else:
+        verdict = "strong"
+
+    return {
+        "score": round(score, 2),
+        "verdict": verdict,
+        "avg_seconds_per_change": round(avg_gap, 2),
+        "change_count": len(change_times),
+        "reason": (
+            f"Avg {avg_gap:.1f}s between visual changes "
+            f"({'exceeds' if avg_gap > threshold_seconds else 'within'} {threshold_seconds}s threshold)"
+        ),
+    }
+
+
+def _score_cut_density_from_scenes(
+    scenes: list[dict[str, Any]],
+    edit_decisions: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """7th dimension: estimate visual density from edit_decisions or scene durations."""
+    if edit_decisions and edit_decisions.get("cuts"):
+        result = check_cut_density(edit_decisions)
+        return {"score": result["score"], "reason": result["reason"]}
+
+    # Fallback: estimate from scene durations when edit_decisions not available
+    if not scenes:
+        return {"score": 3.0, "reason": "No data for cut density check"}
+
+    durations = [
+        float(s.get("end_seconds", 0)) - float(s.get("start_seconds", 0))
+        for s in scenes
+    ]
+    avg = sum(durations) / len(durations) if durations else 5.0
+    score = min(5.0, (avg / 4.5) * 4.0)
+    return {
+        "score": round(score, 1),
+        "reason": f"Estimated from scene durations: avg {avg:.1f}s/scene (no edit_decisions provided)",
+    }

@@ -152,6 +152,32 @@ Every section should have at least one enhancement cue. These tell the Scene Pla
 
 **Density rule**: At least one enhancement cue every 8-10 seconds. A 60-second video should have 6-8 cues minimum. Viewers disengage if the visual doesn't change.
 
+#### Beat Trigger Cues for 10-Minute Documentary Format
+
+For scripts targeting >5 minutes, every section that runs longer than 5 seconds MUST include `beat_trigger` type enhancement cues. The Scene Director uses these to populate `visual_beats[]` on scenes.
+
+**Beat trigger format:**
+```json
+{
+  "type": "beat_trigger",
+  "beat_type": "data_counter",
+  "description": "Animate the 73% statistic as narrator says 'seventy-three percent'",
+  "timestamp_seconds": 22.5,
+  "props": { "from": 0, "to": 73, "suffix": "%" }
+}
+```
+
+**Long-form density requirements (>5 min videos):**
+- One `beat_trigger` cue per 4-5 seconds of narration (up from 8-10s for standard format)
+- Every section covering a statistic MUST have a `data_counter` beat trigger
+- Every section introducing a key term MUST have a `kinetic_highlight` beat trigger
+- `timestamp_seconds` must fall within the section's `start_seconds`/`end_seconds` range
+
+**Self-evaluation additions for long-form scripts:**
+- [ ] Every section >5s has at least one `beat_trigger` enhancement cue
+- [ ] `beat_trigger` cues have `timestamp_seconds` within the section's timing range
+- [ ] `props` for each beat type are complete (no missing `to` for data_counter, no missing `text` for kinetic_highlight)
+
 #### Pronunciation Guides
 
 For technical terms, acronyms, and non-English words:

@@ -25,8 +25,9 @@ from tools.base_tool import (
     ToolTier,
 )
 
-COMFYUI_HOST = "127.0.0.1"
-COMFYUI_PORT = 8188
+import os
+COMFYUI_HOST = os.environ.get("COMFYUI_HOST", "172.18.0.2")
+COMFYUI_PORT = int(os.environ.get("COMFYUI_PORT", 18188))
 WORKFLOW_PATH = Path("/home/pop/ComfyUI/workflows/flux_dev_api.json")
 STYLES_DIR = Path(__file__).parent.parent.parent / "styles"
 DEFAULT_STYLE = "systemic-pulse"

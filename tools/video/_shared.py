@@ -61,6 +61,22 @@ WAN_VARIANTS = {
         "default_num_frames": 81,
         "fps": 16,
     },
+    "wan2.2-14b": {
+        "name": "Wan 2.2 (14B MoE)",
+        "hf_id": "Wan-AI/Wan2.2-T2V-A14B-Diffusers",
+        "hf_i2v_id": "Wan-AI/Wan2.2-I2V-A14B-720P-Diffusers",
+        "pipeline_class": "WanPipeline",
+        "vram_mb": 24000,
+        "quality": "highest",
+        "speed": "slow",
+        "t2v": True,
+        "i2v": True,
+        "license": "Apache-2.0",
+        "default_width": 1280,
+        "default_height": 720,
+        "default_num_frames": 81,
+        "fps": 16,
+    },
 }
 
 HUNYUAN_VARIANTS = {

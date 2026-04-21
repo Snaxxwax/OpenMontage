@@ -39,7 +39,8 @@ class TalkingHead(BaseTool):
 
     dependencies = []  # checked dynamically via get_status()
     install_instructions = (
-        "Clone https://github.com/OpenTalker/SadTalker and set SADTALKER_PATH env var\n"
+        "SadTalker: Clone https://github.com/OpenTalker/SadTalker and set SADTALKER_PATH env var\n"
+        "LivePortrait: Clone https://github.com/KwaiVGI/LivePortrait and set LIVEPORTRAIT_PATH env var\n"
         "Requires: PyTorch with CUDA, ffmpeg\n"
         "pip install sadtalker  # or clone the repo"
     )
@@ -71,9 +72,13 @@ class TalkingHead(BaseTool):
             },
             "model": {
                 "type": "string",
-                "enum": ["sadtalker", "musetalk"],
+                "enum": ["sadtalker", "musetalk", "liveportrait"],
                 "default": "sadtalker",
                 "description": "Model to use for face animation",
+            },
+            "driving_video_path": {
+                "type": "string",
+                "description": "LivePortrait only: path to a driving video for expression transfer. If omitted with liveportrait, a generic talking motion template is used.",
             },
             "expression_scale": {
                 "type": "number",
@@ -109,18 +114,23 @@ class TalkingHead(BaseTool):
     # ------------------------------------------------------------------
 
     def get_status(self) -> ToolStatus:
-        """Check for SadTalker availability via env var or Python import."""
-        # 1. SADTALKER_PATH env var pointing to cloned repo
+        """Check for SadTalker or LivePortrait availability."""
+        # SadTalker via env var
         sadtalker_path = os.environ.get("SADTALKER_PATH", "")
         if sadtalker_path and Path(sadtalker_path).is_dir():
             return ToolStatus.AVAILABLE
 
-        # 2. Installed as a Python package
+        # SadTalker as a Python package
         try:
             import sadtalker  # noqa: F401
             return ToolStatus.AVAILABLE
         except ImportError:
             pass
+
+        # LivePortrait via env var
+        liveportrait_path = os.environ.get("LIVEPORTRAIT_PATH", "")
+        if liveportrait_path and Path(liveportrait_path).is_dir():
+            return ToolStatus.AVAILABLE
 
         return ToolStatus.UNAVAILABLE
 
@@ -161,10 +171,12 @@ class TalkingHead(BaseTool):
                 result = self._run_sadtalker(inputs, image_path, audio_path, output_path)
             elif model == "musetalk":
                 result = self._run_musetalk(inputs, image_path, audio_path, output_path)
+            elif model == "liveportrait":
+                result = self._run_liveportrait(inputs, image_path, audio_path, output_path)
             else:
                 return ToolResult(
                     success=False,
-                    error=f"Unknown model: {model}. Supported: sadtalker, musetalk",
+                    error=f"Unknown model: {model}. Supported: sadtalker, musetalk, liveportrait",
                 )
         except Exception as e:
             return ToolResult(success=False, error=f"Talking head generation failed: {e}")
@@ -255,4 +267,104 @@ class TalkingHead(BaseTool):
                 "MuseTalk support is not yet implemented. "
                 "Use model='sadtalker' instead."
             ),
+        )
+
+    def _run_liveportrait(
+        self,
+        inputs: dict[str, Any],
+        image_path: Path,
+        audio_path: Path,
+        output_path: Path,
+    ) -> ToolResult:
+        """Run LivePortrait inference via subprocess.
+
+        LivePortrait animates a portrait image using a driving video for expression
+        transfer. If a driving_video_path is provided, it is used directly. Otherwise,
+        LivePortrait's built-in animal/human templates are used for a generic talking
+        motion.
+
+        Note: LivePortrait is expression-transfer based, not audio-driven. For
+        audio-synchronized lip movement, pair it with a lip-sync post-pass or use
+        SadTalker instead.
+        """
+        liveportrait_path = os.environ.get("LIVEPORTRAIT_PATH", "")
+        if not liveportrait_path or not Path(liveportrait_path).is_dir():
+            return ToolResult(
+                success=False,
+                error=(
+                    "LIVEPORTRAIT_PATH not set or directory does not exist.\n"
+                    "Clone https://github.com/KwaiVGI/LivePortrait and set LIVEPORTRAIT_PATH."
+                ),
+            )
+
+        liveportrait_dir = Path(liveportrait_path)
+        inference_script = liveportrait_dir / "scripts" / "inference.py"
+        if not inference_script.exists():
+            # Some builds use inference.py at the repo root
+            inference_script = liveportrait_dir / "inference.py"
+        if not inference_script.exists():
+            return ToolResult(
+                success=False,
+                error=f"LivePortrait inference script not found in {liveportrait_dir}",
+            )
+
+        driving_video_path = inputs.get("driving_video_path")
+        if driving_video_path:
+            driving = Path(driving_video_path)
+            if not driving.exists():
+                return ToolResult(success=False, error=f"Driving video not found: {driving}")
+        else:
+            # Use a built-in template from the LivePortrait assets directory
+            template_candidates = sorted(
+                (liveportrait_dir / "assets" / "examples" / "driving").glob("*.mp4")
+            )
+            if not template_candidates:
+                return ToolResult(
+                    success=False,
+                    error=(
+                        "No driving_video_path provided and no template videos found in "
+                        f"{liveportrait_dir}/assets/examples/driving. "
+                        "Provide a driving_video_path or ensure LivePortrait example assets are present."
+                    ),
+                )
+            driving = template_candidates[0]
+
+        result_dir = output_path.parent / "liveportrait_results"
+        result_dir.mkdir(parents=True, exist_ok=True)
+
+        cmd = [
+            "python",
+            str(inference_script),
+            "--source", str(image_path),
+            "--driving", str(driving),
+            "--output-dir", str(result_dir),
+        ]
+
+        self.run_command(cmd, cwd=liveportrait_dir, timeout=600)
+
+        generated = sorted(result_dir.glob("**/*.mp4"), key=lambda p: p.stat().st_mtime, reverse=True)
+        if not generated:
+            return ToolResult(
+                success=False,
+                error=f"No output video found in {result_dir}",
+            )
+
+        shutil.move(str(generated[0]), str(output_path))
+
+        return ToolResult(
+            success=True,
+            data={
+                "model": "liveportrait",
+                "image": str(image_path),
+                "audio": str(audio_path),
+                "driving_video": str(driving),
+                "output": str(output_path),
+                "format": "mp4",
+                "note": (
+                    "LivePortrait produces expression-transfer animation. "
+                    "Audio sync requires a separate lip-sync pass (use lip_sync tool)."
+                ),
+            },
+            artifacts=[str(output_path)],
+            model="liveportrait",
         )

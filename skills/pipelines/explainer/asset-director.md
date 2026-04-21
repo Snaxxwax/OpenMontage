@@ -65,14 +65,83 @@ This step typically costs $0.03–0.08 total and prevents $1–3 of wasted gener
 
 ### Step 3: Generate Narration
 
+Use **ElevenLabs TTS** as the default narration provider. It produces broadcast-quality results suitable for documentary and explainer content.
+
+**Default voice selection by mood:**
+| Mood / Genre | Voice | Voice ID |
+|---|---|---|
+| Documentary / Investigative / Noir | George — "Warm, Captivating Storyteller" | `JBFqnCBsd6RMkjVDRZzb` |
+| Informational / Educational | Daniel — "Steady Broadcaster" | `onwK4e9ZLuTAKqWW03F9` |
+| Corporate / Professional | Matilda — "Knowledgeable, Professional" | `XrExE9yKIg1WjnnlVkGX` |
+| Social / Energetic | Liam — "Energetic, Social Media Creator" | `TX3LPaxmHKxFdv7VOQHJ` |
+
+Use the `elevenlabs_tts` tool (or `curl` to `https://api.elevenlabs.io/v1/text-to-speech/{voice_id}`). On the free plan all premade voices are available.
+
 For each script section:
 1. Extract the narration text
 2. Apply speaker directions from the script (pace, emphasis, emotion)
-3. Apply the playbook's `audio.voice_style`
-4. Generate using `tts_selector` — it auto-routes to the best available TTS provider based on user preference and availability. Check the registry's `best_for` fields to understand each provider's strengths.
-5. Verify the audio file exists and duration matches expected timing (±15%)
+3. Apply `stability: 0.5, similarity_boost: 0.75, style: 0.3` for natural delivery with character
+4. Generate with `model_id: "eleven_multilingual_v2"` for best quality
+5. Save to `projects/<project>/assets/<chapter>/audio/s{N}.mp3`
+6. Verify the file exists and duration matches expected timing (±15%)
 
-**Pronunciation guide**: If the script contains technical terms, jargon, or names with non-obvious pronunciation, include a pronunciation map in the TTS request.
+**Pronunciation guide**: If the script contains technical terms, acronyms, or names (e.g. "Equifax", "FICO"), spell them phonetically in the text or use SSML `<phoneme>` tags.
+
+**Free plan note**: 10,000 characters/month included. A 10-minute documentary chapter is ~800–1,200 characters of narration, well within limits.
+
+### Step 3b: Extract Word Timestamps (mandatory post-TTS)
+
+After generating ALL narration audio sections, run the `transcriber` tool on each narration file to extract word-level timestamps. This is required for the Edit Director to snap `visual_beats` to exact spoken words.
+
+**Process:**
+
+1. For each narration audio file in the asset manifest (subtype: "narration"):
+   ```
+   transcriber.execute({
+     "input_path": "<narration_path>",
+     "model_size": "base",
+     "output_dir": "<project>/artifacts/"
+   })
+   ```
+
+2. Convert from transcriber's native format `{ word, start (seconds), end (seconds) }` to Remotion's format `{ word, startMs (milliseconds), endMs (milliseconds) }`:
+   - `startMs = round(word["start"] * 1000)` — must be integer; fractional ms causes one-frame sync errors
+   - `endMs = round(word["end"] * 1000)`
+
+3. Merge all sections' word lists in chronological order. If narration segments have `start_seconds` offsets (i.e., section 2 starts at 8s), add the section's narration `start_seconds` to each word's timestamps before merging. The result is a flat global list where `word_index=0` is the first word spoken in the video, `word_index=N` is the Nth word spoken across all sections.
+
+4. Write merged list to `{project}/artifacts/word_timestamps.json`:
+   ```json
+   {
+     "version": "1.0",
+     "word_count": 847,
+     "words": [
+       { "word": "Your", "startMs": 0, "endMs": 250 },
+       { "word": "database", "startMs": 260, "endMs": 580 },
+       ...
+     ]
+   }
+   ```
+
+5. Add as supplementary artifact in the asset manifest:
+   ```json
+   {
+     "id": "word-timestamps",
+     "type": "data",
+     "subtype": "word_timestamps",
+     "path": "artifacts/word_timestamps.json",
+     "source_tool": "transcriber",
+     "cost_usd": 0.0
+   }
+   ```
+
+**Validation:**
+- [ ] `artifacts/word_timestamps.json` exists on disk
+- [ ] `word_count` is plausible (roughly matches total narration word count ± 10%)
+- [ ] `startMs` values are monotonically increasing across the merged list
+- [ ] No word has `endMs - startMs > 2000` (2s/word is a transcription artifact — flag it)
+
+**Critical gotcha — global vs. section-local indices:** The merged word list uses GLOBAL indices. `word_index=42` refers to the 42nd word across ALL sections combined, not the 42nd word in section 2. The Scene Director's `word_trigger.word_index` values reference this global list. Document this explicitly in your decision log.
 
 ### Step 4: Generate Visual Assets
 
@@ -100,19 +169,62 @@ Process asset tasks grouped by tool for efficiency:
 2. Apply syntax highlighting theme from playbook's overlay styles
 3. Generate highlighted image or Remotion-compatible data
 
-### Step 5: Generate Music
+### Step 5: Generate Per-Scene Music Cues and Sound Effects
 
-1. Read playbook's `audio.music_mood` and `audio.music_volume`
-2. Check the music decision from `proposal_packet.production_plan.music_source` (set by the Proposal Director)
-3. Source the background track in this priority order:
-   - **User-selected library track**: If the proposal specified a track from `music_library/`, copy it to `projects/<project>/assets/music/background_music.mp3`
-   - **User music library (`music_library/`)**: If the folder exists and has tracks, pick the best match for the playbook's `audio.music_mood`. List candidates by filename and let the EP decide.
-   - **Music generation API**: Use `music_gen` (ElevenLabs) or `suno_music` if available. Check status via registry first — if the tool is unavailable or quota-exhausted, skip immediately (do NOT attempt and fail silently).
-   - **No music available**: Log this clearly in the asset manifest as `"music_status": "unavailable"` with the reason. Do NOT silently produce a video without music — the EP and user should know.
-4. Duration should be at least as long as total video duration. If shorter, it can be looped by the compose stage.
-5. Verify the audio file exists at `projects/<project>/assets/music/background_music.mp3`
+**Do NOT generate a single long background track for the whole video.** Music should be targeted and scene-specific. Generate short cues (10–45s) that match individual scene moments, and spot sound effects for punctuation.
 
-**Critical:** If music generation fails or is unavailable, report it immediately in the asset manifest — do not defer the problem to the compose stage.
+#### 5a: Map scenes to audio needs
+
+Walk the scene plan. For each scene, determine:
+- Does it need a **music cue**? (tension swell, calm underscore, stinger, silence)
+- Does it need **sound effects**? (typewriter click, paper rustle, door slam, ambient hum)
+- What is the **emotional beat**? (revelation, dread, urgency, resolution)
+
+Create an audio cue sheet:
+```
+sc01 (0-6s):   music_cue = "noir-intro-swell" (0-8s), sfx = "typewriter-click" at 1s, 2.3s
+sc02 (6-14s):  music_cue = "tension-pulse" (6-16s), sfx = none
+sc03 (14-20s): music_cue = none (silence for impact), sfx = "low-rumble" at 14s
+...
+```
+
+#### 5b: Generate music cues with ACE-Step (local GPU) or ElevenLabs
+
+**Preferred: ACE-Step** (free, local GPU, `tools/audio/acestep_music.py`)
+- Generate 15–45s clips targeting specific scenes
+- Set `duration` to scene length + 3s (for fade margins)
+- Use focused prompts: `"5-second tense string swell, dramatic reveal, dark orchestral"` rather than generic moods
+
+**Fallback: ElevenLabs Music API** if ACE-Step unavailable
+- Use `POST https://api.elevenlabs.io/v1/sound-generation` for SFX
+- Keep clips short (under 22s for music; ElevenLabs SFX is best for 0.5–10s)
+
+**GPU discipline**: If ACE-Step is used, stop it after each clip. Run `nvidia-smi --query-compute-apps=pid,used_memory --format=csv,noheader` to confirm VRAM freed before next GPU step.
+
+Save each cue to `projects/<project>/assets/<chapter>/audio/music_<label>.mp3`
+
+#### 5c: Generate sound effects with ElevenLabs
+
+Use ElevenLabs SFX API for spot effects:
+```
+POST https://api.elevenlabs.io/v1/sound-generation
+{
+  "text": "single typewriter key click, mechanical, sharp",
+  "duration_seconds": 0.5,
+  "prompt_influence": 0.3
+}
+```
+
+Save to `projects/<project>/assets/<chapter>/audio/sfx_<label>.mp3`
+
+Common SFX for documentary/investigative:
+- `"typewriter key click, crisp, single stroke"` — 0.3–0.5s
+- `"paper rustling, document folder opening"` — 1–2s
+- `"low ominous drone, building tension"` — 3–5s
+- `"sharp news stinger, dramatic reveal"` — 1–2s
+- `"ambient hum, server room, electronic"` — 5–10s (loop)
+
+**Critical:** If music/SFX generation fails, log it in the asset manifest as `"music_status": "unavailable"` with the reason. Do NOT silently produce a video without audio — report it.
 
 ### Step 6: Build Asset Manifest
 
@@ -141,13 +253,25 @@ Assemble all generated assets into the manifest:
       "cost_usd": 0.00
     },
     {
-      "id": "music-bg",
+      "id": "music-cue-intro",
       "type": "audio",
-      "subtype": "music",
-      "path": "assets/music/background.mp3",
-      "source_tool": "music_gen",
-      "duration_seconds": 62,
-      "cost_usd": 0.05
+      "subtype": "music_cue",
+      "path": "assets/audio/music_intro-swell.mp3",
+      "source_tool": "acestep_music",
+      "label": "intro-swell",
+      "scene_id": "scene-1",
+      "duration_seconds": 9.0,
+      "cost_usd": 0.0
+    },
+    {
+      "id": "sfx-typewriter",
+      "type": "audio",
+      "subtype": "sfx",
+      "path": "assets/audio/sfx_typewriter-click.mp3",
+      "source_tool": "elevenlabs_sfx",
+      "label": "typewriter-click",
+      "duration_seconds": 0.4,
+      "cost_usd": 0.001
     }
   ],
   "total_cost_usd": 0.053,
@@ -155,7 +279,8 @@ Assemble all generated assets into the manifest:
     "narration_sections": 5,
     "images_generated": 8,
     "diagrams_generated": 2,
-    "music_tracks": 1
+    "music_cues": 4,
+    "sfx_clips": 6
   }
 }
 ```

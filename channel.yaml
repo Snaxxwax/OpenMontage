@@ -1,0 +1,71 @@
+# Asymmetric — Channel Configuration
+#
+# This file is the production bible for the Asymmetric YouTube channel.
+# The agent reads it at the start of every pipeline run (before proposing concepts)
+# and applies these defaults across all stages.
+#
+# Override individual values per-project only when there is a strong creative reason.
+# The brand is already decided — do not offer style choices unless the user asks.
+
+channel:
+  name: Asymmetric
+  handle: "@asymmetric"
+  tagline: "True stories of imbalance, leverage, and hidden advantage"
+  description: >
+    Asymmetric produces animated documentary content about the hidden mechanics of power —
+    leverage, information asymmetry, structural advantage, and the non-obvious forces
+    that shape outcomes. Every story is true. Every angle is unexpected.
+
+brand:
+  default_playbook: Asymmetric
+
+  # The narrator character — apply this to every TTS request and voice direction.
+  # The script director should write to this voice; the asset director should pass
+  # these parameters to TTS.
+  voice_persona: >
+    Measured and knowing. The narrator has done the research and is sharing a secret —
+    not sensationalist, the facts are strange enough on their own. Deliberate pauses
+    on key reveals. Slight dry irony when facts are absurd. Never preachy or moralistic.
+    The tone is: confident, curious, slightly conspiratorial, always earned.
+
+  # Thumbnail visual character — the publish stage generates thumbnails to this spec.
+  thumbnail:
+    style: "split-reveal"           # One element hidden/revealed — mirrors the channel's theme
+    text_max_words: 5               # Hook or key stat, nothing longer
+    background: "#0C0C14"
+    accent_color: "#F0C040"
+    font: "Space Grotesk"
+    font_weight: 700
+    notes: >
+      Thumbnails should feel like a frame from the video — not a graphic design exercise.
+      Gold text on near-black background. One strong visual element that creates curiosity.
+      The thumbnail asks a question the viewer needs to answer by watching.
+
+production_defaults:
+  platform: youtube
+  aspect_ratio: "16:9"
+  resolution: "1920x1080"
+  fps: 30
+  target_duration_seconds: 480     # 8 minutes — enough depth, short enough to finish
+  min_duration_seconds: 120        # Nothing shorter than 2 min gets the full treatment
+  max_duration_seconds: 1200       # 20 min absolute cap
+
+audio_defaults:
+  tts_voice_preference: "George"   # ElevenLabs: warm, captivating storyteller — right register for Asymmetric
+  tts_stability: 0.55
+  tts_similarity_boost: 0.78
+  tts_style: 0.25
+  music_volume_ratio: 0.12
+
+publish_defaults:
+  default_tags:
+    - asymmetric
+    - true stories
+    - hidden power
+    - leverage
+    - information asymmetry
+    - how power works
+    - untold stories
+  cta: "Subscribe — these are the stories the algorithm usually buries."
+  end_screen_duration_seconds: 20
+  chapters_required: true          # Always include YouTube chapter markers

@@ -225,6 +225,21 @@ If the folder has tracks, the proposal and asset stages should present them as o
 
 Do this before any creative work:
 
+**Step 0 — Load channel config** (always first):
+
+```bash
+python -c "import yaml; print(yaml.safe_load(open('channel.yaml').read()))"
+```
+
+Read `channel.yaml` and apply:
+- `brand.default_playbook` → use this playbook for the entire run. Do not offer style choices unless the user explicitly asks for a different one.
+- `brand.voice_persona` → pass to the script and asset stages as the narrator character.
+- `production_defaults` → use as the baseline for duration, resolution, and fps.
+- `audio_defaults` → use as the baseline for TTS voice and parameters.
+- `publish_defaults` → pre-populate tags, CTA, and chapter requirement for the publish stage.
+
+**Step 1 — Tool registry:**
+
 ```bash
 python -c "from tools.tool_registry import registry; import json; registry.discover(); print(json.dumps(registry.support_envelope(), indent=2))"
 ```
@@ -513,6 +528,35 @@ The reviewer is a meta skill (`skills/meta/reviewer.md`) — advisory, never dir
 - Critical findings -> fix and re-review. Suggestions -> note and proceed.
 - Check playbook `quality_rules` as constraints, not suggestions.
 
+## Verification Contract
+
+Every generated asset MUST be verified before being recorded as complete in the pipeline. Do not accept a tool's `success: true` response as proof that a usable file was produced.
+
+Use `lib/verify_asset.py` after every generation call:
+
+```python
+from lib.verify_asset import verify_asset
+
+result = verify_asset(path)   # auto-detects image / audio / video from extension
+if not result.valid:
+    # surface as a blocker — do not continue to the next stage
+    raise RuntimeError(f"Asset verification failed: {result.error}")
+```
+
+**Per asset type:**
+
+| Type | What is checked | Tool |
+|------|----------------|------|
+| Image | File exists, non-zero size, valid image format | `file` command |
+| Audio | File exists, non-zero size, positive duration | `ffprobe` |
+| Video | File exists, non-zero size, positive duration | `ffprobe` |
+
+**Rules:**
+- Verify immediately after generation, before writing the asset path into any artifact.
+- A failed verification is a blocker — escalate using the Decision Communication Contract format, not a silent retry.
+- Record the `detail` field from `VerifyResult` in the asset manifest (e.g., "1920x1080 PNG, 245KB") for reproducibility.
+- Do not proceed to the next stage if any required asset for that stage failed verification.
+
 ## Human Checkpoint Protocol
 
 The checkpoint protocol meta skill (`skills/meta/checkpoint-protocol.md`) teaches the agent when to pause:
@@ -558,13 +602,32 @@ Tool rules:
 - Tool discovery flows through the registry, not ad hoc imports.
 - Support-envelope reporting is the source of truth for capability, status, and resource requirements.
 
+## Channel Configuration
+
+`channel.yaml` at the repository root is the production bible for this YouTube channel. It is read during preflight (Step 0) and governs all creative and technical defaults.
+
+**This channel is Asymmetric** — animated documentary content built around true stories of imbalance, leverage, hidden advantage, and non-obvious power.
+
+Key rules that flow from the channel config:
+
+- **Default playbook is `Asymmetric`**. Every video uses this brand. The agent must not ask the user to choose a style unless they explicitly request a change.
+- **TTS voice is George** (ElevenLabs). The narrator is measured, knowing, dry — not energetic, not corporate, not cheerful.
+- **Target duration is 8 minutes**. This is a long-form channel. Do not default to 60-second shorts unless the brief is clearly short-form.
+- **Chapter markers are required** in every publish package. YouTube rewards chapters and so does watch time.
+- **Thumbnails must be generated**, not described. The publish stage calls `image_selector` with the channel thumbnail spec. A text description of a thumbnail is not a deliverable.
+
+The channel is the frame. The story changes every video. The brand never does.
+
 ## Style Playbooks
 
 | Playbook | Best For |
 |----------|----------|
+| `Asymmetric` | **Channel default** — Asymmetric brand: hidden systems, geopolitics, leverage, power |
 | `clean-professional` | Corporate, educational, SaaS |
 | `flat-motion-graphics` | Social media, TikTok, startups |
 | `minimalist-diagram` | Technical deep-dives, architecture |
+
+Production-specific playbooks (created for one video) live in `projects/<project-name>/playbook.yaml`, not in `styles/`.
 
 ## Layer Map
 
@@ -600,6 +663,73 @@ Example: Before calling `kling_video`, read its `agent_skills` → `ai-video-gen
 | How should this pipeline stage behave? | `skills/pipelines/<pipeline>/...` |
 | What is the checkpoint/review policy? | `skills/meta/` |
 
+## Long-Form and Chapter-Based Production
+
+When the intended duration exceeds ~3 minutes, treat the production as a **multi-chapter piece**, not a scaled-up short-form video.
+
+### When to use chapter mode
+
+- Target duration > 3 minutes
+- Script word count > ~450 words
+- More than ~15 distinct scenes planned
+- User explicitly requests a "deep dive", "documentary", "10-minute", or "long-form" treatment
+
+### The correct execution order
+
+**Wrong:** run `idea → script → scene_plan → assets → ...` once for the full piece.
+
+**Correct:**
+
+```
+1. idea        — once, for the full piece
+2. script      — once, write the complete script (all chapters) as a single artifact
+                 A 10-minute video = ~1,500 words across 5 chapters of ~300 words each
+3. scene_plan  — per chapter (e.g., Chapter 1 of 5)
+4. assets      — per chapter
+5. edit        — per chapter
+6. compose     — per chapter → produces chapter_01.mp4, chapter_02.mp4, ...
+7. stitch      — once, FFmpeg concat of all chapter renders into final.mp4
+```
+
+The `script` stage is the creative backbone for the whole piece. Running `idea` per chapter causes tonal drift, redundant intros, and loss of narrative arc.
+
+### Chapter artifact naming
+
+```
+projects/<name>/
+├── artifacts/
+│   ├── script.json            # full script, all chapters
+│   ├── scene_plan_ch01.json
+│   ├── scene_plan_ch02.json
+│   └── ...
+├── assets/
+│   ├── ch01/images/
+│   ├── ch01/audio/
+│   ├── ch02/images/
+│   └── ...
+└── renders/
+    ├── chapter_01.mp4
+    ├── chapter_02.mp4
+    └── final.mp4              # FFmpeg concat of all chapters
+```
+
+### Context and VRAM discipline
+
+- Run only one GPU-intensive tool at a time. Kill other GPU processes before starting ComfyUI, Fish Speech, or ACE-Step.
+- Complete all assets for one chapter before starting the next. Do not interleave chapter execution.
+- After completing each chapter render, verify it with `verify_asset` before moving to the next.
+- Use `/compact preserve: [chapter X state, script, completed chapters, remaining chapters]` before starting a new chapter if context is heavy.
+
+### Duration anchoring
+
+Before writing the script, establish the duration anchor:
+
+1. If a narration file exists from a previous run, run `ffprobe` to get its duration. Use that as the scale target.
+2. If the user specifies a duration, calculate word count: `duration_minutes × 150 words/min`.
+3. Record the target word count in the brief artifact so the script stage has a concrete constraint.
+
+Do not default to 60 seconds unless the user explicitly requested short-form content.
+
 ## What Not To Do
 
 - **Do not bypass the pipeline.** Never write ad-hoc scripts to call tools directly. All production goes through pipeline stages with director skills. See Rule Zero.
@@ -612,3 +742,6 @@ Example: Before calling `kling_video`, read its `agent_skills` → `ai-video-gen
 - Do not present a single unavailable tool in isolation. Always show the full capability picture: "X of Y providers configured for this capability."
 - Do not skip the Provider Menu at preflight. The user must see what they have AND what they could unlock.
 - Do not change provider, model, or render path without telling the user first and getting approval when the change is material.
+- **Do not skip asset verification.** Every generated file must pass `verify_asset()` before being written into an artifact. A tool returning `success: true` is not sufficient proof.
+- **Do not default to short-form duration.** If the user's request implies long-form content (deep dive, documentary, 10-minute, or an existing narration file longer than 3 minutes exists), use chapter mode. See Long-Form and Chapter-Based Production.
+- **Do not wipe project directories.** Use `bash lib/archive_project.sh <project-name>` before any fresh run. Existing assets may be reusable and always contain diagnostic value.
