@@ -186,6 +186,10 @@ RUNWAY_API_KEY=your-key        # Runway Gen-4 direct
 ```bash
 make install-gpu
 
+# Verify CUDA + PyTorch are working (must print: cuda True)
+python3 -c "import torch; print('cuda', torch.cuda.is_available(), 'torch', torch.__version__, 'cuda_ver', torch.version.cuda)"
+# If cuda is False, reinstall PyTorch with a CUDA wheel from pytorch.org and re-run: make install-gpu
+
 # Then add to .env:
 VIDEO_GEN_LOCAL_ENABLED=true
 VIDEO_GEN_LOCAL_MODEL=wan2.1-1.3b  # or wan2.1-14b, hunyuan-1.5, ltx2-local, cogvideo-5b

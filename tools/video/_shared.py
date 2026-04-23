@@ -156,17 +156,29 @@ def local_generation_status() -> ToolStatus:
         return ToolStatus.UNAVAILABLE
     try:
         import diffusers  # noqa: F401
-        import torch  # noqa: F401
+        import torch
     except ImportError:
+        return ToolStatus.UNAVAILABLE
+    try:
+        # Guard against CPU-only torch builds (common if users run `pip install torch`
+        # on unsupported platforms or without CUDA wheels).
+        if not torch.cuda.is_available():
+            return ToolStatus.UNAVAILABLE
+        if getattr(torch.version, "cuda", None) is None:
+            return ToolStatus.UNAVAILABLE
+    except Exception:
         return ToolStatus.UNAVAILABLE
     return ToolStatus.AVAILABLE
 
 
 def local_install_instructions() -> str:
     return (
-        "Enable local video generation and install the diffusers stack:\n"
+        "Enable local video generation (NVIDIA GPU + CUDA required):\n"
         "  set VIDEO_GEN_LOCAL_ENABLED=true\n"
         "  pip install diffusers transformers accelerate torch pillow requests\n"
+        "Verify CUDA PyTorch is working:\n"
+        "  python3 -c \"import torch; print('cuda', torch.cuda.is_available(), 'torch', torch.__version__, 'cuda_ver', torch.version.cuda)\"\n"
+        "If cuda is False, reinstall PyTorch with a CUDA wheel from pytorch.org.\n"
         "Use a GPU with the VRAM profile listed on the selected tool."
     )
 
@@ -251,7 +263,8 @@ def generate_local_video(
     import torch
     from diffusers.utils import export_to_video
 
-    variant = inputs.get("model_variant", default_variant)
+    env_variant = os.environ.get("VIDEO_GEN_LOCAL_MODEL", "").strip()
+    variant = inputs.get("model_variant") or (env_variant if env_variant in variants else None) or default_variant
     if variant not in variants:
         return ToolResult(
             success=False,

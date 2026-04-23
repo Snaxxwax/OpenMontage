@@ -546,6 +546,10 @@ make install-gpu
 # Or manually:
 pip install diffusers transformers accelerate torch pillow requests
 
+# 1b. Verify CUDA + PyTorch are working (must print: cuda True)
+python3 -c "import torch; print('cuda', torch.cuda.is_available(), 'torch', torch.__version__, 'cuda_ver', torch.version.cuda)"
+# If cuda is False, reinstall PyTorch with a CUDA wheel from pytorch.org and re-run make install-gpu.
+
 # 2. Enable local generation in .env
 VIDEO_GEN_LOCAL_ENABLED=true
 
