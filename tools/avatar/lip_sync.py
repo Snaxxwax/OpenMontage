@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 import subprocess
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -112,7 +113,13 @@ class LipSync(BaseTool):
         # Check WAV2LIP_PATH environment variable
         wav2lip_path = os.environ.get("WAV2LIP_PATH")
         if wav2lip_path and Path(wav2lip_path).is_dir():
-            return ToolStatus.AVAILABLE
+            wav2lip_dir = Path(wav2lip_path)
+            inference = wav2lip_dir / "inference.py"
+            ckpt_dir = wav2lip_dir / "checkpoints"
+            has_any_ckpt = any((ckpt_dir / fname).is_file() for fname in MODEL_CHECKPOINTS.values())
+            if inference.is_file() and has_any_ckpt:
+                return ToolStatus.AVAILABLE
+            return ToolStatus.DEGRADED
 
         # Fallback: try importing wav2lip as a Python package
         try:
@@ -191,7 +198,7 @@ class LipSync(BaseTool):
         start = time.time()
 
         cmd = [
-            "python", str(inference_script),
+            sys.executable, str(inference_script),
             "--checkpoint_path", str(checkpoint),
             "--face", str(video_path),
             "--audio", str(audio_path),

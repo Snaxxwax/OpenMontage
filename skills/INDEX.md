@@ -288,6 +288,8 @@ Style playbooks (`styles/*.yaml`) define visual language, typography, motion, au
 | `clean-professional` | motion-graphics | polished, trustworthy | Corporate, educational, SaaS |
 | `flat-motion-graphics` | motion-graphics | energetic, bold | Social media, TikTok, startups |
 | `minimalist-diagram` | whiteboard | focused, technical | Technical deep-dives, architecture |
+| `anime-ghibli` | anime-illustration | warm, whimsical | Narrative animations, wonder-led explainers |
+| `asymmetric` | systems-briefing-documentary | controlled, analytical | Chokepoints, hidden control surfaces, leverage maps |
 
 Load via `styles/playbook_loader.py`: `load_playbook("clean-professional")`
 

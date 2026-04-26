@@ -143,7 +143,7 @@ class TestCapabilityMetadata:
         catalog = reg.capability_catalog()
         assert "tts" in catalog
         providers = {item["provider"] for item in catalog["tts"] if item["provider"] != "selector"}
-        assert providers == {"elevenlabs", "google_tts", "openai", "piper"}
+        assert providers == {"elevenlabs", "fish_speech", "google_tts", "openai", "piper"}
 
 
 # ---- Animated Explainer Pipeline ----
@@ -343,3 +343,14 @@ class TestVideoComposeOperations:
         result = tool.execute({"operation": "render"})
         assert not result.success
         assert "edit_decisions" in result.error
+
+    def test_subtitle_style_resolver_tolerates_style_string(self):
+        from tools.video.video_compose import VideoCompose
+
+        style = VideoCompose._resolve_subtitle_style(
+            explicit_style=None,
+            edit_decisions={"subtitles": {"enabled": True, "style": "clean-professional"}},
+            playbook=None,
+        )
+        assert isinstance(style, dict)
+        assert style.get("font")

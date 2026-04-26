@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import time
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -156,18 +157,35 @@ def local_generation_status() -> ToolStatus:
         return ToolStatus.UNAVAILABLE
     try:
         import diffusers  # noqa: F401
-        import torch  # noqa: F401
+        import torch
     except ImportError:
+        return ToolStatus.UNAVAILABLE
+    try:
+        # Guard against CPU-only torch builds (common if users run `pip install torch`
+        # on unsupported platforms or without CUDA wheels).
+        if not torch.cuda.is_available():
+            return ToolStatus.UNAVAILABLE
+        if getattr(torch.version, "cuda", None) is None:
+            return ToolStatus.UNAVAILABLE
+    except Exception:
+        return ToolStatus.UNAVAILABLE
+    if shutil.which("ffmpeg") is None:
         return ToolStatus.UNAVAILABLE
     return ToolStatus.AVAILABLE
 
 
 def local_install_instructions() -> str:
     return (
-        "Enable local video generation and install the diffusers stack:\n"
+        "Enable local video generation (NVIDIA GPU + CUDA required):\n"
         "  set VIDEO_GEN_LOCAL_ENABLED=true\n"
-        "  pip install diffusers transformers accelerate torch pillow requests\n"
-        "Use a GPU with the VRAM profile listed on the selected tool."
+        "  make install-gpu\n"
+        "Verify CUDA PyTorch is working:\n"
+        "  python3 -c \"import torch; print('cuda', torch.cuda.is_available(), 'torch', torch.__version__, 'cuda_ver', torch.version.cuda)\"\n"
+        "FFmpeg is also required for MP4 export:\n"
+        "  linux: sudo apt install ffmpeg\n"
+        "  macOS: brew install ffmpeg\n"
+        "  windows: winget install ffmpeg\n"
+        "If cuda is False, reinstall PyTorch with a CUDA wheel from pytorch.org."
     )
 
 
@@ -200,12 +218,40 @@ def load_diffusers_pipeline(pipeline_class: str, model_id: str, enable_offload: 
         "CogVideoXPipeline": "CogVideoXPipeline",
     }
     pipeline_name = pipeline_map.get(pipeline_class, pipeline_class)
-    pipeline_class_obj = getattr(diffusers, pipeline_name)
+    if not torch.cuda.is_available():
+        raise RuntimeError(
+            "Local video generation requires a CUDA-capable NVIDIA GPU and a CUDA-enabled PyTorch build. "
+            "torch.cuda.is_available() is False."
+        )
     dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
-    pipeline = pipeline_class_obj.from_pretrained(model_id, torch_dtype=dtype)
+
+    def _from_pretrained(cls, **kwargs):
+        # These kwargs reduce peak CPU RAM during weight loading, but may not
+        # exist on older diffusers versions; fall back gracefully.
+        try:
+            return cls.from_pretrained(
+                model_id,
+                torch_dtype=dtype,
+                low_cpu_mem_usage=True,
+                use_safetensors=True,
+                **kwargs,
+            )
+        except TypeError:
+            return cls.from_pretrained(model_id, torch_dtype=dtype, **kwargs)
+
+    if hasattr(diffusers, pipeline_name):
+        pipeline_class_obj = getattr(diffusers, pipeline_name)
+        pipeline = _from_pretrained(pipeline_class_obj)
+    else:
+        # More robust across diffusers versions: let diffusers auto-resolve the
+        # correct pipeline class from the model config.
+        pipeline = _from_pretrained(diffusers.DiffusionPipeline)
 
     if enable_offload:
-        pipeline.enable_model_cpu_offload()
+        if hasattr(pipeline, "enable_model_cpu_offload"):
+            pipeline.enable_model_cpu_offload()
+        else:
+            pipeline = pipeline.to("cuda")
     else:
         pipeline = pipeline.to("cuda")
 
@@ -241,6 +287,87 @@ def load_reference_image(inputs: dict[str, Any], width: int, height: int):
     return image.resize((width, height), Image.LANCZOS)
 
 
+def export_frames_to_mp4(*, frames: list[Any], output_path: Path, fps: int) -> None:
+    """Encode a list of frames into an MP4 using ffmpeg.
+
+    We intentionally avoid `diffusers.utils.export_to_video`'s imageio backend,
+    which can require `imageio-ffmpeg` even when system ffmpeg is available.
+    """
+    from PIL import Image
+    import numpy as np
+
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.TemporaryDirectory(prefix="openmontage_frames_") as tmp:
+        tmp_path = Path(tmp)
+        pattern = tmp_path / "frame_%05d.png"
+
+        def _to_uint8_rgb(frame: Any) -> Image.Image:
+            if isinstance(frame, Image.Image):
+                return frame.convert("RGB")
+
+            try:
+                import torch
+
+                if torch.is_tensor(frame):
+                    frame = frame.detach().cpu().numpy()
+            except Exception:
+                pass
+
+            arr = np.asarray(frame)
+            if arr.ndim == 4 and arr.shape[0] == 1:
+                arr = arr[0]
+
+            # Handle channel-first (C,H,W) → (H,W,C)
+            if arr.ndim == 3 and arr.shape[0] in {1, 3, 4} and arr.shape[-1] not in {1, 3, 4}:
+                arr = np.transpose(arr, (1, 2, 0))
+
+            if arr.dtype.kind == "f":
+                # Assume normalized 0..1 floats.
+                arr = np.clip(arr, 0.0, 1.0)
+                arr = (arr * 255.0).round().astype(np.uint8)
+            elif arr.dtype != np.uint8:
+                arr = arr.astype(np.uint8)
+
+            if arr.ndim == 2:
+                return Image.fromarray(arr, mode="L").convert("RGB")
+            if arr.ndim == 3 and arr.shape[2] in {3, 4}:
+                if arr.shape[2] == 4:
+                    return Image.fromarray(arr, mode="RGBA").convert("RGB")
+                return Image.fromarray(arr, mode="RGB")
+
+            raise ValueError(f"Unsupported frame array shape/dtype: shape={arr.shape} dtype={arr.dtype}")
+
+        for i, frame in enumerate(frames):
+            img = _to_uint8_rgb(frame)
+            img.save(tmp_path / f"frame_{i:05d}.png", format="PNG")
+
+        cmd = [
+            "ffmpeg",
+            "-y",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-framerate",
+            str(int(fps)),
+            "-i",
+            str(pattern),
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-crf",
+            "18",
+            "-pix_fmt",
+            "yuv420p",
+            "-movflags",
+            "+faststart",
+            str(output_path),
+        ]
+        subprocess.run(cmd, check=True)
+
+
 def generate_local_video(
     *,
     tool_name: str,
@@ -249,9 +376,9 @@ def generate_local_video(
     inputs: dict[str, Any],
 ) -> ToolResult:
     import torch
-    from diffusers.utils import export_to_video
 
-    variant = inputs.get("model_variant", default_variant)
+    env_variant = os.environ.get("VIDEO_GEN_LOCAL_MODEL", "").strip()
+    variant = inputs.get("model_variant") or (env_variant if env_variant in variants else None) or default_variant
     if variant not in variants:
         return ToolResult(
             success=False,
@@ -262,7 +389,17 @@ def generate_local_video(
     prompt = inputs["prompt"]
     operation = inputs.get("operation", "text_to_video")
     seed = inputs.get("seed")
-    enable_offload = inputs.get("enable_model_offload", True)
+    enable_offload = inputs.get("enable_model_offload")
+    if enable_offload is None:
+        # Prefer keeping weights on GPU when the card has enough VRAM; CPU offload
+        # can spike system RAM usage substantially on first load.
+        try:
+            total_vram_mb = int(torch.cuda.get_device_properties(0).total_memory / (1024 * 1024))
+            headroom_mb = 2500
+            enable_offload = total_vram_mb < int(meta.get("vram_mb", 0)) + headroom_mb
+        except Exception:
+            enable_offload = True
+    enable_offload = bool(enable_offload)
 
     if operation == "image_to_video" and not meta.get("i2v"):
         return ToolResult(
@@ -294,12 +431,42 @@ def generate_local_video(
     if meta["pipeline_class"] == "CogVideoXPipeline":
         generation_args["negative_prompt"] = "worst quality, low quality, blurry, distorted, watermark"
 
-    output = pipeline(**generation_args)
-    frames = output.frames[0] if hasattr(output, "frames") else output.images
-
     output_path = Path(inputs.get("output_path", f"{tool_name}_{variant}.mp4"))
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    export_to_video(frames, str(output_path), fps=fps)
+
+    output = None
+    frames = None
+    try:
+        with torch.inference_mode():
+            output = pipeline(**generation_args)
+        frames = output.frames[0] if hasattr(output, "frames") else output.images
+        export_frames_to_mp4(frames=list(frames), output_path=output_path, fps=fps)
+    finally:
+        # Release VRAM/RAM aggressively between runs. This is especially
+        # important when the agent runs multiple tools inside one long-lived
+        # Python process.
+        try:
+            del output
+        except Exception:
+            pass
+        try:
+            del frames
+        except Exception:
+            pass
+        try:
+            del pipeline
+        except Exception:
+            pass
+        try:
+            import gc
+
+            gc.collect()
+        except Exception:
+            pass
+        try:
+            torch.cuda.empty_cache()
+        except Exception:
+            pass
 
     return ToolResult(
         success=True,

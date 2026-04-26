@@ -284,17 +284,41 @@ class VideoSelector(BaseTool):
         candidates: list[BaseTool],
     ) -> list[BaseTool]:
         operation = inputs.get("operation", "text_to_video")
+        preferred = str(inputs.get("preferred_provider", "auto"))
+        allowed = set(inputs.get("allowed_providers") or [])
         if operation == "rank":
             return candidates
 
         filtered: list[BaseTool] = []
         for tool in candidates:
+            # Keep legacy provider paths explicit to avoid accidental routing drift.
+            # comfyui_wan remains available, but only when requested directly.
+            if tool.provider == "comfyui_wan":
+                wants_legacy = preferred == "comfyui_wan" or "comfyui_wan" in allowed or tool.name in allowed
+                if not wants_legacy:
+                    continue
+
             supports = getattr(tool, "supports", {})
             props = getattr(tool, "input_schema", {}).get("properties", {})
+            wants_custom_workflow = bool(inputs.get("workflow_json") or inputs.get("workflow_path"))
+
+            if operation == "text_to_video":
+                # Respect explicit operation readiness when published by the provider.
+                if "text_to_video" in supports:
+                    if supports.get("text_to_video") or (wants_custom_workflow and supports.get("custom_workflow")):
+                        filtered.append(tool)
+                    continue
 
             if operation == "image_to_video":
-                if supports.get("image_to_video") or "image_url" in props or "reference_image_url" in props:
-                    filtered.append(tool)
+                # If the provider explicitly publishes image_to_video readiness, respect it.
+                # This prevents routing to tools that only support some operations unless
+                # the caller is providing a fully custom workflow override.
+                if "image_to_video" in supports:
+                    if supports.get("image_to_video") or (wants_custom_workflow and supports.get("custom_workflow")):
+                        filtered.append(tool)
+                else:
+                    if supports.get("image_to_video") or "image_url" in props or "reference_image_url" in props:
+                        filtered.append(tool)
                 continue
 
             if operation == "reference_to_video":

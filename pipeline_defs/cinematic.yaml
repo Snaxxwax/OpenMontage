@@ -54,6 +54,7 @@ compatible_playbooks:
   also_works:
     - clean-professional
     - minimalist-diagram
+    - asymmetric
   custom_allowed: true
 
 stages:

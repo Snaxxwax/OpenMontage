@@ -1,0 +1,273 @@
+identity:
+  name: "Editorial Navy"
+  category: animated-documentary-hybrid
+  mood: intelligent, clear, grounded, slightly ominous, quietly provocative
+  pace: measured
+  best_for: "Animated documentary explainers about hidden power — geopolitics, infrastructure, economic coercion, strategic technology, cyber leverage, and the systems that shape global outcomes."
+  editorial_thesis: "The visible event is rarely the real story. The channel explains the hidden systems, incentives, chokepoints, dependencies, and asymmetries that actually determine outcomes."
+  audience_promise: "Complex subjects made watchable, concrete, and easy to understand without losing the stakes."
+
+visual_language:
+  color_palette:
+    background: "#0B1220"         # Midnight Navy — default world/background
+    surface: "#151D2E"            # Slate Surface — overlays, interiors, panels
+    primary: "#39D0B3"            # Signal Mint — titles, routes, neutral system emphasis
+    accent: "#FF3B72"             # Pressure Pink — power, danger, conflict, coercion
+    warm: "#FFB84D"               # Amber Gold — money, trade, extraction, economic flows
+    cool: "#4DAFFF"               # Network Blue — infrastructure, cyber, logistics, telecom
+    text: "#E9EDF2"               # Soft White — body text
+    muted: "#66728A"              # Steel Gray — captions, secondary labels
+    charcoal: "#2A3142"           # Graphite — character fills, objects, vehicles, institutions
+    land: "#1D2C2A"               # Dark muted green — land masses when maps are used
+    sea: "#0E1A2B"                # Deep ocean blue — map water tone
+  composition: "Scene-driven composition with a strong focal subject and clean visual hierarchy. Every frame should read like a moment in an animated documentary, not a slide. Use environments, maps, symbolic objects, and movement to make abstract systems tangible."
+  texture: "Flat stylized editorial illustration. Hard edges, no texture, no grain, no painterly effects, no photorealism. Minimal shading only when needed for separation. Clean cinematic silhouettes over infographic clutter."
+  framing_rules:
+    - "One dominant idea per shot"
+    - "Foreground action first, explanation second"
+    - "Negative space is deliberate and used for clarity"
+    - "Use wide shots for systems, medium shots for actors/institutions, close shots for critical details"
+    - "Diagrams and data overlays should emerge from scenes rather than replace them"
+
+story_visual_principles:
+  - "Show systems as places, routes, machines, exchanges, and pressure points"
+  - "Turn abstract forces into visible motion: flow, blockage, concentration, buildup, isolation, spillover"
+  - "Prefer cause-and-effect sequences over static explanation panels"
+  - "Anchor complexity in familiar visuals before introducing abstraction"
+  - "Use repetition of symbols and colors so viewers learn the visual language fast"
+
+typography:
+  headings:
+    font: "Manrope"
+    weight: 800
+    tracking: "-0.02em"
+  body:
+    font: "Manrope"
+    weight: 400
+    line_height: 1.55
+  code:
+    font: "Fira Code"
+    weight: 400
+  stat_card:
+    font: "Manrope"
+    weight: 800
+    size_multiplier: 3.2
+  map_label:
+    font: "Manrope"
+    weight: 700
+  caption:
+    font: "Manrope"
+    weight: 300
+  scale_system: "major_third"
+  weight_matrix:
+    title: 800
+    heading: 700
+    body: 400
+    caption: 300
+
+motion:
+  transitions: [cut, fade, slide-up, wipe-right, slow-zoom]
+  animation_style: "controlled, smooth, editorial motion with crisp easing. Movement should feel intentional and informative, never hyperactive."
+  pacing_rules:
+    min_scene_hold_seconds: 2.5
+    max_scene_hold_seconds: 8.5
+    text_card_hold_seconds: 3.0
+    stat_card_hold_seconds: 2.8
+    transition_duration_seconds: 0.35
+    humor_beat_interval_seconds: 70
+    reveal_density: "moderate"
+  entrance: "fade-up (opacity 0->1, translateY 10->0 over 0.35s)"
+  exit: "fade (opacity 1->0 over 0.25s)"
+  camera_language:
+    - "Use slow push-ins to build importance"
+    - "Use lateral motion to show routes, trade, or expansion"
+    - "Use pull-backs to reveal the wider system"
+    - "Use layered parallax sparingly for depth"
+    - "Avoid constant motion for its own sake"
+
+audio:
+  voice_style: "clear, measured, human, lightly dry, authoritative without sounding academic. Break down hard ideas in simple language. Stress names, numbers, and strategic terms."
+  writing_style: "Plainspoken, high-clarity narration. Short-to-medium sentences. Minimal jargon. Define terms fast. Translate institutions and systems into concrete consequences."
+  music_mood: "minimal electronic documentary score, restrained pulse, low-key tension, subtle momentum, no vocals"
+  music_volume: 0.10
+  sfx_style: "subtle whooshes, restrained interface clicks, soft mechanical pulses, map movement accents, low impact hits on major reveals"
+  ducking_threshold_db: -4
+
+narration_rules:
+  - "Assume the viewer is intelligent but unfamiliar with the topic"
+  - "Explain one new idea at a time"
+  - "Replace jargon with concrete comparisons whenever possible"
+  - "Start with what the viewer can picture, then scale outward"
+  - "Every section should answer: what is happening, why it matters, where the leverage is"
+  - "Do not sound like a lecture or policy paper"
+  - "Clarity beats terminology"
+  - "Use plain language even when the subject is technical"
+
+asset_generation:
+  image_prompt_prefix: >
+    stylized flat vector editorial illustration for an animated documentary,
+    midnight navy background (#0B1220), clean hard geometric edges, cinematic scene composition,
+    strong focal subject, minimal clutter, documentary motion-graphics aesthetic,
+    signal mint (#39D0B3) for neutral system emphasis, pressure pink (#FF3B72) for conflict and power,
+    amber gold (#FFB84D) for trade and economic elements, network blue (#4DAFFF) for infrastructure and technology,
+    zero texture, zero noise, zero gradients, bold readable silhouettes, clear foreground-background separation,
+    visual storytelling first, infographic elements only when necessary,
+  image_negative_prompt: >
+    photorealistic, 3D render, CGI, painterly, watercolor, oil painting, pencil sketch,
+    noisy, grainy, cluttered, overly detailed background, generic corporate stock art,
+    dashboard overload, busy infographic collage, white background, light background,
+    pastel, washed out, comic-book halftone texture, neon glow, bloom, lens flare,
+    realistic lighting, film grain, messy perspective
+  scene_type: "animated_documentary"
+  default_particles: null
+  default_vignette: false
+
+  consistency_anchors:
+    - "Midnight Navy (#0B1220) or equally dark background in every scene"
+    - "Signal Mint (#39D0B3) appears in every frame as the neutral system accent"
+    - "Pressure Pink (#FF3B72) is reserved for danger, coercion, conflict, concentration of power, or emphasis"
+    - "Amber Gold (#FFB84D) is reserved for trade, finance, extraction, resource flows, or economic metrics"
+    - "Network Blue (#4DAFFF) is reserved for technology, cyber, logistics, telecom, and infrastructure"
+    - "No white or light backgrounds"
+    - "No photorealistic elements"
+    - "No texture, grain, painterly strokes, or atmospheric clutter"
+    - "Maximum 5 visible colors on screen at once, excluding background and text"
+    - "Every frame should feel like part of a coherent documentary world"
+
+  multi_image_per_scene: false
+  images_per_scene: 1
+
+  flux_defaults:
+    steps: 28
+    guidance: 3.5
+    width: 1024
+    height: 576
+
+scene_system:
+  primary_scene_types:
+    - "establishing_world_scene"
+    - "map_sequence"
+    - "infrastructure_cross_section"
+    - "institutional_confrontation_scene"
+    - "trade_flow_scene"
+    - "resource_extraction_scene"
+    - "cyber_network_scene"
+    - "factory_or_supply_chain_scene"
+    - "consumer_consequence_scene"
+    - "symbolic_mechanism_scene"
+  support_scene_types:
+    - "stat_card"
+    - "comparison_frame"
+    - "flow_diagram"
+    - "timeline"
+    - "key_term_overlay"
+
+  usage_rules:
+    establishing_world_scene: "Use at the start of sections to ground the viewer in place, scale, and stakes."
+    map_sequence: "Use to orient geography, chokepoints, alliances, routes, and dependencies. Keep animated and simplified."
+    infrastructure_cross_section: "Use to explain how a system physically works: cables, ports, data centers, pipelines, grids, chip fabs."
+    institutional_confrontation_scene: "Use when states, corporations, blocs, or agencies are in conflict or negotiation."
+    trade_flow_scene: "Use to show movement of goods, money, energy, or data between regions."
+    resource_extraction_scene: "Use for minerals, oil, gas, manufacturing inputs, and upstream power."
+    cyber_network_scene: "Use for digital dependence, attack surfaces, routing, surveillance, or platform leverage."
+    factory_or_supply_chain_scene: "Use for production bottlenecks, concentration, industrial fragility, and capacity."
+    consumer_consequence_scene: "Use to connect abstract system shifts to everyday costs, shortages, prices, jobs, or constraints."
+    symbolic_mechanism_scene: "Use simple metaphors only when they clarify. Never use them as filler."
+    stat_card: "Use briefly for important numbers. Never let stats replace narrative."
+    comparison_frame: "Use for before/after, one side vs another, or visible story vs real mechanism."
+    flow_diagram: "Use only when the movement of influence, goods, capital, or control cannot be shown more clearly through a scene."
+    timeline: "Use sparingly for sequence, escalation, or historical compression."
+    key_term_overlay: "Use only when defining important terms the audience must understand to follow the story."
+
+maps:
+  style: "Simplified strategic map language, not atlas detail. Strong readability over realism."
+  land_color: "#1D2C2A"
+  sea_color: "#0E1A2B"
+  route_colors:
+    neutral: "#39D0B3"
+    conflict: "#FF3B72"
+    economic: "#FFB84D"
+    infrastructure: "#4DAFFF"
+  rules:
+    - "Only include geography relevant to the current explanation"
+    - "Animate routes, bottlenecks, and directionality"
+    - "Use glow-free highlighting"
+    - "Avoid visual overload with labels"
+    - "Maps should reveal leverage, not just location"
+
+characters_and_actors:
+  style: "Stylized editorial figures and institutional symbols, not comedic cartoon characters"
+  human_figures:
+    fill: "#2A3142"
+    accent_usage: "Mint for neutral/structural roles, Pink for coercive or high-pressure roles"
+  institution_symbols:
+    - "parliament building"
+    - "factory silhouette"
+    - "cargo ship"
+    - "satellite"
+    - "server rack"
+    - "oil barrel"
+    - "port crane"
+    - "microchip"
+    - "bank tower"
+    - "container"
+  rules:
+    - "Represent people as role-bearers or decision-makers, not personality caricatures"
+    - "Represent institutions through repeatable symbols"
+    - "Keep faces minimal unless a specific person matters to the story"
+    - "Never let character animation become slapstick"
+
+overlays:
+  stat_card:
+    bg: "#151D2E"
+    border: "#39D0B3"
+    radius: 8
+    shadow: "0 4px 24px rgba(0,0,0,0.38)"
+  key_term:
+    bg: "#151D2E"
+    text: "#39D0B3"
+    radius: 4
+  emphasis_term:
+    bg: "#2B121A"
+    text: "#FF3B72"
+    radius: 4
+  data_callout:
+    bg: "#151D2E"
+    text: "#FFB84D"
+    radius: 4
+  code_block:
+    bg: "#0B1220"
+    text: "#E9EDF2"
+    highlight: "#39D0B3"
+  network_node:
+    fill: "#2A3142"
+    stroke: "#39D0B3"
+    stroke_width: 2
+    radius: 40
+
+quality_rules:
+  - "Every frame must prioritize clarity first"
+  - "Every scene must communicate a concrete idea, not just atmosphere"
+  - "No white or light backgrounds"
+  - "Signal Mint must appear in every frame"
+  - "Use diagrams only when a scene cannot explain the mechanism clearly enough"
+  - "Charts and stat cards are support tools, not primary storytelling devices"
+  - "All visuals must stay readable on mobile"
+  - "No photorealism, no texture, no visual noise"
+  - "Frames should feel cinematic and intentional, not like a slide deck"
+  - "Whenever possible, connect systems to physical places, objects, or consequences"
+
+chart_palette:
+  - "#39D0B3"   # Signal Mint — primary
+  - "#FF3B72"   # Pressure Pink — conflict / power
+  - "#FFB84D"   # Amber Gold — economic
+  - "#4DAFFF"   # Network Blue — infrastructure / tech
+  - "#E9EDF2"   # Soft White — labels
+  - "#66728A"   # Steel Gray — grid lines
+
+color_rules:
+  harmony_type: "split-complementary"
+  contrast_validation: true
+  colorblind_safe: true
+  background_always: "#0B1220"
+  reject_if_light_background: true

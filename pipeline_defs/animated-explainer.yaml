@@ -55,6 +55,7 @@ compatible_playbooks:
     - flat-motion-graphics
   also_works:
     - minimalist-diagram
+    - asymmetric
   custom_allowed: true
 
 stages:

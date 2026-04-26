@@ -1,0 +1,92 @@
+identity:
+  name: "Cyber Noir"
+  category: cinematic-documentary
+  mood: cyber-noir, high-contrast, prestige, technical elegance
+  pace: moderate
+  best_for: "Prestige tech documentaries, high-contrast data-heavy explainers, cyber/security narratives"
+
+visual_language:
+  color_palette:
+    background: "#0A0A0B" # Obsidian
+    surface: "#111113"
+    primary: "#FFD700"    # Gold — prestige, wealth, power
+    accent: "#00F0FF"     # Cyber Cyan — code, data, future-tech
+    text: "#FFFFFF"
+    muted: "#A0A0A0"
+  composition: "Minimalist, high-energy motion graphics. Data-heavy but readable. Sharp hierarchy and strong contrast."
+  texture: "Mostly flat with controlled radial glows for emphasis. No generic gradients or noisy texture."
+
+typography:
+  headings:
+    font: "Space Grotesk"
+    weight: 700
+    tracking: "-0.03em"
+  body:
+    font: "Inter"
+    weight: 400
+    line_height: 1.5
+  code:
+    font: "Fira Code"
+    weight: 400
+  stat_card:
+    font: "Space Grotesk"
+    weight: 800
+    size_multiplier: 3.8
+  scale_system: "major_third"
+  weight_matrix:
+    title: 800
+    heading: 700
+    body: 400
+    caption: 300
+
+motion:
+  transitions: [cut, fade, glitch]
+  animation_style: "sharp, high-contrast, occasional micro-glitch accents; glows pulse subtly, never bloomy"
+  pacing_rules:
+    min_scene_hold_seconds: 1.8
+    max_scene_hold_seconds: 7.5
+    text_card_hold_seconds: 2.7
+    stat_card_hold_seconds: 2.2
+    transition_duration_seconds: 0.28
+  entrance: "glow-in + fade (opacity 0->1 over 0.28s)"
+  exit: "fade (opacity 1->0 over 0.22s)"
+
+audio:
+  voice_style: "confident, measured, technical; prestige documentary tone"
+  music_mood: "dark synth pulse, restrained cyber tension, minimal percussion"
+  music_volume: 0.11
+  sfx_style: "subtle UI ticks, glitch stutters on emphasis, low impact hits on reveals"
+  ducking_threshold_db: -4
+
+asset_generation:
+  image_prompt_prefix: >
+    cyber-noir prestige documentary, high-contrast obsidian background (#0A0A0B),
+    gold highlights (#FFD700) and cyber cyan accents (#00F0FF), minimalist technical elegance,
+    readable data overlays, sharp edges, controlled glow accents, cinematic composition
+  image_negative_prompt: >
+    watercolor, painterly, film grain, heavy noise, soft pastel, white background,
+    generic gradients, bloom, lens flare, friendly rounded UI, low contrast
+  consistency_anchors:
+    - "Obsidian (#0A0A0B) or equally dark background in every scene"
+    - "Gold (#FFD700) used for prestige/power themes and key hierarchy moments"
+    - "Cyber Cyan (#00F0FF) used for code/data/tech signifiers and secondary emphasis"
+    - "High contrast text readability (no low-contrast gray-on-black)"
+    - "Controlled glows only (no bloom, no lens flare)"
+
+quality_rules:
+  - "Maintain strong contrast for all text and numbers"
+  - "Keep the frame minimalist: one dominant idea per shot"
+  - "No friendly rounded shapes; prefer sharp or slightly beveled corners"
+  - "Glows are accents, not the composition"
+
+chart_palette:
+  - "#FFD700"
+  - "#00F0FF"
+  - "#FFFFFF"
+  - "#A0A0A0"
+
+color_rules:
+  harmony_type: "complementary"
+  contrast_validation: true
+  colorblind_safe: true
+

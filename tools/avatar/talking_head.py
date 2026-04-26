@@ -9,6 +9,7 @@ from __future__ import annotations
 import glob
 import os
 import shutil
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -113,7 +114,13 @@ class TalkingHead(BaseTool):
         # 1. SADTALKER_PATH env var pointing to cloned repo
         sadtalker_path = os.environ.get("SADTALKER_PATH", "")
         if sadtalker_path and Path(sadtalker_path).is_dir():
-            return ToolStatus.AVAILABLE
+            sadtalker_dir = Path(sadtalker_path)
+            inference = sadtalker_dir / "inference.py"
+            ckpt_dir = sadtalker_dir / "checkpoints"
+            has_any_ckpt = ckpt_dir.is_dir() and any(ckpt_dir.iterdir())
+            if inference.is_file() and has_any_ckpt:
+                return ToolStatus.AVAILABLE
+            return ToolStatus.DEGRADED
 
         # 2. Installed as a Python package
         try:
@@ -197,7 +204,7 @@ class TalkingHead(BaseTool):
 
         # Build SadTalker inference command
         cmd = [
-            "python", str(sadtalker_dir / "inference.py"),
+            sys.executable, str(sadtalker_dir / "inference.py"),
             "--driven_audio", str(audio_path),
             "--source_image", str(image_path),
             "--result_dir", str(result_dir),

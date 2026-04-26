@@ -178,7 +178,14 @@ class VideoCompose(BaseTool):
                     "two_pass_encode": {"type": "boolean", "default": False},
                 },
             },
-            "codec": {"type": "string", "default": "libx264"},
+            "codec": {
+                "type": "string",
+                "default": "auto",
+                "description": (
+                    "Video codec for FFmpeg-based operations. "
+                    "`auto` prefers NVENC (h264_nvenc) when available, else libx264."
+                ),
+            },
             "crf": {"type": "integer", "default": 23},
             "preset": {"type": "string", "default": "medium"},
         },
@@ -331,6 +338,92 @@ class VideoCompose(BaseTool):
         return result
 
     _IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".tif", ".webp"}
+    _nvenc_available_cache: Optional[bool] = None
+
+    @classmethod
+    def _nvenc_available(cls) -> bool:
+        if cls._nvenc_available_cache is not None:
+            return cls._nvenc_available_cache
+        try:
+            proc = subprocess.run(
+                ["ffmpeg", "-hide_banner", "-encoders"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+                check=False,
+            )
+            hay = (proc.stdout or "") + "\n" + (proc.stderr or "")
+            has_encoder = "h264_nvenc" in hay or "hevc_nvenc" in hay
+            has_device = Path("/dev/nvidia0").exists() or Path("/dev/nvidiactl").exists()
+            has_smi = False
+            try:
+                smi = subprocess.run(
+                    ["nvidia-smi", "-L"],
+                    capture_output=True,
+                    text=True,
+                    timeout=3,
+                    check=False,
+                )
+                has_smi = smi.returncode == 0 and "GPU" in (smi.stdout or "")
+            except FileNotFoundError:
+                has_smi = False
+            cls._nvenc_available_cache = bool(has_encoder and (has_device or has_smi))
+        except Exception:
+            cls._nvenc_available_cache = False
+        return cls._nvenc_available_cache
+
+    @staticmethod
+    def _nvenc_preset(preset: str) -> str:
+        p = (preset or "").strip().lower()
+        if p in {"p1", "p2", "p3", "p4", "p5", "p6", "p7"}:
+            return p
+        # Map x264-ish presets to NVENC's p1..p7 speed/quality ladder.
+        mapping = {
+            "veryslow": "p7",
+            "slower": "p7",
+            "slow": "p6",
+            "medium": "p5",
+            "fast": "p4",
+            "faster": "p3",
+            "veryfast": "p2",
+            "superfast": "p2",
+            "ultrafast": "p1",
+        }
+        return mapping.get(p, "p5")
+
+    @classmethod
+    def _resolve_video_codec(cls, codec: str | None) -> str:
+        c = (codec or "auto").strip().lower()
+        if c in {"auto", "gpu"}:
+            return "h264_nvenc" if cls._nvenc_available() else "libx264"
+        # Accept common alias from `ffmpeg -encoders`.
+        if c in {"nvenc", "nvenc_h264"}:
+            return "h264_nvenc"
+        return codec or "libx264"
+
+    @classmethod
+    def _ffmpeg_video_encode_args(cls, codec: str, crf: int, preset: str) -> list[str]:
+        """Return codec args for ffmpeg, handling nvenc vs libx264 differences.
+
+        NVENC does not support `-crf`, so we interpret `crf` as `-cq:v` when
+        using NVENC (roughly analogous quality scale).
+        """
+        c = codec.strip().lower()
+        if c in {"h264_nvenc", "hevc_nvenc"}:
+            return [
+                "-c:v",
+                c,
+                "-preset",
+                cls._nvenc_preset(preset),
+                "-rc",
+                "vbr",
+                "-cq",
+                str(int(crf)),
+                "-b:v",
+                "0",
+            ]
+        # Default to x264-style settings.
+        return ["-c:v", codec, "-crf", str(int(crf)), "-preset", preset]
 
     @staticmethod
     def _is_image(path: Path) -> bool:
@@ -378,7 +471,7 @@ class VideoCompose(BaseTool):
         output_path.parent.mkdir(parents=True, exist_ok=True)
         audio_path = inputs.get("audio_path")
         subtitle_path = inputs.get("subtitle_path")
-        codec = inputs.get("codec", "libx264")
+        codec = self._resolve_video_codec(inputs.get("codec"))
         crf = inputs.get("crf", 23)
         preset = inputs.get("preset", "medium")
         profile_name = inputs.get("profile")
@@ -488,13 +581,8 @@ class VideoCompose(BaseTool):
                     if af_parts:
                         cmd.extend(["-filter:a", ",".join(af_parts)])
 
-                    cmd.extend([
-                        "-c:v", codec,
-                        "-crf", str(crf),
-                        "-preset", preset,
-                        "-pix_fmt", "yuv420p",
-                        "-r", "30",
-                    ])
+                    cmd.extend(self._ffmpeg_video_encode_args(codec, crf, preset))
+                    cmd.extend(["-pix_fmt", "yuv420p", "-r", "30"])
 
                     # Audio handling: some source clips have no audio stream
                     # (Pexels stock often ships silent). If we unconditionally
@@ -524,9 +612,9 @@ class VideoCompose(BaseTool):
                         cmd.extend([
                             "-map", "0:v:0",
                             "-map", "1:a:0",
-                            "-c:v", codec,
-                            "-crf", str(crf),
-                            "-preset", preset,
+                        ])
+                        cmd.extend(self._ffmpeg_video_encode_args(codec, crf, preset))
+                        cmd.extend([
                             "-pix_fmt", "yuv420p",
                             "-r", "30",
                             "-c:a", "aac",
@@ -589,7 +677,7 @@ class VideoCompose(BaseTool):
             if needs_reencode:
                 if vfilters:
                     cmd.extend(["-vf", ",".join(vfilters)])
-                cmd.extend(["-c:v", codec, "-crf", str(crf), "-preset", preset])
+                cmd.extend(self._ffmpeg_video_encode_args(codec, crf, preset))
                 cmd.extend(profile_flags)
             else:
                 cmd.extend(["-c:v", "copy"])
@@ -1978,14 +2066,15 @@ class VideoCompose(BaseTool):
         style = inputs.get("subtitle_style", {})
         ass_style = self._build_subtitle_style(style)
         sub_escaped = str(subtitle_path.resolve()).replace("\\", "/").replace(":", "\\:")
-        codec = inputs.get("codec", "libx264")
+        codec = self._resolve_video_codec(inputs.get("codec"))
         crf = inputs.get("crf", 23)
+        preset = inputs.get("preset", "medium")
 
         cmd = [
             "ffmpeg", "-y",
             "-i", str(input_path),
             "-vf", f"subtitles='{sub_escaped}':force_style='{ass_style}'",
-            "-c:v", codec, "-crf", str(crf),
+            *self._ffmpeg_video_encode_args(codec, crf, preset),
             "-c:a", "copy",
             str(output_path),
         ]
@@ -2006,8 +2095,9 @@ class VideoCompose(BaseTool):
         input_path = Path(inputs["input_path"])
         overlays = inputs.get("overlays", [])
         output_path = Path(inputs.get("output_path", str(input_path.with_stem(f"{input_path.stem}_overlay"))))
-        codec = inputs.get("codec", "libx264")
+        codec = self._resolve_video_codec(inputs.get("codec"))
         crf = inputs.get("crf", 23)
+        preset = inputs.get("preset", "medium")
 
         if not input_path.exists():
             return ToolResult(success=False, error=f"Input not found: {input_path}")
@@ -2056,7 +2146,8 @@ class VideoCompose(BaseTool):
         cmd.extend(input_args)
         cmd.extend(["-filter_complex", filter_complex])
         cmd.extend(["-map", f"[{prev_label}]", "-map", "0:a?"])
-        cmd.extend(["-c:v", codec, "-crf", str(crf), "-c:a", "copy"])
+        cmd.extend(self._ffmpeg_video_encode_args(codec, crf, preset))
+        cmd.extend(["-c:a", "copy"])
         cmd.append(str(output_path))
 
         self.run_command(cmd)
@@ -2075,7 +2166,7 @@ class VideoCompose(BaseTool):
         """Re-encode video with a specific profile/codec settings."""
         input_path = Path(inputs["input_path"])
         output_path = Path(inputs.get("output_path", str(input_path.with_stem(f"{input_path.stem}_encoded"))))
-        codec = inputs.get("codec", "libx264")
+        codec = self._resolve_video_codec(inputs.get("codec"))
         crf = inputs.get("crf", 23)
         preset = inputs.get("preset", "medium")
         profile_name = inputs.get("profile")
@@ -2086,7 +2177,7 @@ class VideoCompose(BaseTool):
         cmd = [
             "ffmpeg", "-y",
             "-i", str(input_path),
-            "-c:v", codec, "-crf", str(crf), "-preset", preset,
+            *self._ffmpeg_video_encode_args(codec, crf, preset),
             "-c:a", "aac", "-b:a", "192k",
         ]
 
@@ -2153,13 +2244,16 @@ class VideoCompose(BaseTool):
 
         # Layer 2: edit_decisions subtitle style
         if edit_decisions:
-            ed_style = edit_decisions.get("subtitles", {}).get("style", {})
-            for k, v in ed_style.items():
-                if v is not None:
-                    resolved[k] = v
+            subtitles = edit_decisions.get("subtitles", {})
+            if isinstance(subtitles, dict):
+                ed_style = subtitles.get("style", {})
+                if isinstance(ed_style, dict):
+                    for k, v in ed_style.items():
+                        if v is not None:
+                            resolved[k] = v
 
         # Layer 3: Explicit override (highest priority)
-        if explicit_style:
+        if isinstance(explicit_style, dict):
             for k, v in explicit_style.items():
                 if v is not None:
                     resolved[k] = v

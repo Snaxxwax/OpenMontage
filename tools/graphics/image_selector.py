@@ -284,8 +284,19 @@ class ImageSelector(BaseTool):
             or inputs.get("image_urls")
             or inputs.get("image_paths")
         )
+        wants_custom_workflow = bool(inputs.get("workflow_json") or inputs.get("workflow_path"))
         if not wants_edit:
-            return candidates
+            # Respect explicit readiness when a provider publishes it (e.g. local backends
+            # that need specific models for their bundled default workflow).
+            filtered: list[BaseTool] = []
+            for tool in candidates:
+                supports = getattr(tool, "supports", {})
+                if "text_to_image" in supports:
+                    if supports.get("text_to_image") or (wants_custom_workflow and supports.get("custom_workflow")):
+                        filtered.append(tool)
+                    continue
+                filtered.append(tool)
+            return filtered or candidates
 
         filtered: list[BaseTool] = []
         for tool in candidates:

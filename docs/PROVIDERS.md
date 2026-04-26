@@ -530,11 +530,33 @@ piper --download-dir ~/.piper/models --model en_US-lessac-medium
 
 ---
 
+### Fish Speech — Local GPU TTS Server
+
+> **High-quality local TTS via a separate Fish Speech server.** Best when you already run Fish Speech on your workstation.
+
+**Tool:** `fish_speech_tts`
+**Runtime:** Local GPU server
+**Env vars:** `FISH_SPEECH_BASE_URL` (optional, defaults to `http://127.0.0.1:8080`), `FISH_SPEECH_API_KEY` (optional)
+
+#### Setup
+
+```bash
+# Run Fish Speech server separately (see official docs)
+export FISH_SPEECH_BASE_URL=http://127.0.0.1:8080
+# Optional:
+# export FISH_SPEECH_API_KEY=your_key
+```
+
+Supports `voice_id`/`reference_id` plus reference-audio prompting (`reference_audio_paths` + `reference_texts`) through the `tts_selector` path.
+
+---
+
 ### Local Video Generation (GPU Required)
 
 > **Free AI video generation.** Requires an NVIDIA GPU with sufficient VRAM.
 
-**Tools:** `wan_video`, `hunyuan_video`, `cogvideo_video`, `ltx_video_local`
+**Tools (Diffusers):** `wan_video`, `hunyuan_video`, `cogvideo_video`, `ltx_video_local`
+**Optional (ComfyUI backend):** `comfyui_video` is the default ComfyUI path (bundled WAN 2.2 t2v/i2v + custom workflows). `comfyui_wan_video` is a WAN TI2V-focused **legacy** flow and should be used only when explicitly selected. Set `COMFYUI_SERVER_URL` if not running on `http://127.0.0.1:8188`. On many ComfyUI installs the available WAN weight is **TI2V**, so `operation=image_to_video` is recommended for clear results.
 **Runtime:** Local GPU (CUDA required)
 **Env vars:** `VIDEO_GEN_LOCAL_ENABLED=true`, `VIDEO_GEN_LOCAL_MODEL=<model>`
 
@@ -546,6 +568,15 @@ make install-gpu
 # Or manually:
 pip install diffusers transformers accelerate torch pillow requests
 
+# Optional alternative: if you already run ComfyUI locally,
+# you can use `comfyui_video` and skip diffusers model downloads.
+# (Use `comfyui_wan_video` only as an explicit legacy fallback.)
+# COMFYUI_SERVER_URL=http://127.0.0.1:8188
+
+# 1b. Verify CUDA + PyTorch are working (must print: cuda True)
+python3 -c "import torch; print('cuda', torch.cuda.is_available(), 'torch', torch.__version__, 'cuda_ver', torch.version.cuda)"
+# If cuda is False, reinstall PyTorch with a CUDA wheel from pytorch.org and re-run make install-gpu.
+
 # 2. Enable local generation in .env
 VIDEO_GEN_LOCAL_ENABLED=true
 
@@ -556,6 +587,14 @@ VIDEO_GEN_LOCAL_MODEL=hunyuan-1.5      # 12GB+ VRAM
 VIDEO_GEN_LOCAL_MODEL=ltx2-local       # 8GB+ VRAM (fastest)
 VIDEO_GEN_LOCAL_MODEL=cogvideo-5b      # 10GB+ VRAM
 VIDEO_GEN_LOCAL_MODEL=cogvideo-2b      # 6GB+ VRAM (lightest)
+```
+
+**Memory note:** first-run local generation can temporarily use a lot of system RAM while loading weights. If you see host RAM spikes, prefer a smaller model (e.g. `wan2.1-1.3b`) and avoid CPU offload when your GPU has enough VRAM.
+
+**ComfyUI troubleshooting:** if `comfyui_wan_video` fails while writing `/opt/ComfyUI/temp/metadata.txt`, fix the temp dir permissions:
+
+```bash
+docker exec comfyui bash -lc 'chown -R user:ai-dock /opt/ComfyUI/temp && chmod -R g+rwX /opt/ComfyUI/temp'
 ```
 
 #### Model Comparison
@@ -641,6 +680,7 @@ These tools require only FFmpeg or Python packages — no GPU, no API key.
 | **Pexels** | `PEXELS_API_KEY` | `pexels_image`, `pexels_video` | Free |
 | **Pixabay** | `PIXABAY_API_KEY` | `pixabay_image`, `pixabay_video` | Free |
 | **Piper** | — (install only) | `piper_tts` | Free |
+| **Fish Speech (Local)** | `FISH_SPEECH_BASE_URL` (+ optional `FISH_SPEECH_API_KEY`) | `fish_speech_tts` | Free (GPU server required) |
 | **Google** | `GOOGLE_API_KEY` | `google_tts`, `google_imagen` | Free tier + paid |
 | **ElevenLabs** | `ELEVENLABS_API_KEY` | `elevenlabs_tts`, `music_gen` | Free tier + paid |
 | **fal.ai** | `FAL_KEY` | `flux_image`, `recraft_image`, `kling_video`, `veo_video`, `minimax_video` | Pay-as-you-go |
@@ -651,6 +691,7 @@ These tools require only FFmpeg or Python packages — no GPU, no API key.
 | **HeyGen** | `HEYGEN_API_KEY` | `heygen_video` | Pay-as-you-go |
 | **Suno** | `SUNO_API_KEY` | `suno_music` | Pay-as-you-go |
 | **Local GPU** | `VIDEO_GEN_LOCAL_ENABLED` | `wan_video`, `hunyuan_video`, `cogvideo_video`, `ltx_video_local` | Free (GPU required) |
+| **ComfyUI (Local)** | `COMFYUI_SERVER_URL` | `comfyui_image`, `comfyui_video`, `comfyui_audio`, `comfyui_wan_video` *(legacy explicit opt-in)* | Free (GPU required) |
 | **Local Diffusion** | — (install only) | `local_diffusion` | Free (GPU required) |
 | **Modal** | `MODAL_LTX2_ENDPOINT_URL` | `ltx_video_modal` | Self-hosted cloud |
 

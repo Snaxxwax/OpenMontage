@@ -152,7 +152,7 @@ Selectors route based on: user preference when explicitly set, then scored ranki
 
 **Analysis (4):** transcriber (WhisperX), scene_detect, frame_sampler, video_understand (CLIP/BLIP-2)
 
-**Audio (8):** elevenlabs_tts, google_tts, openai_tts, piper_tts, tts_selector, music_gen, audio_mixer, audio_enhance
+**Audio (9):** elevenlabs_tts, google_tts, openai_tts, fish_speech_tts, piper_tts, tts_selector, music_gen, audio_mixer, audio_enhance
 
 **Avatar (2):** talking_head (SadTalker/MuseTalk), lip_sync (Wav2Lip)
 
@@ -162,7 +162,7 @@ Selectors route based on: user preference when explicitly set, then scored ranki
 
 **Subtitle (1):** subtitle_gen
 
-**Video (18):** grok_video, heygen_video, higgsfield_video, veo_video, kling_video, runway_video, minimax_video, wan_video, hunyuan_video, cogvideo_video, ltx_video_local, ltx_video_modal, pexels_video, pixabay_video, video_selector, video_compose (FFmpeg), video_stitch, video_trimmer
+**Video (19):** grok_video, heygen_video, higgsfield_video, veo_video, kling_video, runway_video, minimax_video, wan_video, comfyui_wan_video (legacy, explicit opt-in), hunyuan_video, cogvideo_video, ltx_video_local, ltx_video_modal, pexels_video, pixabay_video, video_selector, video_compose (FFmpeg), video_stitch, video_trimmer
 
 ---
 
@@ -378,6 +378,7 @@ All config is validated via Pydantic models in `lib/config_model.py`.
 |----------|---------|---------|
 | `ELEVENLABS_API_KEY` | elevenlabs_tts, music_gen | TTS, music, sound effects |
 | `OPENAI_API_KEY` | openai_tts, openai_image | TTS fallback, DALL-E 3 |
+| `FISH_SPEECH_BASE_URL` (+ optional `FISH_SPEECH_API_KEY`) | fish_speech_tts | Local Fish Speech server endpoint (+ optional bearer auth) |
 | `XAI_API_KEY` | grok_image, grok_video | Grok image editing/generation, Grok video generation |
 | `FAL_KEY` | flux_image, kling_video, veo_video, minimax_video, recraft_image | fal.ai hosted models (FLUX, Veo, Kling, MiniMax, Recraft) |
 | `HEYGEN_API_KEY` | heygen_video | Multi-provider video generation |
@@ -389,6 +390,7 @@ All config is validated via Pydantic models in `lib/config_model.py`.
 | `MODAL_LTX2_ENDPOINT_URL` | ltx_video_modal | Self-hosted LTX-2 |
 | `VIDEO_GEN_LOCAL_ENABLED` | local video tools | Enable local GPU generation |
 | `VIDEO_GEN_LOCAL_MODEL` | wan, hunyuan, ltx, cogvideo | Select local model |
+| `COMFYUI_SERVER_URL` (preferred, `COMFYUI_BASE_URL` legacy alias) | comfyui_image, comfyui_video, comfyui_audio, comfyui_wan_video | Use a local ComfyUI server as the execution backend |
 
 ---
 
@@ -480,7 +482,7 @@ tests/
 
 **Optional (extend capabilities):**
 - Node.js (for Remotion composer)
-- GPU + CUDA (for local video/image generation)
+- GPU + CUDA (for local video/image generation). Verify with: `python3 -c "import torch; print(torch.cuda.is_available(), torch.version.cuda)"`
 - Piper (offline TTS)
 - ManimCE (math animations)
 - Mermaid CLI (diagram generation)

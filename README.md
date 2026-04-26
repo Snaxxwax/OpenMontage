@@ -25,7 +25,7 @@
 <p align="center">
   <a href="https://www.youtube.com/@OpenMontage"><img src="https://img.shields.io/badge/YouTube-%40OpenMontage-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube"></a>
   <a href="https://x.com/calesthioailabs"><img src="https://img.shields.io/badge/X-%40calesthioailabs-111111?style=for-the-badge&logo=x&logoColor=white" alt="X"></a>
-  <a href="https://github.com/calesthio/OpenMontage/discussions"><img src="https://img.shields.io/badge/Community-GitHub%20Discussions-0b1220?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Discussions"></a>
+  <a href="https://github.com/Snaxxwax/OpenMontage/discussions"><img src="https://img.shields.io/badge/Community-GitHub%20Discussions-0b1220?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Discussions"></a>
 </p>
 
 ---
@@ -107,13 +107,13 @@ Works with **Claude Code, Cursor, Copilot, Windsurf, Codex** — any AI coding a
 
 - **Python 3.10+** — [python.org](https://www.python.org/downloads/)
 - **FFmpeg** — `brew install ffmpeg` / `sudo apt install ffmpeg` / [ffmpeg.org](https://ffmpeg.org/download.html)
-- **Node.js 18+** — [nodejs.org](https://nodejs.org/)
+- **Node.js 18+** — [nodejs.org](https://nodejs.org/) *(HyperFrames requires Node.js ≥ 22)*
 - **An AI coding assistant** — Claude Code, Cursor, Copilot, Windsurf, or Codex
 
 ### Install & Run
 
 ```bash
-git clone https://github.com/calesthio/OpenMontage.git
+git clone https://github.com/Snaxxwax/OpenMontage.git
 cd OpenMontage
 make setup
 ```
@@ -145,10 +145,14 @@ This repo is built for agentic operation. If you're an OpenClaw-style agent, her
 2. **Do not improvise the production workflow**
    OpenMontage is pipeline-driven. Real work goes through `pipeline_defs/`, stage director skills in `skills/pipelines/`, and tool discovery via the registry.
 3. **Check the actual capability envelope**
-   Run:
+   Start with the human-ready summary:
    ```bash
-   python -c "from tools.tool_registry import registry; import json; registry.discover(); print(json.dumps(registry.support_envelope(), indent=2))"
-   python -c "from tools.tool_registry import registry; import json; registry.discover(); print(json.dumps(registry.provider_menu(), indent=2))"
+    python3 -c "from tools.tool_registry import registry; import json; registry.discover(); print(json.dumps(registry.provider_menu_summary(), indent=2))"
+   ```
+   If you need the full per-tool detail (and only then the raw envelope for debugging):
+   ```bash
+    python3 -c "from tools.tool_registry import registry; import json; registry.discover(); print(json.dumps(registry.provider_menu(), indent=2))"
+    python3 -c "from tools.tool_registry import registry; import json; registry.discover(); print(json.dumps(registry.support_envelope(), indent=2))"
    ```
 4. **Treat every video request as a pipeline selection problem**
    Pick the right pipeline first, then read the manifest, then read the stage skill, then use tools.
@@ -174,6 +178,8 @@ ELEVENLABS_API_KEY=your-key    # Premium TTS, AI music, sound effects
 OPENAI_API_KEY=your-key        # OpenAI TTS, DALL-E 3 images
 XAI_API_KEY=your-key           # xAI Grok image edits/generation + Grok video generation
 GOOGLE_API_KEY=your-key        # Google Imagen images, Google TTS (700+ voices)
+FISH_SPEECH_BASE_URL=http://127.0.0.1:8080  # Optional: local Fish Speech TTS server
+# FISH_SPEECH_API_KEY=your-key  # Optional: only if your Fish server requires auth
 
 # More video providers:
 HEYGEN_API_KEY=your-key        # HeyGen — VEO, Sora, Runway, Kling via single gateway
@@ -186,9 +192,16 @@ RUNWAY_API_KEY=your-key        # Runway Gen-4 direct
 ```bash
 make install-gpu
 
+# Verify CUDA + PyTorch are working (must print: cuda True)
+python3 -c "import torch; print('cuda', torch.cuda.is_available(), 'torch', torch.__version__, 'cuda_ver', torch.version.cuda)"
+
 # Then add to .env:
 VIDEO_GEN_LOCAL_ENABLED=true
 VIDEO_GEN_LOCAL_MODEL=wan2.1-1.3b  # or wan2.1-14b, hunyuan-1.5, ltx2-local, cogvideo-5b
+
+# Optional: if you already run ComfyUI locally:
+# COMFYUI_SERVER_URL=http://127.0.0.1:8188
+# (enables `comfyui_image`, `comfyui_video`, and `comfyui_audio`; legacy `comfyui_wan_video` is explicit opt-in)
 ```
 
 </details>
@@ -624,11 +637,11 @@ See `docs/ARCHITECTURE.md` for the full technical reference, `docs/PROVIDERS.md`
 
 ### Join the Community
 
-We use [GitHub Discussions](https://github.com/calesthio/OpenMontage/discussions) to share work and ideas:
+We use [GitHub Discussions](https://github.com/Snaxxwax/OpenMontage/discussions) to share work and ideas:
 
-- **[Show and Tell](https://github.com/calesthio/OpenMontage/discussions/categories/show-and-tell)** — Share videos you've made, prompts that worked well, or creative workflows you've discovered
-- **[Ideas](https://github.com/calesthio/OpenMontage/discussions/categories/ideas)** — Suggest new pipelines, tools, style playbooks, or integrations
-- **[Q&A](https://github.com/calesthio/OpenMontage/discussions/categories/q-a)** — Ask questions about setup, pipelines, or troubleshooting
+- **[Show and Tell](https://github.com/Snaxxwax/OpenMontage/discussions/categories/show-and-tell)** — Share videos you've made, prompts that worked well, or creative workflows you've discovered
+- **[Ideas](https://github.com/Snaxxwax/OpenMontage/discussions/categories/ideas)** — Suggest new pipelines, tools, style playbooks, or integrations
+- **[Q&A](https://github.com/Snaxxwax/OpenMontage/discussions/categories/q-a)** — Ask questions about setup, pipelines, or troubleshooting
 
 Made something cool? Post it in Show and Tell — we'd love to see what you build.
 
@@ -638,7 +651,7 @@ Made something cool? Post it in Show and Tell — we'd love to see what you buil
 
 For updates, releases, and behind-the-scenes build notes, follow [@calesthioailabs](https://x.com/calesthioailabs).
 
-For bugs, feature requests, and workflow discussions, use [GitHub Issues](https://github.com/calesthio/OpenMontage/issues) and [GitHub Discussions](https://github.com/calesthio/OpenMontage/discussions) so everything stays visible and actionable.
+For bugs, feature requests, and workflow discussions, use [GitHub Issues](https://github.com/Snaxxwax/OpenMontage/issues) and [GitHub Discussions](https://github.com/Snaxxwax/OpenMontage/discussions) so everything stays visible and actionable.
 
 ---
 

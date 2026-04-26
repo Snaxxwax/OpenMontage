@@ -128,9 +128,12 @@ class BgRemove(BaseTool):
 
         input_image = Image.open(input_path)
 
+        # rembg v2 expects model selection via an explicit session.
+        # Passing model_name directly can break across rembg versions.
+        session = rembg.new_session(model_name)
         result_image = rembg.remove(
             input_image,
-            model_name=model_name,
+            session=session,
             alpha_matting=alpha_matting,
         )
 
