@@ -1,0 +1,12 @@
+audits/openmontage-diff-audit/00_repo_state.md
+audits/openmontage-diff-audit/01_diff_stat.txt
+audits/openmontage-diff-audit/02_name_status.txt
+audits/openmontage-diff-audit/03_full_diff.patch
+audits/openmontage-diff-audit/04_commit_log.txt
+audits/openmontage-diff-audit/05_untracked_files.txt
+pipelines/chip-factory-runs-world/checkpoint_assets.json
+pipelines/chip-factory-runs-world/checkpoint_proposal.json
+pipelines/chip-factory-runs-world/checkpoint_research.json
+pipelines/chip-factory-runs-world/checkpoint_scene_plan.json
+pipelines/chip-factory-runs-world/checkpoint_script.json
+server.pid

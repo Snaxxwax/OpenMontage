@@ -44,7 +44,7 @@ class VideoTrimmer(BaseTool):
     )
     agent_skills = ["ffmpeg", "video_toolkit"]
 
-    capabilities = ["cut", "trim", "speed_adjust", "concat"]
+    capabilities = ["cut", "speed", "concat"]
 
     input_schema = {
         "type": "object",

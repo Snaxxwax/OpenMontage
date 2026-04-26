@@ -1,0 +1,47 @@
+.agents/skills/comfyui/SKILL.md:3:description: ComfyUI local backend integration for OpenMontage image, video, and audio generation workflows, including custom workflow overrides, provenance, and runtime troubleshooting.
+.agents/skills/comfyui/SKILL.md:44:  - OpenMontage can upload a local/URL image via `/upload/image`, but it must know **where** to patch the uploaded filename in your workflow.
+.agents/skills/comfyui/SKILL.md:65:OpenMontage supports lightweight safety gates per call:
+.agents/skills/synthetic-screen-recording/SKILL.md:103:1. **Know your narration cues** — for each scene, write down the exact video-time each narration segment starts.
+.agents/skills/synthetic-screen-recording/SKILL.md:106:4. **Put pauses between command groups** that bridge to the next narration cue.
+.agents/skills/synthetic-screen-recording/SKILL.md:129:Look at the output column. Each narration cue's video-time must appear adjacent to the command/output it announces. If a command lands 10s before or after its cue, adjust pauses.
+.claude/CLAUDE.md:18:Asymmetric is a faceless systems-briefing brand for ambitious operators who want to know where power actually concentrates.
+.claude/CLAUDE.md:328:- cyan supports structure only
+.claude/CLAUDE.md:352:- strokes = supports
+.claude/skills/asymmetric-video-qa/SKILL.md:18:- Narrative modes: uses at least two of Cartographer / Operator / Skeptic / Realist
+README.md:35:**Important distinction:** OpenMontage can make image-based videos, but it can also make a real **video video** for free/open-source workflows: the agent builds a corpus from free stock footage and open archives, retrieves actual motion clips, edits them into a timeline, and renders a finished piece. That is not the usual "animate a handful of stills and call it video" trick.
+README.md:133:That's it. The agent researches your topic with live web search, generates AI images, writes and narrates the script with voice direction, finds royalty-free background music automatically, burns in word-level subtitles, and renders the final video. Before you see anything, the system runs a multi-point self-review — ffprobe validation, frame sampling, audio level analysis, delivery promise verification, and subtitle checks. Every provider selection is scored across 7 dimensions with an auditable decision log. Every creative decision gets your approval.
+README.md:308:Each stage has a dedicated **director skill** — a markdown instruction file that teaches the agent exactly how to execute that stage. The agent reads the skill, uses the tools, self-reviews, checkpoints state, and asks for human approval at creative decision points.
+README.md:328:- **Both free/local AND cloud providers** — every capability supports open-source local alternatives alongside premium APIs. Use what you have.
+README.md:329:- **No vendor lock-in** — swap providers freely. The scored selector ranks every provider across 7 dimensions (task fit, output quality, control, reliability, cost efficiency, latency, continuity) and picks the best match automatically.
+README.md:330:- **Production-grade quality gates** — delivery promise enforcement blocks slideshow-looking renders, pre-compose validation catches broken plans before wasting GPU time, and mandatory post-render self-review (ffprobe + frame extraction + audio analysis) ensures the agent never presents garbage. Every provider choice, style decision, and fallback gets logged in an auditable decision trail.
+README.md:337:OpenMontage uses an **agent-first architecture**. There is no code orchestrator. Your AI coding assistant IS the orchestrator.
+README.md:401:└── tests/              # Contract tests, QA integration tests, eval harness
+README.md:412:Each tool declares which Layer 3 skills it relies on. The agent reads Layer 1 to know what's available, Layer 2 to know how OpenMontage wants it used, and Layer 3 for deep technical knowledge when needed.
+README.md:573:- **Slideshow risk scoring** — 6-dimension analysis (repetition, decorative visuals, weak motion, shot intent, typography overreliance, unsupported cinematic claims) prevents "animated PowerPoint" outputs.
+README.md:643:- **[Ideas](https://github.com/Snaxxwax/OpenMontage/discussions/categories/ideas)** — Suggest new pipelines, tools, style playbooks, or integrations
+docs/ARCHITECTURE.md:73:├── tests/                  # Contract tests, QA integration tests, eval harness
+docs/ARCHITECTURE.md:85:- Reads the pipeline manifest to know the stage order
+docs/ARCHITECTURE.md:98:Every capability must support both **API providers** (cloud, paid) and **local/open-source alternatives** (free, GPU-dependent). The selector pattern enforces this by routing to whatever is available.
+docs/ARCHITECTURE.md:285:The `CostTracker` enforces spending controls across the pipeline.
+docs/ARCHITECTURE.md:323:         "How this project uses the tech"  Pipeline integration, quality checklists, artifact mappings
+docs/ARCHITECTURE.md:462:├── qa/                     # Integration tests: TTS, image gen, music, audio mix, video compose/stitch, E2E
+docs/ARCHITECTURE.md:500:3. **Schema-validated artifacts** — Every stage output is validated against a JSON Schema before the checkpoint is written. Prevents garbage propagation.
+docs/PROVIDERS.md:3:Everything you need to know about every provider in OpenMontage — setup instructions, pricing, free tiers, and what each unlocks.
+docs/PROVIDERS.md:91:OpenMontage now uses those published rates in the Grok tool estimators.
+docs/PROVIDERS.md:223:**Recommended voices:** `en-US-Chirp3-HD-Orus` (male, rich/cinematic), `en-US-Chirp3-HD-Aoede` (female, warm). These are Google's newest tier — most natural-sounding, uses the v1beta1 endpoint automatically.
+docs/PROVIDERS.md:480:#### What Remotion Renders
+docs/PROVIDERS.md:495:The `video_compose` tool's `render` operation auto-detects when Remotion is needed:
+docs/PROVIDERS.md:523:# Download a voice model (first run downloads automatically)
+docs/PROVIDERS.md:550:Supports `voice_id`/`reference_id` plus reference-audio prompting (`reference_audio_paths` + `reference_texts`) through the `tts_selector` path.
+docs/PROVIDERS.md:633:**Supports:** Negative prompts, seeds, custom sizes. Quality is lower than FLUX or DALL-E 3 but completely free and offline.
+docs/PROVIDERS.md:720:A: FFmpeg + Node.js (both free, local). FFmpeg handles video assembly, audio mixing, and subtitles. With Node.js, Remotion renders still images into animated video — so even without any video generation API, the agent generates images and Remotion turns them into professional-looking video with spring animations, text cards, and transitions. Add Piper TTS for free narration and Pexels/Pixabay for free stock footage.
+docs/PROVIDERS.md:735:A: No. Start with what you have. The selector pattern auto-routes to whatever's available. Missing a provider? The system falls through to the next one automatically.
+skills/INDEX.md:16:Layer 2: skills/                          "How OpenMontage uses these tools"
+skills/INDEX.md:17:         Project-specific conventions:     Pipeline integration, artifact mappings,
+skills/INDEX.md:27:**How the agent uses this:**
+skills/INDEX.md:39:For capability families with multiple providers (TTS, video generation), the architecture uses:
+skills/INDEX.md:71:3. If joining a multi-provider family, the existing selector discovers it automatically
+skills/INDEX.md:73:5. The registry discovers tools automatically — no manual registration needed
+skills/INDEX.md:109:| Stock Sourcing Usage | `creative/stock-sourcing-usage.md` | Pexels/Pixabay usage, parameters, licensing, integration | — |
+skills/INDEX.md:143:| Script Director | `pipelines/explainer/script-director.md` | `script` | Narrative architecture, timing, enhancement cues, research integration |
+skills/INDEX.md:223:| Script Director | `pipelines/animation/script-director.md` | `script` | Animation-ready beats, text restraint, research integration, mode-aware writing |

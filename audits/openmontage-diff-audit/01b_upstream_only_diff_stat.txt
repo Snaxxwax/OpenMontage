@@ -1,0 +1,100 @@
+ .agents/skills/comfyui/SKILL.md                    |   75 -
+ .agents/skills/seedance-2-0/SKILL.md               |   95 +-
+ .agents/skills/synthetic-screen-recording/SKILL.md |    7 -
+ .claude/CLAUDE.md                                  |  725 ----------
+ .claude/skills/affiliate-description/SKILL.md      |  107 --
+ .claude/skills/asymmetric-episode/SKILL.md         |   33 -
+ .claude/skills/asymmetric-script/SKILL.md          |   52 -
+ .../skills/asymmetric-thumbnail-packaging/SKILL.md |   38 -
+ .claude/skills/asymmetric-video-qa/SKILL.md        |   23 -
+ .claude/skills/launch-plan/SKILL.md                |   82 --
+ .env.example                                       |    7 +-
+ DESIGN.md                                          |   71 -
+ Makefile                                           |   45 +-
+ README.md                                          |   35 +-
+ assets/asymmetric-logo.png                         |  Bin 226876 -> 0 bytes
+ assets/signal-from-tomorrow-demo.mp4               |  Bin 0 -> 20897137 bytes
+ asymmetric_music_test_input_params.json            |   47 -
+ channels/asymmetric/Assets/README.md               |    8 -
+ channels/asymmetric/Productions/README.md          |    7 -
+ .../Productions/chip-factory-runs-world/README.md  |   28 -
+ channels/asymmetric/README.md                      |   27 -
+ channels/asymmetric/Strategy/Brand Identity.md     |   63 -
+ channels/asymmetric/Strategy/Channel Strategy.md   |   43 -
+ channels/asymmetric/Strategy/README.md             |   10 -
+ channels/asymmetric/Templates/Analytics Review.md  |   48 -
+ channels/asymmetric/Templates/Research Brief.md    |   70 -
+ channels/asymmetric/Templates/Topic Idea.md        |   59 -
+ channels/asymmetric/Templates/Video Production.md  |   65 -
+ channels/asymmetric/Templates/Weekly Planner.md    |   46 -
+ channels/asymmetric/Topics/README.md               |    9 -
+ diagram.png                                        |  Bin 5354 -> 5915 bytes
+ docs/ARCHITECTURE.md                               |   10 +-
+ docs/PROVIDERS.md                                  |   43 +-
+ docs/archive/DESIGN.cyber-noir.md                  |   32 -
+ lib/archive_project.sh                             |   23 -
+ lib/source_media_review.py                         |    8 +-
+ lib/verify_asset.py                                |  125 --
+ manual_keyframes/thumb_001.jpg                     |  Bin 5622 -> 0 bytes
+ manual_keyframes/thumb_002.jpg                     |  Bin 49906 -> 0 bytes
+ manual_keyframes/thumb_003.jpg                     |  Bin 13227 -> 0 bytes
+ manual_keyframes/thumb_004.jpg                     |  Bin 27357 -> 0 bytes
+ manual_keyframes/thumb_005.jpg                     |  Bin 47866 -> 0 bytes
+ manual_keyframes/thumb_006.jpg                     |  Bin 29993 -> 0 bytes
+ manual_keyframes/thumb_007.jpg                     |  Bin 38249 -> 0 bytes
+ manual_keyframes/thumb_008.jpg                     |  Bin 33678 -> 0 bytes
+ manual_keyframes/thumb_009.jpg                     |  Bin 22573 -> 0 bytes
+ manual_keyframes/thumb_010.jpg                     |  Bin 8426 -> 0 bytes
+ manual_keyframes/thumb_011.jpg                     |  Bin 18216 -> 0 bytes
+ pipeline_defs/animated-explainer.yaml              |    1 -
+ pipeline_defs/animation.yaml                       |    1 -
+ pipeline_defs/cinematic.yaml                       |    1 -
+ reference_clip.mp4                                 |  Bin 2168490 -> 0 bytes
+ remotion-composer/SCENE_TYPES.md                   |    1 +
+ remotion-composer/src/CinematicRenderer.tsx        |  199 ++-
+ remotion-composer/src/CollageBurst.tsx             |  608 ++++++++
+ remotion-composer/src/Explainer.tsx                |   17 +
+ remotion-composer/src/LyricOverlay.tsx             |  173 +++
+ remotion-composer/src/Root.tsx                     |   30 +
+ remotion-composer/src/cinematic/types.ts           |    4 +
+ .../src/components/ScreenshotScene.tsx             |  668 +++++++++
+ remotion-composer/src/components/index.ts          |    2 +
+ requirements.txt                                   |    3 -
+ run_analysis.py                                    |   17 -
+ schemas/pipelines/pipeline_manifest.schema.json    |   29 +-
+ schemas/styles/playbook.schema.json                |   42 +-
+ skills/INDEX.md                                    |    2 -
+ styles/asymmetric.yaml                             |  139 --
+ styles/cyber-noir.yaml                             |   92 --
+ styles/editorial-navy.yaml                         |  273 ----
+ styles/systemic-pulse.yaml                         |  156 --
+ test_torch.wav                                     |  Bin 96078 -> 0 bytes
+ tests/contracts/test_comfyui_backend.py            |  129 --
+ tests/contracts/test_fish_speech_tts_contract.py   |   48 -
+ tests/contracts/test_phase3_contracts.py           |   13 +-
+ tests/qa/test_08_end_to_end.py                     |    9 +-
+ tools/_comfyui/__init__.py                         |    2 -
+ tools/_comfyui/client.py                           |  540 -------
+ tools/_comfyui/workflows/flux1-dev-txt2img.json    |  103 --
+ tools/_comfyui/workflows/flux2-txt2img.json        |  133 --
+ tools/_comfyui/workflows/wan22-i2v-4step.json      |  221 ---
+ tools/_comfyui/workflows/wan22-t2v-4step.json      |  198 ---
+ tools/audio/acestep_music.py                       |  482 -------
+ tools/audio/comfyui_audio.py                       |  226 ---
+ tools/audio/fish_speech_tts.py                     |  322 -----
+ tools/avatar/lip_sync.py                           |   11 +-
+ tools/avatar/talking_head.py                       |   11 +-
+ tools/enhancement/bg_remove.py                     |    5 +-
+ tools/graphics/comfyui_image.py                    |  288 ----
+ tools/graphics/image_selector.py                   |   13 +-
+ tools/video/_shared.py                             |  195 +--
+ tools/video/comfyui_video.py                       |  433 ------
+ tools/video/comfyui_wan_video.py                   |  370 -----
+ tools/video/hyperframes_compose.py                 | 1485 +-------------------
+ tools/video/seedance_video.py                      |   10 +-
+ tools/video/stock_sources/unsplash.py              |    2 +-
+ tools/video/stock_sources/wikimedia.py             |    2 +-
+ tools/video/video_compose.py                       |  142 +-
+ tools/video/video_selector.py                      |   28 +-
+ visual-style.md                                    |   43 -
+ 99 files changed, 1891 insertions(+), 8197 deletions(-)

@@ -2476,7 +2476,7 @@ class HyperFramesCompose(BaseTool):
         # Prefer per-scene sub-compositions when a scene id is present. This
         # avoids rendering long episodes as simple text cards.
         scene_id = (cut.get("id") or "").strip()
-        if scene_id and not source:
+        if scene_id and not source and cut_type not in {"text_card", "hero_title", "callout"}:
             html = (
                 f'<div id="{cut_id}" class="clip scene-comp" '
                 f'data-composition-id="{self._escape_attr(scene_id)}" '

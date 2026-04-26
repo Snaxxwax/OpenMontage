@@ -23,7 +23,6 @@ from tools.base_tool import (
     ToolResult,
     ToolRuntime,
     ToolStability,
-    ToolStatus,
     ToolTier,
 )
 
@@ -67,7 +66,7 @@ class AudioProbe(BaseTool):
     determinism = Determinism.DETERMINISTIC
     runtime = ToolRuntime.LOCAL
 
-    dependencies = ["binary:ffprobe"]
+    dependencies = ["cmd:ffprobe"]
     install_instructions = (
         "Install ffmpeg (includes ffprobe):\n"
         "  Windows: winget install ffmpeg\n"
@@ -99,11 +98,6 @@ class AudioProbe(BaseTool):
     retry_policy = RetryPolicy(max_retries=0, retryable_errors=[])
     idempotency_key_fields = ["input_path"]
     side_effects = []
-
-    def get_status(self) -> ToolStatus:
-        if shutil.which("ffprobe"):
-            return ToolStatus.AVAILABLE
-        return ToolStatus.UNAVAILABLE
 
     def estimate_cost(self, inputs: dict[str, Any]) -> float:
         return 0.0

@@ -30,7 +30,6 @@ from tools.base_tool import (
     ToolResult,
     ToolRuntime,
     ToolStability,
-    ToolStatus,
     ToolTier,
 )
 
@@ -46,7 +45,7 @@ class AudioEnergy(BaseTool):
     determinism = Determinism.DETERMINISTIC
     runtime = ToolRuntime.LOCAL
 
-    dependencies = ["binary:ffmpeg"]
+    dependencies = ["cmd:ffmpeg", "cmd:ffprobe"]
     install_instructions = (
         "Install ffmpeg:\n"
         "  Windows: winget install ffmpeg\n"
@@ -95,11 +94,6 @@ class AudioEnergy(BaseTool):
     retry_policy = RetryPolicy(max_retries=0, retryable_errors=[])
     idempotency_key_fields = ["input_path"]
     side_effects = []
-
-    def get_status(self) -> ToolStatus:
-        if shutil.which("ffmpeg"):
-            return ToolStatus.AVAILABLE
-        return ToolStatus.UNAVAILABLE
 
     def estimate_cost(self, inputs: dict[str, Any]) -> float:
         return 0.0

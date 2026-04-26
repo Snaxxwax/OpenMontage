@@ -27,7 +27,6 @@ from tools.base_tool import (
     ToolResult,
     ToolRuntime,
     ToolStability,
-    ToolStatus,
     ToolTier,
 )
 
@@ -43,7 +42,7 @@ class CompositionValidator(BaseTool):
     determinism = Determinism.DETERMINISTIC
     runtime = ToolRuntime.LOCAL
 
-    dependencies = ["binary:ffprobe"]
+    dependencies = ["cmd:ffprobe"]
     install_instructions = "Requires ffprobe on PATH (part of ffmpeg)."
 
     capabilities = ["validate_composition", "pre_render_check"]
@@ -85,9 +84,6 @@ class CompositionValidator(BaseTool):
         cpu_cores=1, ram_mb=64, vram_mb=0, disk_mb=0, network_required=False
     )
     side_effects = []
-
-    def get_status(self) -> ToolStatus:
-        return ToolStatus.AVAILABLE
 
     def estimate_cost(self, inputs: dict[str, Any]) -> float:
         return 0.0

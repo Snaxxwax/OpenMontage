@@ -208,6 +208,13 @@ class BaseTool(ABC):
                     raise DependencyError(
                         f"Command {cmd_name!r} not found. {self.install_instructions}"
                     )
+            elif dep.startswith("binary:"):
+                # Backwards-compatible alias for command dependencies.
+                cmd_name = dep[7:]
+                if shutil.which(cmd_name) is None:
+                    raise DependencyError(
+                        f"Command {cmd_name!r} not found. {self.install_instructions}"
+                    )
             elif dep.startswith("env:"):
                 env_name = dep[4:]
                 if not os.environ.get(env_name):

@@ -1,0 +1,87 @@
+A	.agents/skills/comfyui/SKILL.md
+M	.agents/skills/synthetic-screen-recording/SKILL.md
+A	.claude/CLAUDE.md
+A	.claude/skills/affiliate-description/SKILL.md
+A	.claude/skills/asymmetric-episode/SKILL.md
+A	.claude/skills/asymmetric-script/SKILL.md
+A	.claude/skills/asymmetric-thumbnail-packaging/SKILL.md
+A	.claude/skills/asymmetric-video-qa/SKILL.md
+A	.claude/skills/launch-plan/SKILL.md
+M	.env.example
+A	DESIGN.md
+M	Makefile
+M	README.md
+A	assets/asymmetric-logo.png
+D	assets/signal-from-tomorrow-demo.mp4
+A	asymmetric_music_test_input_params.json
+A	channels/asymmetric/Assets/README.md
+A	channels/asymmetric/Productions/README.md
+A	channels/asymmetric/Productions/chip-factory-runs-world/README.md
+A	channels/asymmetric/README.md
+A	channels/asymmetric/Strategy/Brand Identity.md
+A	channels/asymmetric/Strategy/Channel Strategy.md
+A	channels/asymmetric/Strategy/README.md
+A	channels/asymmetric/Templates/Analytics Review.md
+A	channels/asymmetric/Templates/Research Brief.md
+A	channels/asymmetric/Templates/Topic Idea.md
+A	channels/asymmetric/Templates/Video Production.md
+A	channels/asymmetric/Templates/Weekly Planner.md
+A	channels/asymmetric/Topics/README.md
+M	diagram.png
+M	docs/ARCHITECTURE.md
+M	docs/PROVIDERS.md
+A	docs/archive/DESIGN.cyber-noir.md
+A	lib/archive_project.sh
+A	lib/verify_asset.py
+A	manual_keyframes/thumb_001.jpg
+A	manual_keyframes/thumb_002.jpg
+A	manual_keyframes/thumb_003.jpg
+A	manual_keyframes/thumb_004.jpg
+A	manual_keyframes/thumb_005.jpg
+A	manual_keyframes/thumb_006.jpg
+A	manual_keyframes/thumb_007.jpg
+A	manual_keyframes/thumb_008.jpg
+A	manual_keyframes/thumb_009.jpg
+A	manual_keyframes/thumb_010.jpg
+A	manual_keyframes/thumb_011.jpg
+M	pipeline_defs/animated-explainer.yaml
+M	pipeline_defs/animation.yaml
+M	pipeline_defs/cinematic.yaml
+A	reference_clip.mp4
+M	requirements.txt
+A	run_analysis.py
+M	schemas/pipelines/pipeline_manifest.schema.json
+M	schemas/styles/playbook.schema.json
+M	skills/INDEX.md
+A	styles/asymmetric.yaml
+A	styles/cyber-noir.yaml
+A	styles/editorial-navy.yaml
+A	styles/systemic-pulse.yaml
+A	test_torch.wav
+A	tests/contracts/test_comfyui_backend.py
+A	tests/contracts/test_fish_speech_tts_contract.py
+M	tests/contracts/test_phase3_contracts.py
+M	tests/qa/test_08_end_to_end.py
+A	tools/_comfyui/__init__.py
+A	tools/_comfyui/client.py
+A	tools/_comfyui/workflows/flux1-dev-txt2img.json
+A	tools/_comfyui/workflows/flux2-txt2img.json
+A	tools/_comfyui/workflows/wan22-i2v-4step.json
+A	tools/_comfyui/workflows/wan22-t2v-4step.json
+A	tools/audio/acestep_music.py
+A	tools/audio/comfyui_audio.py
+A	tools/audio/fish_speech_tts.py
+M	tools/avatar/lip_sync.py
+M	tools/avatar/talking_head.py
+M	tools/enhancement/bg_remove.py
+A	tools/graphics/comfyui_image.py
+M	tools/graphics/image_selector.py
+M	tools/video/_shared.py
+A	tools/video/comfyui_video.py
+A	tools/video/comfyui_wan_video.py
+M	tools/video/hyperframes_compose.py
+M	tools/video/stock_sources/unsplash.py
+M	tools/video/stock_sources/wikimedia.py
+M	tools/video/video_compose.py
+M	tools/video/video_selector.py
+A	visual-style.md

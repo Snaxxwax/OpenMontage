@@ -797,6 +797,20 @@ class VideoStitch(BaseTool):
         output_path.parent.mkdir(parents=True, exist_ok=True)
         codec = inputs.get("codec", "libx264")
         crf = inputs.get("crf", 23)
+        preset = inputs.get("preset", "medium")
+        target_fps = inputs.get("target_fps")
+
+        target_w = None
+        target_h = None
+        if inputs.get("target_resolution"):
+            parts = str(inputs["target_resolution"]).split("x")
+            if len(parts) == 2:
+                try:
+                    target_w = int(parts[0])
+                    target_h = int(parts[1])
+                except ValueError:
+                    target_w = None
+                    target_h = None
 
         # Verify all clips exist
         for clip in clips:
@@ -817,11 +831,35 @@ class VideoStitch(BaseTool):
                 )
 
             if layout == "side_by_side":
-                self._spatial_side_by_side(working_clips, output_path, codec, crf)
+                self._spatial_side_by_side(
+                    working_clips,
+                    output_path,
+                    codec,
+                    crf,
+                    preset,
+                    target_h=target_h,
+                    target_fps=target_fps,
+                )
             elif layout == "vertical_stack":
-                self._spatial_vertical_stack(working_clips, output_path, codec, crf)
+                self._spatial_vertical_stack(
+                    working_clips,
+                    output_path,
+                    codec,
+                    crf,
+                    preset,
+                    target_w=target_w,
+                    target_fps=target_fps,
+                )
             elif layout == "picture_in_picture":
-                self._spatial_pip(working_clips, output_path, inputs, codec, crf)
+                self._spatial_pip(
+                    working_clips,
+                    output_path,
+                    inputs,
+                    codec,
+                    crf,
+                    preset,
+                    target_fps=target_fps,
+                )
             else:
                 return ToolResult(success=False, error=f"Unknown layout: {layout}")
         except Exception as e:
@@ -847,17 +885,26 @@ class VideoStitch(BaseTool):
         )
 
     def _spatial_side_by_side(
-        self, clips: list[str], output_path: Path, codec: str, crf: int
+        self,
+        clips: list[str],
+        output_path: Path,
+        codec: str,
+        crf: int,
+        preset: str,
+        *,
+        target_h: int | None,
+        target_fps: int | None,
     ) -> None:
         """Place clips side by side (horizontal split).
 
         Both clips are scaled to the same height and placed left-right.
         Uses the first two clips; additional clips are ignored.
         """
+        height = int(target_h) if target_h else 480
         input_args = ["-i", clips[0], "-i", clips[1]]
         filter_complex = (
-            "[0:v]scale=-2:480[left];"
-            "[1:v]scale=-2:480[right];"
+            f"[0:v]scale=-2:{height}[left];"
+            f"[1:v]scale=-2:{height}[right];"
             "[left][right]hstack=inputs=2[v];"
             "[0:a][1:a]amix=inputs=2:duration=shortest[a]"
         )
@@ -866,25 +913,38 @@ class VideoStitch(BaseTool):
         cmd.extend([
             "-filter_complex", filter_complex,
             "-map", "[v]", "-map", "[a]",
-            "-c:v", codec, "-crf", str(crf),
+            "-c:v", codec, "-crf", str(crf), "-preset", preset,
             "-c:a", "aac",
             "-shortest",
             str(output_path),
         ])
+        # Insert -r <fps> before codecs if requested (keep mapping stable).
+        if target_fps:
+            insert_at = cmd.index("-c:v")
+            cmd[insert_at:insert_at] = ["-r", str(int(target_fps))]
         self.run_command(cmd)
 
     def _spatial_vertical_stack(
-        self, clips: list[str], output_path: Path, codec: str, crf: int
+        self,
+        clips: list[str],
+        output_path: Path,
+        codec: str,
+        crf: int,
+        preset: str,
+        *,
+        target_w: int | None,
+        target_fps: int | None,
     ) -> None:
         """Place clips in a vertical stack (top-bottom).
 
         Both clips are scaled to the same width and stacked vertically.
         Ideal for portrait/mobile viewing.
         """
+        width = int(target_w) if target_w else 540
         input_args = ["-i", clips[0], "-i", clips[1]]
         filter_complex = (
-            "[0:v]scale=540:-2[top];"
-            "[1:v]scale=540:-2[bottom];"
+            f"[0:v]scale={width}:-2[top];"
+            f"[1:v]scale={width}:-2[bottom];"
             "[top][bottom]vstack=inputs=2[v];"
             "[0:a][1:a]amix=inputs=2:duration=shortest[a]"
         )
@@ -893,11 +953,14 @@ class VideoStitch(BaseTool):
         cmd.extend([
             "-filter_complex", filter_complex,
             "-map", "[v]", "-map", "[a]",
-            "-c:v", codec, "-crf", str(crf),
+            "-c:v", codec, "-crf", str(crf), "-preset", preset,
             "-c:a", "aac",
             "-shortest",
             str(output_path),
         ])
+        if target_fps:
+            insert_at = cmd.index("-c:v")
+            cmd[insert_at:insert_at] = ["-r", str(int(target_fps))]
         self.run_command(cmd)
 
     def _spatial_pip(
@@ -907,6 +970,9 @@ class VideoStitch(BaseTool):
         inputs: dict[str, Any],
         codec: str,
         crf: int,
+        preset: str,
+        *,
+        target_fps: int | None,
     ) -> None:
         """Picture-in-picture: overlay second clip on first.
 
@@ -935,11 +1001,14 @@ class VideoStitch(BaseTool):
         cmd.extend([
             "-filter_complex", filter_complex,
             "-map", "[v]", "-map", "0:a?",
-            "-c:v", codec, "-crf", str(crf),
+            "-c:v", codec, "-crf", str(crf), "-preset", preset,
             "-c:a", "aac",
             "-shortest",
             str(output_path),
         ])
+        if target_fps:
+            insert_at = cmd.index("-c:v")
+            cmd[insert_at:insert_at] = ["-r", str(int(target_fps))]
         self.run_command(cmd)
 
     # ------------------------------------------------------------------

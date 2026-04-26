@@ -1,0 +1,7 @@
+386338c (upstream/main) feat(remotion): upgrade cinematic TitleCard + add new scene components
+578d77e Merge pull request #47 from itsuzef/fix/architecture-hyperframes-package-name
+676aec6 Merge pull request #46 from itsuzef/fix/source-media-review-get-tool
+d88b048 Merge pull request #45 from itsuzef/fix/seedance-upload-image-name
+36c921e docs(architecture): fix HyperFrames npm package name
+f53f078 fix(source_media_review): use registry.get() not get_tool()
+099cde3 fix(seedance): correct upload_image_fal call name

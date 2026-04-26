@@ -78,7 +78,7 @@ class ACEStepMusic(BaseTool):
     determinism = Determinism.STOCHASTIC
     runtime = ToolRuntime.LOCAL_GPU
 
-    dependencies = ["acestep", "torch"]
+    dependencies = ["python:acestep", "python:torch"]
     install_instructions = (
         "Install ACE-Step:\n"
         "  pip install git+https://github.com/ACE-Step/ACE-Step.git\n"

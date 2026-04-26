@@ -12,6 +12,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 from lib.env_loader import load_env
 load_env()
 
+import pytest
+if not os.getenv("SLOW_TESTS"):
+    pytest.skip("set SLOW_TESTS=1 to run ffmpeg integration tests", allow_module_level=True)
+
 from tools.video.video_stitch import VideoStitch
 
 OUT = os.path.join(os.path.dirname(__file__), "output")

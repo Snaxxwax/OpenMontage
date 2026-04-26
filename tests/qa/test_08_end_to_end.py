@@ -19,6 +19,10 @@ sys.path.insert(0, PROJECT_ROOT)
 from lib.env_loader import load_env
 load_env()
 
+import pytest
+if not os.getenv("SLOW_TESTS"):
+    pytest.skip("set SLOW_TESTS=1 to run ffmpeg integration tests", allow_module_level=True)
+
 from lib.checkpoint import (
     write_checkpoint,
     read_checkpoint,
