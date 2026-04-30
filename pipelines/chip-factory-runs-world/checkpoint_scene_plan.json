@@ -1,0 +1,843 @@
+{
+  "version": "1.0",
+  "project_id": "chip-factory-runs-world",
+  "pipeline_type": "animation",
+  "stage": "scene_plan",
+  "status": "completed",
+  "timestamp": "2026-04-26T02:14:35.134142+00:00",
+  "style_playbook": "asymmetric",
+  "checkpoint_policy": "guided",
+  "human_approval_required": true,
+  "human_approved": true,
+  "artifacts": {
+    "scene_plan": {
+      "version": "1.0",
+      "style_playbook": "asymmetric",
+      "scenes": [
+        {
+          "id": "sc01",
+          "type": "text_card",
+          "description": "Cold open \u2014 near-black screen. Bone text (#F3F5F7) appears one clause at a time via GSAP stagger: 'The most advanced chips in the world \u2014' / 'all come from one company.' / 'One factory.' / 'One island.' Each clause fades in, holds 1.5s, opacity drops to 0.4 before next arrives. Final clause holds at full opacity into sc02.",
+          "start_seconds": 0,
+          "end_seconds": 12,
+          "script_section_id": "s01",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "No logo, no chapter card. Pure text on #050608. Inter Regular, large tracking. State changes every ~2s \u2014 GSAP stagger drives compliance with 4s rule.",
+          "shot_intent": "Establish the weight of the claim before any visual context. Force attention to the words alone.",
+          "narrative_role": "establish_context",
+          "information_role": "The viewer learns that every advanced chip has a single source before they know what that source is. Open loop established.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "stark",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "GSAP stagger text reveal \u2014 4 clauses, near-black background, bone text",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc02",
+          "type": "generated",
+          "description": "Semiconductor wafer hero image fades in over near-black. Narration continues over image. Wafer sits center-left with amber catchlight (#F5A400) animating slowly across the wafer surface (GSAP opacity cycle, 3s period). Bone text overlays appear as narration advances: 'There is no backup.' at ~0:18, then fade. 'Most critical supply chain in the global economy.' at ~0:26. Subtle slow drift (Ken Burns: 1.03x scale over 23s) ensures no frozen state.",
+          "start_seconds": 12,
+          "end_seconds": 35,
+          "script_section_id": "s01",
+          "transition_in": "fade",
+          "transition_out": "cut",
+          "overlay_notes": "Two bone text overlays: 'No backup.' and 'Most critical supply chain.' Timed to narration beats. Amber catchlight animation on wafer image is the primary motion element. No diagram yet.",
+          "shot_intent": "Ground the abstract claim in a physical object \u2014 the wafer is the literal subject of the entire video. First visual payload.",
+          "narrative_role": "introduce_subject",
+          "information_role": "The wafer is the object that everything depends on. The amber light on it signals it is the leverage point, before any diagram appears.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "dark",
+            "object-led",
+            "restrained"
+          ],
+          "shot_language": {
+            "shot_size": "medium_close",
+            "camera_movement": "zoom_in",
+            "lighting_key": "low_key",
+            "depth_of_field": "shallow",
+            "color_temperature": "cool"
+          },
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "SVG/CSS/GSAP wafer hero \u2014 abstract semiconductor wafer: circular graphite disc, cyan die-map grid, amber catchlight sweep. Two text overlays: 'No backup.' and 'Most critical supply chain.' Ken Burns 1.03x over 23s. Source: svg_native substitute for deferred ComfyUI image.",
+              "source": "provided",
+              "file": "assets/scenes/sc02-wafer-hero.html"
+            }
+          ]
+        },
+        {
+          "id": "sc03",
+          "type": "text_card",
+          "description": "Chapter card: 'THE SURFACE STORY' \u2014 Space Grotesk, amber (#F5A400) text on deep slate (#11151C). Cuts in hard. Holds 2s. Cuts out hard to sc04.",
+          "start_seconds": 35,
+          "end_seconds": 37,
+          "script_section_id": "s02",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Chapter card template \u2014 amber headline on deep slate. No subtext. 2s hold exactly.",
+          "shot_intent": "Section break. Orient the viewer to the mode shift: we are about to see what people think is true.",
+          "narrative_role": "transition",
+          "information_role": "Section orientation only.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Chapter card: 'THE SURFACE STORY' \u2014 amber text, deep slate background, Space Grotesk display",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc04",
+          "type": "animation",
+          "description": "Row of company name boxes: Apple / NVIDIA / AMD / Qualcomm / Broadcom \u2014 amber-outlined rectangles, bone wordmarks inside, on near-black. Boxes appear left to right with GSAP stagger (0.3s between each). Label below row: 'Fabless \u2014 Design Only' in IBM Plex Mono, muted steel (#8A95A6). Boxes hold. On 'It is not how any of it works' \u2014 all boxes simultaneously dim to 30% opacity. Hold.",
+          "start_seconds": 37,
+          "end_seconds": 55,
+          "script_section_id": "s02",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "State changes: (1) boxes stagger in, (2) label appears, (3) all dim on the reveal line. Three distinct states across 18s \u2014 compliant.",
+          "shot_intent": "Show the audience what they already recognize. Brand names make the claim real. The dimming gesture signals that the visible layer is not the real structure.",
+          "narrative_role": "establish_context",
+          "information_role": "The viewer maps their existing mental model (Apple makes chips, NVIDIA makes chips) onto the correct structure: these are design-only companies.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "flat-vector",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "GSAP-animated company name box array \u2014 amber borders, bone text, IBM Plex Mono label, stagger reveal + dim on beat",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc05",
+          "type": "animation",
+          "description": "EUV machinery concept \u2014 dark schematic-style illustration of extreme ultraviolet lithography equipment. Near-black background. Cyan (#3F8FA3) structural lines trace the beam path. GSAP timeline: (1) machine silhouette fades in at sc05 start, (2) at 'extreme ultraviolet light' \u2014 cyan beam line draws across the frame, (3) at 'costs over twenty billion dollars' \u2014 $20B+ stat card fades in as overlay (amber border, bone text), (4) at 'decades of continuous production' \u2014 bone text appears: 'Decades of data. Not a blueprint.' \u2014 holds 2s then fades. Four distinct states across 40s.",
+          "start_seconds": 55,
+          "end_seconds": 95,
+          "script_section_id": "s02",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Stat card: '$20B+' / 'Cost to build one leading-edge fab' \u2014 amber border, appears at narration beat for 'costs over twenty billion dollars'. Text beat: 'Decades of data. Not a blueprint.' \u2014 bone, small, appears near end of section.",
+          "shot_intent": "Make the abstraction physical. The machine explains WHY this cannot be replicated. The cost and time signals prepare the viewer for the irreplaceability argument.",
+          "narrative_role": "build_tension",
+          "information_role": "Fab construction is expensive, time-intensive, and expertise-dense. This is not a capital problem \u2014 it is a knowledge and time problem.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "schematic",
+            "dark",
+            "structural"
+          ],
+          "shot_language": {
+            "shot_size": "medium",
+            "camera_movement": "static",
+            "lighting_key": "low_key",
+            "depth_of_field": "deep",
+            "color_temperature": "cool"
+          },
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "SVG/CSS/GSAP EUV machine schematic \u2014 geometric machine mass (graphite), cyan beam line draws across frame at narration beat, amber process point on wafer stage, $20B+ stat card overlay, 'Decades of data. Not a blueprint.' text beat. Source: svg_native substitute for deferred ComfyUI image.",
+              "source": "provided",
+              "file": "assets/scenes/sc05-euv-machine.html"
+            }
+          ]
+        },
+        {
+          "id": "sc06",
+          "type": "text_card",
+          "description": "Bridge text card: 'So they all go to the same place.' \u2014 bone text, near-black, Inter Regular, large. Appears as a cut after the $20B+ stat card lingers. Holds 2s. Cuts hard to chapter card.",
+          "start_seconds": 95,
+          "end_seconds": 120,
+          "script_section_id": "s02",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "No stat card \u2014 this is a pure text beat. 25s hold is long; add GSAP: text appears, holds 3s at full opacity, then dims to 50% while narration continues, snaps back to full on the final sentence.",
+          "shot_intent": "Deliver the structural reveal before the diagram. The viewer knows what is coming. The diagram confirms it.",
+          "narrative_role": "deliver_payload",
+          "information_role": "The section resolves: all roads lead to one place. The viewer is primed for the supply chain diagram.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "stark",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Single large text: 'So they all go to the same place.' \u2014 bone on near-black, Inter Regular, GSAP opacity sequence",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc07",
+          "type": "text_card",
+          "description": "Chapter card: 'THE ACTUAL SYSTEM' \u2014 amber text on deep slate, Space Grotesk. Hard cut in. Holds 2s. Hard cut to sc08.",
+          "start_seconds": 120,
+          "end_seconds": 122,
+          "script_section_id": "s03",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Chapter card template \u2014 amber, deep slate, 2s hold.",
+          "shot_intent": "Mode shift: we move from the misconception to the real structure.",
+          "narrative_role": "transition",
+          "information_role": "Section orientation.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Chapter card: 'THE ACTUAL SYSTEM' \u2014 amber text, deep slate background",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc08",
+          "type": "diagram",
+          "description": "Supply chain flow diagram \u2014 5 nodes build left to right as narration names each layer. GSAP sequential timeline: node appears (circle + label), then arrow draws to next node, then next node appears. Order: [EDA] \u2192 [Fabless Design] \u2192 [Foundry] \u2192 [OSAT] \u2192 [OEM]. All nodes: cyan (#3F8FA3) outline, bone label on near-black. IBM Plex Mono for node labels. Arrows: cyan, 2px. Sub-labels: IBM Plex Mono, muted steel, smaller. EDA sub-label: 'U.S.-dominated / 40%+ global share'. OSAT sub-label: 'Taiwan / S. Korea / SE Asia'. Nodes appear ~every 12\u201315s matching narration pace. On 'this is where the system narrows' \u2014 Foundry node border pulses and dims. Full diagram holds visible after all 5 nodes are placed.",
+          "start_seconds": 122,
+          "end_seconds": 210,
+          "script_section_id": "s03",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "5 sequential state changes (one per node reveal) + final pulse on Foundry node. Compliant with 4s rule \u2014 nodes appear ~every 12\u201315s, each node arrival is a clear state change. Sub-labels add visual density without cluttering the main flow.",
+          "shot_intent": "Show the viewer the structure they did not know existed. Each node arrival is an information beat. The diagram is the argument.",
+          "narrative_role": "introduce_subject",
+          "information_role": "The viewer learns the 5-layer supply chain structure: EDA \u2192 Fabless \u2192 Foundry \u2192 OSAT \u2192 OEM. Each layer is distinct. The Foundry layer is visually centered.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "flat-vector",
+            "structured",
+            "dark"
+          ],
+          "shot_language": {
+            "shot_size": "wide",
+            "camera_movement": "static",
+            "lighting_key": "low_key",
+            "depth_of_field": "deep",
+            "color_temperature": "cool"
+          },
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "GSAP supply chain diagram: 5-node sequential build. Cyan nodes + arrows on near-black. IBM Plex Mono labels. Sub-labels for EDA and OSAT concentration. Foundry node pulse at narration beat.",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc09",
+          "type": "animation",
+          "description": "Chokepoint reveal \u2014 first hero moment. Supply chain diagram from sc08 persists. GSAP: (1) Foundry node border transitions from cyan to amber (#F5A400) over 0.8s, (2) all other nodes dim to 25% opacity over 0.6s, (3) a second amber ring pulses outward from the Foundry node and fades, (4) label beneath Foundry node updates: 'TSMC' \u2014 appears in amber, holds. Amber holds. Silence beat of 1.5s built into narration ('this is where the system narrows' \u2014 then pause). Full hold for remainder of sc09 with dim ambient glow animation on amber node.",
+          "start_seconds": 210,
+          "end_seconds": 240,
+          "script_section_id": "s03",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "This is the first structural reveal. Amber = control/chokepoint in the Asymmetric color system. The Foundry node holds amber for the remainder of the video. Do not return it to cyan at any point.",
+          "shot_intent": "The moment the supply chain collapses to one node. Everything before was structure \u2014 this is the leverage point being named.",
+          "narrative_role": "deliver_payload",
+          "information_role": "The Foundry layer is the chokepoint. TSMC is identified. The color shift is the argument made visually.",
+          "hero_moment": true,
+          "texture_keywords": [
+            "amber-signal",
+            "flat-vector",
+            "reveal"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Continuation of sc08 diagram \u2014 GSAP: Foundry node cyan\u2192amber transition, other nodes dim, second amber pulse ring, 'TSMC' label in amber appears",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc10",
+          "type": "text_card",
+          "description": "Chapter card: 'THE CHOKEPOINT' \u2014 amber text on deep slate, Space Grotesk. Hard cut. Holds 2s. Hard cut to sc11.",
+          "start_seconds": 240,
+          "end_seconds": 242,
+          "script_section_id": "s04",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Chapter card template.",
+          "shot_intent": "Section marker. The name of the section reinforces the visual argument just made.",
+          "narrative_role": "transition",
+          "information_role": "Section orientation.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Chapter card: 'THE CHOKEPOINT' \u2014 amber text, deep slate background",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc11",
+          "type": "animation",
+          "description": "TSMC identity reveal \u2014 dossier-style. Near-black background. GSAP sequential text stagger: (1) 'TSMC' \u2014 large, amber, Space Grotesk Display, center-left, (2) 'Taiwan Semiconductor Manufacturing Company' \u2014 smaller, bone, Inter Regular, (3) three data points appear as IBM Plex Mono lines staggered: 'Founded 1987 / Hsinchu, Taiwan' then '~60,000 employees' then 'Revenue: ~$125B (2025)'. Each line arrives 0.4s after previous. (4) On 'no other company on earth currently matches' \u2014 all text dims except 'TSMC', which holds amber. Amber node motif from sc09 is visible in the background at low opacity as a visual anchor.",
+          "start_seconds": 242,
+          "end_seconds": 290,
+          "script_section_id": "s04",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Dossier visual language. Data lines in IBM Plex Mono signal factual layer. Final state: TSMC name alone in amber \u2014 the rest of the information steps back. 4 distinct state changes across 48s.",
+          "shot_intent": "Name the subject precisely before making the market-share claim. The viewer needs to understand what TSMC is and its scale before the 90%+ figure lands.",
+          "narrative_role": "introduce_subject",
+          "information_role": "TSMC is the foundry. It is large, it is old (established, not new), and it is in one place. Revenue signals it is not a startup \u2014 it is a mature industrial institution.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "dossier",
+            "typographic",
+            "dark"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "GSAP dossier stagger: TSMC name amber, full name bone, three IBM Plex Mono data lines, final dim-to-TSMC state",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc12",
+          "type": "diagram",
+          "description": "Supply chain diagram returns \u2014 same layout as sc08/sc09, Foundry node still amber. 90%+ stat card overlay fades in at 'industry analysts estimate TSMC's market share is above ninety percent': amber border, bone '$' removed \u2014 just '90%+' in large Inter, label below 'TSMC advanced-node market share (analyst est.)' in IBM Plex Mono, muted steel. Stat card holds 8s then fades to 30% opacity as narration continues. Samsung and Intel nodes are NOT shown in this diagram \u2014 supply chain shows only the foundry layer dominance. Background: near-black.",
+          "start_seconds": 290,
+          "end_seconds": 320,
+          "script_section_id": "s04",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Stat card must carry '(analyst est.)' qualifier per source_map c03 guidance. Hard stat card treatment permitted at medium-high confidence. No TSMC logo \u2014 wordmark only. Stat card fades to partial opacity rather than disappearing so it persists as a visual reference.",
+          "shot_intent": "Quantify the dominance before the competition comparison. The viewer needs the scale of TSMC's lead before the yield and alternatives discussion.",
+          "narrative_role": "evidence",
+          "information_role": "TSMC controls ~90%+ of advanced-node manufacturing \u2014 not a modest lead, a near-monopoly.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "data-led",
+            "flat-vector",
+            "dark"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Supply chain diagram (sc09 state) + 90%+ stat card overlay: amber border, '90%+' large, '(analyst est.)' qualifier, fade sequence",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc13",
+          "type": "diagram",
+          "description": "Yield comparison \u2014 directional bar chart. Near-black background. Three horizontal bars, left-aligned, each labeled: (1) TSMC: amber fill, long bar, label 'Industry-leading yield (~65\u201370% est.)' in bone; (2) Samsung: graphite fill (#2A3142), medium-length bar, label 'Improving \u2014 ~50\u201360% late 2025' in muted steel; (3) Intel: muted steel fill, medium-short bar, label 'Internal use only' in muted steel \u2014 asterisk with footnote: 'Not available to fabless customers'. Title above: '2nm Node Yield \u2014 Directional Comparison' in IBM Plex Mono. GSAP: bars draw left to right in sequence (TSMC first, then Samsung, then Intel), each taking 0.6s. After all three drawn, Samsung bar animates: a ghost bar at 30% (early 2025) is shown briefly, then grows to 55\u201360% range \u2014 indicating the trajectory. This motion beat makes the improvement legible.",
+          "start_seconds": 320,
+          "end_seconds": 365,
+          "script_section_id": "s04",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Qualitative framing only per source_map c04/c05/c06 \u2014 no hard yield percentages as primary display numbers. Range estimates appear in bar labels, not as primary chart values. Intel bar must carry 'Internal use only' label prominently. Samsung trajectory animation is the key motion beat \u2014 makes the 'improving but trailing' point visual.",
+          "shot_intent": "Show the yield gap as directional and structural \u2014 not a single moment in time. The Samsung trajectory prevents the comparison from being unfair to Samsung while still making the TSMC lead clear.",
+          "narrative_role": "comparison",
+          "information_role": "TSMC leads on yield. Samsung is improving but still behind. Intel is not a competitive alternative for fabless customers. The gap is real and consequential.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "data-led",
+            "flat-vector",
+            "comparative"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "GSAP directional bar chart: 3 bars with labeled ranges. Samsung trajectory animation (ghost bar grow). Intel 'internal only' footnote. Amber/graphite/steel fills.",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc14",
+          "type": "diagram",
+          "description": "Revenue stat card \u2014 primary source, hard number. Amber border, large '$35.90B' in Inter, sub-label '+40.6% YoY (USD)' in IBM Plex Mono, muted steel. Below: second line 'Q1 2026 \u2014 New Quarterly Record'. Appears at revenue narration beat. Holds 8s. Simultaneously: background of supply chain diagram returns at 15% opacity, Foundry node in amber \u2014 revenue card floats over the diagram context. On 'The chokepoint is not weakening' \u2014 revenue card fades out, diagram background comes to full opacity briefly, then sc15 cuts in.",
+          "start_seconds": 365,
+          "end_seconds": 390,
+          "script_section_id": "s04",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "This is a primary-source hard stat \u2014 no qualifier needed. Hard number treatment appropriate. NVIDIA/Apple displacement is narration-only per source_map c10 guidance \u2014 no stat card for it.",
+          "shot_intent": "Land the financial scale of the chokepoint. The revenue record makes the argument concrete: TSMC's dominance is not theoretical \u2014 it is reflected in its financial results.",
+          "narrative_role": "evidence",
+          "information_role": "TSMC's Q1 2026 revenue is a record. The chokepoint is strengthening under AI demand pressure.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "data-led",
+            "amber-signal"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Revenue stat card: '$35.90B / +40.6% YoY (USD) / Q1 2026 Record' \u2014 amber border, floating over dim supply chain background",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc15",
+          "type": "text_card",
+          "description": "Chapter card: 'WHO BENEFITS' \u2014 amber text on deep slate, Space Grotesk. Hard cut. Holds 2s. Hard cut to sc16.",
+          "start_seconds": 390,
+          "end_seconds": 392,
+          "script_section_id": "s05",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Chapter card template.",
+          "shot_intent": "Mode shift: from proving the chokepoint to examining who holds the leverage and who is exposed.",
+          "narrative_role": "transition",
+          "information_role": "Section orientation.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Chapter card: 'WHO BENEFITS' \u2014 amber text, deep slate background",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc16",
+          "type": "diagram",
+          "description": "Government investment \u2014 three-column stat card layout. Near-black background. GSAP: columns appear left to right with 0.5s stagger. Column 1: '$52B' (large, bone) / 'US CHIPS Act' (IBM Plex Mono, muted steel). Column 2: '\u20ac43B' (large, bone) / 'EU Chips Act'. Column 3: '\u00a53.9T' (large, bone) / 'Japan Subsidies'. Cyan (#3F8FA3) column header labels. Below all three: 'Every major government has assessed this as a strategic liability.' \u2014 bone, italic, Inter, smaller. Columns hold. After 20s, world map outline fades in at very low opacity behind the stat card \u2014 three point sources glow (US, EU, Japan) in muted steel. TSMC location in Taiwan glows amber. Visual: all investment paths point toward one amber node.",
+          "start_seconds": 392,
+          "end_seconds": 455,
+          "script_section_id": "s05",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "\u00a53.9T shown as yen figure \u2014 no USD conversion \u2014 per source_map c12 guidance. US ($52B) and EU (\u20ac43B) are primary-source public law, hard numbers appropriate. World map motif at low opacity \u2014 structural context, not focal element.",
+          "shot_intent": "Show that the chokepoint is universally recognized. Three major economic blocs are all spending to address the same dependency \u2014 this signals the problem is real and large.",
+          "narrative_role": "evidence",
+          "information_role": "Every major government is trying to address TSMC dependency. The scale of investment signals the scale of the perceived risk.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "data-led",
+            "flat-vector",
+            "global"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Three-column stat card (US/EU/Japan investment) + low-opacity world map with amber TSMC node and three muted glow points",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc17",
+          "type": "animation",
+          "description": "Arizona node-generation framing. Near-black background. TSMC fab exterior hero visual (SVG/CSS) fades in, left-heavy composition. Node-generation stat card overlays on right: three stacked lines appear sequentially via GSAP stagger at 0.6s intervals \u2014 'Arizona: N4 Now' (bone) / 'N3: est. 2027' (muted steel) / 'N2: No date set' (muted steel, dimmer). Deep system red border (#D64545) on stat card \u2014 inadequacy frame. After all three lines appear, a small arrow motif draws below: 'Two generations behind Taiwan's leading edge' \u2014 IBM Plex Mono, muted steel. Image holds. No amber in this scene \u2014 the Arizona story is a gap, not a leverage point.",
+          "start_seconds": 455,
+          "end_seconds": 475,
+          "script_section_id": "s05",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Red border on stat card signals inadequacy/gap per Asymmetric color rules \u2014 red only when showing cost, failure, or exposure. Do not use amber here. Three stagger states + arrow motif = 4 state changes across 20s.",
+          "shot_intent": "Show that the Arizona investment, though real, addresses a different generation of technology. The red border is the only use of red in the video \u2014 it marks exactly where the exposure lives.",
+          "narrative_role": "evidence",
+          "information_role": "Arizona is producing N4 \u2014 two generations behind TSMC's leading edge. N3 not until 2027. N2 has no date. The investment is real; the gap is also real.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "dark",
+            "red-signal",
+            "gap-framing"
+          ],
+          "shot_language": {
+            "shot_size": "medium_wide",
+            "camera_movement": "static",
+            "lighting_key": "low_key",
+            "depth_of_field": "medium",
+            "color_temperature": "cool"
+          },
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "SVG/CSS/GSAP Arizona fab scene \u2014 industrial building silhouette (graphite, amber face highlight), desert grid context, construction crane, node-generation stat card with red border: 3 GSAP stagger lines (N4 Now / N3 est. 2027 / N2 no date), arrow motif caption. Source: svg_native substitute for deferred ComfyUI image.",
+              "source": "provided",
+              "file": "assets/scenes/sc17-arizona-fab.html"
+            }
+          ]
+        },
+        {
+          "id": "sc18",
+          "type": "text_card",
+          "description": "Morris Chang pull quote. Graphite (#2A3142) background (not near-black \u2014 slightly lifted for contrast with adjacent scenes). Bone text, Inter Italic, large: '\"A very expensive exercise in futility.\"' \u2014 appears via GSAP fade over 0.5s. Below, after 1.5s delay: '\u2014 Morris Chang, TSMC Founder' in IBM Plex Mono, muted steel, small. Holds 4s at full opacity. No amber \u2014 this is a reality-check moment, not a leverage signal. After 4s, text fades to 40% opacity as narration continues through the ecosystem explanation.",
+          "start_seconds": 475,
+          "end_seconds": 510,
+          "script_section_id": "s05",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Graphite background (not deep slate or near-black) distinguishes this scene visually as a quote moment. No amber \u2014 correct per brand rules. The quote holds while narration runs the ecosystem explanation; the text fades gracefully rather than cutting abruptly.",
+          "shot_intent": "The founder of TSMC is the most credible possible source for the irreplaceability argument. His words land harder than any analyst claim. Let the quote hold space.",
+          "narrative_role": "deliver_payload",
+          "information_role": "The man who built the system says it cannot be replicated. This is the strongest claim in the video and it comes from a primary source.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "stark",
+            "typographic",
+            "authoritative"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Pull quote: Morris Chang 'A very expensive exercise in futility' \u2014 graphite background, bone italic, attribution in IBM Plex Mono, GSAP fade in then graceful dim",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc19",
+          "type": "text_card",
+          "description": "Chapter card: 'THE LEVERAGE MAP' \u2014 amber text on deep slate, Space Grotesk. Hard cut. Holds 2s. Hard cut to sc20.",
+          "start_seconds": 510,
+          "end_seconds": 512,
+          "script_section_id": "s06",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Chapter card template.",
+          "shot_intent": "Mode shift: we now show where the leverage actually concentrates inside the chokepoint.",
+          "narrative_role": "transition",
+          "information_role": "Section orientation.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Chapter card: 'THE LEVERAGE MAP' \u2014 amber text, deep slate background",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc20",
+          "type": "animation",
+          "description": "Leverage concept. Supply chain diagram returns (same state as end of sc09 \u2014 Foundry node amber, others dim). Narration: 'TSMC holds pricing power, schedule power, and strategic weight...' GSAP: three label tags animate into orbit around the amber Foundry node \u2014 'Pricing Power', 'Schedule Power', 'Strategic Weight' \u2014 each tag a small amber-bordered pill, bone IBM Plex Mono text. Tags appear sequentially at 2s intervals. Tags hold. Then narration: 'Inside the primary chokepoint, there is a second one.' \u2014 all three tags retract, Foundry node pulses twice. Pause beat 1.5s. Then sc21 cuts in hard.",
+          "start_seconds": 512,
+          "end_seconds": 565,
+          "script_section_id": "s06",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Three label tags = three state changes (53s / 3 = ~17s each \u2014 compliant). The retraction and pulse before sc21 creates the pause beat for 'there is a second one' \u2014 critical for narration timing.",
+          "shot_intent": "Name the three dimensions of leverage before introducing the nested chokepoint. The viewer needs to understand what 'leverage' means structurally before it's shown to be doubled.",
+          "narrative_role": "build_tension",
+          "information_role": "TSMC's leverage is structural: pricing, schedule, strategic weight \u2014 not aggressive extraction. This sets up the CoWoS reveal as a second, separate leverage layer.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "amber-signal",
+            "flat-vector",
+            "kinetic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Supply chain diagram (sc09 state) + GSAP: three amber-bordered label pills orbit Foundry node sequentially, then retract on 'second one' beat, node pulses twice",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc21",
+          "type": "diagram",
+          "description": "CoWoS second chokepoint reveal \u2014 second hero moment. Supply chain diagram persists. GSAP: (1) Foundry node expands vertically, splitting into two sub-layers \u2014 upper 'Wafer Fabrication' (cyan outline, smaller) and lower 'CoWoS Packaging' (amber outline, larger \u2014 it gets the signal color), (2) second amber border ring draws around the CoWoS sub-layer, (3) label appears: 'CoWoS \u2014 Advanced Packaging' in amber IBM Plex Mono, (4) a dependency arrow from CoWoS sub-layer connects outward to a new node labeled 'AI Accelerators (HBM)' in bone \u2014 indicating what this packaging enables, (5) amber glow on CoWoS sub-layer pulses once and stabilizes. Visual: chokepoint inside a chokepoint. Two amber borders visible simultaneously.",
+          "start_seconds": 565,
+          "end_seconds": 600,
+          "script_section_id": "s06",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "This is the second hero moment \u2014 the nested chokepoint is the most analytically surprising claim in the video. The dual amber border is intentional \u2014 two control layers visible at once. This is the only time two amber elements share the frame.",
+          "shot_intent": "Make the nested structure visual. The viewer must see that there is a chokepoint inside the chokepoint \u2014 this is not a metaphor, it is a separate process layer.",
+          "narrative_role": "deliver_payload",
+          "information_role": "CoWoS is a separate process from wafer fabrication. It is also controlled by TSMC. It is also sold out. The dependency doubles.",
+          "hero_moment": true,
+          "texture_keywords": [
+            "amber-signal",
+            "flat-vector",
+            "nested-reveal"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "GSAP: Foundry node splits into Wafer Fab (cyan) and CoWoS Packaging (amber) sub-layers. Second amber ring draws. AI Accelerator dependency arrow. Dual amber glow stable.",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc22",
+          "type": "diagram",
+          "description": "CoWoS capacity stat card + growth bar. Near-black background. Stat card: '~130K wpm' (large, bone, Inter) with amber border and label 'Projected CoWoS capacity end-2026 / Still sold out' (IBM Plex Mono, muted steel). Below stat card: a horizontal capacity growth bar \u2014 two labeled positions: '35K wpm (2024)' on left (graphite fill), '~130K wpm (late 2026)' on right (amber fill). Bar fills left to right via GSAP over 1.5s. Sub-label: 'Near-fourfold increase / Still insufficient to meet demand' \u2014 bone, smaller. Appears after bar fill completes.",
+          "start_seconds": 600,
+          "end_seconds": 635,
+          "script_section_id": "s06",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Tilde (~) on stat card value signals projection per source_map c08 guidance. 'Still sold out' label sourced from c09 (high confidence). Growth bar is a visual argument: even a 4x increase is insufficient.",
+          "shot_intent": "Quantify the capacity crunch. The 4x growth number sounds large; the 'still sold out' label immediately undercuts it. Both facts together make the argument.",
+          "narrative_role": "evidence",
+          "information_role": "CoWoS capacity is growing fast but demand is growing faster. Fully booked through 2026. This is not a temporary supply chain disruption.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "data-led",
+            "amber-signal"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "CoWoS stat card (~130K wpm) + GSAP capacity growth bar (35K\u2192~130K, graphite to amber fill, 1.5s draw) + 'still insufficient' sub-label",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc23",
+          "type": "diagram",
+          "description": "Abstract convergence diagram \u2014 third hero moment. Near-black background. Five abstract source nodes appear as bone-labeled tiles: 'Apple', 'NVIDIA', 'AMD', 'Qualcomm', and 'AI Data Centers'. Each source node emits a cyan route line (GSAP draw) that curves toward a single central chokepoint node. The chokepoint node is a stacked card labeled 'TSMC / Taiwan' (IBM Plex Mono label line), and it alone is amber (#F5A400). As each route arrives, the amber node pulses brighter and slightly larger; the source node dims. Final state: all cyan routes locked into the amber TSMC node, with a small sub-label appearing last: 'No volume alternative'.",
+          "start_seconds": 635,
+          "end_seconds": 660,
+          "script_section_id": "s06",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "No geography. Interface-driven leverage map. State changes: (1) nodes appear staggered, (2) each cyan route draws in sequence (5 arrivals), (3) amber chokepoint pulses on each arrival, (4) final sub-label appears. Color semantics: cyan = structure/flows; amber = chokepoint/control only.",
+          "shot_intent": "Make the geopolitical dependency physical. All of global AI hardware demand converges on one point on a map. This is the visual argument for the entire video.",
+          "narrative_role": "deliver_payload",
+          "information_role": "Everything \u2014 AI, cloud, phones, defense \u2014 converges on one geographic location. Both the wafer fabrication and the packaging process are there. One company controls both.",
+          "hero_moment": true,
+          "texture_keywords": [
+            "geographic",
+            "amber-signal",
+            "convergence"
+          ],
+          "shot_language": {
+            "shot_size": "wide",
+            "camera_movement": "zoom_in",
+            "lighting_key": "low_key",
+            "depth_of_field": "deep",
+            "color_temperature": "cool"
+          },
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "GSAP geographic convergence: graphite world outline, 4 amber arrows routing toward Taiwan, Taiwan point grows amber with each arrival, 'Hsinchu, Taiwan' label, CoWoS sub-label",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc24",
+          "type": "text_card",
+          "description": "Chapter card: 'WHERE THE LEVERAGE IS' \u2014 amber text on deep slate, Space Grotesk. Hard cut. Holds 2s. Hard cut to sc25.",
+          "start_seconds": 660,
+          "end_seconds": 662,
+          "script_section_id": "s07",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Chapter card template. This is also the recurring channel format title \u2014 'WHERE THE LEVERAGE IS in X' \u2014 applied to this episode.",
+          "shot_intent": "The chapter title is also the brand promise. The section is the answer to the channel's core question.",
+          "narrative_role": "transition",
+          "information_role": "Section orientation + brand promise activation.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Chapter card: 'WHERE THE LEVERAGE IS' \u2014 amber text, deep slate background",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc25",
+          "type": "diagram",
+          "description": "Full leverage map \u2014 dependency tree. Supply chain diagram (Foundry node amber) returns. GSAP: from the TSMC node, a dependency tree branches downward with four labeled leaf nodes: 'AI Training Clusters' / 'Consumer Devices' / 'Cloud Infrastructure' / 'Defense Systems'. Each leaf appears with a stagger of 0.8s. Leaf nodes: bone text, muted steel borders \u2014 they are dependent, not controlling. All four leaves are connected to TSMC with cyan arrows (dependency flow). As narration delivers 'the leverage map looks like this' \u2014 TSMC node flares amber, all four dependency nodes pulse once and stabilize. Then each of three key facts appears as a small IBM Plex Mono label on the amber node: '90%+ share (analyst est.)' \u2192 'No viable substitute' \u2192 'Timeline: years, not months'. Each replaces the previous with a cut (not fade).",
+          "start_seconds": 662,
+          "end_seconds": 740,
+          "script_section_id": "s07",
+          "transition_in": "cut",
+          "transition_out": "cut",
+          "overlay_notes": "Three label replacements on TSMC node = 3 state changes. Four leaf stagger = 4 more. Total 7+ state changes across 78s. Labels use analyst-est. qualifier on 90% per source_map c03. This is the synthesis diagram \u2014 every previous visual motif is present.",
+          "shot_intent": "Show the full leverage map in one frame. The viewer has seen each piece separately \u2014 this scene assembles them. Everything depends on TSMC; TSMC has no substitute.",
+          "narrative_role": "resolution",
+          "information_role": "The leverage map is complete: one node, four dependent domains, no substitutes, long timeline. The viewer can now answer 'where is the leverage?' in one diagram.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "synthesis",
+            "amber-signal",
+            "flat-vector"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Supply chain + dependency tree: 4 leaf nodes (AI/devices/cloud/defense), TSMC amber flare, three cycling IBM Plex Mono label replacements on TSMC node",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc26",
+          "type": "diagram",
+          "description": "Final stat card \u2014 three-line summary. Amber border, deep slate background. GSAP stagger lines appear one at a time at 1s intervals: (1) '90%+ advanced-node share (analyst est.)' \u2014 bone, Inter; (2) 'Arizona: N4 now \u2014 N3 est. 2027' \u2014 muted steel, smaller; (3) 'Structural dependency: unchanged until 2028+' \u2014 muted steel, smaller. Full card holds through end of narration section. No motion after third line appears \u2014 static hold is intentional for emphasis.",
+          "start_seconds": 740,
+          "end_seconds": 765,
+          "script_section_id": "s07",
+          "transition_in": "cut",
+          "transition_out": "fade",
+          "overlay_notes": "Three stagger state changes. Static hold at end is correct \u2014 this is the conclusion, not a build. First and only time in the video that a static hold >4s is intentional: the final summary deserves uninterrupted reading time.",
+          "shot_intent": "Leave the viewer with the three key facts in one frame. This is the takeaway card \u2014 designed for screenshot and sharing.",
+          "narrative_role": "resolution",
+          "information_role": "Three facts to leave with: market share, Arizona gap, dependency timeline. All hedged correctly per source_map.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "summary",
+            "amber-signal",
+            "typographic"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "Three-line stat card: amber border, stagger reveal at 1s intervals, static hold. Lines: 90%+ (analyst est.) / AZ: N4 now, N3 est. 2027 / Dependency until 2028+",
+              "source": "generate"
+            }
+          ]
+        },
+        {
+          "id": "sc27",
+          "type": "text_card",
+          "description": "CTA / close. Near-black background. Fade in from sc26. Single bone text line, Inter Regular: 'The research stack I use for this kind of mapping is linked in the description.' \u2014 appears via GSAP fade. Below after 1.5s: a minimal amber underline animates left to right beneath the text (GSAP draw, 0.8s). After 2s, text and line hold. Optional: Asymmetric wordmark or lever-A logo mark fades in at bottom-right at very low opacity (30%) as a closing brand frame. Fades to black.",
+          "start_seconds": 765,
+          "end_seconds": 780,
+          "script_section_id": "s07",
+          "transition_in": "fade",
+          "transition_out": "fade",
+          "overlay_notes": "CTA is trust-first \u2014 tool recommendation, not a buy-now push. The amber underline is a final brand signal without being decorative. Logo mark optional \u2014 only if it looks restrained at 30% opacity.",
+          "shot_intent": "Close with the CTA in the same voice as the video \u2014 informational, not pushy. The amber underline connects the CTA to the brand signal color used throughout.",
+          "narrative_role": "call_to_action",
+          "information_role": "Tool recommendation. Description link. Brand close.",
+          "hero_moment": false,
+          "texture_keywords": [
+            "clean",
+            "typographic",
+            "brand-close"
+          ],
+          "required_assets": [
+            {
+              "type": "html_scene",
+              "description": "CTA text + amber underline GSAP draw + optional lever-A logo mark at 30% opacity. Fade to black.",
+              "source": "generate"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "project": "chip-factory-runs-world",
+        "pipeline": "animation",
+        "render_runtime": "hyperframes",
+        "playbook": "asymmetric",
+        "total_scenes": 27,
+        "total_duration_seconds": 780,
+        "hero_moments": [
+          "sc09",
+          "sc21",
+          "sc23"
+        ],
+        "transition_rules": {
+          "chapter_card_to_content": "cut \u2014 always hard, no fade",
+          "between_diagram_builds": "cut \u2014 state changes within GSAP timeline, not scene-level transitions",
+          "between_major_sections": "cut (default) \u2014 fade only at sc26\u2192sc27 close",
+          "overlay_elements": "GSAP fade in/out within scene \u2014 not scene-level transitions"
+        },
+        "animatic_rules": {
+          "state_change_max_seconds": 4,
+          "amber_usage": "Foundry/TSMC node only \u2014 set at sc09 and never returned to cyan. CoWoS sub-layer in sc21 is the only second amber element.",
+          "red_usage": "sc17 only \u2014 Arizona node-generation stat card border. One instance total.",
+          "cyan_usage": "Supply chain arrows and non-focal nodes. Structural layer only.",
+          "diagram_continuity": "Supply chain diagram returns in sc12, sc20, sc21, sc25 \u2014 always in the same amber/dim state established in sc09. Visual continuity across sections.",
+          "no_logos": "Company wordmarks only (bone text in boxes). No brand logo assets needed.",
+          "static_hold_exception": "sc26 final stat card is permitted to hold static after the third line appears \u2014 intentional conclusion beat"
+        },
+        "hold_rules": {
+          "chapter_cards": "2s exactly \u2014 no variation",
+          "stat_cards": "8s primary, fade to 30% opacity rather than disappear where background context is useful",
+          "pull_quote": "4s full opacity, then fade to 40% while narration continues",
+          "final_stat_card": "Static hold from 3rd line appearance to end of sc26 \u2014 intentional exception to 4s rule"
+        },
+        "tool_path_map": {
+          "html_scene": "HyperFrames \u2014 GSAP timeline, HTML/CSS, exported to video segment",
+          "generated_image": "ComfyUI (local GPU) \u2014 wafer hero (sc02), EUV machine (sc05), Arizona fab (sc17)",
+          "narration_audio": "Fish Speech (local GPU) \u2014 all sections, serial after ComfyUI",
+          "music": "ACEStep (local GPU) \u2014 minimal electronic documentary pulse, serial after Fish Speech"
+        },
+        "asset_count_by_type": {
+          "html_scene": 27,
+          "generated_image": 3,
+          "narration_segments": 7,
+          "music_track": 1
+        },
+        "gpu_execution_order": "BLOCK A (ComfyUI): 3 images (wafer, EUV machine, Arizona fab) \u2192 unload. BLOCK B (Fish Speech): 7 narration segments \u2192 stop. BLOCK C (ACEStep): 1 music track \u2192 stop. BLOCK D (HyperFrames compose): all 27 scenes assembled.",
+        "ep_gate_checks": {
+          "no_scene_state_unchanged_over_4s": "PASS \u2014 all scenes document state changes; sc26 static hold is documented exception",
+          "amber_used_only_for_control_leverage": "PASS \u2014 amber appears on Foundry/TSMC node (sc09+), CoWoS sub-layer (sc21), stat card borders (primary-source only), chapter cards, CTA underline",
+          "red_used_only_for_cost_exposure_failure": "PASS \u2014 red appears only on sc17 Arizona stat card border",
+          "cyan_used_only_for_structure_flow": "PASS \u2014 cyan used for supply chain arrows and non-focal nodes only",
+          "every_section_has_diagram_coverage": "PASS \u2014 s01 through s07 all covered",
+          "source_map_qualified_stat_cards": "PASS \u2014 analyst-sourced cards carry '(analyst est.)' qualifier; hard numbers only from primary sources",
+          "hero_moments_declared": "3 declared: sc09 (foundry amber), sc21 (CoWoS nested), sc23 (geographic convergence)"
+        }
+      }
+    }
+  },
+  "review": {
+    "status": "approved_with_changes",
+    "approved_changes": [
+      "Keep HyperFrames locked for render runtime.",
+      "sc23 changed from geographic map to abstract convergence diagram (no world-outline SVG dependency).",
+      "Do not depend on ComfyUI unless allocator issue is fixed and verified; use HyperFrames-native SVG/CSS visuals instead.",
+      "Asset order updated: HyperFrames visuals (CPU) -> Fish Speech chunked VO (GPU) -> optional ACEStep -> compose."
+    ]
+  }
+}

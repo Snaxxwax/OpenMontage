@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="scene-layout.css">
+  <link rel="stylesheet" href="leverage-map.css">
+</head>
+<body>
+  <div data-composition-id="leverage-map" data-width="1920" data-height="1080" data-start="0" data-duration="5" class="clip">
+    <div class="scene-container">
+      <div class="background-grid"></div>
+      <div class="map-frame">
+        <div class="map-label text-amber">LEVERAGE MAP</div>
+        <div class="map-content">
+          <svg viewBox="0 0 1600 740" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- ── STRUCTURAL RINGS (graphite) ── -->
+            <circle cx="800" cy="370" r="320" stroke="#D4CBBA" stroke-width="1" stroke-dasharray="12 8"/>
+            <circle cx="800" cy="370" r="210" stroke="#D4CBBA" stroke-width="1" stroke-dasharray="8 6"/>
+            <circle cx="800" cy="370" r="110" stroke="#D4CBBA" stroke-width="1" stroke-dasharray="5 4"/>
+            <line x1="800" y1="30" x2="800" y2="710" stroke="#D4CBBA" stroke-width="1" opacity="0.5"/>
+            <line x1="460" y1="370" x2="1140" y2="370" stroke="#D4CBBA" stroke-width="1" opacity="0.5"/>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!-- CENTRAL CONTROL NODE (amber) -->
+            <!-- ══════════════════════════════════════════════════════ -->
+            <rect x="680" y="320" width="240" height="100" fill="#C94B00" rx="4"/>
+            <text x="800" y="360" fill="#FFF8F0" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="20" font-weight="700">CONTROL NODE</text>
+            <text x="800" y="385" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="600">TSMC ADV. NODES</text>
+            <text x="800" y="406" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">3nm / 5nm MONOPOLY</text>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!-- SPOKE ARMS (cyan) — 6 dependency arms radiating out -->
+            <!-- ══════════════════════════════════════════════════════ -->
+
+            <!-- Arm TOP -->
+            <path d="M800 320 V170" stroke="#1D6A8C" stroke-width="3"/>
+            <polygon points="795,170 800,155 805,170" fill="#1D6A8C"/>
+
+            <!-- Arm BOTTOM -->
+            <path d="M800 420 V555" stroke="#1D6A8C" stroke-width="3"/>
+            <polygon points="795,555 800,570 805,555" fill="#1D6A8C"/>
+
+            <!-- Arm TOP-LEFT -->
+            <path d="M690 328 L535 215" stroke="#1D6A8C" stroke-width="3"/>
+            <polygon points="527,209 535,215 541,225" fill="#1D6A8C"/>
+
+            <!-- Arm TOP-RIGHT -->
+            <path d="M910 328 L1065 215" stroke="#1D6A8C" stroke-width="3"/>
+            <polygon points="1059,209 1065,215 1071,225" fill="#1D6A8C"/>
+
+            <!-- Arm BOTTOM-LEFT -->
+            <path d="M690 412 L535 525" stroke="#1D6A8C" stroke-width="3"/>
+            <polygon points="527,531 535,525 541,515" fill="#1D6A8C"/>
+
+            <!-- Arm BOTTOM-RIGHT -->
+            <path d="M910 412 L1065 525" stroke="#1D6A8C" stroke-width="3"/>
+            <polygon points="1059,531 1065,525 1071,515" fill="#1D6A8C"/>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!-- SATELLITE NODES — 6 dependency boxes -->
+            <!-- ══════════════════════════════════════════════════════ -->
+
+            <!-- TOP: EUV Tooling -->
+            <rect x="685" y="100" width="230" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="685" y="100" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="805" y="129" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">EUV TOOLING</text>
+            <text x="805" y="150" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">ASML — SOLE SUPPLIER</text>
+            <text x="805" y="163" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">DEPENDENCY INDEX: 9.8/10</text>
+
+            <!-- BOTTOM: Export Control -->
+            <rect x="685" y="572" width="230" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="685" y="572" width="5" height="68" fill="#B8291A" rx="2"/>
+            <text x="805" y="601" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">EXPORT CONTROL</text>
+            <text x="805" y="622" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">BIS / ENTITY LIST</text>
+            <text x="805" y="635" fill="#B8291A" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">US JURISDICTION LOCK</text>
+
+            <!-- TOP-LEFT: Chemical Supply -->
+            <rect x="380" y="155" width="220" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="380" y="155" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="495" y="184" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">CHEMICAL SUPPLY</text>
+            <text x="495" y="205" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">NEON / PHOTORESISTS</text>
+            <text x="495" y="218" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">OLIGOPOLY: 3 SUPPLIERS</text>
+
+            <!-- TOP-RIGHT: IP Licensing -->
+            <rect x="1000" y="155" width="220" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="1000" y="155" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="1115" y="184" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">IP LICENSING</text>
+            <text x="1115" y="205" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">ARM / RISC-V / DSP</text>
+            <text x="1115" y="218" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">ROYALTY LAYER</text>
+
+            <!-- BOTTOM-LEFT: Wafer Substrate -->
+            <rect x="380" y="502" width="220" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="380" y="502" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="495" y="531" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">WAFER SUBSTRATE</text>
+            <text x="495" y="552" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">SHIN-ETSU / SUMCO</text>
+            <text x="495" y="565" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">DUOPOLY CONTROL</text>
+
+            <!-- BOTTOM-RIGHT: Packaging/Test -->
+            <rect x="1000" y="502" width="220" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="1000" y="502" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="1115" y="531" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">ADVANCED PKG</text>
+            <text x="1115" y="552" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">CoWoS / SoIC — TSMC</text>
+            <text x="1115" y="565" fill="#C94B00" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">INTERNAL CAPTURE</text>
+
+            <!-- ── OUTER DEPENDENCY INDEX LABELS ── -->
+            <text x="60" y="375" fill="#8C7A68" text-anchor="start" font-family="IBM Plex Mono" font-size="13">HIGH DEPENDENCY →</text>
+            <text x="1545" y="375" fill="#8C7A68" text-anchor="end" font-family="IBM Plex Mono" font-size="13">← HIGH DEPENDENCY</text>
+
+            <!-- Outer ring annotation: LOW SUBSTITUTABILITY -->
+            <text x="800" y="720" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">LOW SUBSTITUTABILITY PERIMETER</text>
+
+            <!-- ══════════════════════════════════════════════ -->
+            <!-- CORNER DATA PANELS (fill empty quadrant space) -->
+            <!-- ══════════════════════════════════════════════ -->
+
+            <!-- TOP-LEFT: Severity index -->
+            <rect x="20" y="30" width="240" height="112" fill="#D4CBBA" rx="3"/>
+            <rect x="20" y="30" width="4" height="112" fill="#C94B00" rx="2"/>
+            <text x="142" y="58" fill="#C94B00" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" font-weight="700">CHOKEPOINT SEVERITY</text>
+            <rect x="32" y="70" width="196" height="8" fill="#F5EDE0" rx="2"/>
+            <rect x="32" y="70" width="181" height="8" fill="#C94B00" rx="2"/>
+            <text x="238" y="79" fill="#C94B00" font-family="IBM Plex Mono" font-size="10">9.2</text>
+            <text x="32" y="100" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">SUBSTITUTION RISK: CRITICAL</text>
+            <text x="32" y="118" fill="#1A1208" font-family="IBM Plex Mono" font-size="11">LOCK-IN HORIZON: 36 MONTHS+</text>
+
+            <!-- TOP-RIGHT: Value capture -->
+            <rect x="1340" y="30" width="240" height="112" fill="#D4CBBA" rx="3"/>
+            <rect x="1340" y="30" width="4" height="112" fill="#1D6A8C" rx="2"/>
+            <text x="1462" y="58" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" font-weight="700">VALUE CAPTURE SUMMARY</text>
+            <text x="1352" y="79" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">Foundry gross margin</text>
+            <text x="1572" y="79" fill="#C94B00" text-anchor="end" font-family="IBM Plex Mono" font-size="11" font-weight="700">54%</text>
+            <text x="1352" y="95" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">IP royalty layer</text>
+            <text x="1572" y="95" fill="#1D6A8C" text-anchor="end" font-family="IBM Plex Mono" font-size="11" font-weight="700">2–5%</text>
+            <text x="1352" y="111" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">Packaging premium</text>
+            <text x="1572" y="111" fill="#1D6A8C" text-anchor="end" font-family="IBM Plex Mono" font-size="11" font-weight="700">22%</text>
+            <text x="1352" y="127" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">Total extraction ~</text>
+            <text x="1572" y="127" fill="#C94B00" text-anchor="end" font-family="IBM Plex Mono" font-size="11" font-weight="700">78%</text>
+
+            <!-- BOTTOM-LEFT: Substitution table -->
+            <rect x="20" y="598" width="240" height="112" fill="#D4CBBA" rx="3"/>
+            <rect x="20" y="598" width="4" height="112" fill="#1D6A8C" rx="2"/>
+            <text x="142" y="622" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" font-weight="700">SUBSTITUTION INDEX</text>
+            <text x="32" y="642" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">TSMC → Samsung</text>
+            <text x="252" y="642" fill="#B8291A" text-anchor="end" font-family="IBM Plex Mono" font-size="11" font-weight="700">PARTIAL</text>
+            <text x="32" y="658" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">TSMC → Intel 18A</text>
+            <text x="252" y="658" fill="#B8291A" text-anchor="end" font-family="IBM Plex Mono" font-size="11" font-weight="700">2026+</text>
+            <text x="32" y="674" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">ASML → alternative</text>
+            <text x="252" y="674" fill="#B8291A" text-anchor="end" font-family="IBM Plex Mono" font-size="11" font-weight="700">NONE</text>
+            <text x="32" y="690" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">Chemical alt</text>
+            <text x="252" y="690" fill="#1D6A8C" text-anchor="end" font-family="IBM Plex Mono" font-size="11" font-weight="700">LIMITED</text>
+
+            <!-- BOTTOM-RIGHT: Strategic implication -->
+            <rect x="1340" y="598" width="240" height="112" fill="#D4CBBA" rx="3"/>
+            <rect x="1340" y="598" width="4" height="112" fill="#C94B00" rx="2"/>
+            <text x="1462" y="622" fill="#C94B00" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" font-weight="700">STRATEGIC IMPLICATION</text>
+            <text x="1352" y="643" fill="#1A1208" font-family="IBM Plex Mono" font-size="11" font-weight="700">WHO CONTROLS THE NODE</text>
+            <text x="1352" y="659" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">CONTROLS GLOBAL COMPUTE</text>
+            <text x="1352" y="679" fill="#1A1208" font-family="IBM Plex Mono" font-size="11" font-weight="700">CHOKEPOINT = LEVERAGE</text>
+            <text x="1352" y="695" fill="#8C7A68" font-family="IBM Plex Mono" font-size="11">EVERY AI CHIP PASSES HERE</text>
+
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines["leverage-map"] = tl;
+  </script>
+</body>
+</html>

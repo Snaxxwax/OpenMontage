@@ -1,0 +1,50 @@
+{
+  "device_id": "xray-layer-reveal",
+  "version": "1.0",
+  "semantic_meaning": "Reveals hidden system layers (structure, control, incentives) beneath the visible surface.",
+  "when_to_use": [
+    "To reveal the hidden layer that makes the claim true",
+    "When the audience needs 'x-ray vision' into a black box",
+    "When shifting from surface narrative to controllable structure"
+  ],
+  "when_not_to_use": [
+    "If the hidden layers are speculative or not supported by sources",
+    "As a generic visual effect without an actual layer reveal",
+    "If the reveal would clutter the frame beyond mobile readability"
+  ],
+  "color_rules": {
+    "required": {
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true },
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true }
+    },
+    "optional": {
+      "red": { "hex": "#B8291A", "meaning": "consequence/failure/exposure only", "not_decorative": true }
+    }
+  },
+  "animation_behavior": {
+    "description": "Surface fades/peels; structure layer appears in cyan; leverage highlight in amber; optional consequence overlay in red (only if explicit).",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "layers", "type": "array<string>", "required": true, "description": "Ordered layer IDs to reveal (e.g. ['surface','structure','control'])." },
+    { "name": "leverage_layer_id", "type": "string", "required": false, "description": "Layer ID where the amber leverage highlight appears." }
+  ],
+  "state_beats": [
+    { "label": "surface", "max_hold_seconds": 4.0, "meaningful_change": "Surface view visible." },
+    { "label": "peel", "max_hold_seconds": 4.0, "meaningful_change": "Surface peels/fades; x-ray starts." },
+    { "label": "structure", "max_hold_seconds": 4.0, "meaningful_change": "Cyan structure layer revealed." },
+    { "label": "control_mark", "max_hold_seconds": 4.0, "meaningful_change": "Amber control/leverage is marked." }
+  ],
+  "expected_outputs": ["A readable layer reveal that grounds the mechanism visually"],
+  "suitable_scene_types": ["xray_reveal", "mechanism_reveal", "system_map"],
+  "validation_notes": [
+    "Do not use red unless the claim is explicitly about consequence/failure/exposure."
+  ],
+  "example_usage": {
+    "hyperframes": {
+      "parameters": { "layers": ["surface", "structure", "control"], "leverage_layer_id": "control" }
+    }
+  }
+}
+

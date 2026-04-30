@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;700&display=swap');
+
+:root {
+  /* Print Intelligence palette */
+  --near-black: #1A1208;   /* Warm near-black / primary ink */
+  --deep-slate: #F5EDE0;   /* Deep cream — raised surfaces, cards */
+  --graphite: #D4CBBA;     /* Mid-cream — borders, separators */
+  --bone: #FFF8F0;         /* Paper field — the ground */
+  --muted: #8C7A68;        /* Warm muted — secondary labels */
+  --amber: #C94B00;        /* Burnt orange — leverage/control only */
+  --cyan: #1D6A8C;         /* Ink blue — structure/flow only */
+  --red: #B8291A;          /* Deep crimson — consequence/extraction only */
+
+  /* Semantic aliases */
+  --ink: #1A1208;
+  --field: #FFF8F0;
+  --surface: #F5EDE0;
+  --burnt-orange-control: #C94B00;
+  --ink-blue-structure: #1D6A8C;
+  --crimson-consequence: #B8291A;
+
+  --font-headings: "Playfair Display", Georgia, serif;
+  --font-body: "Libre Baskerville", Georgia, serif;
+  --font-code: "IBM Plex Mono", monospace;
+}
+
+body {
+  background-color: var(--bone);
+  color: var(--near-black);
+  font-family: var(--font-body);
+  margin: 0;
+  overflow: hidden;
+}
+
+.scene-container {
+  width: 1920px;
+  height: 1080px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 80px;
+  box-sizing: border-box;
+}
+
+.background-grid {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--graphite) 0px,
+    var(--graphite) 1px,
+    transparent 1px,
+    transparent 60px
+  );
+  opacity: 0.2;
+  z-index: -1;
+}
+
+h1, h2 {
+  font-family: var(--font-headings);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0;
+}

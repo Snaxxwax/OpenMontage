@@ -15,6 +15,70 @@ This is where words become visuals. A great script with a bad scene plan produce
 | Playbook | Active style playbook | Visual language, transitions, motion rules |
 | Layer 3 | `.agents/skills/flux-best-practices/`, `.agents/skills/beautiful-mermaid/`, `.agents/skills/manim-composer/` | Image gen, diagram, animation knowledge |
 
+## Asymmetric Mode (Style Playbook = `asymmetric`)
+
+When `style_playbook == "asymmetric"`, scene plans must be **device-driven**, **kinetic (state beats)**, and **source-aware**.
+
+### Retention-Motion Layer (Required)
+
+Plan scenes around **retention beats**, not calm information delivery.
+
+Every scene MUST include the following fields (see `schemas/artifacts/scene_plan.schema.json`):
+- `viewer_hook`: What the viewer is *currently* trying to resolve (their active question / suspicion).
+- `tension_type`: Why it feels unresolved (mystery / contradiction / escalation / bottleneck / consequence / etc.).
+- `visual_event_cadence_seconds`: Target cadence for meaningful visual events (default **5–8s**).
+- `retention_function`: The emotional/narrative job the scene does (opens a loop, proves a claim, reveals mechanism, hits consequence, sets payoff, etc.).
+- `payoff_moment`: The specific moment/beat that “pays” the loop inside the scene.
+- `next_open_loop`: The next unresolved question you intentionally hand off to the following scene.
+
+Mini-arc rule (per section): **question → mechanism → consequence → payoff**. If a script section needs multiple scenes, they should collectively form this arc and explicitly carry the open loop forward.
+
+**Device-driven planning (major scenes):**
+- Add `devices: [...]` referencing device IDs from `channel_assets/asymmetric/diagrams/devices/manifest.json`.
+- Recognized device IDs:
+  - `amber-pivot-marker`, `chokepoint-ring`, `route-trace`, `collapse-to-one-node`
+  - `surface-vs-structure-split`, `xray-layer-reveal`, `blueprint-reveal`, `under-the-hood-mechanism`
+  - `red-consequence-layer`, `source-card-reveal`, `final-leverage-map`, `dependency-tree-stop-point`
+
+**State-change requirements:**
+- Include `state_changes` beats (seconds from scene start) so later validation can enforce motion cadence.
+- Hard rule: no unchanged visual state longer than **4 seconds**; preferred meaningful change every **2–4 seconds**.
+- Every major visual must create **motion, tension, reveal, or consequence** — avoid “static chart/deck energy”.
+- Diagrams must change **visible state** at least every 4 seconds (not just swapping text).
+- A “visual event” means: reveal, collapse, route trace, node highlight, contradiction, source proof, map zoom, consequence hit, comparison slam, or final synthesis.
+- Text-card sequences must include motion/state changes or be split.
+- Stat cards must animate as evidence (not bullet slides).
+- Every major claim must have a visual mechanism, not just text.
+
+**Required episode coverage (minimum):**
+- System map (`route-trace` or `dependency-tree-stop-point`)
+- Chokepoint reveal (`amber-pivot-marker` or `chokepoint-ring`)
+- Surface-vs-structure reveal (`surface-vs-structure-split` or `xray-layer-reveal`)
+- Source/evidence moment (`source-card-reveal`)
+- Final leverage map (`final-leverage-map`)
+
+**SVG/CSS fallback planning (generated imagery must not block production):**
+- Any `required_assets[]` entry with `source: "generate"` should include fallback planning:
+  - `fallback_type` (`svg_css` | `hyperframes_native` | `generated_image` | `stock` | `none`)
+  - set `fallback_required: true` and `fallback_path` when the visual is mission-critical
+- Prefer `svg_css` / `hyperframes_native` when brand-compatible; stock-photo documentary is not the default.
+
+**Evidence/stat-card planning:**
+- Hard stat cards must include `source_claim_ids` (claim IDs from `source_map`).
+- Every stat card must be introduced as **proof of a claim or contradiction** (never “here are some numbers”).
+- Analyst/media estimates must set `qualifier_required: true` and include on-screen qualifiers.
+- Low-confidence claims cannot be planned as hard stat cards.
+- For major non-obvious claims, plan a `source-card-reveal` (set `evidence_device_id: "source-card-reveal"`).
+
+**Color semantics (non-negotiable):**
+- Amber = leverage/chokepoint/control point only (not decorative).
+- Cyan = structure/flow/system map only.
+- Red = consequence/failure/exposure only (not decorative).
+
+**Human-host and tone defaults:**
+- Default to no recurring human host; interface-driven visuals; abstract silhouettes only if needed.
+- Avoid cyberpunk / spy / control-room fantasy; avoid life-hack/gamer-meta public language.
+
 ## Process
 
 ### Step 1: Analyze the Script

@@ -1,0 +1,52 @@
+{
+  "device_id": "surface-vs-structure-split",
+  "version": "1.0",
+  "semantic_meaning": "Splits the frame into 'surface' (what people think is happening) versus 'structure' (what the system actually does).",
+  "when_to_use": [
+    "When correcting a common misunderstanding",
+    "When pivoting from narrative surface to mechanism structure",
+    "Before showing an x-ray layer reveal"
+  ],
+  "when_not_to_use": [
+    "If surface and structure are identical (no reveal)",
+    "As a decorative split-screen",
+    "When it would distract from the central claim"
+  ],
+  "color_rules": {
+    "required": {
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true },
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true }
+    },
+    "forbidden": {
+      "red": "Red only for consequence/failure/exposure."
+    }
+  },
+  "animation_behavior": {
+    "description": "Surface pane slides aside/defocuses; structure pane sharpens; structural routes appear in cyan; leverage highlight in amber.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "surface_label", "type": "string", "required": false, "default": "SURFACE", "description": "Label for the surface pane." },
+    { "name": "structure_label", "type": "string", "required": false, "default": "STRUCTURE", "description": "Label for the structure pane." },
+    { "name": "split_axis", "type": "string", "required": false, "default": "vertical", "description": "vertical|horizontal split." }
+  ],
+  "state_beats": [
+    { "label": "surface_only", "max_hold_seconds": 4.0, "meaningful_change": "Surface view dominant." },
+    { "label": "split_introduce", "max_hold_seconds": 4.0, "meaningful_change": "Split appears; both panes labeled." },
+    { "label": "structure_emerge", "max_hold_seconds": 4.0, "meaningful_change": "Structure pane sharpens; cyan scaffolding appears." },
+    { "label": "surface_fade", "max_hold_seconds": 4.0, "meaningful_change": "Surface pane defocuses; attention moves to structure." }
+  ],
+  "expected_outputs": ["A clear surface/structure contrast with motion-driven reveal"],
+  "suitable_scene_types": ["surface_vs_structure_reveal", "mechanism_reveal", "system_map"],
+  "validation_notes": [
+    "Split must be meaningful (surface != structure).",
+    "Must lead into a mechanism view, not end as a static slide."
+  ],
+  "example_usage": {
+    "hyperframes": {
+      "parameters": { "surface_label": "WHAT YOU SEE", "structure_label": "WHAT RUNS IT" }
+    }
+  }
+}
+

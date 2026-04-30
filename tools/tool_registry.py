@@ -13,6 +13,7 @@ from types import ModuleType
 from typing import Any, Optional
 
 from tools.base_tool import BaseTool, ToolStatus, ToolTier, ToolStability
+from lib.gpu_governance import current_lock_holder, is_failed_after_isolation
 
 
 # Unicode punctuation that breaks on Windows cp1252 stdout. Map each to an
@@ -225,7 +226,7 @@ class ToolRegistry:
         summary: dict[str, dict[str, int]] = {}
         for tier in ToolTier:
             tier_tools = self.get_by_tier(tier)
-            counts = {"available": 0, "unavailable": 0, "degraded": 0}
+            counts = {"available": 0, "busy": 0, "unavailable": 0, "degraded": 0, "failed_after_isolation": 0}
             for t in tier_tools:
                 status = t.get_status().value
                 counts[status] = counts.get(status, 0) + 1
@@ -257,6 +258,7 @@ class ToolRegistry:
         # Skip selectors — they aggregate, they aren't providers themselves
         tools = [t for t in self._tools.values() if t.provider != "selector"]
 
+        holder = current_lock_holder()
         for tool in tools:
             cap = tool.capability
             if cap not in menu:
@@ -264,6 +266,13 @@ class ToolRegistry:
 
             info = tool.get_info()
             status = tool.get_status()
+            gpu_busy_reason = None
+            if tool.runtime.value == "local_gpu":
+                if is_failed_after_isolation(tool.name):
+                    status = ToolStatus.FAILED_AFTER_ISOLATION
+                elif holder and holder.tool_name and holder.tool_name != tool.name:
+                    status = ToolStatus.BUSY
+                    gpu_busy_reason = f"GPU lock held by {holder.tool_name} (pid={holder.pid})"
             entry = {
                 "name": tool.name,
                 "provider": tool.provider,
@@ -272,6 +281,8 @@ class ToolRegistry:
                 "install_instructions": tool.install_instructions,
                 "status": status.value,
             }
+            if gpu_busy_reason:
+                entry["gpu_busy_reason"] = gpu_busy_reason
             for extra_key in (
                 "source_provider_menu",
                 "source_provider_summary",

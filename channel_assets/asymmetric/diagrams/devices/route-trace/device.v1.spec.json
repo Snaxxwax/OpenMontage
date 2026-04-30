@@ -1,0 +1,57 @@
+{
+  "device_id": "route-trace",
+  "version": "1.0",
+  "semantic_meaning": "Traces the structural flow path (cyan) and highlights the control junction (amber) along the route.",
+  "when_to_use": [
+    "To show how inputs become outputs through the system",
+    "To connect a claim to the chokepoint physically/structurally",
+    "To turn text claims into mechanism motion"
+  ],
+  "when_not_to_use": [
+    "As decorative motion in the background",
+    "If the route is unknown/unsupported by the story evidence",
+    "If the map is too dense to trace legibly"
+  ],
+  "color_rules": {
+    "required": {
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true },
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true }
+    },
+    "forbidden": {
+      "red": "Red is reserved for consequence/failure/exposure only."
+    }
+  },
+  "animation_behavior": {
+    "description": "Route draws in cyan; at control junction the amber highlight pulses/locks; optional return flow fade.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "path_points", "type": "array<point>", "required": true, "description": "Polyline points for the route." },
+    { "name": "junction_index", "type": "integer", "required": false, "description": "Index of the control junction point (amber pulse/lock)." },
+    { "name": "stroke_width_px", "type": "number", "required": false, "default": 5, "description": "Route stroke width." }
+  ],
+  "state_beats": [
+    { "label": "route_prepare", "max_hold_seconds": 4.0, "meaningful_change": "Map context; route dormant." },
+    { "label": "route_draw", "max_hold_seconds": 4.0, "meaningful_change": "Cyan route draws along path." },
+    { "label": "junction_mark", "max_hold_seconds": 4.0, "meaningful_change": "Amber junction pulses/locks." },
+    { "label": "route_settle", "max_hold_seconds": 4.0, "meaningful_change": "Route dims to context; focus shifts to next device." }
+  ],
+  "expected_outputs": ["A traced cyan route with an amber control junction emphasis"],
+  "suitable_scene_types": ["system_map", "mechanism_reveal", "dependency_tree"],
+  "validation_notes": [
+    "Cyan is structural flow only; do not use cyan as hero highlight beyond flow.",
+    "Amber is only for the control junction/chokepoint."
+  ],
+  "example_usage": {
+    "hyperframes": {
+      "css_vars": ["--color-cyan", "--color-amber"],
+      "parameters": {
+        "path_points": [{ "x": 180, "y": 520 }, { "x": 420, "y": 420 }, { "x": 720, "y": 420 }],
+        "junction_index": 1,
+        "stroke_width_px": 5
+      }
+    }
+  }
+}
+

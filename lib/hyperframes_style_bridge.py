@@ -27,6 +27,13 @@ _FALLBACK_CSS_VARS = {
     "--color-secondary": "#10B981",
     "--color-surface": "#111827",
     "--color-muted": "#6B7280",
+    "--color-near-black": "#0B0F1A",
+    "--color-deep-slate": "#111827",
+    "--color-graphite": "#2D3748",
+    "--color-bone": "#F5F5F5",
+    "--color-amber": "#F59E0B",
+    "--color-cyan": "#22C1C3",
+    "--color-red": "#EF4444",
     "--font-heading": "Inter",
     "--font-body": "Inter",
     "--font-mono": "JetBrains Mono",
@@ -102,7 +109,16 @@ def style_bridge(
         primary = _first(palette.get("primary"), css["--color-primary"])
         secondary = _first(palette.get("secondary"), css["--color-secondary"])
         surface = _first(palette.get("surface"), css["--color-surface"])
-        muted = _first(palette.get("muted_text"), css["--color-muted"])
+        muted = _first(palette.get("muted"), _first(palette.get("muted_text"), css["--color-muted"]))
+
+        # Canonical palette aliases (Asymmetric + future channel playbooks).
+        near_black = _first(palette.get("near_black"), bg)
+        deep_slate = _first(palette.get("deep_slate"), surface)
+        graphite = _first(palette.get("graphite"), css["--color-graphite"])
+        bone = _first(palette.get("bone"), fg)
+        amber = _first(palette.get("amber"), primary)
+        cyan = _first(palette.get("cyan"), accent)
+        red = _first(palette.get("red"), _first(palette.get("danger"), css["--color-red"]))
 
         duration, ease = _motion_easing(motion)
 
@@ -115,6 +131,13 @@ def style_bridge(
                 "--color-secondary": secondary,
                 "--color-surface": surface,
                 "--color-muted": muted,
+                "--color-near-black": near_black,
+                "--color-deep-slate": deep_slate,
+                "--color-graphite": graphite,
+                "--color-bone": bone,
+                "--color-amber": amber,
+                "--color-cyan": cyan,
+                "--color-red": red,
                 "--font-heading": _font(typo, "heading", css["--font-heading"]),
                 "--font-body": _font(typo, "body", css["--font-body"]),
                 "--font-mono": _font(typo, "code", css["--font-mono"]),
@@ -159,6 +182,13 @@ def _render_design_md(
         f"- Secondary: `{css['--color-secondary']}`",
         f"- Surface: `{css['--color-surface']}`",
         f"- Muted text: `{css['--color-muted']}`",
+        f"- Near Black: `{css['--color-near-black']}`",
+        f"- Deep Slate: `{css['--color-deep-slate']}`",
+        f"- Graphite: `{css['--color-graphite']}`",
+        f"- Bone: `{css['--color-bone']}`",
+        f"- Amber: `{css['--color-amber']}`",
+        f"- Cyan: `{css['--color-cyan']}`",
+        f"- Red: `{css['--color-red']}`",
         "",
         "## Typography",
         "",

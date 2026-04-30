@@ -1,0 +1,57 @@
+{
+  "device_id": "chokepoint-ring",
+  "version": "1.0",
+  "semantic_meaning": "Encircles the chokepoint node/edge to signal constrained capacity or control.",
+  "when_to_use": [
+    "When a system reduces to a small number of critical nodes",
+    "When showing 'everything funnels through here'",
+    "When establishing a leverage constraint before consequences"
+  ],
+  "when_not_to_use": [
+    "As a generic highlight for any important item",
+    "On multiple nodes at once (unless explicitly comparing chokepoints)",
+    "If the claim is not about constraint/control"
+  ],
+  "color_rules": {
+    "required": {
+      "amber": {
+        "hex": "#C94B00",
+        "meaning": "leverage/chokepoint/control point only",
+        "not_decorative": true
+      }
+    },
+    "forbidden": {
+      "multi_ring_decoration": "Do not sprinkle rings as decoration.",
+      "red": "Do not use red unless showing consequence/failure/exposure."
+    }
+  },
+  "animation_behavior": {
+    "description": "Ring draws on, tightens, and stabilizes; optional subtle scanline to imply constraint.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": true
+  },
+  "input_parameters": [
+    { "name": "target_bounds", "type": "rect", "required": true, "description": "Bounding box of the chokepoint target." },
+    { "name": "ring_thickness_px", "type": "number", "required": false, "default": 6, "description": "Stroke thickness." },
+    { "name": "corner_radius_px", "type": "number", "required": false, "default": 16, "description": "Rounded ring corner radius." }
+  ],
+  "state_beats": [
+    { "label": "map_context", "max_hold_seconds": 4.0, "meaningful_change": "System map visible without ring." },
+    { "label": "ring_draw", "max_hold_seconds": 4.0, "meaningful_change": "Ring strokes draws around chokepoint." },
+    { "label": "ring_tighten", "max_hold_seconds": 4.0, "meaningful_change": "Ring tightens/scales slightly to imply constraint." },
+    { "label": "ring_lock", "max_hold_seconds": 4.0, "meaningful_change": "Ring stabilizes; label/callout may appear." }
+  ],
+  "expected_outputs": ["A single amber ring emphasizing the chokepoint", "Beat labels suitable for cadence validation"],
+  "suitable_scene_types": ["system_map", "chokepoint_reveal", "dependency_tree"],
+  "validation_notes": [
+    "Only one chokepoint ring per focal claim (unless explicitly comparing).",
+    "No beat may hold longer than 4 seconds without state change."
+  ],
+  "example_usage": {
+    "hyperframes": {
+      "css_vars": ["--color-amber", "--color-deep-slate", "--color-bone"],
+      "parameters": { "target_bounds": { "x": 420, "y": 220, "w": 360, "h": 220 }, "ring_thickness_px": 6 }
+    }
+  }
+}
+

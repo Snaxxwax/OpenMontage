@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="scene-layout.css">
+  <link rel="stylesheet" href="final-map-layout.css">
+</head>
+<body>
+  <div data-composition-id="final-map-layout" data-width="1920" data-height="1080" data-start="0" data-duration="5" class="clip">
+    <div class="scene-container">
+      <div class="background-grid"></div>
+      <div class="final-header">
+        <h1 class="text-amber">CONSOLIDATED LEVERAGE MAP</h1>
+        <div class="version text-muted">BUILD 2026</div>
+      </div>
+      <div class="final-map-visual">
+        <svg viewBox="0 0 1600 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- ══════════════════════════════════════════════════════ -->
+          <!-- ROW 1: SYSTEM ACTORS (y=30 → 110) -->
+          <!-- ══════════════════════════════════════════════════════ -->
+
+          <!-- Actor A: Fabless Design -->
+          <rect x="20" y="30" width="200" height="72" fill="#D4CBBA" rx="3"/>
+          <rect x="20" y="30" width="5" height="72" fill="#1D6A8C" rx="2"/>
+          <text x="125" y="64" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">FABLESS</text>
+          <text x="125" y="83" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">DESIGN</text>
+          <text x="125" y="98" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">NVIDIA / APPLE / AMD</text>
+
+          <!-- Actor B: EDA & IP -->
+          <rect x="250" y="30" width="200" height="72" fill="#D4CBBA" rx="3"/>
+          <rect x="250" y="30" width="5" height="72" fill="#1D6A8C" rx="2"/>
+          <text x="355" y="64" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">EDA / IP</text>
+          <text x="355" y="83" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">STACK</text>
+          <text x="355" y="98" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">SYNOPSYS / ARM</text>
+
+          <!-- Actor C: TSMC CHOKEPOINT (amber) -->
+          <rect x="480" y="22" width="220" height="88" fill="#C94B00" rx="3"/>
+          <text x="590" y="58" fill="#FFF8F0" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="18" font-weight="700">TSMC / SAMSUNG</text>
+          <text x="590" y="78" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="600">FOUNDRY CONTROL</text>
+          <text x="590" y="97" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">92% ADV. NODE MARKET SHARE</text>
+
+          <!-- Actor D: Packaging -->
+          <rect x="730" y="30" width="200" height="72" fill="#D4CBBA" rx="3"/>
+          <rect x="730" y="30" width="5" height="72" fill="#1D6A8C" rx="2"/>
+          <text x="835" y="64" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">ADVANCED</text>
+          <text x="835" y="83" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">PACKAGING</text>
+          <text x="835" y="98" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">CoWoS / HBM STACK</text>
+
+          <!-- Actor E: OEM Assembly -->
+          <rect x="960" y="30" width="200" height="72" fill="#D4CBBA" rx="3"/>
+          <rect x="960" y="30" width="5" height="72" fill="#1D6A8C" rx="2"/>
+          <text x="1065" y="64" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">OEM</text>
+          <text x="1065" y="83" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">ASSEMBLY</text>
+          <text x="1065" y="98" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">FOXCONN / PEGATRON</text>
+
+          <!-- Actor F: Platform Layer -->
+          <rect x="1190" y="30" width="200" height="72" fill="#D4CBBA" rx="3"/>
+          <rect x="1190" y="30" width="5" height="72" fill="#1D6A8C" rx="2"/>
+          <text x="1295" y="64" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">PLATFORM</text>
+          <text x="1295" y="83" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">LAYER</text>
+          <text x="1295" y="98" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">APP STORE / CLOUD</text>
+
+          <!-- Actor G: End Users -->
+          <rect x="1420" y="30" width="160" height="72" fill="#D4CBBA" rx="3"/>
+          <rect x="1420" y="30" width="5" height="72" fill="#8C7A68" rx="2"/>
+          <text x="1505" y="64" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">END</text>
+          <text x="1505" y="83" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" font-weight="700">USERS</text>
+          <text x="1505" y="98" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">CONSUMERS / CORPS</text>
+
+          <!-- ── Row 1 flow arrows ── -->
+          <path d="M220 66 H250" stroke="#1D6A8C" stroke-width="3"/>
+          <polygon points="250,61 263,66 250,71" fill="#1D6A8C"/>
+          <path d="M450 66 H480" stroke="#C94B00" stroke-width="4"/>
+          <polygon points="480,61 495,66 480,71" fill="#C94B00"/>
+          <path d="M700 66 H730" stroke="#1D6A8C" stroke-width="3"/>
+          <polygon points="730,61 743,66 730,71" fill="#1D6A8C"/>
+          <path d="M930 66 H960" stroke="#1D6A8C" stroke-width="3"/>
+          <polygon points="960,61 973,66 960,71" fill="#1D6A8C"/>
+          <path d="M1160 66 H1190" stroke="#1D6A8C" stroke-width="3"/>
+          <polygon points="1190,61 1203,66 1190,71" fill="#1D6A8C"/>
+          <path d="M1390 66 H1420" stroke="#1D6A8C" stroke-width="3"/>
+          <polygon points="1420,61 1433,66 1420,71" fill="#1D6A8C"/>
+
+          <!-- ══════════════════════════════════════════════════════ -->
+          <!-- EXTRACTION FLOWS — downward arrows from actors -->
+          <!-- ══════════════════════════════════════════════════════ -->
+          <line x1="590" y1="118" x2="1600" y2="118" stroke="#D4CBBA" stroke-width="1"/>
+
+          <!-- Vertical extraction drops -->
+          <path d="M590 110 V200" stroke="#C94B00" stroke-width="3" stroke-dasharray="6 4"/>
+          <polygon points="585,200 590,216 595,200" fill="#C94B00"/>
+
+          <path d="M835 102 V200" stroke="#1D6A8C" stroke-width="2" stroke-dasharray="6 4"/>
+          <polygon points="830,200 835,216 840,200" fill="#1D6A8C"/>
+
+          <path d="M1295 102 V200" stroke="#1D6A8C" stroke-width="2" stroke-dasharray="6 4"/>
+          <polygon points="1290,200 1295,216 1300,200" fill="#1D6A8C"/>
+
+          <!-- ══════════════════════════════════════════════════════ -->
+          <!-- ROW 2: EXTRACTION VALUE BOXES (y=222 → 290) -->
+          <!-- ══════════════════════════════════════════════════════ -->
+
+          <rect x="455" y="222" width="280" height="68" fill="#D4CBBA" rx="3"/>
+          <rect x="455" y="222" width="5" height="68" fill="#C94B00" rx="2"/>
+          <text x="600" y="252" fill="#C94B00" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">FOUNDRY EXTRACTION</text>
+          <text x="600" y="272" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">54% GROSS MARGIN CAPTURED</text>
+          <text x="600" y="284" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">$85B REVENUE / YEAR</text>
+
+          <rect x="710" y="222" width="260" height="68" fill="#D4CBBA" rx="3"/>
+          <rect x="710" y="222" width="5" height="68" fill="#1D6A8C" rx="2"/>
+          <text x="845" y="252" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">PKG EXTRACTION</text>
+          <text x="845" y="272" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">COWOS YIELD RENT: 22%</text>
+          <text x="845" y="284" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">CAPTIVE TO TSMC 2025+</text>
+
+          <rect x="1175" y="222" width="250" height="68" fill="#D4CBBA" rx="3"/>
+          <rect x="1175" y="222" width="5" height="68" fill="#1D6A8C" rx="2"/>
+          <text x="1305" y="252" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">PLATFORM TOLL</text>
+          <text x="1305" y="272" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">APP STORE TAKE: 15–30%</text>
+          <text x="1305" y="284" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">IAP + SUBSCRIPTION</text>
+
+          <!-- ══════════════════════════════════════════════════════ -->
+          <!-- ROW 3: LEVERAGE ANALYSIS BARS (y=330 → 460) -->
+          <!-- ══════════════════════════════════════════════════════ -->
+
+          <line x1="0" y1="328" x2="1600" y2="328" stroke="#D4CBBA" stroke-width="1"/>
+
+          <text x="20" y="360" fill="#8C7A68" font-family="IBM Plex Mono" font-size="14" font-weight="600">LEVERAGE CONCENTRATION INDEX</text>
+
+          <!-- Bar 1: TSMC Node Control -->
+          <text x="20" y="395" fill="#1A1208" font-family="IBM Plex Mono" font-size="13">TSMC ADV. NODE SHARE</text>
+          <rect x="280" y="380" width="900" height="22" fill="#D4CBBA" rx="2"/>
+          <rect x="280" y="380" width="828" height="22" fill="#C94B00" rx="2"/>
+          <text x="1230" y="396" fill="#C94B00" font-family="IBM Plex Mono" font-size="14" font-weight="700">92%</text>
+
+          <!-- Bar 2: ASML EUV -->
+          <text x="20" y="435" fill="#1A1208" font-family="IBM Plex Mono" font-size="13">ASML EUV MARKET SHARE</text>
+          <rect x="280" y="420" width="900" height="22" fill="#D4CBBA" rx="2"/>
+          <rect x="280" y="420" width="900" height="22" fill="#C94B00" rx="2"/>
+          <text x="1230" y="436" fill="#C94B00" font-family="IBM Plex Mono" font-size="14" font-weight="700">100%</text>
+
+          <!-- Bar 3: Apple App Store -->
+          <text x="20" y="475" fill="#1A1208" font-family="IBM Plex Mono" font-size="13">APPLE APP STORE MOBILE</text>
+          <rect x="280" y="460" width="900" height="22" fill="#D4CBBA" rx="2"/>
+          <rect x="280" y="460" width="567" height="22" fill="#1D6A8C" rx="2"/>
+          <text x="1230" y="476" fill="#1D6A8C" font-family="IBM Plex Mono" font-size="14" font-weight="700">63%</text>
+
+          <!-- Bar 4: Top 3 Fabs -->
+          <text x="20" y="515" fill="#1A1208" font-family="IBM Plex Mono" font-size="13">TOP 3 FABS CAPACITY</text>
+          <rect x="280" y="500" width="900" height="22" fill="#D4CBBA" rx="2"/>
+          <rect x="280" y="500" width="765" height="22" fill="#1D6A8C" rx="2"/>
+          <text x="1230" y="516" fill="#1D6A8C" font-family="IBM Plex Mono" font-size="14" font-weight="700">85%</text>
+
+          <!-- ══════════════════════════════════════════════════════ -->
+          <!-- ROW 4: WINNER / LOSER SUMMARY (y=560 → 650) -->
+          <!-- ══════════════════════════════════════════════════════ -->
+
+          <line x1="0" y1="556" x2="1600" y2="556" stroke="#D4CBBA" stroke-width="1"/>
+
+          <!-- WHO WINS box -->
+          <rect x="20" y="568" width="480" height="90" fill="#D4CBBA" rx="3"/>
+          <rect x="20" y="568" width="5" height="90" fill="#C94B00" rx="2"/>
+          <text x="265" y="598" fill="#C94B00" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="18" font-weight="700">WHO WINS</text>
+          <text x="265" y="622" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">TSMC / ASML / ARM</text>
+          <text x="265" y="642" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">CAPTIVE MARGIN ON EVERY DEVICE</text>
+
+          <!-- WHO PAYS box -->
+          <rect x="560" y="568" width="480" height="90" fill="#D4CBBA" rx="3"/>
+          <rect x="560" y="568" width="5" height="90" fill="#B8291A" rx="2"/>
+          <text x="805" y="598" fill="#B8291A" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="18" font-weight="700">WHO PAYS</text>
+          <text x="805" y="622" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">FABLESS + OEMs + END USERS</text>
+          <text x="805" y="642" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">NO SUBSTITUTION PATH AT 3nm</text>
+
+          <!-- WHAT CHANGES box -->
+          <rect x="1100" y="568" width="480" height="90" fill="#D4CBBA" rx="3"/>
+          <rect x="1100" y="568" width="5" height="90" fill="#1D6A8C" rx="2"/>
+          <text x="1345" y="598" fill="#1D6A8C" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="18" font-weight="700">WHAT CHANGES</text>
+          <text x="1345" y="622" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">GEOPOLITICS / EXPORT LAW</text>
+          <text x="1345" y="642" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="12">INTEL 18A / SAMSUNG 2nm RACE</text>
+
+        </svg>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines["final-map-layout"] = tl;
+  </script>
+</body>
+</html>

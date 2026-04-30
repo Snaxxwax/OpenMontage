@@ -1262,6 +1262,12 @@ class VideoCompose(BaseTool):
             hf_inputs["strict"] = inputs["strict"]
         if "skip_contrast" in inputs:
             hf_inputs["skip_contrast"] = inputs["skip_contrast"]
+        # Allow callers (pipelines) to override long renders. This is especially
+        # important when HyperFrames falls back to screenshot capture mode.
+        if "render_timeout_seconds" in inputs:
+            hf_inputs["render_timeout_seconds"] = inputs["render_timeout_seconds"]
+        if "timeout_seconds" in inputs:
+            hf_inputs["timeout_seconds"] = inputs["timeout_seconds"]
 
         render_result = HyperFramesCompose().execute(hf_inputs)
 

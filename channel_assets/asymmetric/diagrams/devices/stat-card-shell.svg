@@ -1,0 +1,6 @@
+<svg width="400" height="250" viewBox="0 0 400 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stat Card Shell -->
+  <rect x="2" y="2" width="396" height="246" rx="10" fill="#F5EDE0" stroke="#C94B00" stroke-width="3"/>
+  <!-- Grid Accent -->
+  <path d="M10 40H390M10 80H390" stroke="#D4CBBA" stroke-width="1"/>
+</svg>

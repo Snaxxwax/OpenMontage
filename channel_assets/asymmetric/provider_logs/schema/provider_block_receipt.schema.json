@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Provider Block Receipt",
+  "description": "Captures local GPU provider-block outcomes (busy/unavailable/failed_after_isolation) and execution context.",
+  "type": "object",
+  "required": ["schema_version", "timestamp", "selected_tool", "selected_provider", "gpu_status"],
+  "properties": {
+    "schema_version": { "type": "integer", "const": 1 },
+    "timestamp": { "type": "string", "description": "ISO-8601 timestamp" },
+    "selected_tool": { "type": "string" },
+    "selected_provider": { "type": "string" },
+    "gpu_status": {
+      "type": "string",
+      "enum": ["available", "busy", "unavailable", "failed_after_isolation"]
+    },
+    "gpu_lock_holder": { "type": ["string", "null"] },
+    "gpu_lock_pid": { "type": ["integer", "null"] },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}
+

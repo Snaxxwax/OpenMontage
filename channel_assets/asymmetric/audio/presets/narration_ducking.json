@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "narration_ducking",
+  "version": "0.1.0",
+  "description": "Default narration ducking preset for Asymmetric episodes.",
+  "targets": {
+    "narration_lufs": -16.0,
+    "music_lufs": -28.0
+  },
+  "ducking": {
+    "enabled": true,
+    "attenuation_db": 10.0,
+    "attack_ms": 30,
+    "release_ms": 250,
+    "lookahead_ms": 10
+  },
+  "notes": [
+    "Tune attenuation by scene density; keep voice intelligible.",
+    "Use gentler ducking for sparse scenes; stronger for dense music beds."
+  ]
+}
+

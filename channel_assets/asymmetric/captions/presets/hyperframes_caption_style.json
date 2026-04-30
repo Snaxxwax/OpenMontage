@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "name": "hyperframes_caption_style",
+  "version": "0.1.0",
+  "font": {
+    "family": "system-ui",
+    "weight": 600,
+    "size_px": 42,
+    "line_height": 1.15,
+    "letter_spacing_em": 0.0
+  },
+  "colors": {
+    "text": "#1A1208",
+    "shadow": "rgba(26,18,8,0.18)",
+    "highlight": "#C94B00"
+  },
+  "layout": {
+    "max_width_pct": 86,
+    "margin_bottom_pct": 9,
+    "safe_area_padding_pct": 5
+  },
+  "motion": {
+    "entry": "fade_up",
+    "exit": "fade",
+    "min_display_ms": 900
+  }
+}
+

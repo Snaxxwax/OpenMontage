@@ -1,0 +1,5 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Route Trace Curved -->
+  <path d="M20 180C20 180 20 20 180 20" stroke="#1D6A8C" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M170 10L180 20L170 30" stroke="#1D6A8C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

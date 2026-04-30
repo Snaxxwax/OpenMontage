@@ -1,0 +1,161 @@
+.stat-card-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.stat-card {
+  width: 1400px;
+  background-color: var(--deep-slate);
+  border: 3px solid var(--amber);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(26,18,8,0.12);
+  overflow: hidden;
+}
+
+/* ── BURNT ORANGE HEADER BAND ── */
+.stat-header-band {
+  background-color: var(--amber);
+  padding: 18px 52px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-header-label {
+  font-family: var(--font-headings);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--bone);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.stat-header-tag {
+  font-family: var(--font-code);
+  font-size: 16px;
+  color: var(--bone);
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+}
+
+/* ── PRIMARY STAT ── */
+.stat-body {
+  padding: 60px 52px 40px 52px;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  border-bottom: 2px solid var(--graphite);
+}
+
+.stat-value {
+  font-family: var(--font-code);
+  font-size: 200px;
+  font-weight: 700;
+  line-height: 0.85;
+  color: var(--near-black);
+  flex-shrink: 0;
+}
+
+.stat-descriptor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stat-label {
+  font-family: var(--font-headings);
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--amber);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+.stat-sublabel {
+  font-family: var(--font-body);
+  font-size: 22px;
+  color: var(--muted);
+  line-height: 1.4;
+  max-width: 560px;
+}
+
+/* ── SECONDARY STATS ROW ── */
+.stat-secondary-row {
+  display: flex;
+  align-items: center;
+  padding: 32px 52px;
+  border-bottom: 2px solid var(--graphite);
+  gap: 0;
+}
+
+.stat-secondary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-secondary-value {
+  font-family: var(--font-code);
+  font-size: 72px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--near-black);
+}
+
+.stat-secondary-label {
+  font-family: var(--font-code);
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.4;
+}
+
+.stat-secondary-divider {
+  width: 2px;
+  height: 80px;
+  background-color: var(--graphite);
+  flex-shrink: 0;
+}
+
+/* ── PROGRESS BAR ── */
+.stat-bar-container {
+  padding: 28px 52px 20px 52px;
+  border-bottom: 2px solid var(--graphite);
+}
+
+.stat-bar-track {
+  height: 16px;
+  background-color: var(--graphite);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background-color: var(--amber);
+  border-radius: 8px;
+}
+
+.stat-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-code);
+  font-size: 14px;
+}
+
+/* ── FOOTER ── */
+.stat-footer {
+  padding: 20px 52px;
+  font-size: 16px;
+  font-family: var(--font-code);
+  letter-spacing: 0.03em;
+}

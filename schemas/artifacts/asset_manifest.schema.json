@@ -7,6 +7,74 @@
   "required": ["version", "assets"],
   "properties": {
     "version": { "type": "string", "const": "1.0" },
+    "provider_blocks": {
+      "type": "array",
+      "description": "Provider-block receipts for mutually exclusive local GPU provider windows (busy/failed_after_isolation/compatibility_failure/deferred fallbacks).",
+      "items": {
+        "type": "object",
+        "required": ["block_id", "provider", "tool_name", "runtime", "status"],
+        "properties": {
+          "block_id": { "type": "string" },
+          "provider": { "type": "string" },
+          "tool_name": { "type": "string" },
+          "runtime": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "busy",
+              "failed_after_isolation",
+              "compatibility_failure",
+              "deferred_svg_css_fallback",
+              "skipped",
+              "failed"
+            ]
+          },
+          "start_time": { "type": "string", "description": "ISO8601 timestamp when the provider block started." },
+          "end_time": { "type": "string", "description": "ISO8601 timestamp when the provider block ended." },
+          "lock_acquired": { "type": "boolean" },
+          "artifacts_produced": { "type": "array", "items": { "type": "string" } },
+          "failure_reason": { "type": "string" },
+          "fallback_path": { "type": "string" },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "tts_chunk_receipts": {
+      "type": "array",
+      "description": "Chunked TTS receipts (e.g., Fish Speech) capturing per-chunk duration and truncation signals.",
+      "items": {
+        "type": "object",
+        "required": ["section_id", "provider", "final_output_path", "chunk_count", "chunks"],
+        "properties": {
+          "section_id": { "type": "string" },
+          "provider": { "type": "string" },
+          "final_output_path": { "type": "string" },
+          "final_duration_seconds": { "type": "number", "minimum": 0 },
+          "chunk_count": { "type": "integer", "minimum": 0 },
+          "chunks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["chunk_id", "output_path", "word_count", "estimated_seconds", "duration_seconds", "suspected_truncation"],
+              "properties": {
+                "chunk_id": { "type": "string" },
+                "output_path": { "type": "string" },
+                "word_count": { "type": "integer", "minimum": 0 },
+                "estimated_seconds": { "type": "number", "minimum": 0 },
+                "duration_seconds": { "type": "number", "minimum": 0 },
+                "wall_time_seconds": { "type": "number", "minimum": 0 },
+                "realtime_factor": { "type": "number", "minimum": 0 },
+                "suspected_truncation": { "type": "boolean" }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
     "assets": {
       "type": "array",
       "items": {
@@ -32,8 +100,26 @@
           "subtype": { "type": "string", "description": "Sub-classification (e.g. 'background', 'stock', 'generated')" },
           "generation_summary": { "type": "string", "description": "Brief summary of how the asset was generated or sourced" },
           "provider": { "type": "string", "description": "Provider name (e.g. pixabay, google_imagen)" },
+          "provider_status": {
+            "type": "string",
+            "description": "Provider status at time of generation (busy/failed_after_isolation/etc). Useful for governance receipts."
+          },
           "license": { "type": "string", "description": "License type (e.g. Pixabay License, CC0)" },
           "original_url": { "type": "string", "description": "Source URL if downloaded from a stock service" }
+          ,
+          "fallback_type": {
+            "type": "string",
+            "enum": ["svg_css", "hyperframes_native", "generated_image", "stock", "none"],
+            "description": "Fallback plan/type for this asset when generation is blocked."
+          },
+          "fallback_path": { "type": "string", "description": "Path to fallback asset (SVG/CSS/HyperFrames-native), or a planned: sentinel." },
+          "fallback_required": { "type": "boolean" },
+          "generation_status": {
+            "type": "string",
+            "enum": ["generated", "deferred", "substituted", "failed", "skipped"],
+            "description": "Whether this asset was generated, deferred (planned), substituted, failed, or skipped."
+          },
+          "deferred_reason": { "type": "string", "description": "If generation_status is deferred/failed, why." }
         },
         "additionalProperties": false
       }

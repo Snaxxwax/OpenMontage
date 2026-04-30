@@ -28,6 +28,32 @@
           "transition_in": { "type": "string" },
           "transition_out": { "type": "string" },
           "overlay_notes": { "type": "string" },
+          "viewer_hook": {
+            "type": "string",
+            "description": "Retention: The active viewer question or suspicion driving this scene (why they keep watching right now)."
+          },
+          "tension_type": {
+            "type": "string",
+            "enum": ["mystery", "contradiction", "escalation", "constraint", "substitution_failure", "consequence", "reversal", "hidden_actor", "bottleneck", "proof", "synthesis", "payoff"],
+            "description": "Retention: Narrative tension category for this scene."
+          },
+          "visual_event_cadence_seconds": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Retention: Target cadence (seconds) for meaningful visual events inside this scene (default 5-8s for Asymmetric)."
+          },
+          "retention_function": {
+            "type": "string",
+            "description": "Retention: What this scene does to keep the viewer watching (open loop / mechanism / proof / contradiction / consequence / payoff / synthesis)."
+          },
+          "payoff_moment": {
+            "type": "string",
+            "description": "Retention: The specific beat that resolves or flips the tension inside the scene."
+          },
+          "next_open_loop": {
+            "type": "string",
+            "description": "Retention: The unresolved question the scene hands off to the next scene."
+          },
           "shot_language": {
             "type": "object",
             "description": "Structured cinematography vocabulary for this scene",
@@ -73,6 +99,87 @@
             "items": { "type": "string" },
             "description": "Visual texture descriptors: grain, clean, anamorphic, gritty, ethereal, etc."
           },
+          "devices": {
+            "type": "array",
+            "description": "Reusable visual device references. When style_playbook is 'asymmetric', major scenes should reference one or more devices from channel_assets/asymmetric/diagrams/devices/manifest.json.",
+            "items": {
+              "type": "object",
+              "required": ["device_id"],
+              "properties": {
+                "device_id": {
+                  "type": "string",
+                  "enum": [
+                    "amber-pivot-marker",
+                    "chokepoint-ring",
+                    "route-trace",
+                    "collapse-to-one-node",
+                    "surface-vs-structure-split",
+                    "xray-layer-reveal",
+                    "blueprint-reveal",
+                    "under-the-hood-mechanism",
+                    "red-consequence-layer",
+                    "source-card-reveal",
+                    "final-leverage-map",
+                    "dependency-tree-stop-point"
+                  ]
+                },
+                "purpose": { "type": "string", "description": "Why this device is used in this scene." },
+                "params": { "type": "object", "description": "Device input parameters (shape depends on device spec)." },
+                "notes": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "state_changes": {
+            "type": "array",
+            "description": "State change timeline for motion enforcement (no static visual state > 4s). Times are seconds from scene start.",
+            "items": {
+              "type": "object",
+              "required": ["t", "beat", "description", "visual_state_change"],
+              "properties": {
+                "t": { "type": "number", "minimum": 0 },
+                "beat": { "type": "string", "description": "Short timeline label (e.g., 'pivot_acquire')." },
+                "device_id": {
+                  "type": "string",
+                  "enum": [
+                    "amber-pivot-marker",
+                    "chokepoint-ring",
+                    "route-trace",
+                    "collapse-to-one-node",
+                    "surface-vs-structure-split",
+                    "xray-layer-reveal",
+                    "blueprint-reveal",
+                    "under-the-hood-mechanism",
+                    "red-consequence-layer",
+                    "source-card-reveal",
+                    "final-leverage-map",
+                    "dependency-tree-stop-point"
+                  ]
+                },
+                "description": { "type": "string" },
+                "visual_state_change": { "type": "boolean" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "source_claim_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of claims from a source_map artifact that this scene (especially stat cards) relies on."
+          },
+          "qualifier_required": {
+            "type": "boolean",
+            "description": "True when this scene includes analyst/media estimates that must carry an on-screen qualifier."
+          },
+          "confidence_label": {
+            "type": "string",
+            "description": "Confidence label for the scene's key quantitative claim (e.g., high/medium/low/unknown)."
+          },
+          "evidence_device_id": {
+            "type": "string",
+            "enum": ["source-card-reveal"],
+            "description": "Recommended evidence device for major non-obvious claims."
+          },
           "required_assets": {
             "type": "array",
             "items": {
@@ -80,7 +187,16 @@
               "properties": {
                 "type": { "type": "string" },
                 "description": { "type": "string" },
-                "source": { "type": "string", "enum": ["generate", "source", "provided", "record"] }
+                "source": { "type": "string", "enum": ["generate", "source", "provided", "record"] },
+                "file": { "type": "string", "description": "Optional path to an existing asset file." },
+                "params": { "type": "object", "description": "Optional structured parameters for generating or transforming the asset." },
+                "fallback_type": {
+                  "type": "string",
+                  "enum": ["svg_css", "hyperframes_native", "generated_image", "stock", "none"],
+                  "description": "Fallback planning when generation fails or is blocked."
+                },
+                "fallback_path": { "type": "string", "description": "Optional path to an SVG/CSS/HyperFrames-native fallback asset." },
+                "fallback_required": { "type": "boolean", "description": "If true, a fallback must exist for production to proceed." }
               },
               "required": ["type", "description", "source"]
             }
@@ -92,5 +208,34 @@
     },
     "metadata": { "type": "object" }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "style_playbook": { "const": "asymmetric" } },
+        "required": ["style_playbook"]
+      },
+      "then": {
+        "properties": {
+          "scenes": {
+            "items": {
+              "required": [
+                "id",
+                "type",
+                "description",
+                "start_seconds",
+                "end_seconds",
+                "viewer_hook",
+                "tension_type",
+                "visual_event_cadence_seconds",
+                "retention_function",
+                "payoff_moment",
+                "next_open_loop"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false
 }

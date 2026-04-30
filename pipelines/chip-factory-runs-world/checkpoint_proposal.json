@@ -1,0 +1,342 @@
+{
+  "version": "1.0",
+  "project_id": "chip-factory-runs-world",
+  "pipeline_type": "animation",
+  "stage": "proposal",
+  "status": "completed",
+  "timestamp": "2026-04-26T02:16:54.514114+00:00",
+  "style_playbook": "asymmetric",
+  "checkpoint_policy": "guided",
+  "human_approval_required": true,
+  "human_approved": true,
+  "artifacts": {
+    "proposal_packet": {
+      "version": "1.0",
+      "concept_options": [
+        {
+          "id": "c1",
+          "title": "Why Everything Depends on One Factory",
+          "hook": "Every AI chip, every smartphone, every data center runs through one factory on a 36km\u00b2 island. There is no backup.",
+          "narrative_structure": "problem_solution",
+          "visual_approach": "Progressive chokepoint-map build. Supply chain diagram constructs left-to-right (EDA \u2192 Fabless \u2192 TSMC \u2192 OSAT \u2192 OEM) as narration runs; TSMC node lights amber last and holds. Abstract convergence diagram shows Apple/NVIDIA/AMD/Qualcomm + AI data centers as source nodes converging via cyan routes into one amber TSMC/Taiwan chokepoint node. Stat cards overlay production share numbers. All flat vector, dark editorial, Asymmetric palette.",
+          "suggested_playbook": "asymmetric",
+          "target_audience": "Operators, founders, analysts, systems thinkers \u2014 anyone trying to understand where AI hardware actually comes from",
+          "target_platform": "youtube",
+          "target_duration_seconds": 780,
+          "key_points": [
+            "TSMC controls 90%+ of advanced-node chip manufacturing \u2014 no volume alternative exists until 2028+",
+            "NVIDIA has overtaken Apple as TSMC's largest customer in 2026 \u2014 AI demand has made the concentration worse",
+            "TSMC Arizona is <5% of leading-edge output \u2014 CHIPS Act spending doesn't solve this on any 5-year horizon",
+            "TSMC's 2nm yield is 65% vs Samsung's 30% \u2014 the moat is 30 years of accumulated process, not geography",
+            "CoWoS advanced packaging is sold out through 2026 \u2014 a second chokepoint inside the primary one",
+            "Morris Chang: building TSMC elsewhere is 'a very expensive exercise in futility'"
+          ],
+          "core_message": "The most advanced technology on earth runs through one irreplaceable bottleneck \u2014 and nobody can build an alternative in time to matter.",
+          "cta": "If you want to map the systems that actually move AI hardware, the research stack is linked in the description.",
+          "tone": "direct, analytical, quietly severe",
+          "grounded_in": [
+            "90%+ advanced node market share data point",
+            "NVIDIA/Apple customer shift data point (2026)",
+            "Arizona <5% data point",
+            "TSMC 65% vs Samsung 30% yield data point",
+            "CoWoS sold-out-through-2026 data point",
+            "Morris Chang 'exercise in futility' quote"
+          ],
+          "why_this_works": "The leverage point is undeniable and visually demonstrable. A supply chain diagram that narrows to one amber node IS the argument \u2014 viewers understand it before the narration finishes. Title engine hit: 'Why Everything Depends on [Bottleneck].' Strong news peg (Q1 2026 record revenue, NVIDIA overtaking Apple) and evergreen structural argument."
+        },
+        {
+          "id": "c2",
+          "title": "The Moat Is a Process, Not a Place",
+          "hook": "The US is spending $52 billion to clone a factory. The factory's founder says it won't work \u2014 and the reason has nothing to do with location.",
+          "narrative_structure": "myth_busting",
+          "visual_approach": "Data journalism treatment. Opens on Morris Chang quote. Animated yield comparison bar (TSMC 65% vs Samsung 30% vs Intel 55%). Radial diagram: TSMC's 'one-hour ecosystem' of suppliers vs Arizona supply chain spanning 3,000 miles. Government spending stat cards (US $52B, EU \u20ac43B, Japan \u00a53.9T). Skeptic narrative mode dominant.",
+          "suggested_playbook": "asymmetric",
+          "target_audience": "Policy-aware operators, researchers watching CHIPS Act spend, founders thinking about supply chain exposure",
+          "target_platform": "youtube",
+          "target_duration_seconds": 540,
+          "key_points": [
+            "TSMC's 2nm yield is 65% vs Samsung 30% \u2014 fabrication quality is not interchangeable",
+            "The 'one-hour ecosystem': every supplier and tool within 60 minutes of Hsinchu, 30 years in the making",
+            "$52B CHIPS Act + $43B EU Chips Act + Japan subsidies all underperform on TSMC's 10-year horizon",
+            "TSMC Arizona faces permit delays, workforce shortages, and no local supplier ecosystem"
+          ],
+          "core_message": "You can't clone 30 years of accumulated process yield with a check \u2014 no matter how large.",
+          "cta": "The research tools and databases I use for this kind of systems mapping are in the description.",
+          "tone": "skeptical, precise, contrarian",
+          "grounded_in": [
+            "TSMC 65% vs Samsung 30% yield data point",
+            "Morris Chang 'exercise in futility' quote",
+            "Arizona <5% data point",
+            "Government spending figures data point"
+          ],
+          "why_this_works": "Contrarian hook targets active frustration about CHIPS Act spending. Yield data is the underserved explanation nobody has visualized. Different narrative mode (skeptic dominant) from Concept A."
+        },
+        {
+          "id": "c3",
+          "title": "AI Has One Chokepoint. This Is It.",
+          "hook": "Every frontier AI model runs on hardware that passes through a single bottleneck. This is not a policy problem. It's a physics and economics problem.",
+          "narrative_structure": "data_narrative",
+          "visual_approach": "Minimal data-first treatment using Remotion built-in components only (zero image generation cost). Animated number opener: CoWoS capacity in wafers/month climbing vs demand. KPI grid: NVIDIA as TSMC % share. Bar chart showing TSMC vs Samsung vs Intel at advanced nodes. Operator mode dominant \u2014 fast, data-dense, no narrative padding.",
+          "suggested_playbook": "asymmetric",
+          "target_audience": "AI practitioners, cloud operators, investors with direct exposure to AI hardware supply",
+          "target_platform": "youtube",
+          "target_duration_seconds": 420,
+          "key_points": [
+            "CoWoS packaging sold out through 2026, demand growing 113% annually",
+            "NVIDIA now TSMC's largest customer \u2014 AI demand has overtaken consumer devices",
+            "Every major AI accelerator depends on one packaging process at one company",
+            "Q1 2026: $35.7B revenue, +35.1% YoY \u2014 TSMC's pricing power is strengthening"
+          ],
+          "core_message": "The AI supply chain has a single point of failure that no amount of capital can fix on any near-term horizon.",
+          "cta": "Stack and tools in the description.",
+          "tone": "operator-direct, unsentimental",
+          "grounded_in": [
+            "CoWoS sold-out data point",
+            "NVIDIA overtaking Apple data point",
+            "Q1 2026 revenue record"
+          ],
+          "why_this_works": "Zero image generation cost \u2014 entirely free to produce via Remotion dataviz components. Fastest production path. AI-specific angle is differentiated from Concepts A and B."
+        }
+      ],
+      "selected_concept": {
+        "concept_id": "c1",
+        "rationale": "Concept A is the strongest launch episode for Asymmetric: undeniable leverage point, iconic hero object (semiconductor wafer), clean 5-box diagram that collapses to one amber node, AI urgency with evergreen structural argument. Best title engine match. HyperFrames diagram-build approach is native to this content.",
+        "modifications": [
+          "Production plan updated per operator correction: ComfyUI (local GPU) for image generation, ACEStep (local GPU) for music, Fish Speech (local GPU) as preferred TTS with ElevenLabs as explicit paid fallback only if Fish Speech is unreachable. Serial GPU execution order enforced. No concurrent local workloads."
+        ]
+      },
+      "production_plan": {
+        "pipeline": "animation",
+        "playbook": "asymmetric",
+        "render_runtime": "hyperframes",
+        "renderer_family": "animation-first",
+        "delivery_promise": {
+          "promise_type": "data_explainer",
+          "motion_required": false,
+          "source_required": false,
+          "tone_mode": "cinematic",
+          "quality_floor": "broadcast",
+          "approved_fallback": null
+        },
+        "voice_selection": {
+          "provider": "fish_speech",
+          "rationale": "Fish Speech is the preferred local TTS \u2014 zero API cost, local GPU, no external dependency. Requires VRAM to be freed from ComfyUI before starting. Registry showed unavailable during preflight because ComfyUI models were loaded at the time \u2014 this is a GPU scheduling issue, not a provider availability issue. Fallback order only if Fish Speech fails after VRAM isolation: elevenlabs \u2192 openai \u2192 google_tts \u2192 piper. User must approve any paid fallback before it is used.",
+          "voice_id": "tbd_at_asset_stage",
+          "estimated_cost_usd": 0.0
+        },
+        "music_source": {
+          "source_type": "ai_generated",
+          "provider": "acestep",
+          "mood_direction": "Minimal electronic documentary pulse, restrained tension, no vocals. Slow-building, controlled, no dramatic swells. Asymmetric brand: music_volume=0.08, ducking_threshold=-4dB under narration.",
+          "estimated_cost_usd": 0.0
+        },
+        "stages": [
+          {
+            "stage": "script",
+            "tools": [],
+            "approach": "Full script: 3 title options, cold open, 6 sections per brand structure (0:00\u201313:00), motion notes, chapter cards. Target ~1,950 words at 150 WPM for 13 min. Asymmetric brand rules enforced: leverage legible by 0:35, no state unchanged >4s.",
+            "fallback_if_unavailable": "N/A \u2014 no tools required"
+          },
+          {
+            "stage": "scene_plan",
+            "tools": [],
+            "approach": "Map each script section to diagram scenes. 3 reusable templates: supply-chain-flow, stat-card-overlay, geographic-convergence-map. TSMC node always amber. HyperFrames scene blocks declared with timing, content, animation beat.",
+            "fallback_if_unavailable": "N/A \u2014 no tools required"
+          },
+          {
+            "stage": "assets",
+            "tools": [
+              {
+                "tool_name": "fish_speech_tts",
+                "role": "Narration \u2014 generate all TTS audio segments in script order",
+                "provider": "fish_speech",
+                "available": true,
+                "estimated_cost_usd": 0.0,
+                "why_this_provider": "Local GPU, zero API cost. Preferred provider per operator configuration. Requires VRAM freed from ComfyUI before starting. Registry showed unavailable at preflight due to GPU contention, not a provider fault \u2014 this is a scheduling issue. Unload ComfyUI models first, then start Fish Speech and confirm health before generating."
+              },
+              {
+                "tool_name": "elevenlabs_tts",
+                "role": "TTS fallback ONLY if Fish Speech fails after VRAM isolation is attempted",
+                "provider": "elevenlabs",
+                "available": true,
+                "estimated_cost_usd": 0.5,
+                "why_this_provider": "Highest voice quality among API fallbacks. Estimated ~9,000 chars for 13 min narration. Do not use without user approval \u2014 paid external provider. Not valid as fallback until Fish Speech has been tested in isolation."
+              },
+              {
+                "tool_name": "comfyui_image",
+                "role": "Hero image generation \u2014 semiconductor wafer + fab exterior illustration (2 images)",
+                "provider": "comfyui",
+                "available": true,
+                "estimated_cost_usd": 0.0,
+                "why_this_provider": "Local GPU, zero API cost. Preferred image provider per operator configuration. Must not run concurrently with TTS or music generation."
+              },
+              {
+                "tool_name": "acestep_music",
+                "role": "Background music \u2014 one minimal electronic documentary track, ~13 min",
+                "provider": "acestep",
+                "available": true,
+                "estimated_cost_usd": 0.0,
+                "why_this_provider": "Local GPU, zero API cost. Preferred music provider per operator configuration. Run only after all ComfyUI jobs complete."
+              }
+            ],
+            "approach": "Provider-block GPU scheduling \u2014 group jobs by loaded model stack to minimize VRAM unload/reload cycles. BLOCK A (ComfyUI): if ComfyUI models are already loaded, run all ComfyUI work first \u2014 still images, diagram-support images, any background video clips \u2014 then unload. BLOCK B (Fish Speech): start after VRAM freed, confirm health, generate full narration script, stop. BLOCK C (ACEStep): start after Fish Speech stopped, generate music, apply quality gate (discard if weak \u2192 silence), stop. Sequential jobs inside the same provider window are allowed and preferred. asset_manifest logs: provider block started, provider/service, assets generated, model/workflow used, start/end time, output path, failure/fallback reason if any, provider block ended, VRAM handoff to next provider.",
+            "fallback_if_unavailable": "Local provider fails after VRAM isolation \u2192 report specific failure details, do not switch to paid provider without user approval. A provider is only considered failed if conflicting GPU services were unloaded first and it still failed. ComfyUI fails after isolation \u2192 openai image gen (paid, requires approval). ACEStep fails after isolation \u2192 silence (no music). Fish Speech fails after isolation \u2192 report to user, ask before using any paid TTS."
+          },
+          {
+            "stage": "edit",
+            "tools": [],
+            "approach": "Lock cuts, overlays, subtitle burn, music mix. Music ducking: 0.08 volume under narration per asymmetric.yaml. SRT generated and synced to narration. render_runtime=hyperframes carried forward unchanged.",
+            "fallback_if_unavailable": "N/A \u2014 no tools required"
+          },
+          {
+            "stage": "compose",
+            "tools": [
+              {
+                "tool_name": "hyperframes_compose",
+                "role": "Primary composition engine \u2014 render all diagram-evolution scenes via HTML/CSS/GSAP",
+                "provider": "hyperframes",
+                "available": true,
+                "estimated_cost_usd": 0.0,
+                "why_this_provider": "Locked at proposal per HARD RULE. Best fit for progressive diagram builds, flat vector node animation, Asymmetric motion cadence."
+              },
+              {
+                "tool_name": "audio_mixer",
+                "role": "Mix narration + music with ducking",
+                "provider": "ffmpeg",
+                "available": true,
+                "estimated_cost_usd": 0.0,
+                "why_this_provider": "Local, always available"
+              }
+            ],
+            "approach": "Route to HyperFrames. Run hyperframes lint + hyperframes validate before render. Post-render: extract keyframes and visually inspect each scene. Verify amber = #F5A400 on all chokepoint nodes.",
+            "fallback_if_unavailable": "HyperFrames failure \u2192 surface structured blocker, do NOT silently route to Remotion or FFmpeg. Get user approval before any runtime swap."
+          },
+          {
+            "stage": "publish",
+            "tools": [],
+            "approach": "Run /asymmetric-thumbnail-packaging (3 variants: power/mechanism/consequence). Run /asymmetric-video-qa. Run /affiliate-description. Produce publish_log.",
+            "fallback_if_unavailable": "N/A \u2014 no tools required"
+          }
+        ],
+        "quality_tradeoffs": [
+          {
+            "tradeoff": "Fish Speech (local, free, GPU) vs ElevenLabs (API, ~$0.50, no GPU)",
+            "recommendation": "Unload ComfyUI models, start Fish Speech, confirm health, then generate. Fish Speech is available when VRAM is freed \u2014 registry unavailable status at preflight was VRAM contention, not a provider fault. Use ElevenLabs only if Fish Speech fails after isolation \u2014 requires explicit user approval.",
+            "quality_impact": "Fish Speech produces high-quality voice comparable to ElevenLabs for documentary narration. ElevenLabs has more voice variety and instant availability."
+          },
+          {
+            "tradeoff": "ComfyUI images (local, free, GPU) vs OpenAI/Imagen images (API, ~$0.08\u2013$0.16 per image)",
+            "recommendation": "ComfyUI is preferred. Only fall back to API providers if ComfyUI is unavailable \u2014 requires user approval.",
+            "quality_impact": "ComfyUI with a well-tuned workflow matches or exceeds API image quality for flat vector illustration. Requires GPU availability."
+          },
+          {
+            "tradeoff": "ACEStep music (local, free, GPU) vs no music (silence)",
+            "recommendation": "Attempt ACEStep generation. If output doesn't meet Asymmetric restraint bar (minimal electronic pulse, no vocals), proceed without music. Do not force a weak track.",
+            "quality_impact": "A well-generated minimal track adds 10\u201315% to perceived production quality. A wrong track actively damages brand trust."
+          },
+          {
+            "tradeoff": "Serial GPU execution (slower, ~20\u201340 min total) vs parallel external APIs (faster, ~5 min, costs money)",
+            "recommendation": "Serial GPU execution per operator rule. Wall time is acceptable for production quality. Paid parallel is not the default.",
+            "quality_impact": "Serial execution is slower but produces local-quality assets at zero marginal cost."
+          }
+        ],
+        "alternative_paths": [
+          {
+            "description": "All local GPU: Fish Speech + ComfyUI + ACEStep + HyperFrames. Zero API cost. Serial with explicit VRAM handoffs.",
+            "total_cost_usd": 0.0,
+            "quality_level": "premium",
+            "what_changes": "VRAM management between each step: unload previous service before loading next. ~20\u201340 min total generation time. All three local providers are available when scheduled correctly."
+          },
+          {
+            "description": "ElevenLabs TTS + ComfyUI images + ACEStep music + HyperFrames. Paid TTS fallback path.",
+            "total_cost_usd": 0.5,
+            "quality_level": "premium",
+            "what_changes": "ElevenLabs charges ~$0.50 for 13 min of narration. Only valid if Fish Speech fails after VRAM isolation is attempted. Requires user approval."
+          },
+          {
+            "description": "Piper TTS (local CPU, no GPU) + ComfyUI images + ACEStep music + HyperFrames. Free, no GPU for TTS.",
+            "total_cost_usd": 0.0,
+            "quality_level": "free",
+            "what_changes": "Piper runs on CPU \u2014 no GPU conflict with ComfyUI. Lower voice quality than Fish Speech or ElevenLabs but fully free. Good for drafts."
+          }
+        ],
+        "decision_log_ref": "projects/chip-factory-runs-world/artifacts/decision_log.json"
+      },
+      "cost_estimate": {
+        "total_estimated_usd": 0.0,
+        "line_items": [
+          {
+            "tool": "fish_speech_tts",
+            "operation": "Narration generation \u2014 full 13 min script, all sections",
+            "quantity": 1,
+            "estimated_usd": 0.0,
+            "notes": "Local GPU, zero API cost. Available when VRAM freed from ComfyUI. Registry showed unavailable at preflight due to GPU contention \u2014 scheduling issue, not provider fault. Unload ComfyUI models first, start server, confirm health before generating. If Fish Speech fails after isolation, fallback to ElevenLabs (~$0.50) requires user approval."
+          },
+          {
+            "tool": "svg_native",
+            "operation": "HyperFrames SVG/CSS visuals (wafer, EUV, Arizona, convergence)",
+            "quantity": 4,
+            "estimated_usd": 0.0,
+            "notes": "Deterministic local visuals. No ComfyUI dependency for this run."
+          },
+          {
+            "tool": "acestep_music",
+            "operation": "Background music track \u2014 13 min minimal electronic documentary pulse",
+            "quantity": 1,
+            "estimated_usd": 0.0,
+            "notes": "Local GPU, zero API cost. Run after all ComfyUI jobs complete (serial GPU rule). If output doesn't meet quality bar, proceed without music."
+          },
+          {
+            "tool": "hyperframes_compose",
+            "operation": "Diagram scene rendering \u2014 all HyperFrames scene blocks",
+            "quantity": 1,
+            "estimated_usd": 0.0,
+            "notes": "Local render, zero cost. Runs after GPU generation is complete."
+          },
+          {
+            "tool": "audio_mixer",
+            "operation": "Final audio mix \u2014 narration + music with ducking",
+            "quantity": 1,
+            "estimated_usd": 0.0,
+            "notes": "FFmpeg, always free."
+          }
+        ],
+        "budget_cap_usd": 2.0,
+        "budget_verdict": "within_budget",
+        "savings_options": [
+          "Already at $0.00. If Fish Speech fallback to ElevenLabs is required, cost rises to ~$0.50 \u2014 still well within $2.00 budget."
+        ]
+      },
+      "approval": {
+        "status": "pending",
+        "user_notes": "Production plan updated per operator correction: ComfyUI for images, ACEStep for music, Fish Speech preferred TTS with serial GPU execution. Fish Speech currently unavailable \u2014 needs resolution before asset stage.",
+        "approved_budget_usd": 2.0
+      },
+      "metadata": {
+        "project": "chip-factory-runs-world",
+        "pipeline": "animation",
+        "created": "2026-04-25",
+        "local_gpu_providers": {
+          "fish_speech_tts": "available \u2014 requires VRAM freed from ComfyUI before starting (registry showed unavailable at preflight due to GPU contention, not a provider fault)",
+          "comfyui_image": "available \u2014 requires VRAM freed from Fish Speech/ACEStep",
+          "comfyui_video": "available \u2014 requires VRAM freed from Fish Speech/ACEStep",
+          "acestep_music": "available \u2014 requires VRAM freed from ComfyUI/Fish Speech",
+          "comfyui_audio": "available"
+        },
+        "gpu_execution_order": [
+          "BLOCK A \u2014 ComfyUI (if models already loaded, start here): still images \u2192 diagram-support images \u2192 optional video/background clips \u2192 save all outputs \u2192 unload ComfyUI models",
+          "BLOCK B \u2014 Fish Speech: start server after VRAM freed \u2192 confirm health \u2192 generate full narration \u2192 save outputs \u2192 stop Fish Speech",
+          "BLOCK C \u2014 ACEStep: start after Fish Speech stopped \u2192 generate music \u2192 quality gate (if weak, discard and use silence) \u2192 stop ACEStep",
+          "HANDOFF: all local GPU work complete \u2192 proceed to edit/compose"
+        ],
+        "local_provider_failure_rule": "A local GPU provider is only considered failed if: (1) conflicting GPU services have been unloaded, AND (2) the provider still fails to start or generate. Do not use paid external fallback until local isolation has been attempted and user approves the fallback.",
+        "concurrent_gpu_rule": "FORBIDDEN \u2014 only one local GPU workload at a time. ComfyUI, ACEStep, Fish Speech, WAN, LTX, Hunyuan, comfyui_wan must never run concurrently.",
+        "provider_block_scheduling": "Group asset generation by currently loaded model stack to minimize VRAM unload/reload cycles. If ComfyUI is already loaded, run all ComfyUI work first (still images + diagram images + video clips) before unloading. Then load Fish Speech for all narration. Then load ACEStep for music. Sequential jobs inside the same provider window are allowed and preferred. Do not rigidly order by asset type \u2014 order by provider residency.",
+        "operator_notes": "This run avoids ComfyUI unless the allocator issue is fixed and verified. Use HyperFrames-native SVG/CSS visuals for wafer/EUV/Arizona/convergence scenes. Narration uses Fish Speech in chunked mode (25\u201340s chunks) with sequential generation + duration validation + concatenation per section. Asset order: author HyperFrames visuals first (CPU), then generate VO (GPU), then optional ACEStep music, then compose."
+      }
+    }
+  },
+  "review": {
+    "status": "pending"
+  }
+}

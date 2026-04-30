@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="scene-layout.css">
+  <link rel="stylesheet" href="chapter-card.css">
+</head>
+<body>
+  <div data-composition-id="chapter-card" data-width="1920" data-height="1080" data-start="0" data-duration="5" class="clip scene-container">
+
+    <!-- ── INK LEFT COLUMN ── -->
+    <div class="chapter-ink-column"></div>
+
+    <!-- ── LARGE BACKGROUND NUMBER ── -->
+    <div class="chapter-bg-number" aria-hidden="true">02</div>
+
+    <!-- ── EDITORIAL RULES ── -->
+    <div class="chapter-rule-top"></div>
+    <div class="chapter-rule-bottom"></div>
+
+    <!-- ── DIAGRAM MOTIF (route trace) ── -->
+    <div class="chapter-motif">
+      <svg viewBox="0 0 520 320" fill="none" xmlns="http://www.w3.org/2000/svg" class="chapter-motif-svg">
+        <!-- Structural rings -->
+        <circle cx="260" cy="160" r="130" stroke="#D4CBBA" stroke-width="1" stroke-dasharray="10 7"/>
+        <circle cx="260" cy="160" r="80" stroke="#D4CBBA" stroke-width="1" stroke-dasharray="6 5"/>
+        <!-- Spoke arms (ink blue) -->
+        <path d="M260 80 V30" stroke="#1D6A8C" stroke-width="2"/>
+        <path d="M260 240 V290" stroke="#1D6A8C" stroke-width="2"/>
+        <path d="M180 100 L120 60" stroke="#1D6A8C" stroke-width="2"/>
+        <path d="M340 100 L400 60" stroke="#1D6A8C" stroke-width="2"/>
+        <path d="M180 220 L120 260" stroke="#1D6A8C" stroke-width="2"/>
+        <path d="M340 220 L400 260" stroke="#1D6A8C" stroke-width="2"/>
+        <!-- Central control node (burnt orange) -->
+        <rect x="210" y="135" width="100" height="50" fill="#C94B00" rx="2"/>
+        <text x="260" y="165" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" font-weight="700">LEVERAGE</text>
+        <!-- Chokepoint ring -->
+        <circle cx="260" cy="160" r="36" stroke="#C94B00" stroke-width="2" fill="none" stroke-dasharray="5 3" opacity="0.5"/>
+        <!-- Satellite dots -->
+        <circle cx="260" cy="20" r="5" fill="#D4CBBA"/>
+        <circle cx="260" cy="300" r="5" fill="#D4CBBA"/>
+        <circle cx="108" cy="50" r="5" fill="#D4CBBA"/>
+        <circle cx="412" cy="50" r="5" fill="#D4CBBA"/>
+        <circle cx="108" cy="270" r="5" fill="#D4CBBA"/>
+        <circle cx="412" cy="270" r="5" fill="#D4CBBA"/>
+      </svg>
+    </div>
+
+    <!-- ── FOREGROUND TEXT ── -->
+    <div class="foreground-content">
+      <div class="chapter-content">
+        <div class="chapter-number">PHASE 02</div>
+        <h1 class="chapter-title">THE EXTRACTION LAYER</h1>
+        <div class="chapter-sub">Identifying Systemic Chokepoints</div>
+      </div>
+    </div>
+
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines["chapter-card"] = tl;
+</script>
+</body>
+</html>

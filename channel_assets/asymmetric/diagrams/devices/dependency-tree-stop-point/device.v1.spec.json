@@ -1,0 +1,41 @@
+{
+  "device_id": "dependency-tree-stop-point",
+  "version": "1.0",
+  "semantic_meaning": "Marks the stop-point in a dependency tree: where control consolidates and downstream becomes constrained.",
+  "when_to_use": [
+    "When a dependency graph must end at a specific control boundary",
+    "When explaining why upstream determines downstream outcomes",
+    "When highlighting the 'last node that matters' for leverage"
+  ],
+  "when_not_to_use": [
+    "To end a graph arbitrarily without justification",
+    "As a decorative node highlight",
+    "If the stop-point is not tied to a leverage/control claim"
+  ],
+  "color_rules": {
+    "required": {
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true },
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true }
+    }
+  },
+  "animation_behavior": {
+    "description": "Tree grows in cyan; traversal animates; at stop-point the amber marker locks and traversal stops with an explicit boundary label.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "stop_node_id", "type": "string", "required": true, "description": "Node ID where traversal stops." },
+    { "name": "boundary_label", "type": "string", "required": false, "default": "STOP POINT", "description": "Label shown at the boundary." }
+  ],
+  "state_beats": [
+    { "label": "tree_build", "max_hold_seconds": 4.0, "meaningful_change": "Cyan tree draws in." },
+    { "label": "traversal", "max_hold_seconds": 4.0, "meaningful_change": "Traversal highlight moves along edges." },
+    { "label": "stop_lock", "max_hold_seconds": 4.0, "meaningful_change": "Amber stop marker locks at stop node." },
+    { "label": "boundary_callout", "max_hold_seconds": 4.0, "meaningful_change": "Boundary label appears; motion stops deliberately." }
+  ],
+  "expected_outputs": ["A dependency tree with an explicit stop-point and leverage marker"],
+  "suitable_scene_types": ["dependency_tree", "supply_chain", "system_map"],
+  "validation_notes": ["Stop-point must be justified by the narrative; amber is never decorative."],
+  "example_usage": { "hyperframes": { "parameters": { "stop_node_id": "node:control", "boundary_label": "CONTROL BOUNDARY" } } }
+}
+

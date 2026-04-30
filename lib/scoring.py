@@ -404,6 +404,8 @@ def score_provider(tool, task_context: dict[str, Any]) -> ProviderScore:
     elif status == "available":
         # Stable tools get higher baseline than experimental ones
         reliability = 0.95 if info.get("stability") == "production" else 0.8
+    elif status == "busy":
+        reliability = 0.15
     elif status == "degraded":
         reliability = 0.4
     else:

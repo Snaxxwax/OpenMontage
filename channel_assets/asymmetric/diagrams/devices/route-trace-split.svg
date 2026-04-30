@@ -1,0 +1,6 @@
+<svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Route Trace Split -->
+  <path d="M0 100H100" stroke="#1D6A8C" stroke-width="4"/>
+  <path d="M100 100C150 100 150 20 200 20H300" stroke="#1D6A8C" stroke-width="4" stroke-dasharray="8 8"/>
+  <path d="M100 100C150 100 150 180 200 180H300" stroke="#1D6A8C" stroke-width="4" stroke-dasharray="8 8"/>
+</svg>

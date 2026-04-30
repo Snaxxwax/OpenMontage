@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "package": {
+    "name": "asymmetric-channel-assets",
+    "version": "0.1.0",
+    "description": "Reusable channel-level assets for the Asymmetric framework (brand tokens, templates, devices, presets)."
+  },
+  "paths": {
+    "brand_tokens": "channel_assets/asymmetric/brand/tokens.json",
+    "hyperframes_templates_root": "channel_assets/asymmetric/templates/hyperframes",
+    "diagram_devices_root": "channel_assets/asymmetric/diagrams/devices",
+    "objects_svg_root": "channel_assets/asymmetric/objects/svg",
+    "audio_presets_root": "channel_assets/asymmetric/audio/presets",
+    "caption_presets_root": "channel_assets/asymmetric/captions/presets",
+    "provider_log_schema_root": "channel_assets/asymmetric/provider_logs/schema"
+  },
+  "conventions": {
+    "naming": "kebab-case",
+    "rule_reuse_threshold_videos": 3,
+    "preferred_visuals": ["svg", "css"],
+    "no_human_host_default": true
+  },
+  "semantics": {
+    "amber": "leverage/chokepoint",
+    "cyan": "structure/flow",
+    "red": "consequence/failure/exposure only"
+  },
+  "anti_patterns": [
+    "cyberpunk",
+    "spy/intelligence fantasy",
+    "control-room fantasy",
+    "stock-photo documentary default"
+  ]
+}
+

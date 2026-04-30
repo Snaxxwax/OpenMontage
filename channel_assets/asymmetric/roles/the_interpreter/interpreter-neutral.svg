@@ -1,0 +1,12 @@
+<svg width="400" height="600" viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Body Silhouette -->
+  <path d="M100 600L130 220C130 200 150 180 180 180H220C250 180 270 200 270 220L300 600H100Z" fill="#1A1208"/>
+  <!-- Head -->
+  <path d="M150 100C150 72.3858 172.386 50 200 50C227.614 50 250 72.3858 250 100C250 127.614 227.614 150 200 150C172.386 150 150 127.614 150 100Z" fill="#1A1208"/>
+  <!-- Diagonal Seam -->
+  <path d="M180 180L270 350" stroke="#D4CBBA" stroke-width="2"/>
+  <!-- Amber Eye/Lens -->
+  <circle cx="215" cy="95" r="6" fill="#C94B00"/>
+  <!-- Mouth Line (Neutral) -->
+  <path d="M190 125H210" stroke="#FFF8F0" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

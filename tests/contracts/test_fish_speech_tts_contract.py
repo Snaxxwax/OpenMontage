@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from tools.audio.fish_speech_tts import FishSpeechTTS
-from tools.base_tool import ToolStatus
+from tools.base_tool import ToolResult, ToolStatus
 
 
 def test_fish_speech_input_schema_exposes_server_overrides() -> None:
@@ -46,3 +46,26 @@ def test_fish_speech_execute_checks_explicit_server_url(monkeypatch) -> None:
     result = tool.execute({"text": "hello", "server_url": "http://explicit-server:1234"})
     assert result.success is False
     assert seen["base_url"] == "http://explicit-server:1234"
+
+
+def test_fish_speech_refuses_unsafe_long_text_by_default(monkeypatch) -> None:
+    tool = FishSpeechTTS()
+    monkeypatch.setattr(tool, "check_dependencies", lambda: None)
+    monkeypatch.setattr(tool, "_server_status", lambda **kwargs: ToolStatus.AVAILABLE)
+    monkeypatch.setattr(tool, "_generate", lambda *a, **k: ToolResult(success=True, data={}, artifacts=[]))
+
+    long_text = "word " * 300  # ~107s at 2.8 wps
+    result = tool.execute({"text": long_text})
+    assert result.success is False
+    assert "Refusing unsafe long Fish Speech request" in (result.error or "")
+
+
+def test_fish_speech_allows_long_text_with_explicit_escape_hatch(monkeypatch) -> None:
+    tool = FishSpeechTTS()
+    monkeypatch.setattr(tool, "check_dependencies", lambda: None)
+    monkeypatch.setattr(tool, "_server_status", lambda **kwargs: ToolStatus.AVAILABLE)
+    monkeypatch.setattr(tool, "_generate", lambda *a, **k: ToolResult(success=True, data={}, artifacts=[]))
+
+    long_text = "word " * 300
+    result = tool.execute({"text": long_text, "allow_long_single_request": True})
+    assert result.success is True

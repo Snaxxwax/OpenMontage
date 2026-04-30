@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 
 from tools.base_tool import BaseTool, ToolResult, ToolRuntime, ToolStability, ToolStatus, ToolTier
+from lib.gpu_governance import gpu_lock, mark_failed_after_isolation
 
 
 class VideoSelector(BaseTool):
@@ -43,6 +44,16 @@ class VideoSelector(BaseTool):
         "required": ["prompt"],
         "properties": {
             "prompt": {"type": "string"},
+            "allow_paid_providers": {
+                "type": "boolean",
+                "default": False,
+                "description": "Explicitly allow API/paid providers when local options are unavailable.",
+            },
+            "allow_concurrent_gpu": {
+                "type": "boolean",
+                "default": False,
+                "description": "Bypass the local GPU mutex (unsafe; only if providers can coexist).",
+            },
             "preferred_provider": {
                 "type": "string",
                 "description": "Provider name or 'auto'. Valid values are discovered at runtime from the registry.",
@@ -152,9 +163,18 @@ class VideoSelector(BaseTool):
                 },
             )
 
+        paid_policy_error = self._enforce_paid_provider_policy(inputs, candidates)
+        if paid_policy_error:
+            return ToolResult(success=False, error=paid_policy_error)
+
         # Normal generation — use scored selection
         tool, score = self._select_best_tool(inputs, candidates, task_context)
         if tool is None:
+            if not inputs.get("allow_paid_providers", False):
+                return ToolResult(
+                    success=False,
+                    error="No local/non-API provider available. Paid/API fallback requires allow_paid_providers=true.",
+                )
             return ToolResult(success=False, error="No video generation provider available.")
 
         # Adapt input keys: stock tools use 'query' while generators use 'prompt'
@@ -175,7 +195,32 @@ class VideoSelector(BaseTool):
                 except Exception as e:
                     return ToolResult(success=False, error=f"Failed to upload reference image: {e}")
 
-        result = tool.execute(adapted)
+        if tool.runtime == ToolRuntime.LOCAL_GPU and not inputs.get("allow_concurrent_gpu", False):
+            with gpu_lock(tool_name=tool.name, timeout_s=0.0) as lk:
+                if not lk.get("acquired"):
+                    holder = lk.get("holder")
+                    msg = "GPU is busy (VRAM occupied by another local GPU tool)."
+                    if holder:
+                        msg += f" Lock held by {holder.tool_name} (pid={holder.pid})."
+                    return ToolResult(
+                        success=False,
+                        error=msg,
+                        data={
+                            "gpu_status": "busy",
+                            "gpu_lock_holder": holder.tool_name if holder else None,
+                            "gpu_lock_pid": holder.pid if holder else None,
+                            "selected_tool": tool.name,
+                            "selected_provider": tool.provider,
+                        },
+                    )
+                result = tool.execute(adapted)
+        else:
+            result = tool.execute(adapted)
+
+        if not result.success and tool.runtime == ToolRuntime.LOCAL_GPU and not inputs.get("allow_concurrent_gpu", False):
+            mark_failed_after_isolation(tool.name)
+            result.data = result.data or {}
+            result.data["gpu_status"] = "failed_after_isolation"
         if result.success:
             result.data.setdefault("selected_tool", tool.name)
             result.data["selected_provider"] = tool.provider
@@ -207,6 +252,8 @@ class VideoSelector(BaseTool):
         if allowed:
             candidates = [tool for tool in candidates if tool.provider in allowed]
         candidates = self._filter_candidates(inputs, candidates)
+        if not inputs.get("allow_paid_providers", False) and preferred == "auto":
+            candidates = [t for t in candidates if t.runtime != ToolRuntime.API]
 
         env_hint = os.environ.get("VIDEO_GEN_LOCAL_MODEL", "").lower()
         env_map = {
@@ -241,6 +288,26 @@ class VideoSelector(BaseTool):
                 return tool_by_provider[score.provider], score
 
         return None, None
+
+    def _enforce_paid_provider_policy(self, inputs: dict[str, object], candidates: list[BaseTool]) -> str | None:
+        allow_paid = bool(inputs.get("allow_paid_providers", False))
+        preferred = str(inputs.get("preferred_provider", "auto"))
+        allowed = set(inputs.get("allowed_providers") or [])
+        if allow_paid:
+            return None
+
+        api_providers = {t.provider for t in candidates if t.runtime == ToolRuntime.API}
+        if preferred != "auto" and preferred in api_providers:
+            return (
+                f"Preferred provider '{preferred}' is a paid/API provider. "
+                "Set allow_paid_providers=true to approve paid/API fallback."
+            )
+        if allowed and (allowed & api_providers):
+            return (
+                "allowed_providers includes paid/API providers. "
+                "Set allow_paid_providers=true to approve paid/API fallback."
+            )
+        return None
 
     def _prepare_task_context(self, inputs: dict[str, object]) -> dict[str, object]:
         from lib.scoring import normalize_task_context

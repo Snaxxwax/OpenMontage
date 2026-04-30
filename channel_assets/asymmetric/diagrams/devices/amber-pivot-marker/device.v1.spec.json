@@ -1,0 +1,61 @@
+{
+  "device_id": "amber-pivot-marker",
+  "version": "1.0",
+  "semantic_meaning": "Marks the exact leverage pivot/control surface where the system can be steered.",
+  "when_to_use": [
+    "When introducing the chokepoint/control surface in a system diagram",
+    "When shifting from broad map to actionable lever",
+    "When restating 'where the leverage is' before a key claim"
+  ],
+  "when_not_to_use": [
+    "As decoration",
+    "To highlight routine nouns or section headers",
+    "When no control surface is being claimed"
+  ],
+  "color_rules": {
+    "required": {
+      "amber": {
+        "hex": "#C94B00",
+        "meaning": "leverage/chokepoint/control point only",
+        "not_decorative": true
+      }
+    },
+    "forbidden": {
+      "red": "Do not use red unless showing consequence/failure/exposure.",
+      "amber_decorative": "Amber cannot be used as general accent."
+    }
+  },
+  "animation_behavior": {
+    "description": "Pivot marker pulses once, locks, then hands off to downstream motion (route trace / map reframe).",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": true
+  },
+  "input_parameters": [
+    { "name": "pivot_position", "type": "point", "required": true, "description": "x/y position of the pivot in the diagram coordinate space." },
+    { "name": "label", "type": "string", "required": false, "description": "Optional short label (<= 18 chars) shown near the pivot." },
+    { "name": "pulse_count", "type": "integer", "required": false, "default": 1, "description": "Number of pulses before lock." }
+  ],
+  "state_beats": [
+    { "label": "idle_map", "max_hold_seconds": 4.0, "meaningful_change": "Diagram present, pivot unmarked." },
+    { "label": "pivot_acquire", "max_hold_seconds": 4.0, "meaningful_change": "Amber marker appears at pivot." },
+    { "label": "pivot_pulse", "max_hold_seconds": 4.0, "meaningful_change": "Single pulse/scan confirms 'this is the lever'." },
+    { "label": "pivot_lock", "max_hold_seconds": 4.0, "meaningful_change": "Marker locks; camera/diagram reframes to pivot context." }
+  ],
+  "expected_outputs": [
+    "A clearly identifiable amber pivot marker at the leverage point",
+    "Timeline beats that can be validated for motion cadence"
+  ],
+  "suitable_scene_types": ["system_map", "chokepoint_reveal", "leverage_map"],
+  "validation_notes": [
+    "Amber must only appear when a control surface is being asserted.",
+    "No beat may hold longer than 4 seconds without a state change."
+  ],
+  "example_usage": {
+    "hyperframes": {
+      "css_vars": ["--color-amber", "--color-near-black", "--color-bone"],
+      "parameters": { "pivot_position": { "x": 640, "y": 360 }, "label": "CONTROL", "pulse_count": 1 },
+      "notes": "Pair with `route-trace` to show flow to/from the pivot."
+    }
+  }
+}
+

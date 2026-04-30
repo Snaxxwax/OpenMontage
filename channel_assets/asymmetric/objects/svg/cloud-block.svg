@@ -1,0 +1,6 @@
+<svg width="120" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cloud Block -->
+  <path d="M30 40C30 23.4315 43.4315 10 60 10C76.5685 10 90 23.4315 90 40V90H30V40Z" fill="#1A1208" stroke="#1A1208" stroke-width="2"/>
+  <rect x="40" y="50" width="40" height="5" rx="1" fill="#1D6A8C"/>
+  <rect x="40" y="65" width="40" height="5" rx="1" fill="#1D6A8C"/>
+</svg>

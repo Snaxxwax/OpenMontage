@@ -1,0 +1,7 @@
+<svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Silicon Wafer -->
+  <circle cx="75" cy="75" r="70" fill="#1A1208" stroke="#8C7A68" stroke-width="1"/>
+  <path d="M75 5V145M5 75H145" stroke="#1A1208" stroke-width="0.5"/>
+  <path d="M40 10V140M110 10V140M10 40H140M10 110H140" stroke="#1A1208" stroke-width="0.5"/>
+  <rect x="125" y="70" width="10" height="10" fill="#1A1208"/>
+</svg>

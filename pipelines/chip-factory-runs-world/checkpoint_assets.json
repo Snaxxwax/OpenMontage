@@ -1,0 +1,178 @@
+{
+  "version": "1.0",
+  "project_id": "chip-factory-runs-world",
+  "pipeline_type": "animation",
+  "stage": "assets",
+  "status": "completed",
+  "timestamp": "2026-04-26T06:59:26.483055+00:00",
+  "checkpoint_policy": "guided",
+  "human_approval_required": false,
+  "human_approved": false,
+  "artifacts": {
+    "asset_manifest": {
+      "version": "1.0",
+      "assets": [
+        {
+          "id": "img-sc02-wafer",
+          "type": "animation",
+          "path": "projects/chip-factory-runs-world/assets/scenes/sc02-wafer-hero.html",
+          "source_tool": "svg_native",
+          "scene_id": "sc02",
+          "subtype": "svg_native_substitute",
+          "format": "html",
+          "generation_summary": "SVG/CSS/GSAP HyperFrames scene. Abstract semiconductor wafer: circular graphite disc, cyan die-map grid (die cells + micro-grid at 30px intervals), amber catchlight sweep animation, Ken Burns 1.03x scale over 23s. Two bone text overlays timed to narration beats. Substitutes for deferred ComfyUI wafer image (d6 \u2014 ComfyUI GPU allocator failure, local compatibility issue not a provider failure).",
+          "cost_usd": 0.0,
+          "duration_seconds": 23
+        },
+        {
+          "id": "img-sc05-euv",
+          "type": "animation",
+          "path": "projects/chip-factory-runs-world/assets/scenes/sc05-euv-machine.html",
+          "source_tool": "svg_native",
+          "scene_id": "sc05",
+          "subtype": "svg_native_substitute",
+          "format": "html",
+          "generation_summary": "SVG/CSS/GSAP HyperFrames scene. Simplified geometric EUV machine schematic: source column, optics tower (3 mirror elements), wafer stage, connecting rails. Cyan beam line draws across frame at ~8s (narration beat 'extreme ultraviolet light'). Amber process point grows on wafer stage. $20B+ stat card (amber border) at ~16s. 'Decades of data. Not a blueprint.' text beat at ~32s. 4 distinct state changes across 40s. No trademarked branding. Substitutes for deferred ComfyUI EUV image (d6).",
+          "cost_usd": 0.0,
+          "duration_seconds": 40
+        },
+        {
+          "id": "img-sc17-arizona",
+          "type": "animation",
+          "path": "projects/chip-factory-runs-world/assets/scenes/sc17-arizona-fab.html",
+          "source_tool": "svg_native",
+          "scene_id": "sc17",
+          "subtype": "svg_native_substitute",
+          "format": "html",
+          "generation_summary": "SVG/CSS/GSAP HyperFrames scene. Industrial fab building silhouette: primary cleanroom block with amber face highlight (leftmost third), utility block, mechanical services block, construction crane (signals under-construction), desert perspective grid, distant second building. Node-generation stat card (red #D64545 border): 3 GSAP stagger lines \u2014 'Arizona: N4 Now' (bone) / 'N3: est. 2027' (muted steel) / 'N2: No date set' (muted steel, dimmer). Arrow motif + 'Two generations behind Taiwan's leading edge' caption. Red border only use of red in video \u2014 per brand rules. Substitutes for deferred ComfyUI Arizona fab image (d6).",
+          "cost_usd": 0.0,
+          "duration_seconds": 20
+        },
+        {
+          "id": "img-sc23-convergence",
+          "type": "diagram",
+          "path": "projects/chip-factory-runs-world/assets/scenes/sc23-convergence.html",
+          "source_tool": "svg_native",
+          "scene_id": "sc23",
+          "subtype": "svg_native",
+          "format": "html",
+          "generation_summary": "SVG/CSS/GSAP HyperFrames scene. Abstract convergence diagram: source nodes (Apple/NVIDIA/AMD/Qualcomm/AI Data Centers) with cyan routes converging into one amber TSMC/Taiwan chokepoint node. No world map.",
+          "cost_usd": 0.0,
+          "duration_seconds": 25
+        },
+        {
+          "id": "nar-s01",
+          "type": "narration",
+          "path": "projects/chip-factory-runs-world/assets/audio/narration/s01.mp3",
+          "source_tool": "tts_selector",
+          "scene_id": "sc01",
+          "subtype": "chunked_regen",
+          "format": "mp3",
+          "generation_summary": "Regenerate with Fish Speech via tts_selector in chunked mode: split section into 25\u201340s chunks, generate sequentially (raise max_new_tokens per chunk), validate duration, concatenate to this final MP3. Existing file is a known-truncated placeholder (~47.5s cap) and will be replaced.",
+          "cost_usd": 0.0,
+          "provider": "fish_speech"
+        },
+        {
+          "id": "nar-s02",
+          "type": "narration",
+          "path": "projects/chip-factory-runs-world/assets/audio/narration/s02.mp3",
+          "source_tool": "tts_selector",
+          "scene_id": "sc04",
+          "subtype": "chunked_regen",
+          "format": "mp3",
+          "generation_summary": "Regenerate with Fish Speech via tts_selector in chunked mode: split section into 25\u201340s chunks, generate sequentially (raise max_new_tokens per chunk), validate duration, concatenate to this final MP3. Existing file is a known-truncated placeholder (~47.5s cap) and will be replaced.",
+          "cost_usd": 0.0,
+          "provider": "fish_speech"
+        },
+        {
+          "id": "nar-s03",
+          "type": "narration",
+          "path": "projects/chip-factory-runs-world/assets/audio/narration/s03.mp3",
+          "source_tool": "tts_selector",
+          "scene_id": "sc08",
+          "subtype": "chunked_regen",
+          "format": "mp3",
+          "generation_summary": "Regenerate with Fish Speech via tts_selector in chunked mode: split section into 25\u201340s chunks, generate sequentially (raise max_new_tokens per chunk), validate duration, concatenate to this final MP3. Existing file is a known-truncated placeholder (~47.5s cap) and will be replaced.",
+          "cost_usd": 0.0,
+          "provider": "fish_speech"
+        },
+        {
+          "id": "nar-s04",
+          "type": "narration",
+          "path": "projects/chip-factory-runs-world/assets/audio/narration/s04.mp3",
+          "source_tool": "tts_selector",
+          "scene_id": "sc11",
+          "subtype": "chunked_regen",
+          "format": "mp3",
+          "generation_summary": "Regenerate with Fish Speech via tts_selector in chunked mode: split section into 25\u201340s chunks, generate sequentially (raise max_new_tokens per chunk), validate duration, concatenate to this final MP3. Existing file is a known-truncated placeholder (~47.5s cap) and will be replaced.",
+          "cost_usd": 0.0,
+          "provider": "fish_speech"
+        },
+        {
+          "id": "nar-s05",
+          "type": "narration",
+          "path": "projects/chip-factory-runs-world/assets/audio/narration/s05.mp3",
+          "source_tool": "tts_selector",
+          "scene_id": "sc16",
+          "subtype": "chunked_regen",
+          "format": "mp3",
+          "generation_summary": "Regenerate with Fish Speech via tts_selector in chunked mode: split section into 25\u201340s chunks, generate sequentially (raise max_new_tokens per chunk), validate duration, concatenate to this final MP3. Existing file is a known-truncated placeholder (~47.5s cap) and will be replaced.",
+          "cost_usd": 0.0,
+          "provider": "fish_speech"
+        },
+        {
+          "id": "nar-s06",
+          "type": "narration",
+          "path": "projects/chip-factory-runs-world/assets/audio/narration/s06.mp3",
+          "source_tool": "tts_selector",
+          "scene_id": "sc20",
+          "subtype": "chunked_regen",
+          "format": "mp3",
+          "generation_summary": "Regenerate with Fish Speech via tts_selector in chunked mode: split section into 25\u201340s chunks, generate sequentially (raise max_new_tokens per chunk), validate duration, concatenate to this final MP3. Existing file is a known-truncated placeholder (~47.5s cap) and will be replaced.",
+          "cost_usd": 0.0,
+          "provider": "fish_speech"
+        },
+        {
+          "id": "nar-s07",
+          "type": "narration",
+          "path": "projects/chip-factory-runs-world/assets/audio/narration/s07.mp3",
+          "source_tool": "tts_selector",
+          "scene_id": "sc24",
+          "subtype": "chunked_regen",
+          "format": "mp3",
+          "generation_summary": "Regenerate with Fish Speech via tts_selector in chunked mode: split section into 25\u201340s chunks, generate sequentially (raise max_new_tokens per chunk), validate duration, concatenate to this final MP3. Existing file is a known-truncated placeholder (~47.5s cap) and will be replaced.",
+          "cost_usd": 0.0,
+          "provider": "fish_speech"
+        }
+      ],
+      "total_cost_usd": 0.0,
+      "metadata": {
+        "project_id": "chip-factory-runs-world",
+        "pipeline": "animation",
+        "stage": "assets",
+        "timestamp": "2026-04-25",
+        "comfyui_images_status": "deferred",
+        "comfyui_images_reason": "ComfyUI v0.13.0 GPU allocator failure (torch_vram_total: 0 despite 23GB VRAM free). ComfyUI-internal issue, not VRAM contention. See decision_log d6. Post-run diagnostic task created. Images replaced with svg_native HyperFrames scenes.",
+        "svg_native_scenes": [
+          "img-sc02-wafer",
+          "img-sc05-euv",
+          "img-sc17-arizona"
+        ],
+        "narration_status": "pending \u2014 awaiting Fish Speech server startup (BLOCK B)",
+        "gpu_execution_order": "CPU: author HyperFrames SVG/CSS scenes -> GPU: Fish Speech chunked narration -> GPU (optional): ACEStep music -> compose",
+        "fallback_policy": "If Fish Speech unavailable after ComfyUI unload, escalate to user before switching to paid TTS. If ACEStep music fails quality gate, proceed without music (silence policy).",
+        "narration_mode": "fish_speech_chunked",
+        "narration_chunk_target_seconds": "25-40",
+        "narration_fix_reason": "Previous full-section generations truncated at ~47.5s due to max_new_tokens=1024; switch to chunked generation + concat.",
+        "comfyui_policy": "Do not use ComfyUI for this run unless allocator issue is fixed and verified.",
+        "music_status": "optional \u2014 generate with ACEStep only if needed; silence fallback if weak"
+      }
+    }
+  },
+  "style_playbook": "asymmetric",
+  "metadata": {
+    "notes": [
+      "Asset manifest paths normalized to repo-root so tools can resolve them from any cwd."
+    ]
+  }
+}

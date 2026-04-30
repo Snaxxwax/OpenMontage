@@ -23,6 +23,73 @@ For each scene, define:
 - what is held,
 - how the scene exits.
 
+**Duration gate (required):**
+- If `proposal_packet.selected_concept.target_duration_seconds` is set (longform default), the **scene_plan total duration** must match within **±10–15%**.
+- The scene plan must not silently compress a 13-minute (780s) project into a 5-minute (300s) plan.
+- If a shorter pilot is intended, the proposal/project_config must explicitly set a shorter `target_duration_seconds` (e.g. ~300s).
+
+### 1b. Asymmetric Mode (Device-Driven, Kinetic, Source-Aware)
+
+When `style_playbook == "asymmetric"`, plan scenes as **devices + state changes**, not slides.
+
+**Retention-motion layer (required fields on every scene):**
+- `viewer_hook`: the active viewer question driving the scene.
+- `tension_type`: why it feels unresolved (mystery/contradiction/escalation/bottleneck/consequence/etc.).
+- `visual_event_cadence_seconds`: target cadence for meaningful visual events (default **5–8s**).
+- `retention_function`: why the viewer keeps watching (open loop / proof / mechanism / consequence / payoff / synthesis).
+- `payoff_moment`: the in-scene beat that resolves or flips the tension.
+- `next_open_loop`: the unresolved next question you hand off to the next scene.
+
+Mini-arc rule (per section): **question → mechanism → consequence → payoff**. If a section spans multiple scenes, the arc must be visible across them and the open loop must be explicit.
+
+**Device references (required for major scenes):**
+- Each major scene should include `devices: [...]` referencing one or more device IDs from `channel_assets/asymmetric/diagrams/devices/manifest.json`.
+- Recognized device IDs:
+  - `amber-pivot-marker`, `chokepoint-ring`, `route-trace`, `collapse-to-one-node`
+  - `surface-vs-structure-split`, `xray-layer-reveal`, `blueprint-reveal`, `under-the-hood-mechanism`
+  - `red-consequence-layer`, `source-card-reveal`, `final-leverage-map`, `dependency-tree-stop-point`
+
+**State-change enforcement:**
+- Add `state_changes` with timeline beats (seconds from scene start).
+- Hard rule: **no unchanged visual state longer than 4 seconds**.
+- Preferred: meaningful state change every **2–4 seconds**.
+- Every 5–8 seconds requires a meaningful visual event (reveal/collapse/route trace/node highlight/contradiction/source proof/map zoom/consequence hit/comparison slam/final synthesis).
+- Each diagram must change **visible state** at least every 4 seconds (not just swapping text/cards).
+- Text-card sequences must include state changes or be split.
+- Stat cards must animate as **evidence**, not slide bullets.
+- Every major claim needs a **visual mechanism**, not just text.
+
+**Asymmetric episode coverage (minimum):**
+- One system map (`route-trace` or `dependency-tree-stop-point`)
+- One chokepoint reveal (`amber-pivot-marker` or `chokepoint-ring`)
+- One surface-vs-structure reveal (`surface-vs-structure-split` or `xray-layer-reveal`)
+- One source/evidence moment (`source-card-reveal`)
+- One final leverage map (`final-leverage-map`)
+
+**SVG/CSS fallback planning (required):**
+- Any generated-image dependency in `required_assets` must include a fallback plan:
+  - `fallback_type` (`svg_css` | `hyperframes_native` | `generated_image` | `stock` | `none`)
+  - `fallback_path` when `fallback_required: true`
+- Prefer `svg_css` / `hyperframes_native` when brand-compatible; do not block on ComfyUI.
+
+**Evidence/stat-card requirements:**
+- Hard stat cards must carry `source_claim_ids` referencing `source_map` claim IDs.
+- Every stat card must be framed as proof of a claim or contradiction (never decorative).
+- Analyst/media estimates must set `qualifier_required: true` and include on-screen qualifiers.
+- Low-confidence claims should not be planned as hard stat cards (use qualifiers or convert to mechanism/explanation).
+- Use `evidence_device_id: "source-card-reveal"` for major non-obvious claims.
+
+**Color semantics (non-negotiable):**
+- Amber = leverage/chokepoint/control point only (not decorative).
+- Cyan = structure/flow/system map only.
+- Red = consequence/failure/exposure only (not decorative).
+
+**Human-host and tone defaults:**
+- Default to **no recurring human host**.
+- Interface-driven, diagram-native visuals.
+- Use abstract silhouettes only when necessary.
+- Avoid cyberpunk / spy / control-room fantasy; avoid life-hack/gamer-meta framing.
+
 ### 2. Limit Transition Families
 
 Choose a small set of transition meanings:

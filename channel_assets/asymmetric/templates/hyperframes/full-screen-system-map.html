@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="scene-layout.css">
+  <link rel="stylesheet" href="full-screen-system-map.css">
+</head>
+<body>
+  <div data-composition-id="full-screen-system-map" data-width="1920" data-height="1080" data-start="0" data-duration="5" class="clip">
+    <div class="scene-container">
+      <div class="background-grid"></div>
+      <div class="map-container">
+        <div class="map-overlay">
+          <h1 class="text-cyan">Supply Chain Architecture</h1>
+          <p class="text-muted">Tier 1 &amp; Tier 2 Extraction Points</p>
+        </div>
+        <div class="map-visual">
+          <svg viewBox="0 0 1600 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- ── HORIZONTAL LANE RAILS ────────────────────────────── -->
+            <line x1="0" y1="130" x2="1600" y2="130" stroke="#D4CBBA" stroke-width="1"/>
+            <line x1="0" y1="350" x2="1600" y2="350" stroke="#D4CBBA" stroke-width="1"/>
+            <line x1="0" y1="530" x2="1600" y2="530" stroke="#D4CBBA" stroke-width="1"/>
+
+            <!-- ── LANE LABELS ─────────────────────────────────────── -->
+            <text x="12" y="105" fill="#8C7A68" font-family="IBM Plex Mono" font-size="15" font-weight="600" text-transform="uppercase">UPSTREAM</text>
+            <text x="12" y="315" fill="#8C7A68" font-family="IBM Plex Mono" font-size="15" font-weight="600">CORE CHAIN</text>
+            <text x="12" y="505" fill="#8C7A68" font-family="IBM Plex Mono" font-size="15" font-weight="600">DOWNSTREAM</text>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!-- LANE 1 — UPSTREAM INPUTS (y=140 → 225) -->
+            <!-- ══════════════════════════════════════════════════════ -->
+
+            <!-- Node A1: Raw Materials -->
+            <rect x="60" y="145" width="210" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="60" y="145" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="170" y="176" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" font-weight="700">RAW MATERIALS</text>
+            <text x="170" y="200" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">RARE EARTH / SILICA</text>
+
+            <!-- Node A2: Chemical Suppliers -->
+            <rect x="330" y="145" width="210" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="330" y="145" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="440" y="176" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" font-weight="700">CHEMICAL SUPPLY</text>
+            <text x="440" y="200" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">PHOTORESISTS / GAS</text>
+
+            <!-- Node A3: Tooling/Equipment -->
+            <rect x="600" y="145" width="220" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="600" y="145" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="715" y="176" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" font-weight="700">LITHO EQUIPMENT</text>
+            <text x="715" y="200" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">ASML EUV MONOPOLY</text>
+
+            <!-- Node A4: Design IP -->
+            <rect x="890" y="145" width="200" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="890" y="145" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="995" y="176" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" font-weight="700">EDA / IP STACK</text>
+            <text x="995" y="200" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">SYNOPSYS / CADENCE</text>
+
+            <!-- Node A5: Design Houses -->
+            <rect x="1160" y="145" width="200" height="68" fill="#D4CBBA" rx="3"/>
+            <rect x="1160" y="145" width="5" height="68" fill="#1D6A8C" rx="2"/>
+            <text x="1265" y="176" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" font-weight="700">DESIGN HOUSES</text>
+            <text x="1265" y="200" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">APPLE / NVIDIA / AMD</text>
+
+            <!-- ── Upstream horizontal connectors ── -->
+            <path d="M270 179 H330" stroke="#1D6A8C" stroke-width="3"/>
+            <polygon points="330,174 343,179 330,184" fill="#1D6A8C"/>
+            <path d="M540 179 H600" stroke="#1D6A8C" stroke-width="3"/>
+            <polygon points="600,174 613,179 600,184" fill="#1D6A8C"/>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!-- LANE 2 — CORE CHAIN (y=360 → 455) -->
+            <!-- ══════════════════════════════════════════════════════ -->
+
+            <!-- Vertical feed lines from upstream to core chain -->
+            <path d="M170 213 V295" stroke="#1D6A8C" stroke-width="2" stroke-dasharray="6 4"/>
+            <polygon points="165,293 170,307 175,293" fill="#1D6A8C"/>
+
+            <path d="M715 213 V295" stroke="#1D6A8C" stroke-width="2" stroke-dasharray="6 4"/>
+            <polygon points="710,293 715,307 720,293" fill="#1D6A8C"/>
+
+            <path d="M1265 213 V295" stroke="#1D6A8C" stroke-width="2" stroke-dasharray="6 4"/>
+            <polygon points="1260,293 1265,307 1270,293" fill="#1D6A8C"/>
+
+            <!-- Node B1: Wafer Prep -->
+            <rect x="60" y="362" width="200" height="72" fill="#D4CBBA" rx="3"/>
+            <rect x="60" y="362" width="5" height="72" fill="#1D6A8C" rx="2"/>
+            <text x="165" y="393" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">WAFER PREP</text>
+            <text x="165" y="414" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">SHIN-ETSU / SUMCO</text>
+            <text x="165" y="430" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">2 GLOBAL SUPPLIERS</text>
+
+            <!-- Node B2: CHOKEPOINT — Foundry Control (AMBER) -->
+            <rect x="340" y="354" width="260" height="88" fill="#C94B00" rx="3"/>
+            <text x="470" y="388" fill="#FFF8F0" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="22" font-weight="700">SEMICONDUCTOR FAB</text>
+            <text x="470" y="410" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="600">TSMC / SAMSUNG</text>
+            <text x="470" y="430" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">CHOKEPOINT — 92% ADV. NODE SHARE</text>
+
+            <!-- Chokepoint ring marker -->
+            <circle cx="470" cy="398" r="68" stroke="#C94B00" stroke-width="2" fill="none" stroke-dasharray="6 4" opacity="0.4"/>
+
+            <!-- Node B3: Packaging/Test -->
+            <rect x="680" y="362" width="210" height="72" fill="#D4CBBA" rx="3"/>
+            <rect x="680" y="362" width="5" height="72" fill="#1D6A8C" rx="2"/>
+            <text x="790" y="393" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">PACKAGE / TEST</text>
+            <text x="790" y="414" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">ASE / AMKOR / JCET</text>
+            <text x="790" y="430" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">ADVANCED PKG LOCK-IN</text>
+
+            <!-- Node B4: OEM Assembly -->
+            <rect x="970" y="362" width="200" height="72" fill="#D4CBBA" rx="3"/>
+            <rect x="970" y="362" width="5" height="72" fill="#1D6A8C" rx="2"/>
+            <text x="1075" y="393" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">OEM ASSEMBLY</text>
+            <text x="1075" y="414" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">FOXCONN / PEGATRON</text>
+            <text x="1075" y="430" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">CONTRACT MFG LAYER</text>
+
+            <!-- Node B5: Platform Markets -->
+            <rect x="1250" y="362" width="210" height="72" fill="#D4CBBA" rx="3"/>
+            <rect x="1250" y="362" width="5" height="72" fill="#1D6A8C" rx="2"/>
+            <text x="1360" y="393" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" font-weight="700">PLATFORM MARKETS</text>
+            <text x="1360" y="414" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">APPLE / AMAZON / MSFT</text>
+            <text x="1360" y="430" fill="#1D6A8C" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">END-MARKET LOCK</text>
+
+            <!-- ── Core chain flow arrows ── -->
+            <path d="M260 398 H340" stroke="#C94B00" stroke-width="4"/>
+            <polygon points="340,393 355,398 340,403" fill="#C94B00"/>
+
+            <path d="M600 398 H680" stroke="#1D6A8C" stroke-width="4"/>
+            <polygon points="680,393 695,398 680,403" fill="#1D6A8C"/>
+
+            <path d="M890 398 H970" stroke="#1D6A8C" stroke-width="4"/>
+            <polygon points="970,393 985,398 970,403" fill="#1D6A8C"/>
+
+            <path d="M1170 398 H1250" stroke="#1D6A8C" stroke-width="4"/>
+            <polygon points="1250,393 1265,398 1250,403" fill="#1D6A8C"/>
+
+            <!-- ══════════════════════════════════════════════════════ -->
+            <!-- LANE 3 — DOWNSTREAM EXTRACTION (y=540 → 620) -->
+            <!-- ══════════════════════════════════════════════════════ -->
+
+            <!-- Vertical feed lines from core to downstream -->
+            <path d="M470 442 V537" stroke="#C94B00" stroke-width="2" stroke-dasharray="6 4"/>
+            <polygon points="465,537 470,551 475,537" fill="#C94B00"/>
+
+            <path d="M1075 434 V537" stroke="#1D6A8C" stroke-width="2" stroke-dasharray="6 4"/>
+            <polygon points="1070,537 1075,551 1080,537" fill="#1D6A8C"/>
+
+            <!-- Extraction label boxes -->
+            <rect x="330" y="558" width="290" height="60" fill="#D4CBBA" rx="3"/>
+            <rect x="330" y="558" width="5" height="60" fill="#C94B00" rx="2"/>
+            <text x="480" y="583" fill="#C94B00" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">EXTRACTION POINT A</text>
+            <text x="480" y="603" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">FOUNDRY MARGIN: 54% GROSS</text>
+
+            <rect x="960" y="558" width="250" height="60" fill="#D4CBBA" rx="3"/>
+            <rect x="960" y="558" width="5" height="60" fill="#B8291A" rx="2"/>
+            <text x="1090" y="583" fill="#B8291A" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">EXTRACTION POINT B</text>
+            <text x="1090" y="603" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">PLATFORM TAKE RATE: 30%</text>
+
+            <!-- ── CHOKEPOINT CALLOUT LINE ── -->
+            <path d="M470 354 V80" stroke="#C94B00" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>
+            <rect x="380" y="40" width="190" height="34" fill="#C94B00" rx="3"/>
+            <text x="475" y="62" fill="#FFF8F0" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="16" font-weight="700">PRIMARY CHOKEPOINT</text>
+
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines["full-screen-system-map"] = tl;
+  </script>
+</body>
+</html>

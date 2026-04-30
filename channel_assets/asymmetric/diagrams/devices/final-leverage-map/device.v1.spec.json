@@ -1,0 +1,58 @@
+{
+  "device_id": "final-leverage-map",
+  "version": "1.0",
+  "semantic_meaning": "Summarizes the system into a final leverage map: structure (cyan), leverage points (amber), consequences (red only if explicit).",
+  "when_to_use": [
+    "Episode wrap-up to restate where leverage exists",
+    "After presenting evidence and mechanism to unify the story",
+    "As a final actionable system map"
+  ],
+  "when_not_to_use": [
+    "If the episode did not establish leverage points with evidence",
+    "As a decorative end screen",
+    "To introduce new claims without sources"
+  ],
+  "color_rules": {
+    "required": {
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true },
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true }
+    },
+    "optional": {
+      "red": { "hex": "#B8291A", "meaning": "consequence/failure/exposure only", "not_decorative": true }
+    }
+  },
+  "animation_behavior": {
+    "description": "Map builds (cyan), leverage points appear (amber), optional red consequence layer toggles for explicit risk; ends with locked, readable map.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "nodes", "type": "array<object>", "required": true, "description": "Map nodes (id, label, position)." },
+    { "name": "edges", "type": "array<object>", "required": true, "description": "Map edges/routes (from, to, optional label)." },
+    { "name": "leverage_node_ids", "type": "array<string>", "required": true, "description": "Nodes that are leverage points (amber markers/rings)." },
+    { "name": "consequence_node_ids", "type": "array<string>", "required": false, "description": "Nodes tied to explicit consequences (red layer only if used)." }
+  ],
+  "state_beats": [
+    { "label": "structure_build", "max_hold_seconds": 4.0, "meaningful_change": "Cyan structure draws in." },
+    { "label": "leverage_marks", "max_hold_seconds": 4.0, "meaningful_change": "Amber leverage points appear/pulse." },
+    { "label": "risk_toggle", "max_hold_seconds": 4.0, "meaningful_change": "Optional red consequence overlay toggles on/off." },
+    { "label": "final_lock", "max_hold_seconds": 4.0, "meaningful_change": "Final map locks; camera holds briefly then ends." }
+  ],
+  "expected_outputs": ["A final summary map with clear leverage markings and optional consequence layer"],
+  "suitable_scene_types": ["final_summary", "leverage_map", "episode_close"],
+  "validation_notes": [
+    "If red is present, it must correspond to explicit consequence/failure/exposure claims.",
+    "Leverage points must have been established earlier in the episode."
+  ],
+  "example_usage": {
+    "hyperframes": {
+      "parameters": {
+        "nodes": [{ "id": "nA", "label": "INPUT", "x": 220, "y": 360 }, { "id": "nB", "label": "CHOKEPOINT", "x": 640, "y": 360 }, { "id": "nC", "label": "OUTPUT", "x": 1020, "y": 360 }],
+        "edges": [{ "from": "nA", "to": "nB" }, { "from": "nB", "to": "nC" }],
+        "leverage_node_ids": ["nB"],
+        "consequence_node_ids": []
+      }
+    }
+  }
+}
+

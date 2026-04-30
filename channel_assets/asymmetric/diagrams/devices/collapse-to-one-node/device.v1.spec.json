@@ -1,0 +1,53 @@
+{
+  "device_id": "collapse-to-one-node",
+  "version": "1.0",
+  "semantic_meaning": "Collapses a complex network into a single controlling node to communicate concentration of leverage.",
+  "when_to_use": [
+    "After showing a dense dependency graph to reveal the effective controller",
+    "When summarizing multiple moving parts into one bottleneck",
+    "When bridging from structure to leverage"
+  ],
+  "when_not_to_use": [
+    "If the narrative does not justify a single controlling node",
+    "If it implies certainty where the source confidence is low",
+    "As a transition effect without explanatory meaning"
+  ],
+  "color_rules": {
+    "required": {
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true },
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true }
+    },
+    "forbidden": {
+      "red": "Red only for explicit consequence/failure/exposure."
+    }
+  },
+  "animation_behavior": {
+    "description": "Many nodes shrink/fade into one node; routes converge; the survivor node gets amber pivot marker.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "node_ids", "type": "array<string>", "required": true, "description": "IDs of nodes participating in collapse." },
+    { "name": "target_node_id", "type": "string", "required": true, "description": "ID of the final controlling node." },
+    { "name": "converge_point", "type": "point", "required": false, "description": "Optional explicit converge point (defaults to target node center)." }
+  ],
+  "state_beats": [
+    { "label": "graph_full", "max_hold_seconds": 4.0, "meaningful_change": "Full network visible." },
+    { "label": "converge", "max_hold_seconds": 4.0, "meaningful_change": "Nodes/routes converge toward target." },
+    { "label": "collapse", "max_hold_seconds": 4.0, "meaningful_change": "Non-target nodes fade/scale down; edges compress." },
+    { "label": "single_node_lock", "max_hold_seconds": 4.0, "meaningful_change": "Target node remains; amber pivot marker locks." }
+  ],
+  "expected_outputs": ["A reduced diagram with a single emphasized controlling node"],
+  "suitable_scene_types": ["dependency_tree", "system_map", "chokepoint_reveal"],
+  "validation_notes": [
+    "Must not over-claim: use only when the sources justify the concentration."
+  ],
+  "example_usage": {
+    "hyperframes": {
+      "css_vars": ["--color-cyan", "--color-amber"],
+      "parameters": { "node_ids": ["n1", "n2", "n3"], "target_node_id": "n2" },
+      "notes": "Follow immediately with `chokepoint-ring` or `amber-pivot-marker`."
+    }
+  }
+}
+

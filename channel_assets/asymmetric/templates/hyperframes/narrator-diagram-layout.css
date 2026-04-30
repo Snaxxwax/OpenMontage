@@ -1,0 +1,94 @@
+.foreground-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  height: 100%;
+  gap: 40px;
+}
+
+/* ── LEFT: Interpreter panel ── */
+.narrator-side {
+  width: 38%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  background: linear-gradient(to top, rgba(212, 203, 186, 0.35) 0%, transparent 60%);
+  border-right: 2px solid var(--graphite);
+}
+
+.narrator-glow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(ellipse at center, rgba(29, 106, 140, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.interpreter-figure {
+  width: 80%;
+  max-width: 480px;
+  height: auto;
+  max-height: 820px;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.narrator-label {
+  position: absolute;
+  top: 36px;
+  left: 36px;
+  z-index: 3;
+}
+
+.narrator-role {
+  font-family: var(--font-code);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+  border-left: 4px solid var(--cyan);
+  padding-left: 14px;
+}
+
+/* ── RIGHT: Diagram panel ── */
+.diagram-side {
+  flex: 1;
+  height: 100%;
+  background-color: var(--deep-slate);
+  padding: 48px 48px 36px 48px;
+  display: flex;
+  flex-direction: column;
+  border-left: 8px solid var(--cyan);
+  box-shadow: inset 0 0 60px rgba(212, 203, 186, 0.3);
+  box-sizing: border-box;
+}
+
+.diagram-label {
+  font-family: var(--font-headings);
+  font-size: 40px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.diagram-visual {
+  flex-grow: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+}
+
+.diagram-visual svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

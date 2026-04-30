@@ -229,6 +229,10 @@ class HyperFramesCompose(BaseTool):
 
     _NODE_FLOOR_MAJOR = 22
     _NPM_PACKAGE = "hyperframes"  # published npm name (NOT @hyperframes/cli — that's 404)
+    # Pin a known-good CLI version for deterministic, offline-friendly runs.
+    # New npm releases occasionally appear briefly as metadata but fail to
+    # resolve via npx in some environments; this fallback keeps renders stable.
+    _NPM_FALLBACK_VERSION = "0.4.33"
     _nvenc_available_cache: Optional[bool] = None
     # Process-level cache for the npm resolve check. Shape:
     #   {"version": "0.4.5"}   → package resolves
@@ -1128,8 +1132,12 @@ class HyperFramesCompose(BaseTool):
         text = (cut.get("reason") or "").strip()
 
         def _wrap(inner: str, css: str, js: str) -> str:
+            dur_s = max(
+                0.1,
+                float(cut.get("out_seconds", 0) or 0) - float(cut.get("in_seconds", 0) or 0),
+            )
             return f"""<template id="{scene_id}-template">
-  <div data-composition-id="{self._escape_attr(scene_id)}" data-width="1920" data-height="1080">
+  <div data-composition-id="{self._escape_attr(scene_id)}" data-start="0" data-duration="{self._f(dur_s)}" data-width="1920" data-height="1080">
     {inner}
     <style>
       [data-composition-id="{self._escape_attr(scene_id)}"] {{
@@ -1305,10 +1313,15 @@ class HyperFramesCompose(BaseTool):
       #text-supply-chain {{ top: 440px; font-size: 38px; color: {steel}; letter-spacing: 0.06em; }}
 """
             js = """
+      const root = document.querySelector('[data-composition-id="sc02"]');
+      const totalDuration = parseFloat(root?.getAttribute('data-duration') || '30');
+      const cycle = 3;
+      const repeats = Math.max(0, Math.floor((totalDuration - 1.3) / cycle) - 1);
+
       tl.to("#wafer-wrap", { opacity: 1, duration: 1.6, ease: "power2.out" }, 0)
         .to("#wafer-wrap", { scale: 1.03, duration: 22, ease: "none", transformOrigin: "center center" }, 0)
         .to("#catchlight-ellipse", { opacity: 1, duration: 1.0, ease: "power1.in" }, 1.0)
-        .to("#catchlight-ellipse", { attr: { cx: 560, cy: 500 }, duration: 3, ease: "sine.inOut", repeat: -1, yoyo: true }, 1.3)
+        .to("#catchlight-ellipse", { attr: { cx: 560, cy: 500 }, duration: 3, ease: "sine.inOut", repeat: repeats, yoyo: true }, 1.3)
         .to("#text-no-backup", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 6.0)
         .to("#text-no-backup", { opacity: 0.45, duration: 0.35, ease: "power1.out" }, 10.0)
         .to("#text-supply-chain", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 14.0);
@@ -2567,7 +2580,7 @@ class HyperFramesCompose(BaseTool):
             if resolved:
                 cmd[0] = resolved
         try:
-            return subprocess.run(
+            proc = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
@@ -2575,6 +2588,24 @@ class HyperFramesCompose(BaseTool):
                 cwd=str(cwd) if cwd else None,
                 check=False,
             )
+            # If npx tries to resolve a non-existent version (ETARGET), fall back
+            # to a pinned known-good version.
+            stderr = (proc.stderr or "")
+            if proc.returncode != 0 and ("ETARGET" in stderr or "No matching version found" in stderr):
+                fallback = ["npx", "--yes", f"{self._NPM_PACKAGE}@{self._NPM_FALLBACK_VERSION}", *args]
+                if os.name == "nt":
+                    resolved = shutil.which(fallback[0])
+                    if resolved:
+                        fallback[0] = resolved
+                return subprocess.run(
+                    fallback,
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout,
+                    cwd=str(cwd) if cwd else None,
+                    check=False,
+                )
+            return proc
         except subprocess.TimeoutExpired as e:
             # Surface timeouts as a failed CompletedProcess so callers get a
             # uniform shape. The stderr tail will say timeout.

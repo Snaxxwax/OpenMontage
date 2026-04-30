@@ -1,0 +1,338 @@
+{
+  "version": "1.0",
+  "project_id": "chip-factory-runs-world",
+  "pipeline_type": "animation",
+  "stage": "research",
+  "status": "completed",
+  "timestamp": "2026-04-26T02:16:54.514114+00:00",
+  "style_playbook": "asymmetric",
+  "checkpoint_policy": "guided",
+  "human_approval_required": false,
+  "human_approved": false,
+  "artifacts": {
+    "research_brief": {
+      "version": "1.0",
+      "topic": "TSMC \u2014 the semiconductor foundry that controls all advanced chip production",
+      "research_date": "2026-04-25",
+      "research_summary": "TSMC controls 65% of global foundry revenue and 90%+ of advanced-node manufacturing (3nm/2nm), with no viable alternative at volume until at least 2028. Every major AI accelerator, every frontier model training run, every NVIDIA GPU depends on a single industrial node concentrated in Taiwan \u2014 160km from mainland China. The irreplaceability is structural: TSMC's 'one-hour ecosystem' of co-located suppliers took 30 years to build and cannot be transplanted. Governments are spending hundreds of billions to reduce this dependency, but TSMC's own founder says it's 'a very expensive exercise in futility.' The strongest animation approach is a progressive chokepoint-map build that narrows a global supply chain down to a single amber node \u2014 the visual structure mirrors the argument.",
+      "landscape": {
+        "existing_content": [
+          {
+            "title": "TSMC: The World's Most Important Company You've Never Heard Of",
+            "url": "https://taiwan.md/en/economy/tsmc/",
+            "source": "blog/web",
+            "angle": "Corporate profile \u2014 how TSMC became dominant",
+            "what_it_covers": "History of TSMC, Morris Chang's founding, foundry model invention, financial scale",
+            "what_it_misses": "Does not map the geopolitical chokepoint, does not show AI dependency, no diagram of the supply chain narrowing",
+            "engagement_signal": "Widely shared in tech circles"
+          },
+          {
+            "title": "The Taiwan Semiconductor Risk: The $10 Trillion Chokepoint",
+            "url": "https://longyield.substack.com/p/the-taiwan-semiconductor-risk-the",
+            "source": "newsletter/substack",
+            "angle": "Financial risk framing \u2014 investor perspective",
+            "what_it_covers": "Geopolitical exposure, concentration risk, US CHIPS Act",
+            "what_it_misses": "No animation, no supply chain diagram, no AI-demand angle, investor-voice rather than systems-briefing voice",
+            "engagement_signal": "High engagement in finance/tech newsletter audience"
+          },
+          {
+            "title": "TSMC Q1 2026: $35.7B Record Revenue \u2014 The AI Chip Chokepoint That Controls Everything",
+            "url": "https://vucense.com/ai-intelligence/industry-business/tsmc-q1-2026-record-revenue-ai-chip-chokepoint/",
+            "source": "blog/analysis",
+            "angle": "News peg \u2014 Q1 2026 record earnings as evidence of AI chokepoint",
+            "what_it_covers": "Revenue figures, AI demand growth, CoWoS packaging bottleneck",
+            "what_it_misses": "Surface-level treatment, no deep structural analysis, no supply chain visualization",
+            "engagement_signal": "Recent, timely coverage"
+          },
+          {
+            "title": "Apple-TSMC: The Partnership That Built Modern Semiconductors",
+            "url": "https://newsletter.semianalysis.com/p/apple-tsmc-the-partnership-that-built",
+            "source": "newsletter/SemiAnalysis",
+            "angle": "Customer relationship deep-dive \u2014 Apple and TSMC co-dependency",
+            "what_it_covers": "How Apple's chip orders shaped TSMC's roadmap, revenue share",
+            "what_it_misses": "Pre-AI framing; doesn't show NVIDIA overtaking Apple, doesn't show the full 5-layer supply chain",
+            "engagement_signal": "Premium newsletter, high credibility in semiconductor analysis"
+          },
+          {
+            "title": "Inside TSMC's struggle to build a chip factory in the U.S. suburbs",
+            "url": "https://restofworld.org/2024/tsmc-arizona-expansion/",
+            "source": "journalism/RestOfWorld",
+            "angle": "Human interest \u2014 why building TSMC in the US is so hard",
+            "what_it_covers": "Arizona fab delays, cultural mismatch, supply chain ecosystem gap",
+            "what_it_misses": "Does not quantify how little the Arizona fab changes the concentration risk; no systems diagram",
+            "engagement_signal": "High \u2014 widely circulated tech journalism piece"
+          }
+        ],
+        "saturated_angles": [
+          "TSMC corporate history / origin story",
+          "Taiwan geopolitical risk from investor perspective",
+          "US vs China chip war framing (already everywhere)"
+        ],
+        "underserved_gaps": [
+          "Visual supply-chain-narrowing diagram showing where the system collapses to one node",
+          "AI-demand angle: NVIDIA overtaking Apple as TSMC's largest customer \u2014 a power shift nobody visualized",
+          "The structural argument for why TSMC cannot be cloned: the 'one-hour ecosystem' as a system property, not just a location",
+          "CoWoS advanced packaging as a second chokepoint inside the primary one \u2014 a chokepoint within a chokepoint",
+          "Systems-briefing treatment (who wins, who pays, what changes) rather than finance or news framing"
+        ]
+      },
+      "trending": {
+        "recent_developments": [
+          {
+            "headline": "TSMC Q1 2026 revenue hits $35.7B \u2014 35.1% YoY \u2014 new quarterly record",
+            "url": "https://vucense.com/ai-intelligence/industry-business/tsmc-q1-2026-record-revenue-ai-chip-chokepoint/",
+            "date": "2026-04-10",
+            "relevance": "Immediate news peg showing AI demand is still accelerating and TSMC's pricing power is strengthening, not weakening. The chokepoint is tightening in real time."
+          },
+          {
+            "headline": "NVIDIA set to supplant Apple as TSMC's top customer in 2026",
+            "url": "https://www.cnbc.com/2026/01/26/nvidia-set-to-supplant-apple-as-tsmcs-largest-customer.html",
+            "date": "2026-01-26",
+            "relevance": "AI accelerator demand has now overtaken consumer device demand at the world's most advanced fab. This is a structural shift in who controls TSMC's capacity \u2014 and therefore who controls AI hardware supply."
+          },
+          {
+            "headline": "Taiwan Strait Tensions Push Countries to Diversify Semiconductor Supply Chains",
+            "url": "https://thehilltoponline.com/2026/04/13/taiwan-strait-tensions-push-countries-to-diversify-semiconductor-supply-chains/",
+            "date": "2026-04-13",
+            "relevance": "Active geopolitical urgency \u2014 multiple governments simultaneously announcing diversification programs. Makes the chokepoint frame directly relevant to current events."
+          }
+        ],
+        "active_discussions": [
+          {
+            "platform": "financial/tech analysis",
+            "topic_or_url": "TSMC CoWoS capacity sold out through 2026 \u2014 every major AI hardware team is constrained",
+            "sentiment": "Urgency \u2014 analysts noting that CoWoS is now a second-order bottleneck inside the primary TSMC chokepoint",
+            "key_quotes": [
+              "CoWoS capacity is very tight and remains sold out through 2025 and into 2026 \u2014 TSMC management",
+              "NVIDIA expected to account for more than half of TSMC's CoWoS output by end-2026"
+            ]
+          }
+        ],
+        "timeliness_window": "evergreen-with-strong-news-peg"
+      },
+      "data_points": [
+        {
+          "claim": "TSMC holds ~65% of global foundry revenue and over 90% of advanced-node manufacturing (3nm/2nm). No other company can manufacture at leading-edge nodes at volume.",
+          "source_url": "https://patentpc.com/blog/tsmc-samsung-and-intel-whos-leading-the-semiconductor-race-latest-market-share-data",
+          "source_name": "PatentPC / Counterpoint Research foundry market data",
+          "credibility": "secondary_source",
+          "surprise_factor": "surprising",
+          "usable_as": "hook and stat_card \u2014 the first number viewers see"
+        },
+        {
+          "claim": "TSMC Q1 2026 revenue: $35.7 billion \u2014 35.1% year-on-year increase, a new quarterly record. Full-year 2025 revenue: ~$122.9 billion, up 31.6% YoY.",
+          "source_url": "https://vucense.com/ai-intelligence/industry-business/tsmc-q1-2026-record-revenue-ai-chip-chokepoint/",
+          "source_name": "TSMC Q1 2026 earnings report via Vucense",
+          "credibility": "primary_source",
+          "surprise_factor": "notable",
+          "usable_as": "stat_card \u2014 demonstrates that TSMC's leverage is strengthening, not weakening"
+        },
+        {
+          "claim": "TSMC's CoWoS advanced packaging for AI chips is sold out through 2026. CoWoS capacity growing from 35K wafers/month in 2024 to projected 127K/month by end-2026 \u2014 and still insufficient to meet demand.",
+          "source_url": "https://info.fusionww.com/blog/inside-the-ai-bottleneck-cowos-hbm-and-2-3nm-capacity-constraints-through-2027",
+          "source_name": "Fusion Worldwide: Inside the AI Bottleneck",
+          "credibility": "secondary_source",
+          "surprise_factor": "counterintuitive",
+          "usable_as": "chokepoint-within-a-chokepoint \u2014 script anchor for 'there's a second gate inside the gate'"
+        },
+        {
+          "claim": "TSMC Arizona currently represents less than 5% of leading-edge production. At current ramp rates, it won't materially reduce Taiwan dependence until 2028 or later.",
+          "source_url": "https://www.cnbc.com/2026/01/26/nvidia-set-to-supplant-apple-as-tsmcs-largest-customer.html",
+          "source_name": "CNBC / analyst estimates on TSMC Arizona capacity",
+          "credibility": "secondary_source",
+          "surprise_factor": "counterintuitive",
+          "usable_as": "script_anchor \u2014 kills the 'CHIPS Act fixed it' misconception"
+        },
+        {
+          "claim": "TSMC's 2nm yield is ~65%; Samsung's competing 2nm process yields ~30%. This yield gap explains why fabless companies cannot simply switch foundries \u2014 quality is not interchangeable.",
+          "source_url": "https://www.semicone.com/article-252.html",
+          "source_name": "Semicone: 2nm Node Yield Developments",
+          "credibility": "secondary_source",
+          "surprise_factor": "counterintuitive",
+          "usable_as": "script_anchor \u2014 the mechanism behind irreplaceability; not just location, but 30 years of accumulated process yield"
+        },
+        {
+          "claim": "TSMC founder Morris Chang said efforts to build TSMC's equivalent outside Taiwan are 'a very expensive exercise in futility.' The reason: TSMC's 'one-hour ecosystem' \u2014 every supplier, tool, and material within 1 hour \u2014 took 30 years to build and cannot be transplanted.",
+          "source_url": "https://www.quora.com/Why-cant-the-USA-manufacture-semiconductors-with-the-same-quality-as-TSMC",
+          "source_name": "Morris Chang statements, widely reported",
+          "credibility": "primary_source",
+          "surprise_factor": "surprising",
+          "usable_as": "closing_punch \u2014 the structural argument that the chokepoint is permanent on any 10-year horizon"
+        },
+        {
+          "claim": "US CHIPS Act: $52 billion. EU Chips Act: \u20ac43 billion. Japan: \u00a53.9 trillion in semiconductor subsidies. All three are fundamentally programs to reduce concentration at TSMC. None will deliver meaningful results before 2028.",
+          "source_url": "https://longyield.substack.com/p/the-taiwan-semiconductor-risk-the",
+          "source_name": "LongYield: The $10 Trillion Chokepoint",
+          "credibility": "secondary_source",
+          "surprise_factor": "notable",
+          "usable_as": "stat_card \u2014 shows the scale of the problem and how many governments it has mobilized"
+        }
+      ],
+      "audience_insights": {
+        "common_questions": [
+          "Why can't the US just build its own TSMC?",
+          "What does TSMC actually do \u2014 don't chip companies make their own chips?",
+          "If TSMC is so important, why hasn't someone built a competitor?",
+          "What happens to AI if Taiwan is blockaded or invaded?",
+          "Why is NVIDIA so dependent on TSMC now?"
+        ],
+        "misconceptions": [
+          {
+            "myth": "The CHIPS Act solved the semiconductor concentration problem",
+            "reality": "TSMC Arizona represents <5% of leading-edge production and won't change the dependency picture until 2028 at earliest.",
+            "source": "CNBC analyst estimates, TSMC earnings calls"
+          },
+          {
+            "myth": "Samsung and Intel are viable alternatives to TSMC at advanced nodes",
+            "reality": "Samsung's 2nm yields ~30% vs TSMC's ~65%. Intel's 18A is at ~55% and primarily for internal use. At volume, there is no alternative for the most advanced chips.",
+            "source": "Semicone 2nm node yield comparison"
+          },
+          {
+            "myth": "Chip companies like Apple and NVIDIA make their own chips",
+            "reality": "They are fabless \u2014 they design chips but outsource all manufacturing. TSMC fabricates Apple's A-series, NVIDIA's H/B series, AMD's Ryzen/EPYC, Qualcomm's Snapdragon.",
+            "source": "TSMC customer list, foundry model explanation"
+          }
+        ],
+        "knowledge_level": "Audience knows TSMC exists and is important. They do not understand the supply chain structure (fabless \u2192 EDA \u2192 foundry \u2192 OSAT), the yield-based moat, or why the Arizona fab doesn't change anything. The 'one-hour ecosystem' concept is almost entirely unknown to a general business/tech audience.",
+        "pain_points": [
+          "Frustration that US/EU governments are spending massive sums but the problem appears unsolvable",
+          "Confusion about why chip manufacturing is so geographically concentrated when 'everything is digital'",
+          "Anxiety about AI supply chain vulnerability that nobody seems to have a clear answer for"
+        ]
+      },
+      "expert_voices": [
+        {
+          "name": "Morris Chang",
+          "title_or_affiliation": "Founder, TSMC",
+          "position": "Stated publicly that US efforts to replicate TSMC are 'a very expensive exercise in futility.' Attributes TSMC's irreplaceability to the Taiwan semiconductor ecosystem, not any single technology.",
+          "source_url": "https://www.noahpinion.blog/p/why-not-put-tsmc-and-samsung-fabs",
+          "contrarian": true
+        },
+        {
+          "name": "C.C. Wei",
+          "title_or_affiliation": "CEO, TSMC",
+          "position": "Stated CoWoS capacity is 'very tight and sold out' through 2025-2026. Attributed Q1 2026 record revenue primarily to surging AI-related demand.",
+          "source_url": "https://www.fool.com/earnings/call-transcripts/2025/10/17/tsmc-tsm-q3-2025-earnings-call-transcript/",
+          "contrarian": false
+        }
+      ],
+      "angles_discovered": [
+        {
+          "name": "Why Everything Depends on One Factory",
+          "hook": "Every AI chip, every smartphone, every data center runs through one factory on a 36km\u00b2 island. There is no backup.",
+          "type": "evergreen",
+          "why_now": "TSMC Q1 2026 record revenue ($35.7B, +35% YoY) and NVIDIA overtaking Apple as TSMC's largest customer signal that AI has made this concentration more acute, not less. The chokepoint is tightening.",
+          "grounded_in": [
+            "90%+ advanced node market share data point",
+            "CoWoS sold-out-through-2026 data point",
+            "NVIDIA/Apple customer shift data point"
+          ]
+        },
+        {
+          "name": "The Moat Is a Process, Not a Place",
+          "hook": "The US is spending $52 billion to build a fab. TSMC's founder says it won't work \u2014 and the reason has nothing to do with location.",
+          "type": "contrarian",
+          "why_now": "CHIPS Act is active, Arizona fab is running, yet the fundamental dependency hasn't moved. The yield-gap data (TSMC 65% vs Samsung 30% at 2nm) and the 'one-hour ecosystem' argument are the underserved explanation for why money alone can't solve this.",
+          "grounded_in": [
+            "TSMC 2nm yield 65% vs Samsung 30% data point",
+            "Morris Chang 'exercise in futility' quote",
+            "Arizona <5% data point"
+          ]
+        },
+        {
+          "name": "AI Hardware Has One Chokepoint",
+          "hook": "Every frontier AI model runs on hardware that passes through a single bottleneck. This is not a policy problem. It's a physics and economics problem.",
+          "type": "trending",
+          "why_now": "NVIDIA's rise to TSMC's #1 customer position in 2026, and CoWoS packaging being fully sold out through 2026, directly tie AI capability to TSMC capacity in a way that investors and operators can immediately feel.",
+          "grounded_in": [
+            "NVIDIA overtaking Apple as TSMC largest customer",
+            "CoWoS sold out through 2026 data point",
+            "Q1 2026 revenue record driven by AI demand"
+          ]
+        }
+      ],
+      "visual_references": [
+        {
+          "description": "Progressive diagram build: supply chain shown as nodes building from left (fabless design) to right (consumer product), with a single amber-highlighted chokepoint node (TSMC) lighting up last",
+          "what_works": "The visual argument matches the verbal argument \u2014 the diagram literally narrows to one node. Viewers understand the leverage point before the narration finishes the sentence."
+        },
+        {
+          "description": "Stat card with large numbers: '90% of advanced nodes' shown as a bar collapsing into TSMC's share, Samsung's 12% shown as a contrast sliver",
+          "what_works": "Bar chart with dramatic proportion difference is immediately readable. Works for both desktop and mobile."
+        },
+        {
+          "description": "Chokepoint map: world map with arrows from Apple (Cupertino), NVIDIA (Santa Clara), AMD (Santa Clara), Qualcomm (San Diego) all converging on a single point in Hsinchu, Taiwan",
+          "what_works": "Geographic convergence makes the abstraction physical. Everyone understands a map."
+        }
+      ],
+      "sources": [
+        {
+          "url": "https://patentpc.com/blog/tsmc-samsung-and-intel-whos-leading-the-semiconductor-race-latest-market-share-data",
+          "title": "TSMC, Samsung, and Intel: Who's Leading the Semiconductor Race?",
+          "used_for": "Advanced node market share data (90%+)",
+          "reliability": "secondary"
+        },
+        {
+          "url": "https://vucense.com/ai-intelligence/industry-business/tsmc-q1-2026-record-revenue-ai-chip-chokepoint/",
+          "title": "TSMC Q1 2026: $35.7B Record Revenue",
+          "used_for": "Q1 2026 earnings, revenue figures, AI demand",
+          "reliability": "primary"
+        },
+        {
+          "url": "https://www.cnbc.com/2026/01/26/nvidia-set-to-supplant-apple-as-tsmcs-largest-customer.html",
+          "title": "Nvidia set to supplant Apple as TSMC's top customer",
+          "used_for": "NVIDIA/Apple customer shift, Arizona <5% figure",
+          "reliability": "secondary"
+        },
+        {
+          "url": "https://info.fusionww.com/blog/inside-the-ai-bottleneck-cowos-hbm-and-2-3nm-capacity-constraints-through-2027",
+          "title": "Inside the AI Bottleneck: CoWoS, HBM, and 2-3nm Capacity Constraints Through 2027",
+          "used_for": "CoWoS sold-out data, capacity projections",
+          "reliability": "secondary"
+        },
+        {
+          "url": "https://www.semicone.com/article-252.html",
+          "title": "2nm Node Yield: Latest Developments from TSMC, Intel, and Samsung",
+          "used_for": "Yield comparison data (TSMC 65% vs Samsung 30%)",
+          "reliability": "secondary"
+        },
+        {
+          "url": "https://longyield.substack.com/p/the-taiwan-semiconductor-risk-the",
+          "title": "The Taiwan Semiconductor Risk: The $10 Trillion Chokepoint",
+          "used_for": "Government spending figures (CHIPS Act, EU Chips Act, Japan subsidies)",
+          "reliability": "secondary"
+        },
+        {
+          "url": "https://restofworld.org/2024/tsmc-arizona-expansion/",
+          "title": "Inside TSMC's struggle to build a chip factory in the U.S. suburbs",
+          "used_for": "Why TSMC is hard to replicate: ecosystem, workforce, permits",
+          "reliability": "secondary"
+        },
+        {
+          "url": "https://steveblank.com/2022/01/25/the-semiconductor-ecosystem/",
+          "title": "The Semiconductor Ecosystem \u2014 Explained (Steve Blank)",
+          "used_for": "Supply chain structure: EDA \u2192 fabless \u2192 foundry \u2192 OSAT",
+          "reliability": "secondary"
+        },
+        {
+          "url": "https://www.csis.org/analysis/mapping-semiconductor-supply-chain-critical-role-indo-pacific-region",
+          "title": "Mapping the Semiconductor Supply Chain \u2014 CSIS",
+          "used_for": "Supply chain diagram structure, Indo-Pacific concentration",
+          "reliability": "primary"
+        },
+        {
+          "url": "https://seekingalpha.com/article/4858612-taiwan-semiconductor-quietly-turns-the-ai-choke-point-into-pricing-power",
+          "title": "Taiwan Semiconductor Quietly Turns The AI Choke Point Into Pricing Power",
+          "used_for": "CoWoS pricing power, leverage point analysis",
+          "reliability": "secondary"
+        }
+      ],
+      "metadata": {
+        "pipeline": "animation",
+        "project": "chip-factory-runs-world",
+        "searches_conducted": 8,
+        "animation_technique_notes": "Progressive chokepoint-map build is the ideal technique for this topic. The visual structure of a supply chain diagram that narrows to one amber node mirrors the argument perfectly. HyperFrames (HTML/CSS/GSAP) is the preferred runtime for diagram evolution \u2014 vector nodes animating sequentially, arrows drawing, chokepoint lighting amber at the end of each sequence. No Manim needed (no math); no AI video needed for core argument (though a semiconductor wafer hero image would add production value at the cold open)."
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+:root {
+  /* Foundations — Print Intelligence palette */
+  --ink: #1A1208;
+  --near-black: #1A1208;
+  --field: #FFF8F0;
+  --bone: #FFF8F0;
+  --surface: #F5EDE0;
+  --deep-slate: #F5EDE0;
+  --graphite: #D4CBBA;
+  --muted: #8C7A68;
+
+  /* Semantic signal colors */
+  --burnt-orange-control: #C94B00;
+  --amber-chokepoint: #C94B00;
+  --ink-blue-structure: #1D6A8C;
+  --steel-cyan-structure: #1D6A8C;
+  --crimson-consequence: #B8291A;
+}

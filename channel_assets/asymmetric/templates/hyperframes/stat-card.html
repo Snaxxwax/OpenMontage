@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="scene-layout.css">
+  <link rel="stylesheet" href="stat-card.css">
+</head>
+<body>
+  <div data-composition-id="stat-card" data-width="1920" data-height="1080" data-start="0" data-duration="5" class="clip">
+    <div class="scene-container">
+      <div class="background-grid"></div>
+      <div class="stat-card-wrapper">
+        <div class="stat-card">
+          <!-- ── AMBER HEADER BAND ── -->
+          <div class="stat-header-band">
+            <span class="stat-header-label">CRITICAL METRIC</span>
+            <span class="stat-header-tag">SEMICONDUCTOR SUPPLY CHAIN</span>
+          </div>
+
+          <!-- ── PRIMARY STAT ── -->
+          <div class="stat-body">
+            <div class="stat-value">92.4%</div>
+            <div class="stat-descriptor">
+              <div class="stat-label">ADVANCED NODE DEPENDENCY</div>
+              <div class="stat-sublabel">Share of global sub-5nm production controlled by a single foundry, 2025</div>
+            </div>
+          </div>
+
+          <!-- ── SECONDARY STATS ROW ── -->
+          <div class="stat-secondary-row">
+            <div class="stat-secondary-item">
+              <div class="stat-secondary-value text-cyan">3</div>
+              <div class="stat-secondary-label">COMPANIES CONTROL<br>EUV SUPPLY CHAIN</div>
+            </div>
+            <div class="stat-secondary-divider"></div>
+            <div class="stat-secondary-item">
+              <div class="stat-secondary-value text-amber">$85B</div>
+              <div class="stat-secondary-label">FOUNDRY REVENUE<br>CAPTURED / YEAR</div>
+            </div>
+            <div class="stat-secondary-divider"></div>
+            <div class="stat-secondary-item">
+              <div class="stat-secondary-value" style="color: var(--red);">0</div>
+              <div class="stat-secondary-label">VIABLE<br>SUBSTITUTES AT 3nm</div>
+            </div>
+          </div>
+
+          <!-- ── PROGRESS BAR ── -->
+          <div class="stat-bar-container">
+            <div class="stat-bar-track">
+              <div class="stat-bar-fill" style="width: 92.4%;"></div>
+            </div>
+            <div class="stat-bar-labels">
+              <span class="text-muted">0%</span>
+              <span class="text-amber">92.4% CONCENTRATION</span>
+              <span class="text-muted">100%</span>
+            </div>
+          </div>
+
+          <!-- ── FOOTER ── -->
+          <div class="stat-footer text-muted">
+            SOURCE: TSMC ANNUAL REPORT 2025 · IC INSIGHTS ADVANCED NODE TRACKER · BIS ENTITY ANALYSIS
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines["stat-card"] = tl;
+  </script>
+</body>
+</html>

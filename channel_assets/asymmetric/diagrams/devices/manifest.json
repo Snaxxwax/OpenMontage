@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "package": {
+    "name": "asymmetric-diagram-devices",
+    "version": "0.1.0",
+    "style_playbook": "styles/asymmetric.yaml",
+    "brand_tokens": "channel_assets/asymmetric/brand/tokens.json"
+  },
+  "rules": {
+    "default_duration_range_seconds": [2.0, 4.0],
+    "max_static_state_seconds": 4.0,
+    "color_semantics": {
+      "amber": "leverage/chokepoint/control point only",
+      "cyan": "structure/flow/system map only",
+      "red": "consequence/failure/exposure only"
+    },
+    "non_decorative_signals": {
+      "amber": true,
+      "red": true
+    }
+  },
+  "devices": [
+    {
+      "device_id": "amber-pivot-marker",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/amber-pivot-marker/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/amber-pivot-marker/README.md",
+      "semantic_category": "leverage_marker",
+      "required_colors": ["amber"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "must-have"
+    },
+    {
+      "device_id": "chokepoint-ring",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/chokepoint-ring/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/chokepoint-ring/README.md",
+      "semantic_category": "leverage_marker",
+      "required_colors": ["amber"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "must-have"
+    },
+    {
+      "device_id": "route-trace",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/route-trace/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/route-trace/README.md",
+      "semantic_category": "flow_map",
+      "required_colors": ["cyan", "amber"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "should-have"
+    },
+    {
+      "device_id": "collapse-to-one-node",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/collapse-to-one-node/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/collapse-to-one-node/README.md",
+      "semantic_category": "mechanism_simplification",
+      "required_colors": ["cyan", "amber"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "should-have"
+    },
+    {
+      "device_id": "surface-vs-structure-split",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/surface-vs-structure-split/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/surface-vs-structure-split/README.md",
+      "semantic_category": "xray_compare",
+      "required_colors": ["cyan", "amber"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "must-have"
+    },
+    {
+      "device_id": "xray-layer-reveal",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/xray-layer-reveal/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/xray-layer-reveal/README.md",
+      "semantic_category": "xray_reveal",
+      "required_colors": ["cyan", "amber"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "must-have"
+    },
+    {
+      "device_id": "blueprint-reveal",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/blueprint-reveal/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/blueprint-reveal/README.md",
+      "semantic_category": "structure_reveal",
+      "required_colors": ["cyan"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "optional"
+    },
+    {
+      "device_id": "under-the-hood-mechanism",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/under-the-hood-mechanism/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/under-the-hood-mechanism/README.md",
+      "semantic_category": "mechanism_view",
+      "required_colors": ["cyan", "amber"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "should-have"
+    },
+    {
+      "device_id": "red-consequence-layer",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/red-consequence-layer/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/red-consequence-layer/README.md",
+      "semantic_category": "consequence",
+      "required_colors": ["red"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "should-have"
+    },
+    {
+      "device_id": "source-card-reveal",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/source-card-reveal/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/source-card-reveal/README.md",
+      "semantic_category": "evidence",
+      "required_colors": ["cyan", "amber"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "must-have"
+    },
+    {
+      "device_id": "final-leverage-map",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/final-leverage-map/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/final-leverage-map/README.md",
+      "semantic_category": "summary_map",
+      "required_colors": ["cyan", "amber", "red"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "must-have"
+    },
+    {
+      "device_id": "dependency-tree-stop-point",
+      "spec_path": "channel_assets/asymmetric/diagrams/devices/dependency-tree-stop-point/device.v1.spec.json",
+      "template_path": "channel_assets/asymmetric/diagrams/devices/dependency-tree-stop-point/README.md",
+      "semantic_category": "stop_point",
+      "required_colors": ["amber", "cyan"],
+      "default_duration_range_seconds": [2.0, 4.0],
+      "episode_importance": "should-have"
+    }
+  ]
+}
+

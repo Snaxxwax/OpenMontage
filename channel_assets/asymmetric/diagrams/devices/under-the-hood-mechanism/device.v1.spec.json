@@ -1,0 +1,47 @@
+{
+  "device_id": "under-the-hood-mechanism",
+  "version": "1.0",
+  "semantic_meaning": "Shows the mechanism view: the moving parts that actually enforce outcomes.",
+  "when_to_use": [
+    "When a major claim needs a mechanism, not just text",
+    "When describing constraints (queues, tooling, capacity, gates)",
+    "When transitioning from map to process"
+  ],
+  "when_not_to_use": [
+    "If you don't have a mechanism to show (avoid empty motion)",
+    "As decorative UI soup",
+    "To replace source/evidence moments"
+  ],
+  "color_rules": {
+    "required": {
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true },
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true }
+    },
+    "optional": {
+      "red": { "hex": "#B8291A", "meaning": "consequence/failure/exposure only", "not_decorative": true }
+    }
+  },
+  "animation_behavior": {
+    "description": "Mechanism parts animate in sequence (2–4s beats): gate opens, flow passes, counter updates, lever locks.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "mechanism_parts", "type": "array<string>", "required": true, "description": "Named parts to animate (e.g. ['gate','queue','valve'])." },
+    { "name": "control_part_id", "type": "string", "required": false, "description": "Part that gets amber leverage emphasis." }
+  ],
+  "state_beats": [
+    { "label": "parts_in", "max_hold_seconds": 4.0, "meaningful_change": "Parts enter sequentially." },
+    { "label": "flow_cycle", "max_hold_seconds": 4.0, "meaningful_change": "Cyan flow runs through mechanism." },
+    { "label": "control_highlight", "max_hold_seconds": 4.0, "meaningful_change": "Amber lever/control part highlights." },
+    { "label": "lock_result", "max_hold_seconds": 4.0, "meaningful_change": "Mechanism locks; result state shown." }
+  ],
+  "expected_outputs": ["Mechanism animation that grounds a claim with structure and control"],
+  "suitable_scene_types": ["mechanism_reveal", "process_explain", "constraint_showcase"],
+  "validation_notes": [
+    "Avoid UI soup: only show parts that matter to the claim.",
+    "Use amber only for the actual lever/control surface."
+  ],
+  "example_usage": { "hyperframes": { "parameters": { "mechanism_parts": ["gate", "queue", "valve"], "control_part_id": "gate" } } }
+}
+

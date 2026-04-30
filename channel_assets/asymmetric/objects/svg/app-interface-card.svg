@@ -1,0 +1,7 @@
+<svg width="150" height="100" viewBox="0 0 150 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- App Interface Card -->
+  <rect x="10" y="10" width="130" height="80" rx="4" fill="#1A1208" stroke="#8C7A68" stroke-width="2"/>
+  <rect x="20" y="25" width="20" height="20" rx="2" fill="#1A1208"/>
+  <rect x="50" y="25" width="80" height="5" rx="1" fill="#1A1208"/>
+  <rect x="50" y="40" width="60" height="5" rx="1" fill="#1A1208"/>
+</svg>

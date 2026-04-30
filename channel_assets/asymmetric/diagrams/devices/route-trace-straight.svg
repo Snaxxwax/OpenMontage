@@ -1,0 +1,5 @@
+<svg width="300" height="100" viewBox="0 0 300 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Route Trace Straight -->
+  <path d="M0 50H300" stroke="#1D6A8C" stroke-width="4" stroke-dasharray="10 10"/>
+  <path d="M290 40L300 50L290 60" stroke="#1D6A8C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

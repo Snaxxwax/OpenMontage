@@ -1,0 +1,43 @@
+{
+  "device_id": "blueprint-reveal",
+  "version": "1.0",
+  "semantic_meaning": "Reveals the system blueprint: stable structure, constraints, and interfaces.",
+  "when_to_use": [
+    "When introducing a system architecture quickly",
+    "When switching from narrative to schematic structure",
+    "As a calm reset after high-density segments"
+  ],
+  "when_not_to_use": [
+    "If it becomes a static slide (must animate)",
+    "If a mechanism reveal would be more appropriate",
+    "To imply certainty for unknown internals"
+  ],
+  "color_rules": {
+    "required": {
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true }
+    },
+    "optional": {
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true }
+    }
+  },
+  "animation_behavior": {
+    "description": "Grid/edges draw in cyan; labels fade in; optional amber marker for a single interface/leverage point.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": true
+  },
+  "input_parameters": [
+    { "name": "blueprint_layers", "type": "array<string>", "required": false, "default": ["grid", "edges", "labels"], "description": "Blueprint elements to reveal." },
+    { "name": "focus_interface_id", "type": "string", "required": false, "description": "Optional interface to mark in amber." }
+  ],
+  "state_beats": [
+    { "label": "grid_in", "max_hold_seconds": 4.0, "meaningful_change": "Blueprint grid appears." },
+    { "label": "edges_draw", "max_hold_seconds": 4.0, "meaningful_change": "Cyan edges draw in." },
+    { "label": "labels_in", "max_hold_seconds": 4.0, "meaningful_change": "Labels fade in." },
+    { "label": "interface_mark", "max_hold_seconds": 4.0, "meaningful_change": "Optional amber interface mark appears." }
+  ],
+  "expected_outputs": ["A clean blueprint scaffold readable on mobile"],
+  "suitable_scene_types": ["system_intro", "system_map", "structure_reset"],
+  "validation_notes": ["Avoid static holds; use layered reveals to enforce motion cadence."],
+  "example_usage": { "hyperframes": { "parameters": { "blueprint_layers": ["grid", "edges", "labels"] } } }
+}
+

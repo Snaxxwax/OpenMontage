@@ -1,0 +1,7 @@
+<svg width="200" height="150" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Institution Block -->
+  <path d="M20 130H180V60L100 20L20 60V130Z" fill="#1A1208" stroke="#1A1208" stroke-width="2"/>
+  <rect x="45" y="70" width="20" height="40" fill="#1A1208"/>
+  <rect x="90" y="70" width="20" height="40" fill="#1A1208"/>
+  <rect x="135" y="70" width="20" height="40" fill="#1A1208"/>
+</svg>

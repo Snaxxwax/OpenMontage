@@ -1,0 +1,8 @@
+<svg width="800" height="60" viewBox="0 0 800 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Timeline Rail -->
+  <path d="M0 30H800" stroke="#F5EDE0" stroke-width="4"/>
+  <circle cx="100" cy="30" r="6" fill="#8C7A68"/>
+  <circle cx="300" cy="30" r="6" fill="#8C7A68"/>
+  <circle cx="500" cy="30" r="6" fill="#8C7A68"/>
+  <circle cx="700" cy="30" r="8" fill="#C94B00"/>
+</svg>

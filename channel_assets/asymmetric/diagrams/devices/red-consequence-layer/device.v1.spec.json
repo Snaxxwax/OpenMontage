@@ -1,0 +1,44 @@
+{
+  "device_id": "red-consequence-layer",
+  "version": "1.0",
+  "semantic_meaning": "Overlays consequence/failure/exposure as a distinct red layer (never decorative).",
+  "when_to_use": [
+    "When showing failure modes, shutdowns, losses, or exposure",
+    "When a consequence is the point of the beat (not a footnote)",
+    "When a claim explicitly involves damage/cost/extraction"
+  ],
+  "when_not_to_use": [
+    "As an accent color for drama",
+    "For routine emphasis",
+    "When the claim is neutral/structural"
+  ],
+  "color_rules": {
+    "required": {
+      "red": { "hex": "#B8291A", "meaning": "consequence/failure/exposure only", "not_decorative": true }
+    },
+    "forbidden": {
+      "red_decorative": "Red may not be used as decoration.",
+      "amber": "Amber is reserved for leverage/chokepoint only (separate device)."
+    }
+  },
+  "animation_behavior": {
+    "description": "Red layer appears as a diagnostic overlay (scan/fill), then locks into a single crisp consequence marker.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "affected_region", "type": "rect|path", "required": true, "description": "Region of the diagram/frame affected by the consequence." },
+    { "name": "label", "type": "string", "required": false, "description": "Short consequence label (e.g. 'FAILURE', 'EXPOSED')." }
+  ],
+  "state_beats": [
+    { "label": "pre_consequence", "max_hold_seconds": 4.0, "meaningful_change": "Normal structure view." },
+    { "label": "overlay_scan", "max_hold_seconds": 4.0, "meaningful_change": "Red diagnostic overlay scans in." },
+    { "label": "consequence_lock", "max_hold_seconds": 4.0, "meaningful_change": "Overlay locks to a specific marker/region." },
+    { "label": "aftermath", "max_hold_seconds": 4.0, "meaningful_change": "Return to structure with consequence still visible (dimmed)." }
+  ],
+  "expected_outputs": ["A clear red consequence layer that does not read as decorative accent"],
+  "suitable_scene_types": ["failure_mode", "exposure", "risk_moment"],
+  "validation_notes": ["If red is present, the scene must explicitly be about consequence/failure/exposure."],
+  "example_usage": { "hyperframes": { "parameters": { "affected_region": { "x": 260, "y": 180, "w": 520, "h": 340 }, "label": "FAILURE" } } }
+}
+

@@ -178,7 +178,12 @@ def _score_weak_motion(scenes: list[dict]) -> dict[str, Any]:
 
 def _score_weak_intent(scenes: list[dict]) -> dict[str, Any]:
     """Score shot intent completeness."""
-    with_intent = sum(1 for s in scenes if s.get("shot_intent"))
+    # Prefer explicit shot intent, but also accept retention scaffolding as intent
+    # in channels like Asymmetric where scenes are planned as retention beats.
+    def has_intent(scene: dict) -> bool:
+        return bool(scene.get("shot_intent")) or bool(scene.get("viewer_hook")) or bool(scene.get("retention_function"))
+
+    with_intent = sum(1 for s in scenes if has_intent(s))
     ratio = with_intent / len(scenes)
 
     # Invert: more intent = lower score

@@ -1,0 +1,7 @@
+<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Surface vs Structure Panel -->
+  <rect x="10" y="10" width="280" height="380" rx="4" fill="#F5EDE0" stroke="#8C7A68" stroke-width="2"/>
+  <rect x="310" y="10" width="280" height="380" rx="4" fill="#FFF8F0" stroke="#1D6A8C" stroke-width="2"/>
+  <text x="30" y="50" fill="#8C7A68" font-family="Playfair Display, Georgia, serif" font-size="20">SURFACE</text>
+  <text x="330" y="50" fill="#1D6A8C" font-family="Playfair Display, Georgia, serif" font-size="20">STRUCTURE</text>
+</svg>

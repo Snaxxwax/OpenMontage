@@ -1,0 +1,10 @@
+<svg width="600" height="600" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Silhouette - The Interpreter (Presenting Map) -->
+  <path d="M300 80C333.137 80 360 106.863 360 140C360 173.137 333.137 200 300 200C266.863 200 240 173.137 240 140C240 106.863 266.863 80 300 80Z" fill="#1A1208"/>
+  <path d="M200 250C200 230 220 210 250 210H350C380 210 400 230 400 250V600H200V250Z" fill="#1A1208"/>
+  <!-- Arms Open -->
+  <path d="M200 300L50 350" stroke="#1A1208" stroke-width="30" stroke-linecap="round"/>
+  <path d="M400 300L550 350" stroke="#1A1208" stroke-width="30" stroke-linecap="round"/>
+  <!-- Eye (Amber) -->
+  <circle cx="320" cy="130" r="8" fill="#C94B00"/>
+</svg>

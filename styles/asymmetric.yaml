@@ -3,38 +3,76 @@ identity:
   category: systems-briefing-documentary
   mood: direct, controlled, analytical, quietly severe
   pace: rapid
+  pacing_model: "Retention-first editorial systems drama (Print Intelligence is the visual base, not the pacing model)."
   best_for: "Faceless systems briefings — chokepoints, hidden control surfaces, extraction layers, and leverage maps."
+  positioning: "X-ray for hidden systems"
+  channel_promise: "Where the leverage is."
+  defaults:
+    no_recurring_human_host: true
+    prefer_diagram_native_svg_css: true
+    stock_photo_documentary_not_default: true
+  anti_patterns:
+    - "static chart deck energy"
+    - "calm consulting briefing pacing"
+    - "Bloomberg-terminal energy by default"
+    - "empty premium minimalism"
+    - "cyberpunk"
+    - "spy/intelligence fantasy"
+    - "control-room fantasy"
+    - "life-hack framing"
+    - "gamer-meta language"
 
 visual_language:
   color_palette:
-    # Base
-    background: "#050608"   # Near Black
-    surface: "#11151C"      # Deep Slate
-    graphite: "#2A3142"     # Graphite
-    text: "#F3F5F7"         # Bone
-    muted: "#8A95A6"        # Muted Steel
+    # Canonical Asymmetric palette — Print Intelligence identity.
+    near_black: "#1A1208"   # Warm near-black / primary ink
+    deep_slate: "#F5EDE0"   # Deep cream — raised surfaces, cards
+    graphite: "#D4CBBA"     # Mid-cream — borders, separators
+    bone: "#FFF8F0"         # Paper field — the ground
+    muted: "#8C7A68"        # Warm muted — secondary labels
+    amber: "#C94B00"        # Burnt orange — leverage/control (ONLY)
+    cyan: "#1D6A8C"         # Ink blue — structure/flow (ONLY)
+    red: "#B8291A"          # Deep crimson — consequence/extraction (ONLY)
 
-    # Signal (semantic)
-    primary: "#F5A400"      # Institutional Amber — control / leverage / chokepoint
-    accent: "#3F8FA3"       # Muted Steel Cyan — structure / flow / map logic
-    danger: "#D64545"       # Deep System Red — cost / extraction / failure only
-  composition: "Dark editorial framing with map-room clarity: heavy subject on one side, negative space on the other, directional flow lines to the chokepoint, and a single marked control surface."
+    # Backward-compatible aliases used by existing tooling.
+    background: "#FFF8F0"   # Bone / paper field
+    surface: "#F5EDE0"      # Deep Slate / raised surface
+    text: "#1A1208"         # Near Black / ink
+    primary: "#C94B00"      # Burnt Orange — leverage/chokepoint only
+    accent: "#1D6A8C"       # Ink Blue — structure/flow only
+    danger: "#B8291A"       # Deep Crimson — consequence/failure/exposure only
+  color_semantics:
+    amber:
+      meaning: "leverage/chokepoint/control point only"
+      not_decorative: true
+    cyan:
+      meaning: "structure/flow/system map only"
+      not_decorative: true
+    red:
+      meaning: "consequence/failure/exposure only"
+      not_decorative: true
+  visual_rules:
+    dark_editorial_diagram_native: true
+    interface_driven: true
+    generated_images_optional: true
+    avoid_defaulting_to_stock_photo_documentary: true
+  composition: "Print Intelligence framing with map-room clarity: ink on paper field, heavy subject on one side, negative space on the other, directional flow lines to the chokepoint, and a single marked control surface."
   texture: "Flat vector, high contrast, sparse labels. Restrained 2.5D depth only for hierarchy and separation. No glossy 3D, no UI soup, no gradients."
 
 typography:
   headings:
-    font: "Space Grotesk"
+    font: "Playfair Display"
     weight: 700
     tracking: "-0.01em"
   body:
-    font: "Inter"
+    font: "Libre Baskerville"
     weight: 400
     line_height: 1.55
   code:
     font: "IBM Plex Mono"
     weight: 400
   stat_card:
-    font: "Space Grotesk"
+    font: "IBM Plex Mono"
     weight: 700
     size_multiplier: 3.2
   scale_system: "major_third"
@@ -46,18 +84,39 @@ typography:
 
 motion:
   transitions: [cut, fade, slide-up, wipe-right, crop-shift]
-  animation_style: "Fast start, controlled lock. No bounce. Motion serves clarity: micro-beats every 1.5–3s, reframes every 3–6s, pattern interrupts every 8–15s."
+  animation_style: "Fast start, controlled lock. No bounce. Motion serves drama + proof (not calm chart briefings): micro-beats every 1.5–3s, reframes every 3–6s, pattern interrupts every 8–15s."
   pacing_rules:
     min_scene_hold_seconds: 2.0
-    max_scene_hold_seconds: 6.0
+    max_scene_hold_seconds: 4.0
     text_card_hold_seconds: 3.0
     stat_card_hold_seconds: 2.8
     transition_duration_seconds: 0.35
     state_change_max_seconds: 4.0
+    preferred_state_change_seconds_min: 2.0
+    preferred_state_change_seconds_max: 4.0
     micro_beat_interval_seconds: 2.5
     reframe_interval_seconds: 4.5
     pattern_interrupt_interval_seconds: 12.0
     mode_shift_interval_seconds: 28.0
+  retention_motion_layer:
+    visual_event_cadence_seconds: [5.0, 8.0]
+    rule: "Every 5–8 seconds requires a meaningful visual event (reveal/tension/consequence), not just content updates."
+    allowed_visual_events:
+      - reveal
+      - collapse
+      - route_trace
+      - node_highlight
+      - contradiction
+      - source_proof
+      - map_zoom
+      - consequence_hit
+      - comparison_slam
+      - final_synthesis
+  enforcement:
+    max_unchanged_visual_state_seconds: 4.0
+    major_claim_requires_visual_mechanism: true
+    text_card_sequences_require_state_changes_or_split: true
+    stat_cards_should_animate_as_evidence: true
   entrance: "fast fade-up (opacity 0->1, translateY 10->0 over 0.35s)"
   exit: "fade (opacity 1->0 over 0.25s)"
 
@@ -69,25 +128,39 @@ audio:
   ducking_threshold_db: -4
 
 asset_generation:
+  shared_asset_references:
+    channel_manifest: "channel_assets/asymmetric/manifest.json"
+    brand_tokens: "channel_assets/asymmetric/brand/tokens.json"
+    hyperframes_templates: "channel_assets/asymmetric/templates/hyperframes/"
+    diagram_devices: "channel_assets/asymmetric/diagrams/devices/"
+    objects_svg: "channel_assets/asymmetric/objects/svg/"
+    provider_block_receipt_schema: "channel_assets/asymmetric/provider_logs/schema/provider_block_receipt.schema.json"
+  preferred_visuals:
+    primary: ["hyperframes", "svg", "css"]
+    when_generated_imagery_is_blocked: ["svg", "css"]
+    notes:
+      - "Prefer HyperFrames-native SVG/CSS when generated imagery is unnecessary or blocked."
+      - "Stock-photo documentary is not the default style for Asymmetric."
   image_prompt_prefix: >
-    dark editorial vector illustration, map-room briefing aesthetic, near-black background (#050608),
-    deep slate surfaces (#11151C), high contrast, sparse labels, flat vector shapes, clean edges,
-    institutional amber (#F5A400) used only to mark control/leverage/chokepoints,
-    muted steel cyan (#3F8FA3) used only for structure/flows/map logic,
-    deep system red (#D64545) used only when cost/damage/extraction/failure is explicit,
+    editorial print photography, warm paper-field aesthetic, cream and ink tones, FT magazine aesthetic,
+    warm near-black ink (#1A1208) on paper field (#FFF8F0), high contrast, sparse labels, flat vector shapes, clean edges,
+    burnt orange (#C94B00) used only to mark control/leverage/chokepoints,
+    ink blue (#1D6A8C) used only for structure/flows/map logic,
+    deep crimson (#B8291A) used only when cost/damage/extraction/failure is explicit,
     one dominant idea, single focal subject, negative space for readability,
     restrained depth layering (2.5D) for hierarchy only, no UI soup,
   image_negative_prompt: >
     photorealistic, 3D render, CGI, glossy, neon cyberpunk, HUD UI soup, busy infographic collage,
-    grain, noise, gradients, glow, bloom, lens flare, bokeh, realistic lighting, white background,
-    clutter, tiny unreadable text, meme style
+    grain, noise, gradients, glow, bloom, lens flare, bokeh, realistic lighting,
+    dark background, near-black background, deep slate, black background, glowing,
+    clutter, tiny unreadable text, meme style, stock-photo documentary
   diagram_style: "Flat vector primitives (nodes, flows, gates, valves, wedges) with sparse labels and a single highlighted chokepoint."
   consistency_anchors:
-    - "Use Near Black (#050608) / Deep Slate (#11151C) as the base — never white or light backgrounds"
-    - "Default to ONE signal color per frame (Amber/Cyan/Red) with semantic meaning"
-    - "Amber (#F5A400) marks control/leverage/chokepoints — never decoration"
-    - "Cyan (#3F8FA3) marks structure/flow/map logic — not the hero highlight"
-    - "Red (#D64545) appears only when cost/damage/extraction/failure is explicit"
+    - "Use paper field (#FFF8F0) / raised surface (#F5EDE0) as the base — never dark or near-black backgrounds"
+    - "Default to ONE signal color per frame (Burnt Orange/Ink Blue/Crimson) with semantic meaning"
+    - "Burnt Orange (#C94B00) marks control/leverage/chokepoints — never decoration"
+    - "Ink Blue (#1D6A8C) marks structure/flow/map logic — not the hero highlight"
+    - "Deep Crimson (#B8291A) appears only when cost/damage/extraction/failure is explicit"
     - "High contrast, mobile readability first; minimal text (2–5 words on thumbnails)"
     - "No clutter: one dominant idea, one focal subject"
     - "Flat vector only: no gradients, no texture, no glossy 3D"
@@ -95,43 +168,61 @@ asset_generation:
 
 overlays:
   stat_card:
-    bg: "#11151C"
-    border: "#F5A400"
-    text: "#F3F5F7"
+    bg: "#F5EDE0"
+    border: "#C94B00"
+    text: "#1A1208"
     radius: 10
-    shadow: "0 10px 40px rgba(0,0,0,0.55)"
+    shadow: "0 4px 20px rgba(26,18,8,0.12)"
   key_term:
-    bg: "#11151C"
-    text: "#F5A400"
+    bg: "#F5EDE0"
+    text: "#C94B00"
     radius: 6
   data_callout:
-    bg: "#11151C"
-    text: "#3F8FA3"
+    bg: "#F5EDE0"
+    text: "#1D6A8C"
     radius: 6
   risk_callout:
-    bg: "#1A0E0E"
-    text: "#D64545"
+    bg: "#FFF0EE"
+    text: "#B8291A"
     radius: 6
   code_block:
-    bg: "#050608"
-    text: "#F3F5F7"
-    highlight: "#3F8FA3"
+    bg: "#FFF8F0"
+    text: "#1A1208"
+    highlight: "#1D6A8C"
 
 quality_rules:
+  - "Print Intelligence is the visual base, not the pacing model"
+  - "No calm consulting deck pacing; no Bloomberg-terminal energy as the default"
+  - "No empty premium minimalism (every major visual must do narrative work)"
+  - "Every 5–8 seconds includes a meaningful visual event (reveal/collapse/route trace/node highlight/contradiction/source proof/map zoom/consequence hit/comparison slam/final synthesis)"
+  - "Charts are allowed only when animated as story events (reveal/contradiction/proof/consequence), never as static briefings"
   - "Leverage point is visibly marked whenever a system diagram is shown"
-  - "Signal colors obey semantics (Amber=control, Cyan=structure, Red=cost only)"
-  - "No scene holds unchanged state longer than ~4 seconds"
+  - "Signal colors obey semantics (Burnt Orange=control, Ink Blue=structure, Crimson=cost only)"
+  - "No unchanged visual state longer than 4 seconds"
+  - "Prefer meaningful state change every 2–4 seconds"
+  - "Text-card sequences must include motion/state changes or be split"
+  - "Every major claim needs a visual mechanism, not just text"
+  - "Hard stat cards must cite a source_map reference"
+  - "Analyst/media estimates must carry an on-screen qualifier"
+  - "Low-confidence claims cannot be presented as hard stat cards"
+  - "Source/evidence cards should appear for major non-obvious claims"
   - "Sparse labels: only label what matters"
   - "Text must remain high-contrast and readable on mobile"
   - "No decorative signal colors; no UI soup; no collage clutter"
 
+evidence_rules:
+  hard_stat_cards_require_source_map: true
+  analyst_or_media_estimates_require_qualifier: true
+  low_confidence_claims_forbidden_as_hard_stats: true
+  source_cards_required_for_major_non_obvious_claims: true
+
 chart_palette:
-  - "#F5A400" # Amber — primary series / control
-  - "#3F8FA3" # Cyan — structure
-  - "#D64545" # Red — cost / failure
-  - "#F3F5F7" # Bone — labels
-  - "#8A95A6" # Muted — secondary series
-  - "#2A3142" # Graphite — grid / tertiary
+  - "#C94B00" # Burnt Orange — primary series / control
+  - "#1D6A8C" # Ink Blue — structure
+  - "#B8291A" # Deep Crimson — cost / failure
+  - "#1A1208" # Ink — labels
+  - "#8C7A68" # Warm Muted — secondary series
+  - "#D4CBBA" # Mid-cream — grid / tertiary
 
 color_rules:
   harmony_type: "split-complementary"

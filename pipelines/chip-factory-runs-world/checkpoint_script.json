@@ -1,0 +1,352 @@
+{
+  "version": "1.0",
+  "project_id": "chip-factory-runs-world",
+  "pipeline_type": "animation",
+  "stage": "script",
+  "status": "completed",
+  "timestamp": "2026-04-26T02:14:35.134142+00:00",
+  "style_playbook": "asymmetric",
+  "checkpoint_policy": "guided",
+  "human_approval_required": true,
+  "human_approved": true,
+  "artifacts": {
+    "script": {
+      "version": "1.0",
+      "title": "Why Everything Depends on One Factory",
+      "total_duration_seconds": 780,
+      "sections": [
+        {
+          "id": "s01",
+          "label": "COLD OPEN",
+          "start_seconds": 0,
+          "end_seconds": 35,
+          "text": "The most advanced chips in the world \u2014 the ones inside every AI model, every smartphone, every cloud server, every weapons system \u2014 all come from one company. One factory. One island. There is no backup. That is not a simplification. It is the literal structure of the most critical supply chain in the global economy. And almost nobody who depends on it actually understands how it works.",
+          "speaker_directions": "Direct, controlled. Opening line delivered slowly \u2014 one clause at a time. No warmth. Quiet authority. Pace builds slightly toward the final sentence.",
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "Near-black screen. Bone text appears one clause at a time: 'One company. One factory. One island.' Each phrase appears, holds 1.5s, then the next arrives. No diagram yet.",
+              "timestamp_seconds": 0
+            },
+            {
+              "type": "broll",
+              "description": "ComfyUI hero image: semiconductor wafer on near-black surface, Asymmetric palette. Amber catchlight on the wafer surface. Fade in slowly at 0:12, hold through end of section.",
+              "timestamp_seconds": 12
+            }
+          ],
+          "pronunciation_guides": [],
+          "source_ref": "research_brief: research_summary"
+        },
+        {
+          "id": "s02",
+          "label": "THE SURFACE STORY",
+          "start_seconds": 35,
+          "end_seconds": 120,
+          "text": "Most people think they understand where chips come from. Apple designs Apple chips. NVIDIA designs NVIDIA chips. Samsung, AMD, Qualcomm, Broadcom \u2014 each company appears to have its own silicon. You watch the keynotes. You read the product names. The story holds together convincingly.\n\nIt is not how any of it works.\n\nEvery one of those companies is what the industry calls fabless. They design chips. They do not manufacture them. Chip design is intellectual work \u2014 writing logic, architecting transistors, optimizing circuits. It happens on computers in California, Texas, and Taipei. Chip manufacturing is something entirely different.\n\nBuilding a leading-edge chip requires machines that print circuits using extreme ultraviolet light \u2014 wavelengths shorter than the diameter of a virus. A single modern leading-edge fab costs over twenty billion dollars to construct. The equipment takes years to install and qualify. And the process expertise \u2014 the yield knowledge, the defect reduction data, the process integration \u2014 takes decades of continuous production to accumulate. That knowledge does not live in a patent or a blueprint. It lives in the team and in the data.\n\nFabless companies cannot build this. So they all go to the same place.",
+          "speaker_directions": "First paragraph: measured, slightly ironic. 'It is not how any of it works.' \u2014 flat, dry, delivered as a statement not a gotcha. Second paragraph onward: explanatory, building.",
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "CHAPTER CARD: 'THE SURFACE STORY' \u2014 amber text on deep slate. Holds 2s then cuts to diagram.",
+              "timestamp_seconds": 35
+            },
+            {
+              "type": "diagram",
+              "description": "Row of company logos / wordmarks (Apple, NVIDIA, AMD, Qualcomm) shown as amber-outlined boxes. Label: 'Fabless \u2014 Design Only'. Appears at 'Every one of those companies is fabless.'",
+              "timestamp_seconds": 55
+            },
+            {
+              "type": "stat_card",
+              "description": "Stat card: '$20B+' \u2014 'Cost to build one leading-edge fab'. Amber border, bone text on deep slate. Appears at 'costs over twenty billion dollars'.",
+              "timestamp_seconds": 95
+            }
+          ],
+          "pronunciation_guides": [
+            {
+              "word": "fabless",
+              "phonetic": "FAB-less"
+            },
+            {
+              "word": "Qualcomm",
+              "phonetic": "KWAHL-com"
+            }
+          ],
+          "source_ref": "research_brief: audience_insights.misconceptions[0] (myth: chip companies make their own chips)"
+        },
+        {
+          "id": "s03",
+          "label": "THE ACTUAL SYSTEM",
+          "start_seconds": 120,
+          "end_seconds": 240,
+          "text": "That place is a foundry \u2014 a factory that manufactures chips on behalf of design companies without designing them itself. The foundry model was invented in 1987 by an engineer named Morris Chang, who understood that design and manufacturing could be cleanly separated. Fabless companies could optimize for design. Foundries could optimize for manufacturing. Each side could specialize at scale.\n\nIt worked completely. Today, nearly every advanced chip on earth flows through this structure.\n\nThe supply chain runs through five layers.\n\nAt the top: EDA software. Electronic design automation \u2014 tools built primarily by American companies \u2014 gives engineers the ability to design chips containing billions of transistors. U.S. firms capture more than forty percent of global chip design market share, including the EDA tools that make the entire chain possible. Without EDA, advanced chip design at nanometer scales cannot happen anywhere.\n\nBelow that: fabless design houses. Apple, NVIDIA, AMD, Qualcomm, Broadcom, and hundreds of others translate circuit ideas into the precise manufacturing files a fab needs to build the chip. This is intellectual work. It produces no physical object.\n\nBelow that: the foundry. The factory where chips are physically made. Silicon wafers are grown, circuits are printed through lithography using machines that cost a hundred and fifty million dollars each, and transistors are formed at atomic precision. This is the third layer. This is where the system narrows.\n\nBelow that: OSAT \u2014 outsourced semiconductor assembly and test. After fabrication, chips are packaged, interconnected, and tested for function. Most OSAT capacity sits in Taiwan, South Korea, and Southeast Asia \u2014 another geographic concentration inside the chain.\n\nAt the bottom: OEM assembly. Device manufacturers integrate everything into the phones, servers, vehicles, and infrastructure that the world runs on.\n\nFive layers. Work distributed across three continents. Hundreds of billions of dollars in annual investment. And the entire chain connects through one company in the third layer.",
+          "speaker_directions": "Explanatory and building. The five-layer list should be delivered with slight weight on each 'below that' \u2014 each is a reveal. Pace slows at 'This is where the system narrows.'",
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "CHAPTER CARD: 'THE ACTUAL SYSTEM' \u2014 holds 2s.",
+              "timestamp_seconds": 120
+            },
+            {
+              "type": "diagram",
+              "description": "Supply chain flow diagram builds left to right as narration runs. Five nodes appear one at a time: [EDA] \u2192 [Fabless Design] \u2192 [Foundry] \u2192 [OSAT] \u2192 [OEM]. Arrows draw between nodes as each is named. All nodes in cyan (#3F8FA3) initially. Color and label only \u2014 flat vector, spare.",
+              "timestamp_seconds": 140
+            },
+            {
+              "type": "animation",
+              "description": "On 'this is where the system narrows' \u2014 the Foundry node pulses, its border shifts from cyan to amber (#F5A400). All other nodes dim slightly. Hold 3s before continuing.",
+              "timestamp_seconds": 210
+            }
+          ],
+          "pronunciation_guides": [
+            {
+              "word": "EDA",
+              "phonetic": "E-D-A (spell out)"
+            },
+            {
+              "word": "OSAT",
+              "phonetic": "OH-sat"
+            },
+            {
+              "word": "OEM",
+              "phonetic": "O-E-M (spell out)"
+            },
+            {
+              "word": "lithography",
+              "phonetic": "lith-OG-ruh-fee"
+            }
+          ],
+          "source_ref": "research_brief: sources[7] (Steve Blank semiconductor ecosystem), sources[8] (CSIS supply chain mapping)"
+        },
+        {
+          "id": "s04",
+          "label": "THE CHOKEPOINT",
+          "start_seconds": 240,
+          "end_seconds": 390,
+          "text": "That company is TSMC. Taiwan Semiconductor Manufacturing Company. Founded in 1987 \u2014 the same year the foundry model was invented, by the same man who invented it. Headquartered in Hsinchu, Taiwan. Approximately sixty thousand employees. Annual revenue near one hundred twenty-five billion dollars in 2025.\n\nTSMC does not design chips. It does not sell chips. It only manufactures. And it manufactures at a scale and precision that no other company on earth currently matches.\n\nAt the most advanced process nodes \u2014 the three-nanometer and two-nanometer processes that power the fastest AI accelerators, the most capable phones, and the highest-performance processors \u2014 industry analysts estimate TSMC's market share is above ninety percent. Samsung holds about twelve percent of the overall foundry market. Intel is attempting to re-enter foundry manufacturing after years of delays. But at leading-edge nodes, at volume, today, there is no viable alternative. The tree of substitutes is empty.\n\nThe gap is not just about capacity. It is about yield. When a fab runs a process, not every chip works. The fraction that functions correctly is called yield. Yield determines whether a business is viable. Industry analysts report TSMC's yield at the two-nanometer node at approximately sixty-five to seventy percent. Samsung's competing two-nanometer process started at roughly thirty percent in early 2025 test runs, and industry tracking firms report it has improved to an estimated fifty to sixty percent by late 2025. Intel's 18A process carries reported yields in the fifty-five to sixty-five percent range \u2014 but it is not available to fabless customers. Intel is producing 18A for its own internal chip programs only. The yield gap remains consequential. At leading-edge volume, available to external customers today, TSMC has no credible substitute.\n\nThe demand concentrated at TSMC is now being driven primarily by artificial intelligence. Analysts project NVIDIA will displace Apple as TSMC's largest single customer in 2026 \u2014 the first time in the company's history that AI accelerator orders outpace consumer device demand at the world's most advanced fab. TSMC's first-quarter 2026 revenue reached thirty-five point nine billion dollars \u2014 forty point six percent year-on-year growth in U.S. dollar terms \u2014 a new quarterly record. The chokepoint is not weakening under this pressure. It is strengthening.",
+          "speaker_directions": "Open with the name slowly and cleanly \u2014 'TSMC. Taiwan Semiconductor Manufacturing Company.' Then build through the market share stats with increasing weight. The yield comparison should be delivered matter-of-factly \u2014 the numbers speak. Final sentence: deliberate, conclusive.",
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "CHAPTER CARD: 'THE CHOKEPOINT' \u2014 amber on deep slate, holds 2s.",
+              "timestamp_seconds": 240
+            },
+            {
+              "type": "stat_card",
+              "description": "Stat card: '90%+' \u2014 'TSMC advanced-node market share (analyst est.)'. Amber border. Appears at 'above ninety percent'.",
+              "timestamp_seconds": 290
+            },
+            {
+              "type": "diagram",
+              "description": "Yield comparison \u2014 directional bar chart, qualitative only. TSMC: amber fill, labeled 'Industry-leading yield (~65\u201370% est.)'. Samsung: graphite fill, labeled 'Improving \u2014 ~50\u201360% late 2025 (from ~30% early 2025)'. Intel: muted steel, labeled 'Internal use only \u2014 not available to fabless customers'. No hard yield percentages as primary display numbers. Label: '2nm Node Yield \u2014 Directional Comparison'. Appears at yield discussion.",
+              "timestamp_seconds": 320
+            },
+            {
+              "type": "stat_card",
+              "description": "Stat card: '$35.90B' \u2014 'TSMC Q1 2026 Revenue / +40.6% YoY (USD)'. Amber border. Appears at revenue line.",
+              "timestamp_seconds": 365
+            }
+          ],
+          "pronunciation_guides": [
+            {
+              "word": "TSMC",
+              "phonetic": "T-S-M-C (spell out)"
+            },
+            {
+              "word": "Hsinchu",
+              "phonetic": "SHIN-joo"
+            },
+            {
+              "word": "nanometer",
+              "phonetic": "NAN-oh-mee-ter"
+            }
+          ],
+          "source_ref": "research_brief: data_points[0] (90% market share), data_points[1] (Q1 2026 revenue), data_points[4] (yield comparison)"
+        },
+        {
+          "id": "s05",
+          "label": "WHO BENEFITS",
+          "start_seconds": 390,
+          "end_seconds": 510,
+          "text": "Here is the structural layer that most analysis misses.\n\nYou cannot simply build another TSMC. This is not a claim about political will or capital availability. The United States has committed fifty-two billion dollars through the CHIPS Act to rebuild domestic semiconductor manufacturing. The European Union has pledged forty-three billion euros through its own Chips Act. Japan has committed the equivalent of over twenty-five billion dollars in semiconductor subsidies. Every government that depends on advanced chips \u2014 which is every major government \u2014 has looked at this concentration and concluded it is a strategic liability.\n\nTSMC is building a fabrication plant in Arizona. It is operational. It is producing chips there. But the Arizona facility is running on the N4 process node \u2014 two full generations behind TSMC's most advanced production in Taiwan. N3 production at the Arizona facility is not expected until 2027 at the earliest. N2 has no confirmed date. At current ramp rates, the Arizona investment will not materially change the global dependency picture before 2028.\n\nMorris Chang \u2014 the man who invented the foundry model, the founder of TSMC \u2014 stated publicly that the effort to replicate TSMC in the United States is, in his words, a very expensive exercise in futility.\n\nHis reasoning is not about technology or capital. It is about ecosystem. In Taiwan, every supplier, equipment specialist, process engineer, and material vendor that TSMC depends on is within an hour of the fabrication facility. Chemical suppliers. Tool maintenance engineers. Lithography specialists. Wafer material vendors. Equipment calibration technicians. Hundreds of companies, thousands of workers, all optimized over decades to support one integrated production environment. That proximity took thirty years to develop through co-location, iteration, and shared institutional learning across an entire regional economy. It cannot be packaged and shipped. The knowledge is in the relationships, the proximity, and the accumulated production data. You cannot fly the ecosystem to Arizona. You can only grow another one \u2014 and that takes time measured in decades, not appropriations cycles.\n\nThe Arizona fab is real. The investment is real. The intent is real. The timeline is honest: structural dependency on Taiwan will not end this decade.",
+          "speaker_directions": "Open flatly: 'Here is the structural layer that most analysis misses.' Not dramatic \u2014 just direct. The Morris Chang quote should be delivered as a direct quotation, slight weight on 'his words'. Final three sentences: short, declarative, each on its own beat.",
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "CHAPTER CARD: 'WHO BENEFITS' \u2014 holds 2s.",
+              "timestamp_seconds": 390
+            },
+            {
+              "type": "stat_card",
+              "description": "Three-column stat card: '$52B US CHIPS Act / \u20ac43B EU Chips Act / \u00a53.9T Japan Subsidies'. Muted steel cyan for column labels, bone numbers. Appears at government spending.",
+              "timestamp_seconds": 420
+            },
+            {
+              "type": "stat_card",
+              "description": "Stat card \u2014 node-generation framing: three stacked lines: 'Arizona: N4 Now' / 'N3: est. 2027' / 'N2: No date set'. Deep system red border (#D64545) \u2014 inadequacy/gap frame. Appears at Arizona line.",
+              "timestamp_seconds": 455
+            },
+            {
+              "type": "overlay",
+              "description": "Pull quote: 'A very expensive exercise in futility.' \u2014 Morris Chang, TSMC Founder. Bone text on graphite (#2A3142) background. Appears at quote line, holds 4s.",
+              "timestamp_seconds": 475
+            }
+          ],
+          "pronunciation_guides": [
+            {
+              "word": "futility",
+              "phonetic": "fyoo-TIL-ih-tee"
+            }
+          ],
+          "source_ref": "research_brief: data_points[3] (Arizona <5%), data_points[5] (Morris Chang quote), data_points[6] (government spending figures)"
+        },
+        {
+          "id": "s06",
+          "label": "THE LEVERAGE MAP",
+          "start_seconds": 510,
+          "end_seconds": 660,
+          "text": "So where exactly is the leverage?\n\nTSMC holds pricing power, schedule power, and strategic weight that is entirely disproportionate to the size of any single customer or government. That leverage does not require active extraction. It does not require toll booths or platform rules. It is the structural consequence of irreplaceability. When a system depends on a single node that cannot be bypassed or substituted, that node holds leverage by existing.\n\nInside the primary chokepoint, there is a second one.\n\nTSMC's CoWoS technology \u2014 chip-on-wafer-on-substrate \u2014 is the advanced packaging process that physically connects AI accelerator chips to the high-bandwidth memory they require to function. Every major AI training system in production today relies on this packaging. Without CoWoS, a competitive AI accelerator cannot be built at commercial scale.\n\nTSMC's CoWoS capacity is sold out through 2026. Demand is growing faster than TSMC can expand capacity. Projected output is rising from thirty-five thousand wafers per month in 2024 to targeting around one hundred thirty thousand by end-2026 \u2014 a near-fourfold increase in two years \u2014 and it will still be insufficient to meet demand. NVIDIA alone is expected to consume more than half of all CoWoS output.\n\nThe implication is direct: the supply of AI compute is not governed by capital availability, by the number of companies building hardware, by regulatory conditions, or by geopolitical pressure. It is governed by the production schedule of one factory and the available capacity of one packaging process. Both are in Taiwan. Both are controlled by the same company.\n\nThis is a chokepoint inside a chokepoint. The system narrows twice before reaching the product.",
+          "speaker_directions": "Open question is rhetorical \u2014 no pause needed. 'Inside the primary chokepoint, there is a second one.' \u2014 pause after this line, hold 1.5s before continuing. The CoWoS section should accelerate slightly \u2014 it's the reveal within the reveal. Final line: slow, conclusive, deliberate.",
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "CHAPTER CARD: 'THE LEVERAGE MAP' \u2014 amber on near-black. Holds 2s.",
+              "timestamp_seconds": 510
+            },
+            {
+              "type": "diagram",
+              "description": "Return to supply chain flow diagram. Foundry node already amber from s03. Now a second amber marker appears inside the Foundry node: 'CoWoS Packaging'. The node splits into two sub-layers. A second amber border draws around the packaging sub-layer. Visual: chokepoint inside a chokepoint.",
+              "timestamp_seconds": 565
+            },
+            {
+              "type": "stat_card",
+              "description": "Stat card: '~130K wpm' \u2014 'Projected CoWoS capacity end-2026 / Still sold out'. Amber border. Below: smaller line '35K \u2192 ~130K wpm in 24 months'. Appears at capacity figures.",
+              "timestamp_seconds": 600
+            },
+            {
+              "type": "diagram",
+              "description": "Geographic convergence map: world outline in graphite. Four amber arrows converge from California (Apple/NVIDIA/AMD/Qualcomm headquarters) to a single point in Taiwan. The point pulses amber. Label appears: 'Hsinchu, Taiwan'. Appears at 'Both are in Taiwan.'",
+              "timestamp_seconds": 635
+            }
+          ],
+          "pronunciation_guides": [
+            {
+              "word": "CoWoS",
+              "phonetic": "CO-woss"
+            },
+            {
+              "word": "wafer",
+              "phonetic": "WAY-fer"
+            }
+          ],
+          "source_ref": "research_brief: data_points[2] (CoWoS sold out), data_points[0] (90% market share), trending.active_discussions[0]"
+        },
+        {
+          "id": "s07",
+          "label": "STRATEGIC TAKEAWAY",
+          "start_seconds": 660,
+          "end_seconds": 780,
+          "text": "The model here is reusable.\n\nTSMC is not a unique accident. The world contains dozens of systems that appear, from the outside, to be competitive markets \u2014 but are, on careful examination, single-node dependencies. The test is the same in every case: can the system function at the required quality level if this node is removed or constrained? If the answer is no, the node is a chokepoint. Not a competitive advantage. A structural gate.\n\nFinding these gates requires following dependencies upstream. Follow the supply chain past the branded layer. Ignore the logos. Ask what each layer actually depends on to function. Ask it again for each dependency. At what point does the tree stop branching? At what point do all paths converge? Where does the system narrow to one entity with no adequate substitute?\n\nAt TSMC, it narrows to one at the third layer of a five-layer chain, in a country that three major powers have each independently assessed as the most geopolitically exposed piece of real estate in the world. The United States, China, and Taiwan have all reached this conclusion separately. The governments that understood the exposure earliest have spent the most capital the fastest \u2014 and still cannot close the gap within this decade.\n\nThe leverage map looks like this: one node, ninety percent market share, no adequate alternative, timeline measured in years not months, pricing power that compounds as AI demand increases. Every actor in the system is exposed. The actor who controls the node does not need to do anything aggressive to exercise that leverage. It simply needs to keep running.\n\nIf you want to understand where power concentrates in AI hardware \u2014 not where it appears to concentrate, but where the system literally cannot function without a specific node \u2014 TSMC is the clearest example available right now.\n\nThe research stack I use for this kind of mapping is linked in the description.",
+          "speaker_directions": "Open with 'The model here is reusable' \u2014 flat, like the start of a conclusion. Second paragraph: methodical, teaching. The 'leverage map looks like this' section: each clause lands as its own beat, slightly slower. Final two sentences: authoritative close, no sentimental warmth.",
+          "enhancement_cues": [
+            {
+              "type": "animation",
+              "description": "CHAPTER CARD: 'THE LEVERAGE MAP \u2014 WHAT YOU KEEP' or simply 'WHERE THE LEVERAGE IS'. Amber text. Holds 2s.",
+              "timestamp_seconds": 660
+            },
+            {
+              "type": "diagram",
+              "description": "Full supply chain diagram returns. All five nodes visible, TSMC node amber and large. A simplified 'decision tree' branches downward from TSMC node showing: AI / phones / cloud / defense \u2014 all converging upward into TSMC. Visual: everything feeds through one point.",
+              "timestamp_seconds": 695
+            },
+            {
+              "type": "stat_card",
+              "description": "Final stat card \u2014 three lines stacked: '90%+ advanced-node share (analyst est.)' / 'Arizona: N4 now, N3 est. 2027' / 'Dependency unchanged until 2028+'. Amber border. Holds through end of section.",
+              "timestamp_seconds": 740
+            }
+          ],
+          "pronunciation_guides": [],
+          "source_ref": "research_brief: angles_discovered[0] (why everything depends on one factory), data_points[3] (Arizona), data_points[0] (90%)"
+        }
+      ],
+      "metadata": {
+        "project": "chip-factory-runs-world",
+        "pipeline": "animation",
+        "playbook": "asymmetric",
+        "animation_mode": "diagram_stills",
+        "render_runtime": "hyperframes",
+        "narrative_structure": "problem_solution",
+        "narrator_modes_used": [
+          "cartographer",
+          "operator",
+          "realist"
+        ],
+        "word_count": 1892,
+        "word_count_target": 1950,
+        "word_count_variance_pct": -3.0,
+        "title_options": [
+          "Why Everything Depends on One Factory",
+          "The Chip Factory That Controls Everything",
+          "One Factory. No Backup."
+        ],
+        "chapter_cards": [
+          {
+            "label": "THE SURFACE STORY",
+            "start_seconds": 35
+          },
+          {
+            "label": "THE ACTUAL SYSTEM",
+            "start_seconds": 120
+          },
+          {
+            "label": "THE CHOKEPOINT",
+            "start_seconds": 240
+          },
+          {
+            "label": "WHO BENEFITS",
+            "start_seconds": 390
+          },
+          {
+            "label": "THE LEVERAGE MAP",
+            "start_seconds": 510
+          },
+          {
+            "label": "WHERE THE LEVERAGE IS",
+            "start_seconds": 660
+          }
+        ],
+        "motion_notes": [
+          "Cold open: text-only, no diagram. Hero image fades in at 0:12. First diagram appears at 0:35.",
+          "Supply chain flow diagram builds progressively across s03 and s04 \u2014 nodes appear one at a time as narration names each layer.",
+          "Foundry node shifts from cyan to amber at 2:10 ('this is where the system narrows') \u2014 holds amber for rest of video.",
+          "Yield comparison bars appear as simple horizontal fills \u2014 no animation flourish, just a clean reveal.",
+          "CoWoS second-chokepoint visual at 5:25 \u2014 supply chain node splits to show nested chokepoint.",
+          "Geographic convergence map at 6:35 \u2014 four arrows converge on Taiwan. Pure amber signal, sparse labels.",
+          "All stat cards: amber border, bone text, deep slate background per asymmetric.yaml overlays.stat_card spec.",
+          "Morris Chang pull quote at 7:55 \u2014 bone text, graphite background, no amber (not a leverage signal \u2014 a reality check).",
+          "No scene state unchanged longer than 4 seconds per asymmetric.yaml quality_rules."
+        ],
+        "cta_placement": "s07 \u2014 final 15 seconds",
+        "data_sources_used": [
+          "TSMC Q1 2026 earnings ($35.90B, +40.6% YoY USD / +35.1% NTD) \u2014 official TSMC investor relations",
+          "Advanced-node market share: 90%+ for TSMC \u2014 Counterpoint Research / PatentPC",
+          "2nm yield directional: TSMC ~65\u201370% (industry analysts); Samsung improved from ~30% (early 2025 test) to ~50\u201360% (late 2025) \u2014 TrendForce; Intel 18A ~55\u201365% internal only \u2014 Tom's Hardware",
+          "TSMC Arizona: N4 process now; N3 not expected until 2027 \u2014 TrendForce",
+          "CoWoS capacity: 35K wpm (2024) \u2192 targeting ~130K wpm (end-2026), sold out through 2026 \u2014 TrendForce",
+          "NVIDIA projected to displace Apple as TSMC's largest customer 2026 \u2014 per analyst estimates (CNBC / Creative Strategies)",
+          "Morris Chang: 'very expensive exercise in futility' \u2014 widely reported",
+          "Government spending: US $52B CHIPS Act, EU \u20ac43B, Japan \u00a53.9T \u2014 public legislative record"
+        ],
+        "title_main": "Why Everything Depends on One Factory",
+        "thumbnail_text": "One Factory. No Backup."
+      }
+    }
+  },
+  "review": {
+    "status": "approved_with_changes",
+    "approved_changes": [
+      "Title locked to 'Why Everything Depends on One Factory'.",
+      "Reserve 'One Factory. No Backup.' for thumbnail/cold-open language (not main title).",
+      "Narration to be regenerated via chunked Fish Speech workflow (25-40s chunks + concat) to avoid truncation."
+    ]
+  }
+}

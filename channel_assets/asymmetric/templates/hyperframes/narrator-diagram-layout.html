@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="scene-layout.css">
+  <link rel="stylesheet" href="narrator-diagram-layout.css">
+</head>
+<body>
+  <div data-composition-id="narrator-diagram-layout" data-width="1920" data-height="1080" data-start="0" data-duration="5" class="clip">
+    <div class="scene-container">
+      <div class="background-grid"></div>
+      <div class="foreground-content">
+
+        <!-- ── LEFT: Interpreter anchor ── -->
+        <div class="narrator-side">
+          <div class="narrator-glow"></div>
+          <img src="../../roles/the_interpreter/interpreter-neutral.svg" alt="The Interpreter" class="interpreter-figure">
+          <div class="narrator-label">
+            <span class="narrator-role">THE INTERPRETER</span>
+          </div>
+        </div>
+
+        <!-- ── RIGHT: Mechanism Diagram ── -->
+        <div class="diagram-side">
+          <div class="diagram-label">MECHANISM ANALYSIS</div>
+          <div class="diagram-visual">
+            <svg viewBox="0 0 760 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+              <!-- ── BACKGROUND STRUCTURE ── -->
+              <rect x="0" y="0" width="760" height="520" fill="#F5EDE0"/>
+              <line x1="0" y1="180" x2="760" y2="180" stroke="#D4CBBA" stroke-width="1"/>
+              <line x1="0" y1="360" x2="760" y2="360" stroke="#D4CBBA" stroke-width="1"/>
+              <line x1="253" y1="0" x2="253" y2="520" stroke="#D4CBBA" stroke-width="1"/>
+              <line x1="507" y1="0" x2="507" y2="520" stroke="#D4CBBA" stroke-width="1"/>
+
+              <!-- ── STAGE LABELS ── -->
+              <text x="126" y="24" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">INPUT</text>
+              <text x="380" y="24" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">CHOKEPOINT</text>
+              <text x="634" y="24" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="13">OUTPUT</text>
+
+              <!-- ══════════════════════════════════════════════════ -->
+              <!-- INPUT NODES (col 1) -->
+              <!-- ══════════════════════════════════════════════════ -->
+              <rect x="20" y="50" width="190" height="52" fill="#D4CBBA" rx="3"/>
+              <rect x="20" y="50" width="4" height="52" fill="#1D6A8C" rx="2"/>
+              <text x="118" y="74" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">MATERIAL INPUT A</text>
+              <text x="118" y="92" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">SUPPLIER OLIGOPOLY</text>
+
+              <rect x="20" y="120" width="190" height="52" fill="#D4CBBA" rx="3"/>
+              <rect x="20" y="120" width="4" height="52" fill="#1D6A8C" rx="2"/>
+              <text x="118" y="144" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">MATERIAL INPUT B</text>
+              <text x="118" y="162" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">CAPTIVE CONTRACT</text>
+
+              <rect x="20" y="220" width="190" height="52" fill="#D4CBBA" rx="3"/>
+              <rect x="20" y="220" width="4" height="52" fill="#1D6A8C" rx="2"/>
+              <text x="118" y="244" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">IP LICENSING</text>
+              <text x="118" y="262" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">ROYALTY LAYER</text>
+
+              <rect x="20" y="290" width="190" height="52" fill="#D4CBBA" rx="3"/>
+              <rect x="20" y="290" width="4" height="52" fill="#1D6A8C" rx="2"/>
+              <text x="118" y="314" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">CAPITAL / CREDIT</text>
+              <text x="118" y="332" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">BANK LAYER</text>
+
+              <!-- Input → Chokepoint arrows -->
+              <path d="M210 76 H263" stroke="#1D6A8C" stroke-width="2.5"/>
+              <polygon points="263,71 275,76 263,81" fill="#1D6A8C"/>
+              <path d="M210 146 H263" stroke="#1D6A8C" stroke-width="2.5"/>
+              <polygon points="263,141 275,146 263,151" fill="#1D6A8C"/>
+              <path d="M210 246 H263" stroke="#1D6A8C" stroke-width="2.5"/>
+              <polygon points="263,241 275,246 263,251" fill="#1D6A8C"/>
+              <path d="M210 316 H263" stroke="#1D6A8C" stroke-width="2.5"/>
+              <polygon points="263,311 275,316 263,321" fill="#1D6A8C"/>
+
+              <!-- ══════════════════════════════════════════════════ -->
+              <!-- CHOKEPOINT (center column, amber) -->
+              <!-- ══════════════════════════════════════════════════ -->
+              <rect x="270" y="175" width="220" height="170" fill="#C94B00" rx="4"/>
+              <text x="380" y="230" fill="#FFF8F0" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="18" font-weight="700">CONTROL</text>
+              <text x="380" y="252" fill="#FFF8F0" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="18" font-weight="700">NODE</text>
+              <text x="380" y="278" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" font-weight="600">ALL INPUTS PASS</text>
+              <text x="380" y="296" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" font-weight="600">THROUGH HERE</text>
+              <text x="380" y="320" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">LEVERAGE INDEX: 9.4 / 10</text>
+
+              <!-- Bottleneck funnel lines -->
+              <path d="M270 200 L235 200 L235 430 L270 430" stroke="#C94B00" stroke-width="2" opacity="0.4"/>
+              <path d="M490 200 L525 200 L525 430 L490 430" stroke="#C94B00" stroke-width="2" opacity="0.4"/>
+
+              <!-- Chokepoint → Output arrows -->
+              <path d="M490 248 H515" stroke="#C94B00" stroke-width="3"/>
+              <polygon points="515,243 527,248 515,253" fill="#C94B00"/>
+              <path d="M490 312 H515" stroke="#C94B00" stroke-width="3"/>
+              <polygon points="515,307 527,312 515,317" fill="#C94B00"/>
+
+              <!-- ══════════════════════════════════════════════════ -->
+              <!-- OUTPUT NODES (col 3) -->
+              <!-- ══════════════════════════════════════════════════ -->
+              <rect x="530" y="200" width="200" height="60" fill="#D4CBBA" rx="3"/>
+              <rect x="530" y="200" width="4" height="60" fill="#1D6A8C" rx="2"/>
+              <text x="633" y="228" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">OUTPUT STREAM A</text>
+              <text x="633" y="248" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">APPROVED ACCESS</text>
+
+              <rect x="530" y="280" width="200" height="60" fill="#D4CBBA" rx="3"/>
+              <rect x="530" y="280" width="4" height="60" fill="#B8291A" rx="2"/>
+              <text x="633" y="308" fill="#1A1208" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700">BLOCKED STREAM</text>
+              <text x="633" y="328" fill="#B8291A" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">DENIED / THROTTLED</text>
+
+              <!-- ── Extraction annotation ── -->
+              <rect x="270" y="390" width="220" height="44" fill="#D4CBBA" rx="3"/>
+              <rect x="270" y="390" width="4" height="44" fill="#C94B00" rx="2"/>
+              <text x="383" y="410" fill="#C94B00" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" font-weight="700">MARGIN EXTRACTED HERE</text>
+              <text x="383" y="426" fill="#8C7A68" text-anchor="middle" font-family="IBM Plex Mono" font-size="11">BEFORE VALUE REACHES OUTPUT</text>
+
+              <!-- ── Bottom annotation: leverage point marker ── -->
+              <circle cx="380" cy="470" r="16" fill="#C94B00"/>
+              <text x="380" y="476" fill="#FFF8F0" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="16" font-weight="900">!</text>
+              <text x="410" y="476" fill="#C94B00" font-family="IBM Plex Mono" font-size="13">THE LEVERAGE IS HERE</text>
+
+            </svg>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines["narrator-diagram-layout"] = tl;
+  </script>
+</body>
+</html>

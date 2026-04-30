@@ -69,8 +69,10 @@ class ToolStability(str, Enum):
 
 class ToolStatus(str, Enum):
     AVAILABLE = "available"
+    BUSY = "busy"
     UNAVAILABLE = "unavailable"
     DEGRADED = "degraded"
+    FAILED_AFTER_ISOLATION = "failed_after_isolation"
 
 
 class ToolRuntime(str, Enum):

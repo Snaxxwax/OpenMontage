@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="scene-layout.css">
+  <link rel="stylesheet" href="source-card.css">
+</head>
+<body>
+  <div data-composition-id="source-card" data-width="1920" data-height="1080" data-start="0" data-duration="5" class="clip">
+    <div class="scene-container">
+      <div class="background-grid"></div>
+      <div class="source-card-wrapper">
+
+        <!-- ── CONTEXT STRIP ── -->
+        <div class="source-context-strip">
+          <span class="source-context-label">EVIDENCE LAYER</span>
+          <span class="source-context-divider">·</span>
+          <span class="source-context-item text-muted">SCENE: S04 CLAIM VALIDATION</span>
+          <span class="source-context-divider">·</span>
+          <span class="source-context-item text-muted">SOURCE MAP REF: <span class="text-cyan">SIA-2025-ADV-NODE-01</span></span>
+          <span class="source-context-divider">·</span>
+          <span class="source-context-item text-muted">REQUIRED: <span class="text-amber">YES</span></span>
+        </div>
+
+        <div class="source-card">
+
+          <!-- ── CYAN HEADER BAND ── -->
+          <div class="source-header-band">
+            <span class="source-type-label">PRIMARY SOURCE</span>
+            <span class="source-confidence">CONFIDENCE: HIGH · ACCESS: UNRESTRICTED</span>
+          </div>
+
+          <!-- ── MAIN BODY: icon + citation ── -->
+          <div class="source-body">
+
+            <!-- LEFT: Evidence type marker -->
+            <div class="source-icon-col">
+              <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="80" height="100" fill="#D4CBBA" rx="4"/>
+                <rect x="10" y="10" width="5" height="100" fill="#1D6A8C" rx="2"/>
+                <rect x="22" y="28" width="56" height="6" fill="#1D6A8C" rx="2"/>
+                <rect x="22" y="42" width="48" height="4" fill="#8C7A68" rx="2"/>
+                <rect x="22" y="54" width="52" height="4" fill="#8C7A68" rx="2"/>
+                <rect x="22" y="66" width="40" height="4" fill="#8C7A68" rx="2"/>
+                <rect x="22" y="82" width="30" height="14" fill="#C94B00" rx="2"/>
+                <text x="37" y="93" fill="#FFF8F0" text-anchor="middle" font-family="IBM Plex Mono" font-size="8" font-weight="700">DATA</text>
+              </svg>
+              <div class="source-type-tag">INDUSTRY REPORT</div>
+            </div>
+
+            <!-- RIGHT: Citation content -->
+            <div class="source-citation">
+              <div class="source-title">2025 SEMICONDUCTOR SUPPLY CHAIN<br>CONCENTRATION ANALYSIS</div>
+              <div class="source-publisher">SEMICONDUCTOR INDUSTRY ASSOCIATION (SIA) · IC INSIGHTS</div>
+              <div class="source-excerpt">
+                "Advanced node fabrication capacity remains concentrated among three foundries,
+                with TSMC controlling 92.4% of sub-5nm production globally. No credible
+                alternative at this process node exists within a 36-month horizon."
+              </div>
+              <div class="source-data-point">
+                <span class="source-claim-label">KEY CLAIM:</span>
+                <span class="source-claim-text">92.4% single-foundry concentration at advanced nodes, 2025</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ── FOOTER: meta row ── -->
+          <div class="source-footer">
+            <div class="source-meta-item">
+              <span class="source-meta-key">PUBLISHED</span>
+              <span class="source-meta-val">Q1 2025</span>
+            </div>
+            <div class="source-meta-divider"></div>
+            <div class="source-meta-item">
+              <span class="source-meta-key">PAGES</span>
+              <span class="source-meta-val">148</span>
+            </div>
+            <div class="source-meta-divider"></div>
+            <div class="source-meta-item">
+              <span class="source-meta-key">CLAIM REF</span>
+              <span class="source-meta-val">SIA-2025-ADV-NODE-01</span>
+            </div>
+            <div class="source-meta-divider"></div>
+            <div class="source-meta-item">
+              <span class="source-meta-key">USED IN SCENE</span>
+              <span class="source-meta-val">S04 · S07 · S11</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── CORROBORATING SOURCES STRIP ── -->
+        <div class="source-corroboration-strip">
+          <span class="source-corr-label text-muted">CORROBORATING:</span>
+          <div class="source-corr-items">
+            <div class="source-corr-item">
+              <span class="source-corr-badge text-cyan">IC INSIGHTS</span>
+              <span class="text-muted">Advanced Node Tracker Q4 2024</span>
+            </div>
+            <div class="source-corr-divider"></div>
+            <div class="source-corr-item">
+              <span class="source-corr-badge text-cyan">TSMC AR</span>
+              <span class="text-muted">2024 Annual Report, p.42</span>
+            </div>
+            <div class="source-corr-divider"></div>
+            <div class="source-corr-item">
+              <span class="source-corr-badge text-cyan">BOSTON CONSULTING</span>
+              <span class="text-muted">Semiconductors at the Crossroads, 2025</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+    const tl = gsap.timeline({ paused: true });
+    window.__timelines["source-card"] = tl;
+  </script>
+</body>
+</html>

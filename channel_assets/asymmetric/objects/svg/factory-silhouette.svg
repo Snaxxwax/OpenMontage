@@ -1,0 +1,7 @@
+<svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Factory Silhouette -->
+  <path d="M10 110V50L40 70V50L70 70V50L100 70V30H130V110H10Z" fill="#1A1208"/>
+  <path d="M140 110V10H160V110H140Z" fill="#1A1208"/>
+  <rect x="20" y="80" width="20" height="20" fill="#1A1208"/>
+  <rect x="50" y="80" width="20" height="20" fill="#1A1208"/>
+</svg>

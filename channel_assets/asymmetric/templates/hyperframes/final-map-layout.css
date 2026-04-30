@@ -1,0 +1,35 @@
+.final-header {
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 4px solid var(--amber);
+  padding-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.final-header h1 {
+  font-size: 72px;
+  margin: 0;
+}
+
+.version {
+  font-family: var(--font-code);
+  font-size: 24px;
+}
+
+.final-map-visual {
+  flex-grow: 1;
+  background-color: var(--deep-slate);
+  border: 2px solid var(--graphite);
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+}
+
+.final-map-visual svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

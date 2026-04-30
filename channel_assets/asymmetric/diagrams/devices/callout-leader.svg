@@ -1,0 +1,5 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Callout Leader -->
+  <path d="M0 100L60 40H100" stroke="#1A1208" stroke-width="2"/>
+  <circle cx="2" cy="98" r="4" fill="#1A1208"/>
+</svg>

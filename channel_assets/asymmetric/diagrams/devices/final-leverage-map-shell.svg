@@ -1,0 +1,6 @@
+<svg width="1000" height="600" viewBox="0 0 1000 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Final Leverage Map Shell -->
+  <rect width="1000" height="600" fill="#FFF8F0"/>
+  <path d="M50 50H950V550H50V50Z" stroke="#D4CBBA" stroke-width="2" stroke-dasharray="10 10"/>
+  <circle cx="500" cy="300" r="250" stroke="#C94B00" stroke-width="1" stroke-opacity="0.3"/>
+</svg>

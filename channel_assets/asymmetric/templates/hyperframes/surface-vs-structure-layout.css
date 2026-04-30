@@ -1,0 +1,105 @@
+.foreground-content {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  gap: 0;
+}
+
+/* ── PANELS ── */
+.panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 44px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.surface-panel {
+  background-color: var(--deep-slate);
+  border: 2px solid var(--graphite);
+  border-radius: 6px 0 0 6px;
+}
+
+.structure-panel {
+  background-color: var(--bone);
+  border: 3px solid var(--cyan);
+  border-radius: 0 6px 6px 0;
+}
+
+/* ── PANEL TAGS ── */
+.panel-tag {
+  font-family: var(--font-code);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 16px;
+  align-self: flex-start;
+}
+
+.surface-tag {
+  background-color: var(--graphite);
+  color: var(--muted);
+}
+
+.structure-tag {
+  background-color: rgba(29, 106, 140, 0.12);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+}
+
+/* ── PANEL TITLE ── */
+.panel-title {
+  font-size: 40px;
+  letter-spacing: 0.06em;
+  margin: 0 0 24px 0;
+  flex-shrink: 0;
+}
+
+/* ── PANEL CONTENT (SVG area) ── */
+.panel-content {
+  flex-grow: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+}
+
+.panel-content svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ── CENTER DIVIDER ── */
+.panel-divider {
+  width: 60px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  z-index: 10;
+}
+
+.divider-line {
+  flex: 1;
+  width: 2px;
+  background-color: var(--graphite);
+}
+
+.divider-label {
+  font-family: var(--font-headings);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 16px 0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.2em;
+}

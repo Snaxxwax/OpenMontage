@@ -1,0 +1,53 @@
+{
+  "device_id": "source-card-reveal",
+  "version": "1.0",
+  "semantic_meaning": "Displays an evidence/source card tied to a non-obvious claim (source_map-backed).",
+  "when_to_use": [
+    "For major non-obvious claims",
+    "When introducing a hard stat card or estimate qualifier",
+    "When transitioning from claim to evidence moment"
+  ],
+  "when_not_to_use": [
+    "For obvious/common-knowledge claims",
+    "As a decorative UI element",
+    "If you cannot provide at least a source_map reference ID"
+  ],
+  "color_rules": {
+    "required": {
+      "cyan": { "hex": "#1D6A8C", "meaning": "structure/flow/system map only", "not_decorative": true },
+      "amber": { "hex": "#C94B00", "meaning": "leverage/chokepoint/control point only", "not_decorative": true }
+    },
+    "forbidden": {
+      "red": "Red only for consequence/failure/exposure."
+    }
+  },
+  "animation_behavior": {
+    "description": "Card slides in, locks, highlights the exact cited fragment, then collapses into a small pinned source tag.",
+    "cadence_seconds": [2.0, 4.0],
+    "supports_looping": false
+  },
+  "input_parameters": [
+    { "name": "claim_id", "type": "string", "required": true, "description": "Stable ID for the claim being supported." },
+    { "name": "source_map_ref", "type": "string", "required": true, "description": "Reference key into the episode source_map." },
+    { "name": "title", "type": "string", "required": false, "description": "Short source title." },
+    { "name": "qualifier", "type": "string", "required": false, "description": "On-screen qualifier for analyst/media/estimate claims." }
+  ],
+  "state_beats": [
+    { "label": "card_in", "max_hold_seconds": 4.0, "meaningful_change": "Evidence card slides in." },
+    { "label": "cite_highlight", "max_hold_seconds": 4.0, "meaningful_change": "Highlight cited fragment/line." },
+    { "label": "lock", "max_hold_seconds": 4.0, "meaningful_change": "Card locks; claim-to-source link is clear." },
+    { "label": "pin", "max_hold_seconds": 4.0, "meaningful_change": "Card collapses into pinned source tag." }
+  ],
+  "expected_outputs": ["An evidence moment that visibly ties a claim to a source_map reference"],
+  "suitable_scene_types": ["evidence_moment", "stat_card_support", "claim_hardening"],
+  "validation_notes": [
+    "If used, must include a `source_map_ref`.",
+    "If claim is an estimate, must include an on-screen qualifier."
+  ],
+  "example_usage": {
+    "hyperframes": {
+      "parameters": { "claim_id": "c-claim-07", "source_map_ref": "src:tsmc:2024:annual-report", "title": "TSMC Annual Report", "qualifier": "Analyst estimate" }
+    }
+  }
+}
+

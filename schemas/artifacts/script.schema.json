@@ -20,6 +20,35 @@
           "text": { "type": "string" },
           "start_seconds": { "type": "number", "minimum": 0 },
           "end_seconds": { "type": "number", "minimum": 0 },
+          "viewer_question": { "type": "string", "description": "Asymmetric Retention: The specific question this section answers for the viewer." },
+          "tension_type": { 
+            "type": "string", 
+            "enum": ["mystery", "contradiction", "escalation", "constraint", "substitution_failure", "consequence", "reversal", "hidden_actor", "bottleneck", "proof", "synthesis", "payoff"],
+            "description": "Asymmetric Retention: Narrative tension category."
+          },
+          "open_loop": { "type": "string", "description": "Asymmetric Retention: The narrative loop opened at the start of the section." },
+          "proof_moment": { "type": "string", "description": "Asymmetric Retention: The specific fact, stat, or evidence that proves the section's claim." },
+          "consequence": { "type": "string", "description": "Asymmetric Retention: The stakes or impact of the mechanism described." },
+          "payoff": { "type": "string", "description": "Asymmetric Retention: The resolution of the viewer_question." },
+          "next_open_loop": { "type": "string", "description": "Asymmetric Retention: The hook or loop that leads into the next section. Must be empty for final section only." },
+          "visual_event_plan": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "t": { "type": "number", "description": "Timestamp relative to section start" },
+                "event": { "type": "string", "enum": ["reveal", "collapse", "route_trace", "node_lock", "comparison_slam", "source_proof", "red_consequence_hit", "map_zoom", "dependency_tree_stop_point", "final_synthesis"] },
+                "description": { "type": "string" }
+              },
+              "required": ["t", "event", "description"]
+            },
+            "description": "Asymmetric Retention: Timestamped visual beats every 5-8 seconds."
+          },
+          "source_claim_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Asymmetric Retention: IDs of claims from a source_map artifact that the section relies on (proof grounding)."
+          },
           "speaker_directions": { "type": "string" },
           "enhancement_cues": {
             "type": "array",

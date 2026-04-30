@@ -1,0 +1,5 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Red Consequence Frame -->
+  <rect x="10" y="10" width="380" height="280" stroke="#B8291A" stroke-width="6"/>
+  <path d="M0 0L40 40M400 0L360 40M0 300L40 260M400 300L360 260" stroke="#B8291A" stroke-width="2"/>
+</svg>

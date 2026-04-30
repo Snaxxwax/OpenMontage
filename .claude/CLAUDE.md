@@ -310,30 +310,31 @@ This is:
 
 ### Color system
 
-Base:
-- Near Black `#050608`
-- Deep Slate `#11151C`
-- Graphite `#2A3142`
-- Bone `#F3F5F7`
-- Muted Steel `#8A95A6`
+Base (Print Intelligence — paper field identity):
+- Paper Field `#FFF8F0` — the ground
+- Raised Surface `#F5EDE0` — cards, elevated panels
+- Mid-Cream `#D4CBBA` — borders, separators, column rules
+- Warm Ink `#1A1208` — primary text and strokes
+- Warm Muted `#8C7A68` — secondary labels
 
 Signal:
-- Institutional Amber `#F5A400` = control, leverage, chokepoint, approval surface
-- Muted Steel Cyan `#3F8FA3` = structure, flow, map logic
-- Deep System Red `#D64545` = pressure, extraction, failure, visible cost
+- Burnt Orange `#C94B00` = control, leverage, chokepoint, approval surface
+- Ink Blue `#1D6A8C` = structure, flow, map logic
+- Deep Crimson `#B8291A` = pressure, extraction, failure, visible cost
 
 Color rules:
 - one signal color per frame by default
-- amber is the main brand signal
-- cyan supports structure only
-- red appears only when cost, damage, failure, or extraction is explicit
+- burnt orange is the main brand signal
+- ink blue supports structure only
+- crimson appears only when cost, damage, failure, or extraction is explicit
 - never use signal colors as decoration
 - never use all three signal colors in one frame
 
 ### Typography
 
-- Primary: Inter
-- Limited display: Space Grotesk
+- Primary body: Libre Baskerville 400
+- Display/titles: Playfair Display 700
+- Stat values: IBM Plex Mono 700 at display size
 - Data layer: IBM Plex Mono
 
 Rules:
