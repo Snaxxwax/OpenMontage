@@ -1,0 +1,27 @@
+channel:
+  name: "Asymmetric"
+  tagline: "Where the leverage is."
+  platform: youtube
+  format: long-form analytical documentary
+  default_duration_seconds: 480
+  default_playbook: systemic-pulse
+  logo: /home/pop/Downloads/Asymmetriclogo.svg
+
+voice:
+  provider: elevenlabs
+  voice_id: george
+  fallback: fish_speech
+  style: "authoritative, analytical, measured — Wendover/RealLifeLore register"
+
+brand:
+  background: "#030202"
+  gold: "#F0B429"
+  blue: "#3E9BFF"
+  white: "#F0EDE6"
+  font: "Space Grotesk"
+
+production_defaults:
+  render_runtime: remotion
+  fps: 30
+  resolution: "1920x1080"
+  render_quality: 720p_draft_then_1080p_final
