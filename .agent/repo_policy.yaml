@@ -1,0 +1,19 @@
+repo_name: openmontage-asymmetric
+repo_role: target_repo
+
+rules:
+  - Use AGENT_HOME for orchestration state.
+  - Use TARGET_REPO for product code changes only.
+  - Do not store scratch prompts, run logs, temporary receipts, downloaded references, or extracted media in this repo.
+  - Every repo patch must record files changed, commands run and test results under AGENT_HOME.
+  - Do not modify .git, .env, secrets, node_modules, or generated cache folders.
+  - Do not modify OpenMontage internals unless the task spec explicitly allows it.
+
+runtime_artifacts:
+  allowed_uncommitted:
+    - shared_studio/
+    - remotion-composer/public/source-commentary/
+    - remotion-composer/public/asymmetric/
+    - tmp/
+    - .pytest_cache/
+    - __pycache__/

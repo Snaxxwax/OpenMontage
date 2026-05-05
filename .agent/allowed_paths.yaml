@@ -1,0 +1,21 @@
+allowed_write_paths:
+  - AGENTS.md
+  - GEMINI.md
+  - CLAUDE.md
+  - CODEX.md
+  - .agent/
+  - pipeline_defs/
+  - skills/
+  - schemas/
+  - tools/
+  - tests/
+  - docs/
+  - remotion-composer/src/
+
+forbidden_write_paths:
+  - .git/
+  - .env
+  - node_modules/
+  - __pycache__/
+  - shared_studio/
+  - remotion-composer/public/

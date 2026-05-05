@@ -22,14 +22,15 @@ pipeline/
 tests/qa/output/
 
 # Project workspaces (generated assets, renders — all regenerable)
-projects/
+shared_studio/projects/
 
 # Corpus directories (downloaded stock clips, thumbnails, embeddings —
 # regenerable from source APIs via corpus_builder). Explicit rule even
-# though most corpora live under projects/ since agents sometimes
+# though most corpora live under shared_studio/projects/ since agents sometimes
 # build scratch corpora at the repo root.
 corpus/
 **/corpus/
+shared_studio/corpus/
 
 # User music library (personal royalty-free tracks — not part of repo)
 music_library/
@@ -79,3 +80,19 @@ remotion-composer/public/*
 remotion-composer/public/demo-props/test-*
 remotion-composer/public/demo-props/talking-head-*
 remotion-composer/public/demo-props/caption-burn-*
+
+# Agent/runtime artifacts — external control plane owns these
+receipts/
+runs/
+tmp/
+.gemini/
+.playwright-mcp/
+
+# Repo-local agent scratch only
+.agent/tmp/
+.agent/runs/
+.agent/receipts/
+.agent/cache/
+
+# Root-level generated project workspaces
+projects/
