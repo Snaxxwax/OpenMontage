@@ -259,6 +259,30 @@ def test_runtime_check_succeeds_when_npm_resolves(monkeypatch):
     assert rc["reasons"] == []
 
 
+def test_npm_resolve_uses_cached_npx_package_when_offline(monkeypatch, tmp_path):
+    """A warmed npx cache should satisfy offline/sandboxed runtime checks."""
+    package_dir = tmp_path / "_npx" / "abc123" / "node_modules" / "hyperframes"
+    package_dir.mkdir(parents=True)
+    (package_dir / "package.json").write_text(
+        '{"name":"hyperframes","version":"0.4.39"}',
+        encoding="utf-8",
+    )
+    bin_dir = package_dir.parent / ".bin"
+    bin_dir.mkdir()
+    cached_bin = bin_dir / "hyperframes"
+    cached_bin.write_text("#!/usr/bin/env node\n", encoding="utf-8")
+
+    monkeypatch.setenv("npm_config_cache", str(tmp_path))
+    monkeypatch.setattr(HyperFramesCompose, "_npm_resolve_cache", None, raising=False)
+    monkeypatch.setattr("tools.video.hyperframes_compose.shutil.which", lambda cmd: None if cmd == "npm" else f"/usr/bin/{cmd}")
+
+    assert HyperFramesCompose._resolve_npm_package() == {
+        "version": "0.4.39",
+        "source": "npx-cache",
+    }
+    assert HyperFramesCompose._resolve_cached_npx_binary() == str(cached_bin)
+
+
 def test_video_compose_render_engines_follow_hyperframes_runtime_check(monkeypatch):
     """Regression: `video_compose.get_info()['render_engines']['hyperframes']`
     must track the true availability, not just the local-binary floor.

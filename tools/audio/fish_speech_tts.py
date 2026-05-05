@@ -8,6 +8,7 @@ Python 3.10 runtime.
 from __future__ import annotations
 
 import os
+import re
 import time
 from pathlib import Path
 from typing import Any
@@ -118,6 +119,18 @@ class FishSpeechTTS(BaseTool):
                 "default": 1024,
                 "minimum": 0,
             },
+            "chunking_enabled": {
+                "type": "boolean",
+                "description": "Set true when calling Fish Speech as part of a safe chunked flow.",
+            },
+            "allow_long_single_request": {
+                "type": "boolean",
+                "description": "Explicit escape hatch to allow >40s narration in one request.",
+            },
+            "allow_truncation": {
+                "type": "boolean",
+                "description": "Allow suspected truncation. Use only for debugging.",
+            },
             "top_p": {
                 "type": "number",
                 "default": 0.8,
@@ -174,6 +187,14 @@ class FishSpeechTTS(BaseTool):
         "opus": "opus",
         "pcm": "pcm",
     }
+    _WORD_RE = re.compile(r"\S+")
+
+    @classmethod
+    def _estimate_speech_seconds(cls, text: str, *, words_per_second: float = 2.8) -> float:
+        word_count = len(cls._WORD_RE.findall(text or ""))
+        if words_per_second <= 0:
+            return 0.0
+        return word_count / words_per_second
 
     def _base_url(self, inputs: dict[str, Any] | None = None) -> str:
         if inputs and inputs.get("server_url"):
@@ -181,9 +202,7 @@ class FishSpeechTTS(BaseTool):
         return os.environ.get("FISH_SPEECH_BASE_URL", "http://127.0.0.1:8080").rstrip("/")
 
     def _headers(self, inputs: dict[str, Any] | None = None) -> dict[str, str]:
-        headers = {
-            "content-type": "application/msgpack",
-        }
+        headers = {"content-type": "application/msgpack"}
         api_key = (inputs or {}).get("api_key") or os.environ.get("FISH_SPEECH_API_KEY")
         if api_key:
             headers["authorization"] = f"Bearer {api_key}"
@@ -193,11 +212,7 @@ class FishSpeechTTS(BaseTool):
         try:
             import requests
 
-            response = requests.get(
-                f"{base_url}/v1/health",
-                headers=headers,
-                timeout=3,
-            )
+            response = requests.get(f"{base_url}/v1/health", headers=headers, timeout=3)
             if response.ok:
                 return ToolStatus.AVAILABLE
             return ToolStatus.DEGRADED
@@ -225,6 +240,23 @@ class FishSpeechTTS(BaseTool):
         if self._server_status(base_url=base_url, headers=headers) != ToolStatus.AVAILABLE:
             return ToolResult(success=False, error="Fish Speech server unavailable. " + self.install_instructions)
 
+        text = str(inputs.get("text") or "")
+        estimated_seconds = self._estimate_speech_seconds(text, words_per_second=2.8)
+        if estimated_seconds > 40.0 and not inputs.get("chunking_enabled") and not inputs.get("allow_long_single_request"):
+            return ToolResult(
+                success=False,
+                error=(
+                    "Refusing unsafe long Fish Speech request (>40s estimated). "
+                    "Use tts_selector chunking or pass allow_long_single_request=true."
+                ),
+                data={
+                    "estimated_seconds": round(estimated_seconds, 2),
+                    "threshold_seconds": 40.0,
+                    "word_count": len(self._WORD_RE.findall(text)),
+                    "text_length": len(text),
+                },
+            )
+
         start = time.time()
         try:
             result = self._generate(inputs, base_url=base_url, headers=headers)
@@ -247,10 +279,7 @@ class FishSpeechTTS(BaseTool):
             path = Path(audio_path)
             if not path.is_file():
                 raise FileNotFoundError(f"Reference audio not found: {path}")
-            references.append({
-                "audio": path.read_bytes(),
-                "text": ref_text,
-            })
+            references.append({"audio": path.read_bytes(), "text": ref_text})
         return references
 
     def _generate(self, inputs: dict[str, Any], *, base_url: str, headers: dict[str, str]) -> ToolResult:
@@ -259,12 +288,9 @@ class FishSpeechTTS(BaseTool):
 
         from tools.analysis.audio_probe import probe_duration
 
-        text = inputs["text"]
-        reference_id = (
-            inputs.get("reference_id")
-            or inputs.get("voice_id")
-            or os.environ.get("FISH_SPEECH_DEFAULT_REFERENCE_ID")
-        )
+        text = str(inputs["text"])
+        word_count = len(self._WORD_RE.findall(text))
+        reference_id = inputs.get("reference_id") or inputs.get("voice_id") or os.environ.get("FISH_SPEECH_DEFAULT_REFERENCE_ID")
         fmt = inputs.get("format", "wav")
         ext = self._EXT_MAP.get(fmt, fmt)
         output_path = Path(inputs.get("output_path", f"tts_output.{ext}"))
@@ -305,6 +331,44 @@ class FishSpeechTTS(BaseTool):
         output_path.write_bytes(response.content)
         audio_duration = probe_duration(output_path) if fmt != "pcm" else None
 
+        duration_s = round(audio_duration, 2) if audio_duration else None
+        warnings: list[str] = []
+        expected_s = self._estimate_speech_seconds(text, words_per_second=2.8)
+        suspected_truncation = False
+        if duration_s is None:
+            suspected_truncation = True
+            warnings.append("missing_audio_duration")
+        else:
+            if 47.0 <= duration_s <= 49.5 and expected_s > duration_s * 1.3:
+                suspected_truncation = True
+                warnings.append("duration_cluster_48s")
+            if word_count > 0 and duration_s < (word_count / 5.0):
+                suspected_truncation = True
+                warnings.append("implausibly_short")
+
+        if suspected_truncation and not inputs.get("allow_truncation", False):
+            return ToolResult(
+                success=False,
+                error="Suspected Fish Speech truncation; refusing to return potentially incomplete audio.",
+                data={
+                    "provider": self.provider,
+                    "model": "fish-speech-server",
+                    "reference_id": reference_id,
+                    "format": fmt,
+                    "fish_speech_server_url": base_url,
+                    "requested_max_new_tokens": inputs.get("max_new_tokens", 1024),
+                    "text_length": len(text),
+                    "word_count": word_count,
+                    "estimated_seconds": round(expected_s, 2),
+                    "audio_duration_seconds": duration_s,
+                    "suspected_truncation": True,
+                    "warnings": warnings,
+                    "output": str(output_path),
+                },
+                artifacts=[str(output_path)],
+                model="fish-speech-server",
+            )
+
         return ToolResult(
             success=True,
             data={
@@ -313,8 +377,13 @@ class FishSpeechTTS(BaseTool):
                 "reference_id": reference_id,
                 "format": fmt,
                 "fish_speech_server_url": base_url,
+                "requested_max_new_tokens": inputs.get("max_new_tokens", 1024),
                 "text_length": len(text),
-                "audio_duration_seconds": round(audio_duration, 2) if audio_duration else None,
+                "word_count": word_count,
+                "estimated_seconds": round(expected_s, 2),
+                "audio_duration_seconds": duration_s,
+                "suspected_truncation": suspected_truncation,
+                "warnings": warnings,
                 "output": str(output_path),
             },
             artifacts=[str(output_path)],

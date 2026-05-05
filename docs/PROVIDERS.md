@@ -13,7 +13,7 @@ Everything you need to know about every provider in OpenMontage — setup instru
 | 1 | **$0** | Pexels + Pixabay | Stock photos and videos — enough to produce basic videos |
 | 2 | **$0** | Google API key | TTS with 700+ voices (1M chars/month free) + $300 new account credit |
 | 3 | **$0** | ElevenLabs | Premium TTS + music + SFX (10K chars/month free) |
-| 4 | **$0** | Piper (local install) | Fully offline TTS — no API key, no cost, no network |
+| 4 | **$0 + GPU** | Fish Speech S2 Pro (local install) | Best local expressive TTS with inline tags and reference-style control |
 | 5 | **~$0.03/image** | fal.ai | FLUX images + Kling/Veo/MiniMax video + Recraft — broad single-key image + video coverage |
 | 6 | **~$0.04/image** | OpenAI | DALL-E 3 images + OpenAI TTS |
 | 7 | **~$0.04/image** | Google Imagen | Imagen 4 images (shares the Google API key) |
@@ -49,6 +49,8 @@ RUNWAY_API_KEY=              # Runway Gen-4 video (direct)
 SUNO_API_KEY=                # Suno music generation
 
 # LOCAL (no keys needed — just GPU + install)
+FISH_SPEECH_BASE_URL=        # Local Fish Speech server URL, usually http://127.0.0.1:8080
+FISH_SPEECH_API_KEY=         # Optional bearer token if your local Fish server is protected
 VIDEO_GEN_LOCAL_ENABLED=     # Set to "true" for local video gen
 VIDEO_GEN_LOCAL_MODEL=       # wan2.1-1.3b, wan2.1-14b, hunyuan-1.5, ltx2-local, cogvideo-5b
 ```
@@ -563,24 +565,81 @@ piper --download-dir ~/.piper/models --model en_US-lessac-medium
 
 ---
 
-### Fish Speech — Local GPU TTS Server
+### Fish Speech S2 Pro — Local Expressive TTS
 
-> **High-quality local TTS via a separate Fish Speech server.** Best when you already run Fish Speech on your workstation.
+> **Best local narration quality when the script needs performance.** Fish Speech S2 Pro is the OpenMontage path for inline emotional formatting, pause control, and phrase-level delivery shaping on a local GPU.
 
-**Tool:** `fish_speech_tts`
-**Runtime:** Local GPU server
-**Env vars:** `FISH_SPEECH_BASE_URL` (optional, defaults to `http://127.0.0.1:8080`), `FISH_SPEECH_API_KEY` (optional)
+**Tools unlocked:** `fish_speech_tts`, `tts_selector`
+**Env vars:** `FISH_SPEECH_BASE_URL` (optional, defaults to `http://127.0.0.1:8080`) and optional `FISH_SPEECH_API_KEY`
 
 #### Setup
 
+Run Fish as a separate local server and point OpenMontage at it:
+
 ```bash
-# Run Fish Speech server separately (see official docs)
+# Example local server startup (S2 Pro)
+cd /home/pop/local-ai/fish-speech
+FISH_SKIP_WARMUP=1 python tools/api_server.py \
+  --llama-checkpoint-path checkpoints/s2-pro \
+  --decoder-checkpoint-path checkpoints/s2-pro/codec.pth \
+  --decoder-config-name modded_dac_vq \
+  --listen 127.0.0.1:8080 \
+  --device cuda \
+  --half
+
+# OpenMontage env
 export FISH_SPEECH_BASE_URL=http://127.0.0.1:8080
-# Optional:
-# export FISH_SPEECH_API_KEY=your_key
 ```
 
-Supports `voice_id`/`reference_id` plus reference-audio prompting (`reference_audio_paths` + `reference_texts`) through the `tts_selector` path.
+If your server is bearer-protected:
+
+```bash
+export FISH_SPEECH_API_KEY=your-token
+```
+
+#### What Fish is best for
+
+- **High-quality documentary narration** with deliberate pauses and emphasis
+- **Expressive reads** controlled with inline `[tag]` formatting
+- **Local high-quality TTS** when you want to avoid cloud APIs
+- **Reference-voice prompting** when a local Fish workflow already exists
+
+#### Why Fish needs different prompting
+
+Fish is designed to respond to **inline performance instructions** embedded in the text itself.
+
+Examples:
+
+```text
+[low voice] The route looks simple. [short pause] [emphasis] That is the trap.
+[whisper] It feels like convenience.
+[professional broadcast tone] The platform owns the route to users.
+```
+
+Fish S2 Pro supports both short predefined tags and free-form bracketed descriptions like:
+
+- `[whisper]`
+- `[short pause]`
+- `[emphasis]`
+- `[excited]`
+- `[angry]`
+- `[professional broadcast tone]`
+- `[whisper in small voice]`
+- `[pitch up]`
+
+For OpenMontage, convert `speaker_directions` into sparse inline tags before generation. Do not rely on plain prose alone when the beat depends on delivery.
+
+Detailed usage guidance lives in [FISH_SPEECH.md](/home/pop/repos/openmontage-asymmetric/docs/FISH_SPEECH.md).
+
+#### Requirements and tradeoffs
+
+- Requires a local NVIDIA GPU with substantial VRAM (S2-Pro prefers 24 GB for optimal performance).
+- Best results come from generating a section sample first, then batching after tag tuning.
+- Long narration should go through `tts_selector`, which handles chunking and reference consistency.
+
+#### Cost
+
+Free after install. No API billing. GPU server required.
 
 ---
 
@@ -738,7 +797,7 @@ How many providers cover each capability:
 |-----------|----------------|-----------------|--------------|
 | **Image Generation** | FLUX, Grok, Google Imagen, DALL-E 3, Recraft | Local Diffusion | Pexels, Pixabay (stock) |
 | **Video Generation** | Grok, Kling, Runway, Veo, Higgsfield, MiniMax, HeyGen | WAN, Hunyuan, CogVideo, LTX | Pexels, Pixabay (stock) |
-| **Text-to-Speech** | ElevenLabs, Google TTS, OpenAI | Piper | Piper, Google free tier, ElevenLabs free tier |
+| **Text-to-Speech** | ElevenLabs, Google TTS, OpenAI | Piper, Fish Speech | Piper, Fish Speech, Google free tier, ElevenLabs free tier |
 | **Music Generation** | ElevenLabs, Suno | — | ElevenLabs free tier |
 | **Post-Production** | — | FFmpeg (compose, stitch, trim, mix, enhance, grade) | All free |
 | **Analysis** | — | WhisperX, Scene Detect, Frame Sampler, CLIP/BLIP-2 | All free |
@@ -762,7 +821,7 @@ A: fal.ai (`FAL_KEY`) is one pay-as-you-go option with broad single-key coverage
 A: Set `VIDEO_GEN_LOCAL_ENABLED=true` and install `diffusers`. You get WAN 2.1, Hunyuan, CogVideo, and LTX video generation plus Stable Diffusion image generation — all free, all offline.
 
 **Q: Which TTS provider should I use?**
-A: For quality → ElevenLabs. For localization (50+ languages) → Google TTS. For budget → Google free tier (1M chars/month). For offline → Piper.
+A: For quality with cloud API → ElevenLabs. For localization (50+ languages) → Google TTS. For budget → Google free tier (1M chars/month). For fully offline CPU drafts → Piper. For local expressive narration with inline tags and a strong GPU → Fish Speech.
 
 **Q: Do I need all these providers?**
 A: No. Start with what you have. The selector pattern auto-routes to whatever's available. Missing a provider? The system falls through to the next one automatically.

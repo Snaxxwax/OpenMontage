@@ -299,6 +299,88 @@ class HyperFramesCompose(BaseTool):
         return cls._nvenc_available()
 
     @classmethod
+    def _resolve_cached_npx_package(cls) -> dict[str, str]:
+        """Find a cached npx install of the HyperFrames package.
+
+        `npx --yes hyperframes` stores fetched packages under npm's `_npx`
+        cache. In sandboxed/offline runs, `npm view hyperframes version` may
+        fail even though the CLI is already cached and runnable. Treat a cached
+        package.json as a valid local runtime signal.
+        """
+        npm_cache = os.environ.get("npm_config_cache")
+        if not npm_cache:
+            try:
+                proc = subprocess.run(
+                    ["npm", "config", "get", "cache"],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                )
+                if proc.returncode == 0:
+                    npm_cache = (proc.stdout or "").strip()
+            except (OSError, subprocess.SubprocessError, subprocess.TimeoutExpired):
+                npm_cache = None
+
+        if not npm_cache:
+            npm_cache = str(Path.home() / ".npm")
+
+        npx_cache = Path(npm_cache) / "_npx"
+        if not npx_cache.exists():
+            return {"error": "npx cache not found"}
+
+        candidates = sorted(
+            npx_cache.glob(f"*/node_modules/{cls._NPM_PACKAGE}/package.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        for package_json in candidates:
+            try:
+                data = json.loads(package_json.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            version = str(data.get("version") or "").strip()
+            if version:
+                return {"version": version, "source": "npx-cache"}
+
+        return {"error": "cached package.json not found"}
+
+    @classmethod
+    def _resolve_cached_npx_binary(cls) -> Optional[str]:
+        """Return the cached HyperFrames CLI binary path, if npx installed it."""
+        package = cls._resolve_cached_npx_package()
+        if "version" not in package:
+            return None
+
+        npm_cache = os.environ.get("npm_config_cache")
+        if not npm_cache:
+            try:
+                proc = subprocess.run(
+                    ["npm", "config", "get", "cache"],
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                )
+                if proc.returncode == 0:
+                    npm_cache = (proc.stdout or "").strip()
+            except (OSError, subprocess.SubprocessError, subprocess.TimeoutExpired):
+                npm_cache = None
+
+        if not npm_cache:
+            npm_cache = str(Path.home() / ".npm")
+
+        npx_cache = Path(npm_cache) / "_npx"
+        candidates = sorted(
+            npx_cache.glob(f"*/node_modules/{cls._NPM_PACKAGE}/package.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        for package_json in candidates:
+            bin_path = package_json.parent.parent / ".bin" / cls._NPM_PACKAGE
+            if bin_path.exists():
+                return str(bin_path)
+        return None
+
+    @classmethod
     def _resolve_npm_package(cls) -> dict[str, str]:
         """Verify the `hyperframes` npm package actually resolves.
 
@@ -312,6 +394,8 @@ class HyperFramesCompose(BaseTool):
 
         Returns {"version": "X.Y.Z"} on success, {"error": "<short>"} on any
         failure (404, timeout, network error, npm missing). Never raises.
+        If npm is offline but npx has already cached the package, the cached
+        package version is accepted as an offline runtime signal.
         """
         if cls._npm_resolve_cache is not None:
             return cls._npm_resolve_cache
@@ -339,7 +423,8 @@ class HyperFramesCompose(BaseTool):
 
         npm = shutil.which("npm")
         if not npm:
-            cls._npm_resolve_cache = {"error": "npm not on PATH"}
+            cached = cls._resolve_cached_npx_package()
+            cls._npm_resolve_cache = cached if "version" in cached else {"error": "npm not on PATH"}
             return cls._npm_resolve_cache
 
         try:
@@ -350,13 +435,25 @@ class HyperFramesCompose(BaseTool):
                 timeout=5,
             )
         except subprocess.TimeoutExpired:
-            cls._npm_resolve_cache = {"error": "timeout (5s) — offline or slow registry"}
+            cached = cls._resolve_cached_npx_package()
+            if "version" in cached:
+                cls._npm_resolve_cache = cached
+            else:
+                cls._npm_resolve_cache = {"error": "timeout (5s) — offline or slow registry"}
             return cls._npm_resolve_cache
         except (OSError, subprocess.SubprocessError) as e:
-            cls._npm_resolve_cache = {"error": f"npm view failed: {type(e).__name__}"}
+            cached = cls._resolve_cached_npx_package()
+            if "version" in cached:
+                cls._npm_resolve_cache = cached
+            else:
+                cls._npm_resolve_cache = {"error": f"npm view failed: {type(e).__name__}"}
             return cls._npm_resolve_cache
 
         if proc.returncode != 0:
+            cached = cls._resolve_cached_npx_package()
+            if "version" in cached:
+                cls._npm_resolve_cache = cached
+                return cls._npm_resolve_cache
             stderr = (proc.stderr or "").strip()
             # Most common failure is 404 (package unpublished or name wrong).
             if "404" in stderr or "E404" in stderr:
@@ -1111,21 +1208,20 @@ class HyperFramesCompose(BaseTool):
         scene: dict[str, Any],
         css_vars: dict[str, str],
     ) -> str:
-        """Generate a HyperFrames sub-composition (template-wrapped)."""
+        """Generate a HyperFrames sub-composition (template-wrapped).
+
+        TODO: Production-specific templates (like 'Chip Factory') should be moved
+        to a project-level asset or handled via a registry-block extension.
+        Do not hardcode per-scene HTML/CSS here.
+        """
         bg = css_vars.get("--color-bg", "#050608")
         fg = css_vars.get("--color-fg", "#F3F5F7")
-        accent = css_vars.get("--color-accent", "#F5A400")  # amber
-        primary = css_vars.get("--color-primary", "#3F8FA3")  # cyan
-
-        # House palette used throughout this episode.
-        slate = "#11151C"
+        accent = css_vars.get("--color-accent", "#F5A400")
+        primary = css_vars.get("--color-primary", "#3F8FA3")
         steel = "#8A95A6"
-        graphite = "#2A3142"
-        red = "#F04A3A"
 
-        stype = (scene.get("type") or "").strip().lower()
-        desc = (scene.get("description") or "").strip()
-        text = (cut.get("reason") or "").strip()
+        text = cut.get("text") or cut.get("title") or cut.get("reason") or ""
+        text = text.strip()
 
         def _wrap(inner: str, css: str, js: str) -> str:
             return f"""<template id="{scene_id}-template">
@@ -1153,1171 +1249,6 @@ class HyperFramesCompose(BaseTool):
   </div>
 </template>
 """
-
-        # ------------------------------------------------------------------
-        # Per-scene templates (episode-specific)
-        # ------------------------------------------------------------------
-        if scene_id in {"sc03", "sc07", "sc10", "sc15", "sc19", "sc24"}:
-            title = desc.split("—", 1)[0].strip() if desc else scene_id.upper()
-            # Prefer quoted title for chapter cards.
-            if ":" in desc:
-                # e.g. Chapter card: 'THE SURFACE STORY'
-                import re
-                m = re.search(r"'([^']+)'", desc)
-                if m:
-                    title = m.group(1)
-            inner = f'<div class="chapter"><div class="label">{self._escape_text(title)}</div></div>'
-            css = f"""
-      .chapter {{
-        position: absolute; inset: 0;
-        background: {slate};
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }}
-      .label {{
-        color: {accent};
-        font-family: \"Space Grotesk\", Inter, Arial, sans-serif;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        font-size: 96px;
-      }}
-      .label::after {{
-        content: \"\";
-        display: block;
-        width: 240px;
-        height: 3px;
-        background: {accent};
-        margin: 28px auto 0;
-        opacity: 0.8;
-      }}
-"""
-            js = "tl.from('.label', { y: 18, opacity: 0, duration: 0.35, ease: 'power2.out' }, 0);"
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc01":
-            clauses = [
-                "The most advanced chips in the world —",
-                "all come from one company.",
-                "One factory.",
-                "One island.",
-            ]
-            inner = (
-                '<div class="coldopen">'
-                + "".join(f'<div class="clause" id="c{i}">{self._escape_text(t)}</div>' for i, t in enumerate(clauses))
-                + "</div>"
-            )
-            css = f"""
-      .coldopen {{
-        position: absolute; inset: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding: 160px 180px;
-        gap: 26px;
-      }}
-      .clause {{
-        font-size: 72px;
-        font-weight: 400;
-        letter-spacing: 0.02em;
-        opacity: 0;
-      }}
-"""
-            js_lines = []
-            t = 0.0
-            for i in range(len(clauses)):
-                js_lines.append(f"tl.to('#c{i}', {{ opacity: 1, duration: 0.25, ease: 'power1.out' }}, {t});")
-                js_lines.append(f"tl.to('#c{i}', {{ opacity: 0.45, duration: 0.25, ease: 'power1.out' }}, {t + 1.6});")
-                t += 2.0
-            js = "\n      ".join(js_lines)
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc02":
-            # Wafer hero (ported from assets/scenes/sc02-wafer-hero.html).
-            inner = """
-    <div id="scene">
-      <div id="wafer-wrap">
-        <svg viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <clipPath id="wafer-clip"><circle cx="450" cy="450" r="430"/></clipPath>
-            <radialGradient id="wafer-grad" cx="45%" cy="45%" r="55%">
-              <stop offset="0%"  stop-color="#2A3142"/>
-              <stop offset="60%" stop-color="#11151C"/>
-              <stop offset="100%" stop-color="#050608"/>
-            </radialGradient>
-          </defs>
-          <circle cx="450" cy="450" r="430" fill="url(#wafer-grad)" stroke="#2A3142" stroke-width="1.5"/>
-          <g clip-path="url(#wafer-clip)" opacity="0.18" stroke="#3F8FA3" stroke-width="0.7" fill="none">
-            <line x1="20" y1="90"  x2="880" y2="90"/><line x1="20" y1="150" x2="880" y2="150"/><line x1="20" y1="210" x2="880" y2="210"/>
-            <line x1="20" y1="270" x2="880" y2="270"/><line x1="20" y1="330" x2="880" y2="330"/><line x1="20" y1="390" x2="880" y2="390"/>
-            <line x1="20" y1="450" x2="880" y2="450"/><line x1="20" y1="510" x2="880" y2="510"/><line x1="20" y1="570" x2="880" y2="570"/>
-            <line x1="20" y1="630" x2="880" y2="630"/><line x1="20" y1="690" x2="880" y2="690"/><line x1="20" y1="750" x2="880" y2="750"/>
-            <line x1="90"  y1="20" x2="90"  y2="880"/><line x1="150" y1="20" x2="150" y2="880"/><line x1="210" y1="20" x2="210" y2="880"/>
-            <line x1="270" y1="20" x2="270" y2="880"/><line x1="330" y1="20" x2="330" y2="880"/><line x1="390" y1="20" x2="390" y2="880"/>
-            <line x1="450" y1="20" x2="450" y2="880"/><line x1="510" y1="20" x2="510" y2="880"/><line x1="570" y1="20" x2="570" y2="880"/>
-            <line x1="630" y1="20" x2="630" y2="880"/><line x1="690" y1="20" x2="690" y2="880"/><line x1="750" y1="20" x2="750" y2="880"/>
-          </g>
-        </svg>
-      </div>
-
-      <svg id="catchlight" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="amber-glow" cx="50%" cy="40%" r="50%">
-            <stop offset="0%" stop-color="#F5A400" stop-opacity="0.35"/>
-            <stop offset="100%" stop-color="#F5A400" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <ellipse id="catchlight-ellipse" cx="330" cy="280" rx="240" ry="180" fill="url(#amber-glow)"/>
-      </svg>
-
-      <div class="overlay-text" id="text-no-backup">There is no backup.</div>
-      <div class="overlay-text" id="text-supply-chain">the most critical supply chain in the global economy</div>
-    </div>
-"""
-            css = f"""
-      #scene {{ position: relative; width: 1920px; height: 1080px; }}
-      #wafer-wrap {{
-        position: absolute; left: 140px; top: 90px;
-        width: 900px; height: 900px;
-        opacity: 0;
-        transform-origin: center center;
-      }}
-      #catchlight {{
-        position: absolute; left: 140px; top: 90px;
-        width: 900px; height: 900px;
-        pointer-events: none;
-      }}
-      #catchlight-ellipse {{ opacity: 0; }}
-      .overlay-text {{
-        position: absolute;
-        right: 120px;
-        color: {fg};
-        font-size: 52px;
-        font-weight: 300;
-        letter-spacing: 0.04em;
-        line-height: 1.3;
-        max-width: 720px;
-        text-align: right;
-        opacity: 0;
-        transform: translateY(8px);
-      }}
-      #text-no-backup {{ top: 320px; }}
-      #text-supply-chain {{ top: 440px; font-size: 38px; color: {steel}; letter-spacing: 0.06em; }}
-"""
-            js = """
-      tl.to("#wafer-wrap", { opacity: 1, duration: 1.6, ease: "power2.out" }, 0)
-        .to("#wafer-wrap", { scale: 1.03, duration: 22, ease: "none", transformOrigin: "center center" }, 0)
-        .to("#catchlight-ellipse", { opacity: 1, duration: 1.0, ease: "power1.in" }, 1.0)
-        .to("#catchlight-ellipse", { attr: { cx: 560, cy: 500 }, duration: 3, ease: "sine.inOut", repeat: -1, yoyo: true }, 1.3)
-        .to("#text-no-backup", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 6.0)
-        .to("#text-no-backup", { opacity: 0.45, duration: 0.35, ease: "power1.out" }, 10.0)
-        .to("#text-supply-chain", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 14.0);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc04":
-            inner = """
-    <div class="wrap">
-      <div class="row">
-        <div class="box" id="b0">Apple</div>
-        <div class="box" id="b1">NVIDIA</div>
-        <div class="box" id="b2">AMD</div>
-        <div class="box" id="b3">Qualcomm</div>
-        <div class="box" id="b4">Broadcom</div>
-      </div>
-      <div class="label">Fabless — Design Only</div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position: absolute; inset: 0; display:flex; flex-direction:column; justify-content:center; gap: 42px; padding: 140px 160px; }}
-      .row {{ display:flex; gap: 22px; flex-wrap: wrap; }}
-      .box {{
-        width: 320px; height: 96px;
-        border: 2px solid {accent};
-        background: rgba(17, 21, 28, 0.55);
-        display:flex; align-items:center; justify-content:center;
-        font-size: 34px; letter-spacing: 0.05em;
-        opacity: 0; transform: translateY(10px);
-      }}
-      .label {{
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 20px; letter-spacing: 0.12em;
-        color: {steel};
-        text-transform: uppercase;
-        opacity: 0;
-      }}
-"""
-            js = """
-      tl.to(["#b0","#b1","#b2","#b3","#b4"], { opacity: 1, y: 0, duration: 0.35, stagger: 0.30, ease: "power2.out" }, 0)
-        .to(".label", { opacity: 1, duration: 0.45, ease: "power1.out" }, 1.9);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc05":
-            # EUV machine (ported; minimal, interface-driven).
-            # Keep it abstract; cyan beam to amber dot + stat card.
-            inner = """
-    <div id="scene">
-      <svg id="svg" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="steelGrad" x1="0" x2="1">
-            <stop offset="0" stop-color="#11151C"/>
-            <stop offset="1" stop-color="#050608"/>
-          </linearGradient>
-        </defs>
-        <rect x="0" y="0" width="1920" height="1080" fill="url(#steelGrad)"/>
-        <rect x="220" y="220" width="900" height="560" rx="14" fill="rgba(17,21,28,0.65)" stroke="#2A3142" stroke-width="2"/>
-        <rect x="280" y="280" width="360" height="200" rx="10" fill="rgba(5,6,8,0.55)" stroke="#2A3142" stroke-width="1.5"/>
-        <rect x="680" y="280" width="380" height="200" rx="10" fill="rgba(5,6,8,0.55)" stroke="#2A3142" stroke-width="1.5"/>
-        <rect x="280" y="520" width="780" height="200" rx="10" fill="rgba(5,6,8,0.55)" stroke="#2A3142" stroke-width="1.5"/>
-        <line id="beam-line" x1="260" y1="500" x2="260" y2="500" stroke="#3F8FA3" stroke-width="6" opacity="0.9"/>
-        <circle id="amber-dot" cx="1000" cy="500" r="0" fill="rgba(245,164,0,0.18)" stroke="#F5A400" stroke-width="2"/>
-        <circle id="amber-dot-inner" cx="1000" cy="500" r="0" fill="#F5A400"/>
-      </svg>
-
-      <div id="stat-card">
-        <div class="big">$20B+</div>
-        <div class="small">EUV machine price (order of magnitude)</div>
-      </div>
-      <div id="text-beat">Decades of data. Not a blueprint.</div>
-    </div>
-"""
-            css = f"""
-      #scene {{ position:absolute; inset:0; }}
-      #stat-card {{
-        position:absolute; right: 140px; top: 240px;
-        width: 520px; padding: 34px 34px 30px;
-        border: 2px solid {accent};
-        background: rgba(17, 21, 28, 0.82);
-        opacity: 0; transform: translateY(10px);
-      }}
-      #stat-card .big {{ font-size: 74px; font-weight: 700; letter-spacing: 0.02em; }}
-      #stat-card .small {{
-        margin-top: 10px;
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 16px; letter-spacing: 0.12em;
-        color: {steel};
-        text-transform: uppercase;
-      }}
-      #text-beat {{
-        position:absolute; right: 140px; top: 420px;
-        width: 560px;
-        color: {fg};
-        font-size: 42px;
-        font-weight: 300;
-        letter-spacing: 0.04em;
-        opacity: 0; transform: translateY(10px);
-      }}
-"""
-            js = """
-      tl.set("#beam-line", { attr: { x2: 260 } }, 0)
-        .to("#beam-line", { attr: { x2: 1000 }, duration: 1.4, ease: "power2.inOut" }, 8.0)
-        .to("#amber-dot", { attr: { r: 55 }, duration: 0.7, ease: "power3.out" }, 9.2)
-        .to("#amber-dot-inner", { attr: { r: 12 }, duration: 0.5, ease: "power3.out" }, 9.2)
-        .to("#amber-dot-inner", { attr: { r: 16 }, duration: 1.4, ease: "sine.inOut", repeat: 12, yoyo: true }, 10.0)
-        .to("#stat-card", { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 16.0)
-        .to("#stat-card", { opacity: 0.78, duration: 0.4, ease: "power1.out" }, 25.0)
-        .to("#text-beat", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 32.0)
-        .to("#text-beat", { opacity: 0, duration: 0.6, ease: "power1.in" }, 37.5);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc06":
-            inner = f'<div class="bridge"><div class="t">{self._escape_text("So they all go to the same place.")}</div></div>'
-            css = f"""
-      .bridge {{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding: 160px; }}
-      .t {{ font-size: 72px; font-weight: 400; letter-spacing: 0.02em; opacity: 0; }}
-      .t::after {{ content:\"\"; display:block; height:2px; width: 220px; background:{primary}; margin: 28px auto 0; opacity: 0.55; }}
-"""
-            js = "tl.to('.t', { opacity: 1, duration: 0.35, ease: 'power1.out' }, 0);"
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc08":
-            # Supply chain diagram: EDA -> Fabless -> Foundry -> OSAT -> OEM.
-            inner = """
-    <div id="diagram">
-      <svg id="arrows" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#3F8FA3"/>
-          </marker>
-        </defs>
-        <path id="a0" d="M 440 540 L 610 540" stroke="#3F8FA3" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
-        <path id="a1" d="M 740 540 L 910 540" stroke="#3F8FA3" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
-        <path id="a2" d="M 1040 540 L 1210 540" stroke="#3F8FA3" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
-        <path id="a3" d="M 1340 540 L 1510 540" stroke="#3F8FA3" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
-      </svg>
-      <div class="node" id="n0"><div class="label">EDA</div></div>
-      <div class="node" id="n1"><div class="label">Fabless</div></div>
-      <div class="node" id="n2"><div class="label">Foundry</div></div>
-      <div class="node" id="n3"><div class="label">OSAT</div></div>
-      <div class="node" id="n4"><div class="label">OEM</div></div>
-      <div id="pulse"></div>
-    </div>
-"""
-            css = f"""
-      #diagram {{ position:absolute; inset:0; }}
-      #arrows {{ position:absolute; inset:0; }}
-      .node {{
-        position:absolute;
-        top: 476px;
-        width: 220px; height: 128px;
-        border: 2px solid {primary};
-        background: rgba(17, 21, 28, 0.72);
-        display:flex; align-items:center; justify-content:center;
-        opacity: 0; transform: translateY(10px);
-      }}
-      .label {{ font-size: 30px; letter-spacing: 0.10em; font-weight: 500; }}
-      #n0 {{ left: 220px; }}
-      #n1 {{ left: 520px; }}
-      #n2 {{ left: 820px; }}
-      #n3 {{ left: 1120px; }}
-      #n4 {{ left: 1420px; }}
-      #pulse {{
-        position:absolute;
-        left: 930px;
-        top: 540px;
-        width: 18px; height: 18px;
-        border-radius: 999px;
-        border: 2px solid {accent};
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(1);
-      }}
-"""
-            js = """
-      const arrows = ["#a0","#a1","#a2","#a3"];
-      arrows.forEach((sel) => {
-        const p = document.querySelector(sel);
-        const len = p.getTotalLength();
-        p.style.strokeDasharray = len;
-        p.style.strokeDashoffset = len;
-        p.style.opacity = 0.0;
-      });
-      tl.to("#n0", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.0)
-        .to("#a0", { opacity: 0.9, duration: 0.01 }, 2.0)
-        .to("#a0", { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, 2.0)
-        .to("#n1", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 2.8)
-        .to("#a1", { opacity: 0.9, duration: 0.01 }, 5.3)
-        .to("#a1", { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, 5.3)
-        .to("#n2", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 6.1)
-        .to("#a2", { opacity: 0.9, duration: 0.01 }, 8.6)
-        .to("#a2", { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, 8.6)
-        .to("#n3", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 9.4)
-        .to("#a3", { opacity: 0.9, duration: 0.01 }, 11.9)
-        .to("#a3", { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, 11.9)
-        .to("#n4", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 12.7)
-        .to("#pulse", { opacity: 1, duration: 0.01 }, 14.4)
-        .to("#pulse", { opacity: 0, scale: 1.12, duration: 0.7, ease: "power2.out" }, 14.42);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc09":
-            # Chokepoint reveal: reuse sc08 layout but amber Foundry, dim others, pulse ring.
-            inner = """
-    <div id="diagram">
-      <div class="node dim" id="n0"><div class="label">EDA</div></div>
-      <div class="node dim" id="n1"><div class="label">Fabless</div></div>
-      <div class="node" id="n2"><div class="label">Foundry</div></div>
-      <div class="node dim" id="n3"><div class="label">OSAT</div></div>
-      <div class="node dim" id="n4"><div class="label">OEM</div></div>
-      <div id="ring"></div>
-    </div>
-"""
-            css = f"""
-      #diagram {{ position:absolute; inset:0; }}
-      .node {{
-        position:absolute;
-        top: 476px;
-        width: 220px; height: 128px;
-        border: 2px solid {primary};
-        background: rgba(17, 21, 28, 0.72);
-        display:flex; align-items:center; justify-content:center;
-        opacity: 1;
-      }}
-      .dim {{ opacity: 0.25; }}
-      .label {{ font-size: 30px; letter-spacing: 0.10em; font-weight: 500; }}
-      #n0 {{ left: 220px; }}
-      #n1 {{ left: 520px; }}
-      #n2 {{ left: 820px; border-color: {primary}; box-shadow: 0 0 0 rgba(245,164,0,0); }}
-      #n3 {{ left: 1120px; }}
-      #n4 {{ left: 1420px; }}
-      #ring {{
-        position:absolute;
-        left: 930px; top: 540px;
-        width: 28px; height: 28px;
-        border-radius: 999px;
-        border: 2px solid {accent};
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.9);
-      }}
-"""
-            js = f"""
-      tl.to("#n2", {{ borderColor: {json.dumps(accent)}, duration: 0.8, ease: "power1.out" }}, 0.2)
-        .to("#ring", {{ opacity: 1, duration: 0.01 }}, 1.2)
-        .to("#ring", {{ opacity: 0, scale: 1.55, duration: 0.9, ease: "power2.out" }}, 1.22)
-        .to("#ring", {{ opacity: 1, scale: 1.0, duration: 0.01 }}, 3.0)
-        .to("#ring", {{ opacity: 0, scale: 1.55, duration: 0.9, ease: "power2.out" }}, 3.02);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc11":
-            inner = """
-    <div class="wrap">
-      <div class="bg-node"></div>
-      <div class="title" id="t0">TSMC</div>
-      <div class="subtitle" id="t1">Taiwan Semiconductor Manufacturing Company</div>
-      <div class="facts">
-        <div class="fact" id="f0">Founded 1987 / Hsinchu, Taiwan</div>
-        <div class="fact" id="f1">~60,000 employees</div>
-        <div class="fact" id="f2">Revenue: ~$125B (2025)</div>
-      </div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; padding: 140px 160px; }}
-      .bg-node {{
-        position:absolute;
-        left: 220px; top: 340px;
-        width: 520px; height: 520px;
-        border-radius: 999px;
-        border: 2px solid {accent};
-        opacity: 0.12;
-        filter: blur(0.2px);
-      }}
-      .title {{
-        position: relative;
-        margin-top: 200px;
-        font-family: \"Space Grotesk\", Inter, Arial, sans-serif;
-        font-weight: 800;
-        font-size: 132px;
-        letter-spacing: 0.02em;
-        color: {accent};
-        opacity: 0;
-      }}
-      .subtitle {{
-        margin-top: 20px;
-        font-size: 34px;
-        font-weight: 300;
-        letter-spacing: 0.03em;
-        opacity: 0;
-      }}
-      .facts {{ margin-top: 44px; }}
-      .fact {{
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 18px;
-        letter-spacing: 0.10em;
-        text-transform: uppercase;
-        color: {steel};
-        opacity: 0;
-        margin-top: 14px;
-      }}
-"""
-            js = """
-      tl.to("#t0", { opacity: 1, duration: 0.35, ease: "power1.out" }, 0.0)
-        .to("#t1", { opacity: 1, duration: 0.35, ease: "power1.out" }, 0.35)
-        .to("#f0", { opacity: 1, duration: 0.3, ease: "power1.out" }, 0.75)
-        .to("#f1", { opacity: 1, duration: 0.3, ease: "power1.out" }, 1.15)
-        .to("#f2", { opacity: 1, duration: 0.3, ease: "power1.out" }, 1.55)
-        .to(["#t1", "#f0", "#f1", "#f2"], { opacity: 0.35, duration: 0.35, ease: "power1.out" }, 7.0);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc12":
-            inner = """
-    <div class="wrap">
-      <div class="chain">
-        <div class="node dim">EDA</div>
-        <div class="arrow"></div>
-        <div class="node dim">Fabless</div>
-        <div class="arrow"></div>
-        <div class="node amber">Foundry</div>
-        <div class="arrow"></div>
-        <div class="node dim">OSAT</div>
-        <div class="arrow"></div>
-        <div class="node dim">OEM</div>
-      </div>
-      <div class="stat" id="stat">
-        <div class="big">90%+</div>
-        <div class="small">advanced-node share <span class="qual">(analyst est.)</span></div>
-      </div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; padding: 140px 140px; }}
-      .chain {{ display:flex; align-items:center; justify-content:center; gap: 18px; margin-top: 340px; }}
-      .node {{
-        width: 200px; height: 120px;
-        border: 2px solid {primary};
-        background: rgba(17, 21, 28, 0.72);
-        display:flex; align-items:center; justify-content:center;
-        font-size: 26px; letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }}
-      .dim {{ opacity: 0.25; }}
-      .amber {{ border-color: {accent}; box-shadow: 0 0 0 1px rgba(245,164,0,0.15) inset; }}
-      .arrow {{ width: 54px; height: 2px; background: {primary}; opacity: 0.65; }}
-      .stat {{
-        position:absolute; right: 140px; top: 180px;
-        width: 520px; padding: 32px 32px 28px;
-        border: 2px solid {accent};
-        background: rgba(17, 21, 28, 0.84);
-        opacity: 0; transform: translateY(10px);
-      }}
-      .big {{ font-size: 86px; font-weight: 800; letter-spacing: 0.02em; }}
-      .small {{
-        margin-top: 10px;
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 16px; letter-spacing: 0.12em;
-        color: {steel};
-        text-transform: uppercase;
-      }}
-      .qual {{ color: {steel}; opacity: 0.9; }}
-"""
-            js = "tl.to('#stat', { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 2.2);"
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc13":
-            inner = """
-    <div class="wrap">
-      <div class="title">Yield (directional)</div>
-      <div class="bar tsmc"><div class="fill"></div><div class="label">TSMC — Industry-leading (~65–70% est.)</div></div>
-      <div class="bar samsung"><div class="fill"></div><div class="label">Samsung — Lower yield (directional)</div></div>
-      <div class="bar intel"><div class="fill"></div><div class="label">Intel — Catching up (directional)</div></div>
-      <div class="note">Comparison is directional. Estimates stay labeled.</div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; padding: 160px 180px; }}
-      .title {{
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 18px;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: {steel};
-      }}
-      .bar {{
-        margin-top: 48px;
-        position: relative;
-        height: 82px;
-        border: 1px solid {graphite};
-        background: rgba(17, 21, 28, 0.55);
-        overflow: hidden;
-      }}
-      .fill {{
-        position:absolute; left:0; top:0; bottom:0;
-        width: 0%;
-        opacity: 0.95;
-      }}
-      .tsmc .fill {{ background: {accent}; }}
-      .samsung .fill {{ background: {primary}; opacity: 0.55; }}
-      .intel .fill {{ background: {primary}; opacity: 0.35; }}
-      .label {{
-        position: relative;
-        padding: 22px 24px;
-        font-size: 26px;
-        letter-spacing: 0.03em;
-      }}
-      .note {{
-        margin-top: 56px;
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 14px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: {steel};
-        opacity: 0.85;
-      }}
-"""
-            js = """
-      tl.to(".tsmc .fill", { width: "86%", duration: 0.9, ease: "power2.out" }, 0.6)
-        .to(".samsung .fill", { width: "44%", duration: 0.9, ease: "power2.out" }, 1.1)
-        .to(".intel .fill", { width: "58%", duration: 0.9, ease: "power2.out" }, 1.6);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc14":
-            inner = """
-    <div class="wrap">
-      <div class="card" id="card">
-        <div class="big">$35.90B</div>
-        <div class="sub">+40.6% YoY (USD)</div>
-        <div class="line">Q1 2026 — New Quarterly Record</div>
-      </div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding: 160px; }}
-      .card {{
-        width: 900px;
-        padding: 70px 70px 62px;
-        border: 3px solid {accent};
-        background: rgba(17, 21, 28, 0.86);
-        box-shadow: 0 18px 70px rgba(0,0,0,0.55);
-        opacity: 0;
-        transform: translateY(14px);
-      }}
-      .big {{ font-size: 128px; font-weight: 800; letter-spacing: 0.01em; }}
-      .sub {{
-        margin-top: 16px;
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 18px; letter-spacing: 0.12em;
-        color: {steel};
-        text-transform: uppercase;
-      }}
-      .line {{ margin-top: 26px; font-size: 28px; letter-spacing: 0.04em; opacity: 0.95; }}
-"""
-            js = "tl.to('#card', { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 0.4);"
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc16":
-            inner = """
-    <div class="wrap">
-      <div class="cols">
-        <div class="col" id="c0"><div class="big">$52B</div><div class="small">US CHIPS Act</div></div>
-        <div class="col" id="c1"><div class="big">€43B</div><div class="small">EU Chips Act</div></div>
-        <div class="col" id="c2"><div class="big">¥3.9T</div><div class="small">Japan incentives</div></div>
-      </div>
-      <div class="note">Capital helps. The ecosystem is the moat.</div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; padding: 160px 160px; }}
-      .cols {{ display:flex; gap: 26px; justify-content:center; margin-top: 220px; }}
-      .col {{
-        width: 460px;
-        padding: 38px 38px 34px;
-        border: 2px solid {graphite};
-        background: rgba(17, 21, 28, 0.72);
-        opacity: 0; transform: translateY(10px);
-      }}
-      .big {{ font-size: 86px; font-weight: 800; letter-spacing: 0.01em; }}
-      .small {{
-        margin-top: 10px;
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 16px; letter-spacing: 0.12em;
-        color: {steel};
-        text-transform: uppercase;
-      }}
-      .note {{
-        margin-top: 80px;
-        text-align:center;
-        font-size: 34px;
-        font-weight: 300;
-        letter-spacing: 0.03em;
-        opacity: 0.0;
-      }}
-"""
-            js = """
-      tl.to(["#c0","#c1","#c2"], { opacity: 1, y: 0, duration: 0.5, stagger: 0.5, ease: "power2.out" }, 0.0)
-        .to(".note", { opacity: 0.9, duration: 0.55, ease: "power1.out" }, 2.1);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc17":
-            # Arizona fab stat card (ported from assets/scenes/sc17-arizona-fab.html).
-            inner = """
-    <div id="scene">
-      <div id="stat-card">
-        <div class="title">TSMC Arizona</div>
-        <div class="line" id="line-n4"><span class="k">N4</span><span class="v">In production</span></div>
-        <div class="line" id="line-n3"><span class="k">N3</span><span class="v">2027 (planned)</span></div>
-        <div class="line" id="line-n2"><span class="k">N2</span><span class="v">No date set</span></div>
-        <div id="stat-divider"></div>
-        <div id="arrow-caption">Node-generation framing: not leading-edge redundancy</div>
-      </div>
-    </div>
-"""
-            css = f"""
-      #scene {{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding: 160px; }}
-      #stat-card {{
-        width: 980px;
-        padding: 64px 64px 56px;
-        border: 2px solid {graphite};
-        background: rgba(17, 21, 28, 0.86);
-        opacity: 0; transform: translateY(12px);
-      }}
-      .title {{
-        font-family: \"Space Grotesk\", Inter, Arial, sans-serif;
-        font-weight: 800;
-        font-size: 66px;
-        letter-spacing: 0.02em;
-        margin-bottom: 22px;
-      }}
-      .line {{
-        display:flex; justify-content:space-between; align-items:baseline;
-        font-size: 34px; letter-spacing: 0.03em;
-        padding: 14px 0;
-        opacity: 0; transform: translateY(8px);
-      }}
-      .k {{
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 18px; letter-spacing: 0.16em;
-        color: {steel}; text-transform: uppercase;
-      }}
-      #line-n2 {{ opacity: 0; }}
-      #stat-divider {{ height: 1px; background: {graphite}; margin: 22px 0; opacity: 0; }}
-      #arrow-caption {{
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 14px; letter-spacing: 0.12em;
-        color: {red};
-        text-transform: uppercase;
-        opacity: 0; transform: translateX(-6px);
-      }}
-"""
-            js = """
-      tl.to("#stat-card", { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 2.0)
-        .to("#line-n4", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 3.2)
-        .to("#line-n3", { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 4.4)
-        .to("#line-n2", { opacity: 0.7, y: 0, duration: 0.4, ease: "power2.out" }, 5.6)
-        .to("#stat-divider", { opacity: 1, duration: 0.4, ease: "power1.out" }, 8.0)
-        .to("#arrow-caption", { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }, 8.4);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc18":
-            inner = """
-    <div class="wrap">
-      <div class="quote" id="q">\"A very expensive exercise in futility.\"</div>
-      <div class="attr" id="a">Morris Chang</div>
-    </div>
-"""
-            css = f"""
-      [data-composition-id="{self._escape_attr(scene_id)}"] {{ background: {graphite}; }}
-      .wrap {{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding: 160px 180px; gap: 28px; }}
-      .quote {{
-        font-size: 74px;
-        font-weight: 400;
-        font-style: italic;
-        letter-spacing: 0.02em;
-        opacity: 0;
-      }}
-      .attr {{
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 18px; letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: {steel};
-        opacity: 0;
-      }}
-"""
-            js = """
-      tl.to("#q", { opacity: 1, duration: 0.5, ease: "power1.out" }, 0.0)
-        .to("#a", { opacity: 0.9, duration: 0.4, ease: "power1.out" }, 1.5);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc20":
-            inner = """
-    <div class="wrap">
-      <div class="node" id="core">Foundry</div>
-      <div class="tag" id="t0">Pricing power</div>
-      <div class="tag" id="t1">Schedule power</div>
-      <div class="tag" id="t2">Strategic weight</div>
-      <div class="ring" id="r"></div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; }}
-      .node {{
-        position:absolute; left: 960px; top: 520px;
-        width: 260px; height: 150px;
-        transform: translate(-50%, -50%);
-        border: 3px solid {accent};
-        background: rgba(17, 21, 28, 0.82);
-        display:flex; align-items:center; justify-content:center;
-        font-size: 30px; letter-spacing: 0.12em; text-transform: uppercase;
-        box-shadow: 0 0 0 1px rgba(245,164,0,0.15) inset;
-      }}
-      .ring {{
-        position:absolute; left: 960px; top: 520px;
-        width: 420px; height: 420px;
-        transform: translate(-50%, -50%);
-        border-radius: 999px;
-        border: 1px solid {graphite};
-        opacity: 0.35;
-      }}
-      .tag {{
-        position:absolute;
-        padding: 14px 18px;
-        border: 1px solid {graphite};
-        background: rgba(5, 6, 8, 0.55);
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 14px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: {steel};
-        opacity: 0;
-      }}
-      #t0 {{ left: 960px; top: 270px; transform: translate(-50%, -50%); }}
-      #t1 {{ left: 1240px; top: 560px; transform: translate(-50%, -50%); }}
-      #t2 {{ left: 700px; top: 720px; transform: translate(-50%, -50%); }}
-"""
-            js = """
-      tl.to(["#t0","#t1","#t2"], { opacity: 1, duration: 0.45, stagger: 0.5, ease: "power2.out" }, 0.8)
-        .to("#r", { opacity: 0.6, duration: 0.35, ease: "power1.out" }, 0.8);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc21":
-            inner = """
-    <div class="wrap">
-      <div class="stack" id="stack">
-        <div class="layer" id="l0"><div class="k">Wafer Fabrication</div></div>
-        <div class="layer" id="l1"><div class="k">Advanced Packaging</div><div class="sub">CoWoS</div></div>
-      </div>
-      <div class="caption" id="cap">A second chokepoint inside the first.</div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }}
-      .stack {{
-        width: 640px;
-        border: 3px solid {accent};
-        background: rgba(17, 21, 28, 0.86);
-        box-shadow: 0 18px 70px rgba(0,0,0,0.55);
-        overflow: hidden;
-        opacity: 0; transform: translateY(14px);
-      }}
-      .layer {{
-        height: 140px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        flex-direction: column;
-        gap: 8px;
-        border-top: 1px solid rgba(42,49,66,0.8);
-        opacity: 0;
-      }}
-      #l0 {{ border-top: none; }}
-      .k {{ font-size: 28px; letter-spacing: 0.12em; text-transform: uppercase; }}
-      .sub {{
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 16px; letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: {accent};
-      }}
-      .caption {{
-        position:absolute;
-        bottom: 130px;
-        left: 0; right: 0;
-        text-align:center;
-        font-size: 34px;
-        font-weight: 300;
-        letter-spacing: 0.03em;
-        opacity: 0;
-      }}
-"""
-            js = """
-      tl.to("#stack", { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.2)
-        .to("#l0", { opacity: 1, duration: 0.4, ease: "power1.out" }, 0.8)
-        .to("#l1", { opacity: 1, duration: 0.4, ease: "power1.out" }, 1.6)
-        .to("#cap", { opacity: 0.9, duration: 0.55, ease: "power1.out" }, 2.6);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc22":
-            inner = """
-    <div class="wrap">
-      <div class="card" id="card">
-        <div class="big">~130K wpm</div>
-        <div class="small">Projected CoWoS capacity end-2026 / Still sold out</div>
-        <div class="bar"><div class="fill" id="fill"></div></div>
-        <div class="small2">Capacity expansion is real. The backlog remains.</div>
-      </div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding: 160px; }}
-      .card {{
-        width: 980px;
-        padding: 64px 64px 56px;
-        border: 2px solid {accent};
-        background: rgba(17, 21, 28, 0.86);
-        opacity: 0; transform: translateY(14px);
-      }}
-      .big {{ font-size: 96px; font-weight: 800; letter-spacing: 0.01em; }}
-      .small {{
-        margin-top: 14px;
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 14px; letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: {steel};
-      }}
-      .bar {{ margin-top: 28px; height: 14px; background: rgba(42,49,66,0.7); overflow:hidden; }}
-      .fill {{ width: 0%; height: 100%; background: {accent}; opacity: 0.9; }}
-      .small2 {{ margin-top: 26px; font-size: 28px; font-weight: 300; letter-spacing: 0.03em; opacity: 0.85; }}
-"""
-            js = """
-      tl.to("#card", { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.2)
-        .to("#fill", { width: "72%", duration: 0.9, ease: "power2.out" }, 1.0);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc23":
-            # Abstract convergence diagram (ported from assets/scenes/sc23-convergence.html).
-            inner = """
-    <div id="scene">
-      <svg id="routes" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
-        <path id="r-apple" d="M 360 260 C 700 260 820 420 960 480" stroke="#3F8FA3" stroke-width="4" fill="none"/>
-        <path id="r-nvidia" d="M 360 380 C 720 380 820 470 960 510" stroke="#3F8FA3" stroke-width="4" fill="none"/>
-        <path id="r-amd" d="M 360 500 C 740 500 820 520 960 540" stroke="#3F8FA3" stroke-width="4" fill="none"/>
-        <path id="r-qualcomm" d="M 360 620 C 700 620 820 600 960 570" stroke="#3F8FA3" stroke-width="4" fill="none"/>
-        <path id="r-dc" d="M 360 740 C 660 740 820 690 960 600" stroke="#3F8FA3" stroke-width="4" fill="none"/>
-      </svg>
-      <div class="node" id="n-apple"><div class="label">Apple</div></div>
-      <div class="node" id="n-nvidia"><div class="label">NVIDIA</div></div>
-      <div class="node" id="n-amd"><div class="label">AMD</div></div>
-      <div class="node" id="n-qualcomm"><div class="label">Qualcomm</div></div>
-      <div class="node" id="n-dc"><div class="label">AI Data Centers</div></div>
-
-      <div class="node" id="chokepoint">
-        <div style="text-align:center">
-          <div class="label">TSMC</div>
-          <div class="sub">TAIWAN CHOKEPOINT</div>
-        </div>
-      </div>
-      <div id="pulse"></div>
-      <div id="final-sub">One factory. No backup.</div>
-    </div>
-"""
-            css = f"""
-      #scene {{ position: relative; width: 1920px; height: 1080px; }}
-      #routes {{ position:absolute; inset:0; opacity: 0.9; }}
-      .node {{
-        position: absolute;
-        width: 280px;
-        height: 96px;
-        border: 1px solid {graphite};
-        background: rgba(17, 21, 28, 0.65);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transform: translateY(10px);
-      }}
-      .label {{ color: {fg}; font-size: 28px; font-weight: 400; letter-spacing: 0.06em; }}
-      #n-apple {{ left: 140px; top: 210px; }}
-      #n-nvidia {{ left: 140px; top: 330px; }}
-      #n-amd {{ left: 140px; top: 450px; }}
-      #n-qualcomm {{ left: 140px; top: 570px; }}
-      #n-dc {{ left: 140px; top: 690px; }}
-      #chokepoint {{
-        left: 1180px; top: 430px;
-        width: 420px; height: 160px;
-        border: 2px solid {accent};
-        background: rgba(17, 21, 28, 0.88);
-        box-shadow: 0 16px 60px rgba(0,0,0,0.55);
-        transform: translateY(12px);
-      }}
-      #chokepoint .label {{
-        font-family: \"Space Grotesk\", Inter, Arial, sans-serif;
-        font-size: 42px;
-        font-weight: 800;
-        letter-spacing: 0.02em;
-        color: {fg};
-      }}
-      #chokepoint .sub {{
-        margin-top: 10px;
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 14px;
-        letter-spacing: 0.12em;
-        color: {steel};
-        text-transform: uppercase;
-        opacity: 0.95;
-      }}
-      #pulse {{
-        position: absolute;
-        left: 1390px; top: 510px;
-        width: 16px; height: 16px;
-        border-radius: 999px;
-        border: 2px solid {accent};
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(1.0);
-      }}
-      #final-sub {{
-        position:absolute;
-        right: 140px; bottom: 120px;
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 16px; letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: {steel};
-        opacity: 0;
-      }}
-"""
-            js = """
-      const routes = ["#r-apple","#r-nvidia","#r-amd","#r-qualcomm","#r-dc"];
-      for (const sel of routes) {
-        const p = document.querySelector(sel);
-        const len = p.getTotalLength();
-        p.style.strokeDasharray = len;
-        p.style.strokeDashoffset = len;
-        p.style.opacity = 0.0;
-      }
-      const nodes = ["#n-apple","#n-nvidia","#n-amd","#n-qualcomm","#n-dc"];
-      tl.to(nodes, { opacity: 1, y: 0, duration: 0.45, stagger: 0.16, ease: "power2.out" }, 0.0)
-        .to("#chokepoint", { opacity: 1, y: 0, duration: 0.55, ease: "power2.out" }, 0.45);
-      function pulseAmber(at) {
-        tl.to("#pulse", { opacity: 1, scale: 1.0, duration: 0.01 }, at)
-          .to("#pulse", { opacity: 0.0, scale: 1.10, duration: 0.70, ease: "power2.out" }, at + 0.02);
-      }
-      const start = 2.0;
-      const gap = 2.6;
-      routes.forEach((r, i) => {
-        const at = start + i * gap;
-        tl.to(r, { opacity: 0.9, duration: 0.01 }, at)
-          .to(r, { strokeDashoffset: 0, duration: 1.0, ease: "power2.inOut" }, at);
-        pulseAmber(at + 1.0);
-        tl.to(nodes[i], { opacity: 0.55, duration: 0.45, ease: "power1.out" }, at + 1.05);
-      });
-      tl.to("#final-sub", { opacity: 1, duration: 0.6, ease: "power1.out" }, 15.8);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc25":
-            inner = """
-    <div class="wrap">
-      <div class="core" id="core">TSMC</div>
-      <div class="leaf" id="l0">AI Training Clusters</div>
-      <div class="leaf" id="l1">Consumer Devices</div>
-      <div class="leaf" id="l2">Cloud Infrastructure</div>
-      <div class="leaf" id="l3">Defense Systems</div>
-      <svg id="lines" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
-        <path id="p0" d="M 960 360 C 820 470 760 560 720 650" stroke="#3F8FA3" stroke-width="3" fill="none"/>
-        <path id="p1" d="M 960 360 C 900 480 910 600 960 700" stroke="#3F8FA3" stroke-width="3" fill="none"/>
-        <path id="p2" d="M 960 360 C 1020 480 1020 600 960 820" stroke="#3F8FA3" stroke-width="3" fill="none"/>
-        <path id="p3" d="M 960 360 C 1100 470 1160 560 1200 650" stroke="#3F8FA3" stroke-width="3" fill="none"/>
-      </svg>
-      <div class="swap" id="s0">Compute</div>
-      <div class="swap" id="s1">AI</div>
-      <div class="swap" id="s2">Semiconductors</div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; }}
-      #lines {{ position:absolute; inset:0; opacity: 0.8; }}
-      .core {{
-        position:absolute; left: 960px; top: 300px;
-        transform: translate(-50%, -50%);
-        width: 420px; height: 160px;
-        border: 3px solid {accent};
-        background: rgba(17, 21, 28, 0.86);
-        display:flex; align-items:center; justify-content:center;
-        font-family: \"Space Grotesk\", Inter, Arial, sans-serif;
-        font-size: 58px; font-weight: 800;
-        letter-spacing: 0.02em;
-        opacity: 0;
-      }}
-      .leaf {{
-        position:absolute;
-        width: 420px; height: 96px;
-        border: 1px solid {graphite};
-        background: rgba(17, 21, 28, 0.65);
-        display:flex; align-items:center; justify-content:center;
-        font-size: 24px; letter-spacing: 0.06em;
-        opacity: 0; transform: translateY(10px);
-      }}
-      #l0 {{ left: 420px; top: 650px; }}
-      #l1 {{ left: 740px; top: 760px; }}
-      #l2 {{ left: 1160px; top: 860px; }}
-      #l3 {{ left: 1500px; top: 650px; }}
-      .swap {{
-        position:absolute;
-        left: 960px; top: 300px;
-        transform: translate(-50%, -50%);
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 16px; letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: {steel};
-        opacity: 0;
-      }}
-      #s0 {{ top: 410px; }}
-      #s1 {{ top: 448px; }}
-      #s2 {{ top: 486px; }}
-"""
-            js = """
-      const paths = ["#p0","#p1","#p2","#p3"];
-      paths.forEach((sel) => {
-        const p = document.querySelector(sel);
-        const len = p.getTotalLength();
-        p.style.strokeDasharray = len;
-        p.style.strokeDashoffset = len;
-        p.style.opacity = 0.0;
-      });
-      tl.to("#core", { opacity: 1, duration: 0.55, ease: "power2.out" }, 0.2)
-        .to(paths, { opacity: 0.9, duration: 0.01 }, 1.2)
-        .to("#p0", { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 1.2)
-        .to("#l0", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 2.2)
-        .to("#p1", { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 3.0)
-        .to("#l1", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 4.0)
-        .to("#p2", { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 4.8)
-        .to("#l2", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 5.8)
-        .to("#p3", { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 6.6)
-        .to("#l3", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 7.6)
-        .to("#s0", { opacity: 1, duration: 0.35, ease: "power1.out" }, 9.2)
-        .to("#s1", { opacity: 1, duration: 0.35, ease: "power1.out" }, 10.2)
-        .to("#s2", { opacity: 1, duration: 0.35, ease: "power1.out" }, 11.2);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc26":
-            inner = """
-    <div class="wrap">
-      <div class="card" id="card">
-        <div class="line" id="l0">90%+ advanced-node share <span class="q">(analyst est.)</span></div>
-        <div class="line" id="l1">Arizona: N4 now — N3 expected 2027</div>
-        <div class="line" id="l2">CoWoS: still sold out through 2026</div>
-      </div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding: 160px; }}
-      .card {{
-        width: 1100px;
-        padding: 70px 70px 60px;
-        border: 3px solid {accent};
-        background: rgba(17, 21, 28, 0.88);
-        box-shadow: 0 18px 70px rgba(0,0,0,0.55);
-      }}
-      .line {{
-        font-size: 38px;
-        font-weight: 400;
-        letter-spacing: 0.02em;
-        opacity: 0;
-        transform: translateY(10px);
-        margin-top: 18px;
-      }}
-      #l0 {{ margin-top: 0; }}
-      .q {{
-        font-family: \"IBM Plex Mono\", \"Courier New\", monospace;
-        font-size: 16px; letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: {steel};
-        margin-left: 10px;
-      }}
-"""
-            js = """
-      tl.to("#l0", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 0.4)
-        .to("#l1", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 1.4)
-        .to("#l2", { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 2.4);
-"""
-            return _wrap(inner, css, js)
-
-        if scene_id == "sc27":
-            inner = """
-    <div class="wrap">
-      <div class="t" id="t">The research stack I use for this kind of mapping is linked in the description.</div>
-      <div class="u" id="u"></div>
-    </div>
-"""
-            css = f"""
-      .wrap {{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; padding: 160px 180px; gap: 34px; }}
-      .t {{ font-size: 46px; font-weight: 300; letter-spacing: 0.03em; max-width: 1200px; opacity: 0; }}
-      .u {{ width: 420px; height: 3px; background: {accent}; opacity: 0; transform: scaleX(0.2); transform-origin: left center; }}
-"""
-            js = """
-      tl.to("#t", { opacity: 1, duration: 0.6, ease: "power1.out" }, 0.2)
-        .to("#u", { opacity: 0.9, duration: 0.01 }, 1.7)
-        .to("#u", { scaleX: 1.0, duration: 0.6, ease: "power2.out" }, 1.72);
-"""
-            return _wrap(inner, css, js)
 
         # Generic fallback: designed text scene instead of a plain centered card.
         headline = text or scene_id.upper()
@@ -2476,7 +1407,7 @@ class HyperFramesCompose(BaseTool):
         # Prefer per-scene sub-compositions when a scene id is present. This
         # avoids rendering long episodes as simple text cards.
         scene_id = (cut.get("id") or "").strip()
-        if scene_id and not source:
+        if scene_id and not source and cut_type not in {"text_card", "hero_title", "callout", "image", "video"}:
             html = (
                 f'<div id="{cut_id}" class="clip scene-comp" '
                 f'data-composition-id="{self._escape_attr(scene_id)}" '
@@ -2572,7 +1503,8 @@ class HyperFramesCompose(BaseTool):
         want to raise CalledProcessError on non-zero exits — the caller
         parses lint/validate/render exit codes itself.
         """
-        cmd = ["npx", "--yes", "hyperframes", *args]
+        cached_bin = self._resolve_cached_npx_binary()
+        cmd = [cached_bin, *args] if cached_bin else ["npx", "--yes", "hyperframes", *args]
         # On Windows, resolve the .cmd wrapper so subprocess can find it
         # without shell=True.
         if os.name == "nt":
