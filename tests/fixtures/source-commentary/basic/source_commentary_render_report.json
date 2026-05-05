@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "project_id": "project-x",
+  "render_path": "shared_studio/projects/project-x/renders/final.mp4",
+  "duration_seconds": 60.0,
+  "resolution": "1920x1080",
+  "fps": 30,
+  "source_clip_count": 1,
+  "render_success": true
+}

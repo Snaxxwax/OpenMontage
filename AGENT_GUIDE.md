@@ -2,7 +2,11 @@
 
 Start here. This is the complete operating guide and agent contract for OpenMontage.
 
+**MANDATORY:** All agents must strictly follow the model-agnostic operating contract in [`AGENTS.md`](AGENTS.md). 
+
 For architecture, key files, and conventions see [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md).
+
+For pipeline-specific rules (e.g. "Evidence Lock" in source-commentary), see the `CONTRACT.md` in the pipeline's skill directory.
 
 ## First Interaction — Onboarding
 
@@ -187,19 +191,15 @@ Infrastructure files:
 
 ## Project Directory Convention
 
-Every production run creates a project workspace under `projects/`. This directory is gitignored — all generated assets are regenerable.
+Every production run creates a project workspace under `shared_studio/projects/`. This directory is gitignored — all generated assets are regenerable.
 
 ```
-projects/<project-name>/
+shared_studio/projects/<project-name>/
 ├── artifacts/          # JSON artifacts from each stage (research_brief, script, scene_plan, etc.)
-├── assets/
-│   ├── images/         # Generated images (PNG)
-│   ├── video/          # Generated video clips (MP4)
-│   ├── audio/          # Narration segments + final mix (MP3/WAV)
-│   ├── music/          # Background music track (MP3)
-│   └── subtitles.srt   # Generated subtitles
-└── renders/
-    └── final.mp4       # Final rendered video (the deliverable)
+├── receipts/           # Collection of clip_use_receipt JSONs
+├── clips/              # Physical MP4 extractions and local media assets
+├── renders/            # Final rendered video (the deliverable)
+└── qc/                 # Technical analysis results and logs
 ```
 
 **Naming convention**: Use kebab-case derived from the video title (e.g., `hidden-math-of-nature`, `how-music-rewires-brain`).

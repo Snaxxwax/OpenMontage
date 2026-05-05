@@ -98,7 +98,7 @@ HyperFrames needs its own project workspace. Do **not** reuse
 mixing runtimes there causes cross-project collisions.
 
 ```
-projects/<project-name>/
+shared_studio/projects/<project-name>/
 ├── artifacts/
 ├── assets/
 │   ├── images/
@@ -119,7 +119,7 @@ projects/<project-name>/
 
 The workspace is generated at compose time by `hyperframes_compose` from
 `edit_decisions` + `asset_manifest` + the active playbook. It's regenerable
-and gitignored along with the rest of `projects/`.
+and gitignored along with the rest of `shared_studio/projects/`.
 
 ### Why a dedicated workspace per project
 
@@ -142,7 +142,7 @@ OpenMontage artifacts into HyperFrames project files:
 | `edit_decisions.cuts[]` (sequence of scenes) | `index.html` timeline, one `<div data-composition-id data-composition-src>` per cut |
 | `edit_decisions.cuts[i].in_seconds / out_seconds` | `data-start` / `data-duration` on the clip element |
 | `edit_decisions.cuts[i].type` (scene kind) | Registry block installed via `hyperframes add`, OR a hand-authored sub-composition template |
-| `asset_manifest.assets[]` paths | Copied or symlinked into `projects/<p>/hyperframes/assets/` and referenced with relative `src=` |
+| `asset_manifest.assets[]` paths | Copied or symlinked into `shared_studio/projects/<p>/hyperframes/assets/` and referenced with relative `src=` |
 | `audio.narration.segments[]` | `<audio>` element with matching `data-start` / `data-duration` |
 | `audio.music` | Second `<audio>` element, lower `data-volume` |
 | `subtitles` (enabled + source) | Either a registry `captions` block or hand-authored per-word spans — NOT `remotion_caption_burn` |
@@ -159,7 +159,7 @@ Upstream's `website-to-hyperframes` skill uses `DESIGN.md`, `SCRIPT.md`, and
 `STORYBOARD.md` as step-by-step workspace files. OpenMontage does **not**
 replace its canonical artifact contracts with these — `brief`, `script`,
 `scene_plan`, `edit_decisions`, etc. remain the source of truth under
-`projects/<p>/artifacts/`. Treat the upstream files as **convenience copies**
+`shared_studio/projects/<p>/artifacts/`. Treat the upstream files as **convenience copies**
 written into the HyperFrames workspace so the runtime workflow feels natural:
 
 - `DESIGN.md` — derived from the selected playbook, written by
@@ -356,7 +356,7 @@ resolutions in the asset stage.
 When you truly can't source HD clips, switch pipelines: use FFmpeg
 hybrid-compositing (scale-to-cover + crop + unsharp in an external
 b-roll reel, then overlay HyperFrames typography via chromakey). That's
-the pattern `projects/quantum-willow-multiverse/` settled on after six
+the pattern `shared_studio/projects/quantum-willow-multiverse/` settled on after six
 HyperFrames renders with 640×360 Pexels sources.
 
 ### Always preview-scrub footage-forward scenes before render

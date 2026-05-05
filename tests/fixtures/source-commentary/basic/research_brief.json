@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "topic": "The Future of Nuclear Fusion",
+  "research_date": "2026-05-04",
+  "landscape": {
+    "existing_content": [
+      {
+        "title": "Fusion Power Explained",
+        "source": "youtube",
+        "angle": "Educational overview",
+        "what_it_covers": "Basic physics"
+      },
+      {
+        "title": "Nuclear Fusion 101",
+        "source": "blog",
+        "angle": "Technical introduction",
+        "what_it_covers": "Plasma physics"
+      },
+      {
+        "title": "The Fusion Race",
+        "source": "tiktok",
+        "angle": "News update",
+        "what_it_covers": "Venture capital funding"
+      }
+    ],
+    "saturated_angles": ["How reactors work"],
+    "underserved_gaps": ["Economic viability timelines"]
+  },
+  "data_points": [
+    {
+      "claim": "ITER is now 80% complete as of early 2026.",
+      "source_url": "https://iter.org/news",
+      "credibility": "primary_source"
+    },
+    {
+      "claim": "SPARC reactor successfully held plasma for 10 seconds.",
+      "source_url": "https://cfs.energy/news",
+      "credibility": "primary_source"
+    },
+    {
+      "claim": "Fusion investment reached $5B in 2025.",
+      "source_url": "https://fusionindustryassociation.org",
+      "credibility": "secondary_source"
+    }
+  ],
+  "audience_insights": {
+    "common_questions": ["When will it be ready?", "Is it safe?", "How much does it cost?"],
+    "misconceptions": [{"myth": "It's always 30 years away", "reality": "Real prototypes exist"}],
+    "knowledge_level": "intermediate"
+  },
+  "angles_discovered": [
+    {
+      "name": "The 2026 Fusion Pivot",
+      "hook": "Why this year changed everything for fusion.",
+      "type": "trending",
+      "why_now": "ITER milestones met."
+    },
+    {
+      "name": "The Private Fusion Surge",
+      "hook": "How startups are beating government projects.",
+      "type": "data_driven",
+      "why_now": "Investment figures released."
+    },
+    {
+      "name": "Fusion Safety Myths",
+      "hook": "Debunking the 'China Syndrome' for fusion.",
+      "type": "contrarian",
+      "why_now": "Public concern rising."
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://iter.org/news",
+      "title": "ITER Progress Report",
+      "used_for": "data_points",
+      "reliability": "primary"
+    },
+    {
+      "url": "https://cfs.energy/news",
+      "title": "CFS SPARC Update",
+      "used_for": "data_points",
+      "reliability": "primary"
+    },
+    {
+      "url": "https://fusionindustryassociation.org",
+      "title": "FIA Annual Report 2025",
+      "used_for": "data_points",
+      "reliability": "secondary"
+    },
+    {
+      "url": "https://nature.com/articles/fusion-energy",
+      "title": "The State of Fusion Energy",
+      "used_for": "landscape",
+      "reliability": "primary"
+    },
+    {
+      "url": "https://science.org/fusion-2026",
+      "title": "Fusion: From Lab to Grid",
+      "used_for": "underserved_gaps",
+      "reliability": "primary"
+    }
+  ]
+}

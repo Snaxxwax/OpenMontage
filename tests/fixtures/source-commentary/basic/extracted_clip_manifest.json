@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "project_id": "project-x",
+  "clips": [
+    {
+      "receipt_id": "rcpt-01",
+      "local_clip_path": "shared_studio/projects/project-x/clips/rcpt-01.mp4",
+      "source_id": "src-iter-tour",
+      "in_seconds": 45.0,
+      "out_seconds": 55.0,
+      "duration_seconds": 10.0,
+      "checksum_sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    }
+  ]
+}

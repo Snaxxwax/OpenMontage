@@ -128,7 +128,7 @@ class CorpusBuilder(BaseTool):
         "properties": {
             "corpus_dir": {
                 "type": "string",
-                "description": "Project-local corpus directory, e.g. projects/foo/corpus",
+                "description": "Project-local corpus directory, e.g. shared_studio/projects/foo/corpus",
             },
             "queries": {
                 "type": "array",

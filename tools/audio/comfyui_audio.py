@@ -175,7 +175,7 @@ class ComfyUIAudio(BaseTool):
                 dest = Path(inputs["output_path"]).expanduser()
                 dest.parent.mkdir(parents=True, exist_ok=True)
             else:
-                dest = Path(f"projects/_smoke/assets/audio/comfyui_audio_{seed}").expanduser()
+                dest = Path(f"shared_studio/projects/_smoke/assets/audio/comfyui_audio_{seed}").expanduser()
                 dest.parent.mkdir(parents=True, exist_ok=True)
 
             run = client.run_workflow(

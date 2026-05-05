@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "project_id": "project-x",
+  "candidates": [
+    {
+      "candidate_id": "cand-01",
+      "claim_id": "claim-iter-progress",
+      "source_id": "src-iter-tour",
+      "in_seconds": 45.0,
+      "out_seconds": 55.0,
+      "duration_seconds": 10.0,
+      "transcript_excerpt": "eighty percent completion",
+      "relevance_score": 0.95,
+      "rationale": "Directly mentions the 80% milestone.",
+      "clip_role": "primary_evidence"
+    }
+  ]
+}

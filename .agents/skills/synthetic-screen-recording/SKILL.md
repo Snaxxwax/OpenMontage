@@ -180,4 +180,4 @@ The pattern generalizes. When you need to fake another UI surface (Claude Code c
 
 ## Provenance
 
-Introduced: OpenMontage showcase v3 render (2026-04-16). Original motivation: the v3 setup walkthrough section needed a 60-second install demo where every command aligned to Chirp 3 HD narration cues, and Windows-MCP-driven real capture was too flaky in practice. See `projects/openmontage-showcase/build_composition.py` for the reference implementation.
+Introduced: OpenMontage showcase v3 render (2026-04-16). Original motivation: the v3 setup walkthrough section needed a 60-second install demo where every command aligned to Chirp 3 HD narration cues, and Windows-MCP-driven real capture was too flaky in practice. See `shared_studio/projects/openmontage-showcase/build_composition.py` for the reference implementation.

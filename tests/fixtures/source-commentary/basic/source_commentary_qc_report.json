@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "project_id": "project-x",
+  "qc_passed": true,
+  "claim_traceability_passed": true,
+  "source_labels_visible": true,
+  "audio_mix_passed": true,
+  "failures": []
+}

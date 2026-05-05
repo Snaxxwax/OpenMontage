@@ -1,9 +1,10 @@
-# OpenMontage
+# OpenMontage - Claude Agent Instructions
 
-**MANDATORY: Read [`AGENT_GUIDE.md`](AGENT_GUIDE.md) before responding to ANY user message.**
+> **MANDATORY:** Read and follow the model-agnostic contract in [`AGENTS.md`](AGENTS.md) first.
 
-Do not act on the user's request until you have read AGENT_GUIDE.md.
-It contains routing rules that determine your first action based on what the user asked.
-Skipping it WILL cause you to take the wrong action.
+This file contains Claude-specific bootstrap notes. For all pipeline behavior, creative decisions, and artifact generation, `AGENTS.md` is the canonical source of truth.
 
-There are no instructions in this file. All instructions are in AGENT_GUIDE.md.
+### Model-Specific Reminders
+- **Artifact Contract:** Regardless of being Claude, you must produce the same schema-valid artifact JSONs as any other model.
+- **Source-Commentary:** For this pipeline, strictly enforce the "Evidence Lock" described in `skills/pipelines/source-commentary/CONTRACT.md`.
+- **Tool Use:** Always use `.execute(params)` for tool calls.

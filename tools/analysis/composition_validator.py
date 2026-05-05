@@ -118,8 +118,8 @@ class CompositionValidator(BaseTool):
         if assets_root is None or not assets_root.is_dir():
             if runtime == "hyperframes":
                 # HyperFrames workspaces keep assets/ alongside index.html.
-                # Composition JSON typically lives in projects/<p>/artifacts/,
-                # so the workspace is at projects/<p>/hyperframes/.
+                # Composition JSON typically lives in shared_studio/projects/<p>/artifacts/,
+                # so the workspace is at shared_studio/projects/<p>/hyperframes/.
                 candidate = comp_path
                 resolved = None
                 for _ in range(5):

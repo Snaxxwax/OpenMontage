@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "project_id": "project-x",
+  "source_segments": [
+    {
+      "source_id": "src-iter-tour",
+      "segment_id": "seg-01",
+      "start_seconds": 45.0,
+      "end_seconds": 55.0,
+      "text": "We have now reached eighty percent completion of the primary reactor assembly."
+    }
+  ]
+}

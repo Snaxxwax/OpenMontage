@@ -124,8 +124,8 @@ If you get a valid .mp3 file, setup is complete. If it fails, check:
 
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
-cp -r templates/product-demo projects/PROJECT_NAME
-cd projects/PROJECT_NAME
+cp -r templates/product-demo shared_studio/projects/PROJECT_NAME
+cd shared_studio/projects/PROJECT_NAME
 npm install
 ```
 
@@ -133,7 +133,7 @@ Templates: `product-demo` (marketing/explainer), `sprint-review`, `sprint-review
 
 ### Step 2: Write Config
 
-Edit `projects/PROJECT_NAME/src/config/demo-config.ts`:
+Edit `shared_studio/projects/PROJECT_NAME/src/config/demo-config.ts`:
 
 ```typescript
 export const demoConfig: ProductDemoConfig = {
@@ -162,7 +162,7 @@ Scene types: `title`, `problem`, `solution`, `demo`, `feature`, `stats`, `cta`.
 
 ### Step 3: Write Voiceover Script
 
-Create `projects/PROJECT_NAME/VOICEOVER-SCRIPT.md`:
+Create `shared_studio/projects/PROJECT_NAME/VOICEOVER-SCRIPT.md`:
 
 ```markdown
 ## Scene 1: Title (9s, ~17 words)
@@ -189,7 +189,7 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/music_gen.py \
   --preset corporate-bg \
   --duration 90 \
-  --output projects/PROJECT_NAME/public/audio/bg-music.mp3 \
+  --output shared_studio/projects/PROJECT_NAME/public/audio/bg-music.mp3 \
   --cloud modal
 ```
 
@@ -206,14 +206,14 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/qwen3_tts.py \
   --text "The voiceover text for scene one." \
   --speaker Ryan --tone warm \
-  --output projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
+  --output shared_studio/projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
   --cloud modal
 
 # Scene 02
 python3 tools/qwen3_tts.py \
   --text "The voiceover text for scene two." \
   --speaker Ryan --tone warm \
-  --output projects/PROJECT_NAME/public/audio/scenes/02.mp3 \
+  --output shared_studio/projects/PROJECT_NAME/public/audio/scenes/02.mp3 \
   --cloud modal
 
 # ... repeat for each scene
@@ -229,7 +229,7 @@ python3 tools/qwen3_tts.py \
   --text "Text to speak" \
   --ref-audio assets/voices/reference.m4a \
   --ref-text "Exact transcript of the reference audio" \
-  --output projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
+  --output shared_studio/projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
   --cloud modal
 ```
 
@@ -240,7 +240,7 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/flux2.py \
   --prompt "Dark tech background with blue geometric grid, cinematic lighting" \
   --width 1920 --height 1080 \
-  --output projects/PROJECT_NAME/public/images/title-bg.png \
+  --output shared_studio/projects/PROJECT_NAME/public/images/title-bg.png \
   --cloud modal
 ```
 
@@ -251,7 +251,7 @@ Image presets (use `--preset` instead of `--prompt --width --height`):
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/flux2.py \
   --preset title-bg \
-  --output projects/PROJECT_NAME/public/images/title-bg.png \
+  --output shared_studio/projects/PROJECT_NAME/public/images/title-bg.png \
   --cloud modal
 ```
 
@@ -265,20 +265,20 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 # B-roll clip from text
 python3 tools/ltx2.py \
   --prompt "Aerial drone shot over a European city at golden hour, cinematic wide angle" \
-  --output projects/PROJECT_NAME/public/videos/broll-europe.mp4 \
+  --output shared_studio/projects/PROJECT_NAME/public/videos/broll-europe.mp4 \
   --cloud modal
 
 # Animate a slide/screenshot (image-to-video)
 python3 tools/ltx2.py \
   --prompt "Gentle particle effects, soft ambient light shifts, very slight camera drift" \
-  --input projects/PROJECT_NAME/public/images/title-bg.png \
-  --output projects/PROJECT_NAME/public/videos/animated-title.mp4 \
+  --input shared_studio/projects/PROJECT_NAME/public/images/title-bg.png \
+  --output shared_studio/projects/PROJECT_NAME/public/videos/animated-title.mp4 \
   --cloud modal
 
 # Abstract intro/outro background
 python3 tools/ltx2.py \
   --prompt "Dark moody abstract background with flowing blue light streaks, bokeh particles, cinematic" \
-  --output projects/PROJECT_NAME/public/videos/intro-bg.mp4 \
+  --output shared_studio/projects/PROJECT_NAME/public/videos/intro-bg.mp4 \
   --cloud modal
 ```
 
@@ -306,15 +306,15 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/flux2.py \
   --prompt "Professional presenter portrait, clean style, dark background, facing camera, upper body" \
   --width 1024 --height 576 \
-  --output projects/PROJECT_NAME/public/images/presenter.png \
+  --output shared_studio/projects/PROJECT_NAME/public/images/presenter.png \
   --cloud modal
 
 # 2. Generate per-scene narrator clips (one per scene, NOT one long video)
 python3 tools/sadtalker.py \
-  --image projects/PROJECT_NAME/public/images/presenter.png \
-  --audio projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
+  --image shared_studio/projects/PROJECT_NAME/public/images/presenter.png \
+  --audio shared_studio/projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
   --preprocess full --still --expression-scale 0.8 \
-  --output projects/PROJECT_NAME/public/narrator-01.mp4 \
+  --output shared_studio/projects/PROJECT_NAME/public/narrator-01.mp4 \
   --cloud modal
 
 # Repeat for each scene that needs a narrator
@@ -334,9 +334,9 @@ Create scene variants from existing images:
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/image_edit.py \
-  --input projects/PROJECT_NAME/public/images/title-bg.png \
+  --input shared_studio/projects/PROJECT_NAME/public/images/title-bg.png \
   --prompt "Make it darker with red tones, more ominous" \
-  --output projects/PROJECT_NAME/public/images/problem-bg.png \
+  --output shared_studio/projects/PROJECT_NAME/public/images/problem-bg.png \
   --cloud modal
 ```
 
@@ -345,8 +345,8 @@ python3 tools/image_edit.py \
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/upscale.py \
-  --input projects/PROJECT_NAME/public/images/some-image.png \
-  --output projects/PROJECT_NAME/public/images/some-image-4x.png \
+  --input shared_studio/projects/PROJECT_NAME/public/images/some-image.png \
+  --output shared_studio/projects/PROJECT_NAME/public/images/some-image-4x.png \
   --scale 4 --cloud modal
 ```
 
@@ -356,7 +356,7 @@ python3 tools/upscale.py \
 
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
-for f in projects/PROJECT_NAME/public/audio/scenes/*.mp3; do
+for f in shared_studio/projects/PROJECT_NAME/public/audio/scenes/*.mp3; do
   echo "$(basename $f): $(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f")s"
 done
 ```
@@ -368,7 +368,7 @@ Example: if `01.mp3` is 6.8s, set scene 1 `durationSeconds` to `9` (ceil(6.8 + 2
 ### Step 6: Review Still Frames
 
 ```bash
-cd ~/.openclaw/workspace/claude-code-video-toolkit/projects/PROJECT_NAME
+cd ~/.openclaw/workspace/claude-code-video-toolkit/shared_studio/projects/PROJECT_NAME
 npx remotion still src/index.ts ProductDemo --frame=100 --output=/tmp/review-scene1.png
 npx remotion still src/index.ts ProductDemo --frame=400 --output=/tmp/review-scene2.png
 ```
@@ -378,7 +378,7 @@ Check: text truncation, animation timing, narrator PiP positioning, background c
 ### Step 7: Render
 
 ```bash
-cd ~/.openclaw/workspace/claude-code-video-toolkit/projects/PROJECT_NAME
+cd ~/.openclaw/workspace/claude-code-video-toolkit/shared_studio/projects/PROJECT_NAME
 npm run render
 ```
 

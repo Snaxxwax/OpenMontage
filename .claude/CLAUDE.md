@@ -190,14 +190,18 @@ The rules matter more than effort.
 
 ## Narrative modes
 
-Use one narrator with four functional modes:
+Use one narrator with five functional modes:
 
 - Cartographer = map the system
 - Operator = find the leverage point
 - Skeptic = compare stated incentives to actual incentives
 - Realist = show who wins, who pays, and what changes
+- Subject = follow a person or institution whose decisions make the hidden
+  structure visible (used in rise-and-fall and expose formats)
 
-Rule: Most serious outputs should use at least two modes. Strong long-form pieces usually use three.
+Rule: Most serious outputs should use at least two modes. Strong long-form
+pieces usually use three. The Subject mode is mandatory when a named protagonist
+drives the narrative — it grounds the system analysis in human decisions.
 
 ---
 
@@ -488,6 +492,63 @@ Avoid:
 
 ---
 
+## Long-form YouTube visual strategy
+
+For videos 10 minutes and longer, use this visual hierarchy. This overrides the
+animated-diagram-first assumption in the visual system section above.
+
+### Primary medium by section type
+
+**Narrative sections** (origin, events, character moments, timeline, consequences):
+- Primary medium: stock footage (Pexels, Pixabay) — real-world imagery of
+  relevant subjects, locations, institutions, and concepts
+- Treatment: Asymmetric color grade applied to ALL stock footage —
+  shadows pulled to near-black (#050608), highlights desaturated toward bone
+  (#F3F5F7), amber (#F5A400) signal overlays on key moments and lower thirds
+- Never use stock footage at its native color palette — always grade
+- Cut rhythm: 3–8 seconds per clip, vary angle and subject aggressively
+
+**Mechanism sections** (how the system works, the chokepoint, leverage diagram):
+- Primary medium: Remotion animated diagrams — full Asymmetric diagram language
+- Duration: 20–90 seconds per mechanism block; never longer without a narrative cut
+- Entry: always open a mechanism block with a kinetic chapter or label card
+
+**Stat and quote moments**:
+- Remotion text cards: IBM Plex Mono for numbers, Inter for body copy,
+  Institutional Amber (#F5A400) for key figures
+- Hold: 3–5 seconds, then cut back to footage or diagram
+
+### Pattern interrupt cadence (mandatory)
+
+Every 10–15 seconds, introduce one of:
+- Cut to new B-roll angle or subject
+- Animated text overlay on footage
+- Stat card or figure reveal
+- Map zoom or location cut
+- Diagram node highlight or arrow extension
+- Chapter title card
+
+Failure to hit this cadence in narrative-heavy sections is the #1 cause of
+retention drop in long-form YouTube documentary content.
+
+### Chapter cards (mandatory for long-form)
+
+Every 3–5 minutes, a full-screen chapter card:
+- Near-black background (#050608)
+- Institutional Amber accent line
+- Chapter name from the chapter naming bank
+- 2–3 second hold, then hard cut
+
+### What not to do
+
+- Do not run animated diagrams for more than 90 seconds without a narrative cut
+- Do not use stock footage without the Asymmetric grade
+- Do not cut between two diagram sections without a narrative bridge
+- Do not let any visual state remain unchanged for more than 8 seconds in
+  narrative sections or 4 seconds in diagram sections
+
+---
+
 ## Long-form structure
 
 Default structure:
@@ -694,6 +755,52 @@ If forced to choose:
 
 ---
 
+## YouTube performance mandate
+
+Every production output — script, narration, scene plan, visual treatment — must
+be optimized for YouTube audience retention first. Editorial quality and brand
+integrity are constraints, not replacements for engagement.
+
+This means:
+
+**Script and narration:**
+- Every sentence must earn its place. Cut anything that doesn't advance the story
+  or deepen the viewer's understanding of the mechanism.
+- Open with a dramatic, concrete, already-happened fact — not a question, not a
+  statistic, not a setup. Something that makes the viewer feel they've arrived
+  mid-story.
+- Open loops must be placed early (first 60 seconds) and closed late. Never
+  answer a question the moment you raise it.
+- Pacing must vary. Dense mechanism sections need short punchy sentences.
+  Narrative sections can breathe. Alternate between modes to prevent fatigue.
+- Write narration for ears, not eyes. Read every line aloud. If it sounds like
+  a report, rewrite it.
+
+**Visuals:**
+- The question for every scene: would a viewer stop scrolling for this?
+- Stock footage must be specific, not generic. A credit bureau building is better
+  than a generic office. A mortgage application is better than "a document."
+- Diagram sections must be earned — introduce them with a verbal setup so the
+  viewer is ready to read the diagram, not surprised by it.
+- Pattern interrupts every 10–15 seconds are non-negotiable at 10+ minute length.
+- Chapter cards must be placed at genuine narrative turning points, not just
+  time markers.
+
+**Retention structure:**
+- The first 30 seconds determine whether a viewer stays. Optimize ruthlessly.
+- The first 2 minutes must deliver on the hook's promise, then open a new
+  question to carry the viewer forward.
+- Every chapter should end on a forward pull — a question, a revelation that
+  makes the next section necessary.
+- The final 2 minutes must deliver a reusable mental model, not just a summary.
+  Viewers share videos that gave them a framework, not videos that told them facts.
+
+**The test:** Before finalizing any script section, narration pass, or scene
+sequence, ask: would a viewer who stumbled onto this video at this moment stay
+for the next 60 seconds? If the answer is no, it is not ready.
+
+---
+
 ## Final tests
 
 Before finalizing any output, verify:
@@ -702,6 +809,8 @@ Before finalizing any output, verify:
 3. Does the frame or sequence change meaningfully every few seconds?
 4. Does the output feel like a private intelligence briefing, not generic content?
 5. Does the monetization fit the topic without weakening trust?
+6. Is every script section, narration line, and visual beat optimized for
+   YouTube retention — not just editorial quality?
 
 If any answer is no, revise.
 

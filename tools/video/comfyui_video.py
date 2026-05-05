@@ -286,7 +286,7 @@ class ComfyUIVideo(BaseTool):
                 dest = Path(inputs["output_path"]).expanduser()
                 dest.parent.mkdir(parents=True, exist_ok=True)
             else:
-                dest = Path(f"projects/_smoke/assets/video/comfyui_video_{operation}_{seed}").expanduser()
+                dest = Path(f"shared_studio/projects/_smoke/assets/video/comfyui_video_{operation}_{seed}").expanduser()
                 dest.parent.mkdir(parents=True, exist_ok=True)
 
             run = client.run_workflow(
@@ -358,7 +358,7 @@ class ComfyUIVideo(BaseTool):
         if ref_url:
             r = requests.get(ref_url, timeout=60)
             r.raise_for_status()
-            tmp = Path(f"projects/_smoke/assets/images/comfyui_ref_{seed}.png").expanduser()
+            tmp = Path(f"shared_studio/projects/_smoke/assets/images/comfyui_ref_{seed}.png").expanduser()
             tmp.parent.mkdir(parents=True, exist_ok=True)
             tmp.write_bytes(r.content)
             return tmp
@@ -384,7 +384,7 @@ class ComfyUIVideo(BaseTool):
         local_ref = self._resolve_reference_image(inputs.get("reference_image_path"), inputs.get("reference_image_url"), seed)
         uploaded = client.upload_image(local_path=local_ref, name=f"om_{seed}.png")
 
-        output_path = Path(inputs.get("output_path", f"projects/_smoke/assets/video/comfyui_wan22_i2v_{seed}.mp4")).expanduser()
+        output_path = Path(inputs.get("output_path", f"shared_studio/projects/_smoke/assets/video/comfyui_wan22_i2v_{seed}.mp4")).expanduser()
 
         workflow = ComfyUIClient.load_workflow(_WORKFLOWS_DIR / "wan22-i2v-4step.json")
         workflow = ComfyUIClient.patch_workflow(
@@ -417,7 +417,7 @@ class ComfyUIVideo(BaseTool):
         num_frames = int(inputs.get("num_frames", 81))
         fps = int(inputs.get("fps", 16))
 
-        output_path = Path(inputs.get("output_path", f"projects/_smoke/assets/video/comfyui_wan22_t2v_{seed}.mp4")).expanduser()
+        output_path = Path(inputs.get("output_path", f"shared_studio/projects/_smoke/assets/video/comfyui_wan22_t2v_{seed}.mp4")).expanduser()
 
         workflow = ComfyUIClient.load_workflow(_WORKFLOWS_DIR / "wan22-t2v-4step.json")
         workflow = ComfyUIClient.patch_workflow(

@@ -1,0 +1,146 @@
+{
+  "name": "ComfyUI Image Generation",
+  "nodes": [
+    {
+      "id": "node-webhook-img",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "comfyui-image-openm",
+      "parameters": {
+        "path": "comfyui-image",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "node-build-img",
+      "name": "Build Workflow JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const rawInput = $input.first().json;\n// In n8n 2.x, webhook body is in rawInput.body\nconst input = rawInput.body || rawInput;\nconst prompt = input.prompt || 'cinematic photograph, dramatic lighting, high quality';\nconst negative = input.negative_prompt || 'blurry, watermark, text, low quality, deformed';\nconst width = input.width || 768;\nconst height = input.height || 512;\nconst seed = input.seed != null ? input.seed : Math.floor(Math.random() * 999999999);\nconst steps = input.steps || 25;\nconst cfg = input.cfg || 7.0;\nconst model = input.model || 'SD1.5/juggernaut_reborn.safetensors';\n\nconst workflow = {\n  '4': {class_type: 'CheckpointLoaderSimple', inputs: {ckpt_name: model}},\n  '5': {class_type: 'EmptyLatentImage', inputs: {width, height, batch_size: 1}},\n  '6': {class_type: 'CLIPTextEncode', inputs: {text: prompt, clip: ['4', 1]}},\n  '7': {class_type: 'CLIPTextEncode', inputs: {text: negative, clip: ['4', 1]}},\n  '3': {class_type: 'KSampler', inputs: {cfg, denoise: 1.0, latent_image: ['5', 0], model: ['4', 0], negative: ['7', 0], positive: ['6', 0], sampler_name: 'euler_ancestral', scheduler: 'karras', seed, steps}},\n  '8': {class_type: 'VAEDecode', inputs: {samples: ['3', 0], vae: ['4', 2]}},\n  '9': {class_type: 'SaveImage', inputs: {filename_prefix: 'openm_img', images: ['8', 0]}},\n};\n\nreturn [{json: {workflow: JSON.stringify(workflow), seed, prompt, model}}];"
+      }
+    },
+    {
+      "id": "node-submit-img",
+      "name": "Submit to ComfyUI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://172.25.0.1:8188/prompt",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\"prompt\": JSON.parse($json.workflow)} }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "node-poll-img",
+      "name": "Poll Until Done",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const http = require('http');\nconst comfyUrl = '172.25.0.1';\nconst comfyPort = 8188;\nconst promptId = $input.first().json.prompt_id;\nconst seed = $('Build Workflow JSON').first()?.json?.seed;\nconst prompt = $('Build Workflow JSON').first()?.json?.prompt;\n\nif (!promptId) throw new Error('No prompt_id from ComfyUI submit');\n\nfunction httpGet(path) {\n  return new Promise((resolve, reject) => {\n    const req = http.get({ hostname: comfyUrl, port: comfyPort, path }, (res) => {\n      let data = '';\n      res.on('data', chunk => data += chunk);\n      res.on('end', () => {\n        try { resolve(JSON.parse(data)); } catch(e) { reject(e); }\n      });\n    });\n    req.on('error', reject);\n    req.setTimeout(10000, () => { req.abort(); reject(new Error('timeout')); });\n  });\n}\n\nfor (let i = 0; i < 600; i++) {\n  await new Promise(r => setTimeout(r, 1000));\n  const history = await httpGet(`/history/${promptId}`);\n  const result = history[promptId];\n  if (!result) continue;\n\n  if (result?.status?.status_str === 'error') {\n    const msgs = result.status.messages || [];\n    const errMsg = msgs.find(m => m[0] === 'execution_error');\n    throw new Error(`ComfyUI error: ${JSON.stringify(errMsg || msgs)}`);\n  }\n\n  if (result?.status?.completed) {\n    for (const nodeOut of Object.values(result.outputs || {})) {\n      const files = nodeOut.images || [];\n      if (files.length > 0) {\n        const f = files[0];\n        const qs = `filename=${encodeURIComponent(f.filename)}&subfolder=${encodeURIComponent(f.subfolder||'')}&type=${f.type||'output'}`;\n        return [{json: {\n          success: true,\n          filename: f.filename,\n          subfolder: f.subfolder || '',\n          type: f.type || 'output',\n          download_url: `http://${comfyUrl}:${comfyPort}/view?${qs}`,\n          prompt_id: promptId,\n          seed,\n          prompt\n        }}];\n      }\n    }\n    throw new Error('ComfyUI completed but no image output found');\n  }\n}\nthrow new Error('Image generation timed out after 10 minutes');"
+      }
+    },
+    {
+      "id": "node-respond-img",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Workflow JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Workflow JSON": {
+      "main": [
+        [
+          {
+            "node": "Submit to ComfyUI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit to ComfyUI": {
+      "main": [
+        [
+          {
+            "node": "Poll Until Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Until Done": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v1",
+    "executionTimeout": 700
+  },
+  "tags": [],
+  "pinData": {}
+}

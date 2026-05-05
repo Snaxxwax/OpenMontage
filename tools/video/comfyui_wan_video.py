@@ -299,7 +299,7 @@ class ComfyUIWanVideo(BaseTool):
             }
             workflow["5"]["inputs"]["extra_latents"] = ["11", 0]
 
-        out_path = Path(inputs.get("output_path") or f"projects/_smoke/assets/video/{filename_prefix}.mp4").expanduser()
+        out_path = Path(inputs.get("output_path") or f"shared_studio/projects/_smoke/assets/video/{filename_prefix}.mp4").expanduser()
         start = time.time()
 
         timeout_s = int(inputs.get("timeout_seconds", 600))
@@ -363,7 +363,7 @@ class ComfyUIWanVideo(BaseTool):
         if ref_url:
             r = requests.get(ref_url, timeout=30)
             r.raise_for_status()
-            tmp = Path(f"projects/_smoke/assets/images/comfyui_wan_ref_{seed}.png").expanduser()
+            tmp = Path(f"shared_studio/projects/_smoke/assets/images/comfyui_wan_ref_{seed}.png").expanduser()
             tmp.parent.mkdir(parents=True, exist_ok=True)
             tmp.write_bytes(r.content)
             return tmp

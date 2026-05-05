@@ -74,7 +74,7 @@ result = selector.execute({
     "aspect_ratio": "21:9",             # 21:9 / 16:9 / 9:16 / 4:3 / 1:1 / 3:4
     "duration": "10",                   # auto / 4..15
     "resolution": "720p",               # 480p / 720p
-    "output_path": "projects/<proj>/assets/video/clip_01.mp4",
+    "output_path": "shared_studio/projects/<proj>/assets/video/clip_01.mp4",
 })
 ```
 

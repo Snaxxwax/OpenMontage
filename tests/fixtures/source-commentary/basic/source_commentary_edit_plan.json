@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "project_id": "project-x",
+  "timeline": [
+    {
+      "clip_type": "source_clip",
+      "receipt_id": "rcpt-01",
+      "claim_id": "claim-iter-progress",
+      "local_clip_path": "shared_studio/projects/project-x/clips/rcpt-01.mp4",
+      "source_label_plan": {
+        "text": "Source: ITER Organization (2026)",
+        "position": "bottom-right"
+      }
+    }
+  ]
+}

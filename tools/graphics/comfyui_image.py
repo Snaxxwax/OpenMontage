@@ -201,7 +201,7 @@ class ComfyUIImage(BaseTool):
                 height = int(inputs.get("height", 1024))
                 steps = int(inputs.get("steps", 20))
                 guidance = float(inputs.get("guidance", 3.5))
-                out_path = Path(inputs.get("output_path", f"projects/_smoke/assets/images/comfyui_flux2_{seed}")).expanduser()
+                out_path = Path(inputs.get("output_path", f"shared_studio/projects/_smoke/assets/images/comfyui_flux2_{seed}")).expanduser()
                 workflow = ComfyUIClient.patch_workflow(
                     workflow,
                     {
@@ -236,7 +236,7 @@ class ComfyUIImage(BaseTool):
                 dest = Path(inputs["output_path"]).expanduser()
                 dest.parent.mkdir(parents=True, exist_ok=True)
             else:
-                dest = Path(f"projects/_smoke/assets/images/comfyui_image_{seed}").expanduser()
+                dest = Path(f"shared_studio/projects/_smoke/assets/images/comfyui_image_{seed}").expanduser()
                 dest.parent.mkdir(parents=True, exist_ok=True)
 
             run = client.run_workflow(

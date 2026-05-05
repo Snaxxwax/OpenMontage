@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "project_id": "project-x",
+  "claims": [
+    {
+      "claim_id": "claim-iter-progress",
+      "narration_text": "By the start of 2026, the ITER project reached a critical 80% completion milestone.",
+      "claim_type": "factual",
+      "evidence_need": "required",
+      "visual_support_type": "direct_proof",
+      "priority": 1
+    }
+  ]
+}

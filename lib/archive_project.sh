@@ -2,13 +2,13 @@
 # Archive a project directory before a fresh run.
 # Usage: bash lib/archive_project.sh <project-name>
 #
-# Moves projects/<name>/ to projects/<name>_archived_<timestamp>/
+# Moves shared_studio/projects/<name>/ to shared_studio/projects/<name>_archived_<timestamp>/
 # so no generated assets are lost.
 
 set -euo pipefail
 
 PROJECT_NAME="${1:?Usage: archive_project.sh <project-name>}"
-PROJECTS_DIR="$(cd "$(dirname "$0")/.." && pwd)/projects"
+PROJECTS_DIR="$(cd "$(dirname "$0")/.." && pwd)/shared_studio/projects"
 SRC="${PROJECTS_DIR}/${PROJECT_NAME}"
 
 if [ ! -d "$SRC" ]; then

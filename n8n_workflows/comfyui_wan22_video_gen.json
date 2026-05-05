@@ -1,0 +1,146 @@
+{
+  "name": "ComfyUI Video Generation (Wan 2.2)",
+  "nodes": [
+    {
+      "id": "node-webhook-wan22",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "comfyui-wan22-openm",
+      "parameters": {
+        "path": "comfyui-wan22",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "node-build-wan22",
+      "name": "Build Wan 2.2 Workflow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const rawInput = $input.first().json;\nconst input = rawInput.body || rawInput;\nconst prompt = input.prompt || 'cinematic footage, dynamic camera movement, high quality, detailed';\nconst negative = input.negative_prompt || 'blurry, watermark, text, static, no movement, low quality, ugly';\nconst width = input.width || 832;\nconst height = input.height || 480;\nconst num_frames = input.num_frames || 81;\nconst seed = input.seed != null ? input.seed : Math.floor(Math.random() * 999999999);\nconst steps = input.steps || 20;\nconst cfg = input.cfg || 6.0;\nconst frame_rate = input.frame_rate || 16;\n\nconst modelKey = input.model || 'wan22-14b-fp8';\nconst MODELS = {\n  'wan22-14b-fp8': 'Wan2_2-Animate-14B_fp8_e4m3fn_scaled_KJ.safetensors',\n  'wan22-5b-fp16': 'wan2.2_ti2v_5B_fp16.safetensors'\n};\nconst unetModel = MODELS[modelKey] || MODELS['wan22-14b-fp8'];\n\nconst workflow = {\n  '1': {class_type: 'UNETLoader', inputs: {unet_name: unetModel, weight_dtype: 'default'}},\n  '2': {class_type: 'CLIPLoader', inputs: {clip_name: 'umt5_xxl_fp8_e4m3fn_scaled.safetensors', type: 'wan'}},\n  '3': {class_type: 'VAELoader', inputs: {vae_name: 'wan2.2_vae.safetensors'}},\n  '4': {class_type: 'CLIPTextEncode', inputs: {text: prompt, clip: ['2', 0]}},\n  '5': {class_type: 'CLIPTextEncode', inputs: {text: negative, clip: ['2', 0]}},\n  '6': {class_type: 'WanImageToVideo', inputs: {positive: ['4', 0], negative: ['5', 0], vae: ['3', 0], width, height, length: num_frames, batch_size: 1}},\n  '7': {class_type: 'KSampler', inputs: {model: ['1', 0], positive: ['6', 0], negative: ['6', 1], latent_image: ['6', 2], seed, steps, cfg, sampler_name: 'euler', scheduler: 'beta', denoise: 1.0}},\n  '8': {class_type: 'VAEDecode', inputs: {samples: ['7', 0], vae: ['3', 0]}},\n  '9': {class_type: 'VHS_VideoCombine', inputs: {images: ['8', 0], frame_rate, loop_count: 0, filename_prefix: 'openm_wan22', format: 'video/h264-mp4', pingpong: false, save_output: true}},\n};\n\nreturn [{json: {workflow: JSON.stringify(workflow), seed, prompt, unetModel, num_frames, frame_rate}}];"
+      }
+    },
+    {
+      "id": "node-submit-wan22",
+      "name": "Submit to ComfyUI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        680,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://172.25.0.1:8188/prompt",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\"prompt\": JSON.parse($json.workflow)} }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "node-poll-wan22",
+      "name": "Poll Until Done",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const http = require('http');\nconst comfyUrl = '172.25.0.1';\nconst comfyPort = 8188;\nconst promptId = $input.first().json.prompt_id;\nconst seed = $('Build Wan 2.2 Workflow').first()?.json?.seed;\nconst prompt = $('Build Wan 2.2 Workflow').first()?.json?.prompt;\nconst num_frames = $('Build Wan 2.2 Workflow').first()?.json?.num_frames;\n\nif (!promptId) throw new Error('No prompt_id from ComfyUI submit');\n\nfunction httpGet(path) {\n  return new Promise((resolve, reject) => {\n    const req = http.get({ hostname: comfyUrl, port: comfyPort, path }, (res) => {\n      let data = '';\n      res.on('data', chunk => data += chunk);\n      res.on('end', () => {\n        try { resolve(JSON.parse(data)); } catch(e) { reject(e); }\n      });\n    });\n    req.on('error', reject);\n    req.setTimeout(10000, () => { req.abort(); reject(new Error('timeout')); });\n  });\n}\n\nfor (let i = 0; i < 1800; i++) {\n  await new Promise(r => setTimeout(r, 1000));\n  const history = await httpGet(`/history/${promptId}`);\n  const result = history[promptId];\n  if (!result) continue;\n\n  if (result?.status?.status_str === 'error') {\n    const msgs = result.status.messages || [];\n    const errMsg = msgs.find(m => m[0] === 'execution_error');\n    throw new Error(`ComfyUI error: ${JSON.stringify(errMsg || msgs)}`);\n  }\n\n  if (result?.status?.completed) {\n    for (const nodeOut of Object.values(result.outputs || {})) {\n      const files = nodeOut.videos || nodeOut.images || [];\n      if (files.length > 0) {\n        const f = files[0];\n        const qs = `filename=${encodeURIComponent(f.filename)}&subfolder=${encodeURIComponent(f.subfolder||'')}&type=${f.type||'output'}`;\n        return [{json: {\n          success: true,\n          filename: f.filename,\n          subfolder: f.subfolder || '',\n          type: f.type || 'output',\n          download_url: `http://${comfyUrl}:${comfyPort}/view?${qs}`,\n          prompt_id: promptId,\n          seed,\n          prompt,\n          num_frames\n        }}];\n      }\n    }\n    throw new Error('ComfyUI completed but no video output found');\n  }\n}\nthrow new Error('Video generation timed out after 30 minutes');"
+      }
+    },
+    {
+      "id": "node-respond-wan22",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1340,
+        300
+      ],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Wan 2.2 Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Wan 2.2 Workflow": {
+      "main": [
+        [
+          {
+            "node": "Submit to ComfyUI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit to ComfyUI": {
+      "main": [
+        [
+          {
+            "node": "Poll Until Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll Until Done": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionOrder": "v1",
+    "executionTimeout": 1900
+  },
+  "tags": [],
+  "pinData": {}
+}

@@ -235,7 +235,7 @@ Each stage:
 Specialized pipelines may insert domain-specific stages. For example,
 `character-animation` adds `character_design` and `rig_plan` before
 `scene_plan`, then emits a HyperFrames workspace and final deliverable at
-`projects/<project-name>/renders/final.mp4`.
+`shared_studio/projects/<project-name>/renders/final.mp4`.
 
 ---
 
@@ -448,7 +448,7 @@ A standalone Node.js/React subproject in `remotion-composer/` using [Remotion](h
 Consumed via `npx hyperframes` (no monorepo checkout needed). Runtime floor: Node.js ≥ 22, FFmpeg, `npx`.
 
 - Handles kinetic typography, product promos, launch reels, website-to-video, registry blocks, and SVG/GSAP character rigs
-- Driver: `tools/video/hyperframes_compose.py` materializes a workspace under `projects/<name>/hyperframes/`, then runs `lint → validate → render`
+- Driver: `tools/video/hyperframes_compose.py` materializes a workspace under `shared_studio/projects/<name>/hyperframes/`, then runs `lint → validate → render`
 - Layer 3 skills vendored at `.agents/skills/hyperframes*/`; Layer 2 guide at `skills/core/hyperframes.md`
 - The `character-animation` pipeline uses HyperFrames as the production render package. Browser previews are QA/debug artifacts only, not the render path.
 
