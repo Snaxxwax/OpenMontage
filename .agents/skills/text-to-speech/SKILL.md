@@ -1,366 +1,197 @@
 ---
 name: text-to-speech
 description: |
-  Generate speech audio from text using HeyGen's Starfish TTS model. Use when: (1) Generating standalone speech audio files from text, (2) Converting text to speech with voice selection, speed, and pitch control, (3) Creating audio for voiceovers, narration, or podcasts, (4) Working with HeyGen's /v1/audio endpoints, (5) Listing available TTS voices by language or gender.
-allowed-tools: mcp__heygen__*
+  Generate speech audio across OpenMontage TTS providers. Use when: (1) Creating narration, voiceovers, or spoken samples, (2) Choosing between Fish Speech, Piper, HeyGen, ElevenLabs, Google, or OpenAI TTS, (3) Converting speaker directions into delivery controls, (4) Working with inline performance tags for Fish Speech, (5) Generating local or API-backed speech assets.
 metadata:
   openclaw:
     requires:
-      env:
-        - HEYGEN_API_KEY
-    primaryEnv: HEYGEN_API_KEY
+      env: []
 ---
 
-# Text-to-Speech (HeyGen Starfish)
+# Text-to-Speech
 
-Generate speech audio files from text using HeyGen's in-house Starfish TTS model. This skill is for standalone audio generation — separate from video creation.
+This skill explains how to choose and drive TTS inside OpenMontage.
 
-## Authentication
+## Provider Defaults
 
-All requests require the `X-Api-Key` header. Set the `HEYGEN_API_KEY` environment variable.
+Use these defaults unless the user has already approved a specific provider:
 
-```bash
-curl -X GET "https://api.heygen.com/v1/audio/voices" \
-  -H "X-Api-Key: $HEYGEN_API_KEY"
+- `fish_speech_tts`: best local expressive narration, strongest when the script uses inline formatting and tags
+- `piper_tts`: local CPU fallback for drafts and zero-cost offline work
+- `google_tts`: strongest localization coverage
+- `elevenlabs_tts`: premium cloud narration
+- `openai_tts`: lightweight cloud fallback
+- `mcp__heygen__*`: standalone HeyGen Starfish audio flow when those MCP tools are available
+
+## Fish Speech First
+
+Fish is not plain TTS. It is designed to respond to **inline bracketed performance instructions** embedded directly in the text.
+
+Examples:
+
+```text
+[low voice] The route looks simple. [short pause] [emphasis] That is the trap.
+[whisper] It feels like convenience.
+[professional broadcast tone] The platform owns the route to users.
 ```
 
-## Tool Selection
+Fish supports both short tags and free-form natural-language tags, including:
 
-If HeyGen MCP tools are available (`mcp__heygen__*`), **prefer them** over direct HTTP API calls.
+- `[whisper]`
+- `[short pause]`
+- `[pause]`
+- `[emphasis]`
+- `[excited]`
+- `[angry]`
+- `[professional broadcast tone]`
+- `[whisper in small voice]`
+- `[pitch up]`
 
-| Task | MCP Tool | Fallback (Direct API) |
-|------|----------|----------------------|
-| List TTS voices | `mcp__heygen__list_audio_voices` | `GET /v1/audio/voices` |
-| Generate speech audio | `mcp__heygen__text_to_speech` | `POST /v1/audio/text_to_speech` |
+The core rule:
 
-## Default Workflow
+**When using Fish, convert `speaker_directions` into sparse inline tags before synthesis.**
 
-1. List voices with `mcp__heygen__list_audio_voices` (or `GET /v1/audio/voices`)
-2. Pick a voice matching desired language, gender, and features
-3. Call `mcp__heygen__text_to_speech` (or `POST /v1/audio/text_to_speech`) with text and voice_id
-4. Use the returned `audio_url` to download or play the audio
+## CRITICAL: Never Prepend Raw speaker_directions as a Tag
 
-## List TTS Voices
-
-Retrieve voices compatible with the Starfish TTS model.
-
-> **Note:** This uses `GET /v1/audio/voices` — a different endpoint from the video voices API (`GET /v2/voices`). Not all video voices support Starfish TTS.
-
-### curl
-
-```bash
-curl -X GET "https://api.heygen.com/v1/audio/voices" \
-  -H "X-Api-Key: $HEYGEN_API_KEY"
-```
-
-### TypeScript
-
-```typescript
-interface TTSVoice {
-  voice_id: string;
-  language: string;
-  gender: "female" | "male" | "unknown";
-  name: string;
-  preview_audio_url: string | null;
-  support_pause: boolean;
-  support_locale: boolean;
-  type: string;
-}
-
-interface TTSVoicesResponse {
-  error: null | string;
-  data: {
-    voices: TTSVoice[];
-  };
-}
-
-async function listTTSVoices(): Promise<TTSVoice[]> {
-  const response = await fetch("https://api.heygen.com/v1/audio/voices", {
-    headers: { "X-Api-Key": process.env.HEYGEN_API_KEY! },
-  });
-
-  const json: TTSVoicesResponse = await response.json();
-
-  if (json.error) {
-    throw new Error(json.error);
-  }
-
-  return json.data.voices;
-}
-```
-
-### Python
+Do NOT do this:
 
 ```python
-import requests
-import os
-
-def list_tts_voices() -> list:
-    response = requests.get(
-        "https://api.heygen.com/v1/audio/voices",
-        headers={"X-Api-Key": os.environ["HEYGEN_API_KEY"]}
-    )
-
-    data = response.json()
-    if data.get("error"):
-        raise Exception(data["error"])
-
-    return data["data"]["voices"]
+# WRONG — causes malformed chunks and truncation detection failure
+tagged = f"[{speaker_directions}] {narration_text}"
 ```
 
-### Response Format
+`speaker_directions` are multi-sentence prose (50+ words). When passed as a bracket prefix, `split_sentences` splits them mid-tag, creating unclosed `[` fragments. Fish Speech receives e.g. `[Subject mode — warm but restrained.` as its entire chunk and generates near-zero audio. The truncation guard then fires on every chunk.
 
-```json
-{
-  "error": null,
-  "data": {
-    "voices": [
-      {
-        "voice_id": "f38a635bee7a4d1f9b0a654a31d050d2",
-        "name": "Chill Brian",
-        "language": "English",
-        "gender": "male",
-        "preview_audio_url": "https://resource.heygen.ai/text_to_speech/WpSDQvmLGXEqXZVZQiVeg6.mp3",
-        "support_pause": true,
-        "support_locale": false,
-        "type": "public"
-      }
-    ]
-  }
-}
-```
-
-## Generate Speech Audio
-
-Convert text to speech audio using a specified voice.
-
-### Endpoint
-
-`POST https://api.heygen.com/v1/audio/text_to_speech`
-
-### Request Fields
-
-| Field | Type | Req | Description |
-|-------|------|:---:|-------------|
-| `text` | string | Y | Text content to convert to speech |
-| `voice_id` | string | Y | Voice ID from `GET /v1/audio/voices` |
-| `speed` | number | | Speech speed, 0.5-1.5 (default: 1) |
-| `pitch` | integer | | Voice pitch, -50 to 50 (default: 0) |
-| `locale` | string | | Accent/locale for multilingual voices (e.g., `en-US`, `pt-BR`) |
-| `elevenlabs_settings` | object | | Advanced settings for ElevenLabs voices |
-
-### ElevenLabs Settings (optional)
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `model` | string | Model selection (`eleven_v3`, `eleven_turbo_v2_5`, etc.) |
-| `similarity_boost` | number | Voice similarity, 0.0-1.0 |
-| `stability` | number | Output consistency, 0.0-1.0 |
-| `style` | number | Style intensity, 0.0-1.0 |
-
-### curl
-
-```bash
-curl -X POST "https://api.heygen.com/v1/audio/text_to_speech" \
-  -H "X-Api-Key: $HEYGEN_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Hello! Welcome to our product demo.",
-    "voice_id": "YOUR_VOICE_ID",
-    "speed": 1.0
-  }'
-```
-
-### TypeScript
-
-```typescript
-interface TTSRequest {
-  text: string;
-  voice_id: string;
-  speed?: number;
-  pitch?: number;
-  locale?: string;
-  elevenlabs_settings?: {
-    model?: string;
-    similarity_boost?: number;
-    stability?: number;
-    style?: number;
-  };
-}
-
-interface WordTimestamp {
-  word: string;
-  start: number;
-  end: number;
-}
-
-interface TTSResponse {
-  error: null | string;
-  data: {
-    audio_url: string;
-    duration: number;
-    request_id: string;
-    word_timestamps: WordTimestamp[];
-  };
-}
-
-async function textToSpeech(request: TTSRequest): Promise<TTSResponse["data"]> {
-  const response = await fetch(
-    "https://api.heygen.com/v1/audio/text_to_speech",
-    {
-      method: "POST",
-      headers: {
-        "X-Api-Key": process.env.HEYGEN_API_KEY!,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    }
-  );
-
-  const json: TTSResponse = await response.json();
-
-  if (json.error) {
-    throw new Error(json.error);
-  }
-
-  return json.data;
-}
-```
-
-### Python
+Do this instead — convert directions to 1-3 short Fish tags inline:
 
 ```python
-import requests
-import os
-
-def text_to_speech(
-    text: str,
-    voice_id: str,
-    speed: float = 1.0,
-    pitch: int = 0,
-    locale: str | None = None,
-) -> dict:
-    payload = {
-        "text": text,
-        "voice_id": voice_id,
-        "speed": speed,
-        "pitch": pitch,
-    }
-
-    if locale:
-        payload["locale"] = locale
-
-    response = requests.post(
-        "https://api.heygen.com/v1/audio/text_to_speech",
-        headers={
-            "X-Api-Key": os.environ["HEYGEN_API_KEY"],
-            "Content-Type": "application/json",
-        },
-        json=payload,
-    )
-
-    data = response.json()
-    if data.get("error"):
-        raise Exception(data["error"])
-
-    return data["data"]
+# CORRECT — translate directions to sparse Fish tags embedded in the narration
+text = "In 1956, an engineer named Bill Fair... [pause] Their system worked. [low voice] The problem is what it became."
+result = selector.execute({"text": text, "provider": "fish_speech", ...})
 ```
 
-### Response Format
+If no Fish tags have been embedded in the narration yet, pass the raw narration text with no prefix — plain prose generates better audio than a malformed tag block:
 
-```json
-{
-  "error": null,
-  "data": {
-    "audio_url": "https://resource2.heygen.ai/text_to_speech/.../id=365d46bb.wav",
-    "duration": 5.526,
-    "request_id": "p38QJ52hfgNlsYKZZmd9",
-    "word_timestamps": [
-      { "word": "<start>", "start": 0.0, "end": 0.0 },
-      { "word": "Hey", "start": 0.079, "end": 0.219 },
-      { "word": "there,", "start": 0.239, "end": 0.459 },
-      { "word": "<end>", "start": 5.526, "end": 5.526 }
-    ]
-  }
-}
+```python
+# ACCEPTABLE for baseline audio — no tags is better than a broken tag
+result = selector.execute({"text": narration_text, "provider": "fish_speech", ...})
 ```
 
-## Usage Examples
+## Fish Best Practices
 
-### Basic TTS
+1. Put the tag immediately before the phrase it should affect.
+2. Use pauses at clause boundaries, not every sentence.
+3. Prefer a few sharp tags over a dense wall of markup.
+4. Keep the script semantically close to the approved subtitle text.
+5. Tune the tags first if the read sounds flat.
 
-```typescript
-const result = await textToSpeech({
-  text: "Welcome to our quarterly earnings call.",
-  voice_id: "YOUR_VOICE_ID",
-});
+Good:
 
-console.log(`Audio URL: ${result.audio_url}`);
-console.log(`Duration: ${result.duration}s`);
+```text
+The most valuable software gate is not code. [emphasis] It is permission. [short pause]
+[low voice] The strange part is that most of this power does not feel like power.
 ```
 
-### With Speed Adjustment
+Bad:
 
-```typescript
-const result = await textToSpeech({
-  text: "We're thrilled to announce our newest feature!",
-  voice_id: "YOUR_VOICE_ID",
-  speed: 1.1,
-});
+```text
+[serious][ominous][deep][slow][cinematic] The app store controls the route.
 ```
 
-### With Locale for Multilingual Voices
+Detailed Fish guidance lives in [FISH_SPEECH.md](/home/pop/OpenMontage/docs/FISH_SPEECH.md).
 
-```typescript
-const result = await textToSpeech({
-  text: "Bem-vindo ao nosso produto.",
-  voice_id: "MULTILINGUAL_VOICE_ID",
-  locale: "pt-BR",
-});
+## CRITICAL: Fish Speech Truncation Trap
+
+**Every section longer than ~30 seconds MUST use chunking. Skipping this causes silent truncation at 47.5s regardless of text length.**
+
+Fish Speech's default `max_new_tokens=1024` caps output at ~47.5 seconds. A 286-word section will be silently cut at 47.5s with no error. The tool even flags this as a `duration_cluster_48s` warning — if you see all sections coming out exactly 47.5s, chunking is off.
+
+### Always call via `tts_selector`, never raw curl or direct API
+
+Raw curl calls against the Fish Speech server will always truncate because they bypass the tool's chunking logic. Use `tts_selector` with chunking explicitly enabled:
+
+```python
+from tools.audio.tts_selector import TTSSelector
+selector = TTSSelector()
+result = selector.execute({
+    "text": tagged_text,
+    "provider": "fish_speech",
+    "output_path": "path/to/section.mp3",
+    "format": "mp3",
+    "max_new_tokens": 4096,             # TOP LEVEL — NOT nested. Default 1024 truncates.
+    "chunking": {
+        "enabled": True,
+        "threshold_seconds": 30,        # chunk anything estimated > 30s
+        "target_chunk_seconds_min": 20,
+        "target_chunk_seconds_max": 35,
+    },
+})
 ```
 
-### Find a Voice and Generate Audio
+### Duration sanity check after batch generation
 
-```typescript
-async function generateSpeech(text: string, language: string): Promise<string> {
-  const voices = await listTTSVoices();
-  const voice = voices.find(
-    (v) => v.language.toLowerCase().includes(language.toLowerCase())
-  );
+After generating a batch, always verify durations are proportional to word count:
 
-  if (!voice) {
-    throw new Error(`No TTS voice found for language: ${language}`);
-  }
-
-  const result = await textToSpeech({
-    text,
-    voice_id: voice.voice_id,
-  });
-
-  return result.audio_url;
-}
-
-const audioUrl = await generateSpeech("Hello and welcome!", "english");
+```python
+import subprocess
+dur = float(subprocess.run(
+    ['ffprobe','-v','error','-show_entries','format=duration',
+     '-of','default=noprint_wrappers=1:nokey=1', path],
+    capture_output=True, text=True).stdout.strip())
+# Rule of thumb: ~2.5 words/sec narration pace
+# 200 words → expect ~80s. If you see 47.5s, chunking failed.
 ```
 
-## Pauses with Break Tags
+If every section is exactly 47.5s — stop. Fix chunking before continuing.
 
-Use SSML-style break tags in your text for pauses:
+### GPU memory discipline
 
+Fish Speech S2-Pro occupies ~22 GB VRAM. Always unload it before starting ACE-Step, ComfyUI, or any other GPU tool. Failure causes OOM on the next tool with no warning:
+
+```bash
+# Kill Fish Speech server before starting next GPU tool
+pkill -f "python.*main.py.*18188" || true
+# Verify GPU is clear before proceeding
+nvidia-smi --query-compute-apps=pid,used_memory,name --format=csv,noheader
 ```
-word <break time="1s"/> word
+
+## OpenMontage Workflow
+
+For narration work:
+
+1. Use `tts_selector` unless the user explicitly wants a specific provider.
+2. Generate one section sample first — verify duration is proportional to word count.
+3. Approve voice, pacing, and tag behavior.
+4. Then batch the remaining sections with chunking enabled.
+5. After batch: verify all durations, update `narration_manifest.json`.
+
+If selecting Fish:
+
+- prefer `preferred_provider="fish_speech"`
+- always use `tts_selector` with `chunking.enabled=True` for sections > 30s
+- always set `fish_speech.max_new_tokens=4096` (never rely on the default)
+- ensure the Fish local server is already running and healthy at `/v1/health`
+- expect S2-Pro to use ~22 GB VRAM — unload before starting any other GPU tool
+
+## HeyGen Starfish
+
+If HeyGen MCP tools are available, they are still valid for standalone TTS tasks:
+
+- `mcp__heygen__list_audio_voices`
+- `mcp__heygen__text_to_speech`
+
+HeyGen auth:
+
+```bash
+export HEYGEN_API_KEY=...
 ```
 
-Rules:
-- Use seconds with `s` suffix: `<break time="1.5s"/>`
-- Must have spaces before and after the tag
-- Self-closing tag format
+## Quick Heuristics
 
-## Best Practices
+- expressive local narration with delivery markup: Fish Speech
+- fully offline draft narration with no GPU: Piper
+- multilingual production narration: Google TTS
+- premium cloud narration: ElevenLabs
+- lightweight cloud fallback: OpenAI TTS
 
-1. **Use `GET /v1/audio/voices`** to find compatible voices — not all voices from `GET /v2/voices` support Starfish TTS
-2. **Check `support_locale`** before setting a `locale` — only multilingual voices support locale selection
-3. **Keep speed between 0.8-1.2** for natural-sounding output
-4. **Preview voices** using the `preview_audio_url` before generating (may be null for some voices)
-5. **Use `word_timestamps`** in the response for caption syncing or timed text overlays
-6. **Use SSML break tags** in your text for pauses: `word <break time="1s"/> word`
+When using Fish, the formatting is part of the performance.
