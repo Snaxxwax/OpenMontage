@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/artifacts/approved_clip_manifest",
+  "title": "Approved Clip Manifest",
+  "description": "Canonical list of verified media clips ready for the edit timeline.",
+  "type": "object",
+  "required": ["version", "project_id", "approved_clips"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "project_id": { "type": "string" },
+    "approved_clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "receipt_id",
+          "claim_id",
+          "local_clip_path",
+          "qc_passed",
+          "source_label_required",
+          "source_label_text",
+          "approved_for_edit"
+        ],
+        "properties": {
+          "receipt_id": { "type": "string" },
+          "claim_id": { "type": "string" },
+          "local_clip_path": { "type": "string" },
+          "qc_passed": { "type": "boolean", "const": true },
+          "source_label_required": { "type": "boolean", "const": true },
+          "source_label_text": { "type": "string" },
+          "approved_for_edit": { "type": "boolean", "const": true },
+          "metadata": { "type": "object" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "rejected_clips": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["receipt_id", "reason"],
+        "properties": {
+          "receipt_id": { "type": "string" },
+          "path": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": false
+}

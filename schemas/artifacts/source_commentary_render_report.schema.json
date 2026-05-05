@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/artifacts/source_commentary_render_report",
+  "title": "Source Commentary Render Report",
+  "description": "Technical report of the final source-commentary video render.",
+  "type": "object",
+  "required": [
+    "version",
+    "project_id",
+    "render_path",
+    "duration_seconds",
+    "resolution",
+    "fps",
+    "source_clip_count",
+    "render_success"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "project_id": { "type": "string" },
+    "render_path": { "type": "string" },
+    "duration_seconds": { "type": "number", "minimum": 0 },
+    "resolution": { "type": "string" },
+    "fps": { "type": "number" },
+    "source_clip_count": { "type": "integer", "minimum": 0 },
+    "render_success": { "type": "boolean" },
+    "error_log": { "type": "string" }
+  },
+  "additionalProperties": false
+}

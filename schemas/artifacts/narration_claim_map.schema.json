@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/artifacts/narration_claim_map",
+  "title": "Narration Claim Map",
+  "description": "Decomposition of narrative into discrete, falsifiable claims requiring evidence.",
+  "type": "object",
+  "required": ["version", "project_id", "claims"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "project_id": { "type": "string" },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "claim_id",
+          "narration_text",
+          "claim_type",
+          "evidence_need",
+          "visual_support_type",
+          "priority"
+        ],
+        "properties": {
+          "claim_id": { "type": "string", "description": "Unique ID for this claim" },
+          "narration_text": { "type": "string" },
+          "claim_type": {
+            "type": "string",
+            "enum": ["factual", "historical", "comparative", "contradictory", "reactionary", "explainer"]
+          },
+          "evidence_need": {
+            "type": "string",
+            "enum": ["required", "recommended", "optional"]
+          },
+          "visual_support_type": {
+            "type": "string",
+            "enum": ["direct_proof", "contextual_montage", "expert_quote", "document_scan", "reaction_clip"]
+          },
+          "priority": { "type": "integer", "minimum": 1, "maximum": 5 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

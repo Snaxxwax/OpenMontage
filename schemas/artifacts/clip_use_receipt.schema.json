@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "clip_use_receipt.schema.json",
+  "title": "Clip Use Receipt",
+  "description": "Evidence-lock receipt for a specific source clip. Gatekeeper for acquisition and editing.",
+  "type": "object",
+  "required": [
+    "version",
+    "project_id",
+    "receipt_id",
+    "claim_id",
+    "source_id",
+    "source_url",
+    "source_title",
+    "source_channel",
+    "clip_role",
+    "in_seconds",
+    "out_seconds",
+    "duration_seconds",
+    "rationale",
+    "why_this_clip_is_needed",
+    "commentary_attached",
+    "source_label_required",
+    "decorative_broll",
+    "original_audio_use",
+    "approved_for_edit",
+    "status"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "project_id": { "type": "string" },
+    "receipt_id": { "type": "string", "description": "Unique receipt UUID" },
+    "claim_id": { "type": "string", "description": "Reference to narration_claim_map ID" },
+    "source_id": { "type": "string", "description": "Internal source identifier" },
+    "source_url": { "type": "string", "format": "uri" },
+    "source_title": { "type": "string" },
+    "source_channel": { "type": "string" },
+    "clip_role": {
+      "type": "string",
+      "enum": ["primary_evidence", "quote_support", "supporting_context", "counter_argument", "timeline_proof", "public_reaction"]
+    },
+    "in_seconds": { "type": "number", "minimum": 0 },
+    "out_seconds": { "type": "number", "minimum": 0 },
+    "duration_seconds": { "type": "number", "minimum": 0 },
+    "rationale": { "type": "string", "description": "Semantic proof logic" },
+    "why_this_clip_is_needed": { "type": "string" },
+    "commentary_attached": {
+      "type": "boolean",
+      "description": "Must be true for approved evidence clips"
+    },
+    "source_label_required": {
+      "type": "boolean",
+      "description": "Must be true for attribution"
+    },
+    "decorative_broll": {
+      "type": "boolean",
+      "description": "Must be false for approved evidence clips"
+    },
+    "original_audio_use": {
+      "type": "string",
+      "enum": ["muted", "ducked", "quote_audio"]
+    },
+    "approved_for_edit": {
+      "type": "boolean",
+      "description": "Gate for clip_acquisition"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "approved", "rejected", "flagged"]
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "approved" } } },
+      "then": {
+        "properties": {
+          "decorative_broll": { "const": false },
+          "commentary_attached": { "const": true },
+          "source_label_required": { "const": true },
+          "approved_for_edit": { "const": true }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "approved_for_edit": { "const": true } } },
+      "then": {
+        "properties": { "status": { "const": "approved" } }
+      }
+    }
+  ]
+}

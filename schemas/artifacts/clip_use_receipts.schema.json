@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "clip_use_receipts.schema.json",
+  "title": "Clip Use Receipts Collection",
+  "description": "A collection of evidence-lock receipts for a project.",
+  "type": "object",
+  "required": ["version", "project_id", "receipts"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "project_id": { "type": "string" },
+    "receipts": {
+      "type": "array",
+      "items": { "$ref": "clip_use_receipt.schema.json" }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/artifacts/source_commentary_qc_report",
+  "title": "Source Commentary QC Report",
+  "description": "Traceability and quality audit report for the final video.",
+  "type": "object",
+  "required": [
+    "version",
+    "project_id",
+    "qc_passed",
+    "claim_traceability_passed",
+    "source_labels_visible",
+    "audio_mix_passed",
+    "failures"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "project_id": { "type": "string" },
+    "qc_passed": { "type": "boolean" },
+    "claim_traceability_passed": { "type": "boolean" },
+    "source_labels_visible": { "type": "boolean" },
+    "audio_mix_passed": { "type": "boolean" },
+    "failures": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

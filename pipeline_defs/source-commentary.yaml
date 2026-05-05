@@ -1,0 +1,223 @@
+name: source-commentary
+version: "1.0"
+description: >
+  Model-agnostic source-commentary pipeline where an AI agent acts as the production brain.
+  Enforces an evidence-locked workflow: every source clip must be tied to a specific
+  narration claim via a clip_use_receipt before acquisition or editing.
+category: documentary
+stability: experimental
+default_checkpoint_policy: guided
+
+orchestration:
+  mode: executive-producer
+  skill: pipelines/source-commentary/executive-producer
+  budget_default_usd: 5.00
+  max_revisions_per_stage: 3
+  max_send_backs: 3
+  max_wall_time_minutes: 30
+
+required_skills:
+  - pipelines/source-commentary/research-director
+  - pipelines/source-commentary/claim_map-director
+  - pipelines/source-commentary/source_discovery-director
+  - pipelines/source-commentary/transcript_index-director
+  - pipelines/source-commentary/evidence_candidates-director
+  - pipelines/source-commentary/clip_use_gate-director
+  - pipelines/source-commentary/clip_acquisition-director
+  - pipelines/source-commentary/media_qc-director
+  - pipelines/source-commentary/edit_plan-director
+  - pipelines/source-commentary/compose-director
+  - pipelines/source-commentary/qc-director
+  - meta/reviewer
+  - meta/checkpoint-protocol
+
+compatible_playbooks:
+  recommended:
+    - clean-professional
+  also_works:
+    - editorial-navy
+  custom_allowed: true
+
+stages:
+  - name: research
+    skill: pipelines/source-commentary/research-director
+    produces:
+      - research_brief
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Grounding in verified facts
+      - Diversity of angles discovered
+    success_criteria:
+      - Schema-valid research_brief artifact
+
+  - name: claim_map
+    skill: pipelines/source-commentary/claim_map-director
+    required_artifacts_in:
+      - research_brief
+    produces:
+      - narration_claim_map
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Claims are discrete and falsifiable
+      - Narration flow is logical
+    success_criteria:
+      - Schema-valid narration_claim_map
+
+  - name: source_discovery
+    skill: pipelines/source-commentary/source_discovery-director
+    required_artifacts_in:
+      - narration_claim_map
+    produces:
+      - source_candidate_manifest
+    tools_available:
+      - transcript_fetcher
+      - youtube_metadata_adapter
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - NO binary downloads initiated
+      - No media file may be created in this stage
+      - Sources have valid transcripts or metadata
+    success_criteria:
+      - Schema-valid source_candidate_manifest
+
+  - name: transcript_index
+    skill: pipelines/source-commentary/transcript_index-director
+    required_artifacts_in:
+      - source_candidate_manifest
+    produces:
+      - transcript_index
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Index coverage across all candidates
+    success_criteria:
+      - Schema-valid transcript_index
+
+  - name: evidence_candidates
+    skill: pipelines/source-commentary/evidence_candidates-director
+    required_artifacts_in:
+      - narration_claim_map
+      - transcript_index
+    produces:
+      - evidence_candidate_manifest
+    tools_available:
+      - clip_search
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Timestamps align with claim logic
+      - High semantic relevance score
+    success_criteria:
+      - Schema-valid evidence_candidate_manifest
+
+  - name: clip_use_gate
+    skill: pipelines/source-commentary/clip_use_gate-director
+    required_artifacts_in:
+      - evidence_candidate_manifest
+    produces:
+      - clip_use_receipts
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Every clip is explicitly approved for a specific claim
+      - decorative_broll is FALSE for all approved clips
+    success_criteria:
+      - Collection of schema-valid clip_use_receipts
+
+  - name: clip_acquisition
+    skill: pipelines/source-commentary/clip_acquisition-director
+    required_artifacts_in:
+      - clip_use_receipts
+    produces:
+      - extracted_clip_manifest
+    required_tools:
+      - video_downloader
+      - video_trimmer
+    tools_available:
+      - video_downloader
+      - video_trimmer
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Downloads are restricted to receipt-approved ranges
+      - Successful extraction of all approved clips
+    success_criteria:
+      - Schema-valid extracted_clip_manifest
+
+  - name: media_qc
+    skill: pipelines/source-commentary/media_qc-director
+    required_artifacts_in:
+      - extracted_clip_manifest
+    produces:
+      - approved_clip_manifest
+    tools_available:
+      - video_analyzer
+      - frame_sampler
+      - visual_qa
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Technical quality (resolution, frame rate)
+      - Visual alignment with evidence claims
+    success_criteria:
+      - Schema-valid approved_clip_manifest
+
+  - name: edit_plan
+    skill: pipelines/source-commentary/edit_plan-director
+    required_artifacts_in:
+      - narration_claim_map
+      - approved_clip_manifest
+    produces:
+      - source_commentary_edit_plan
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Timeline is blocked until all clips have approved receipts
+      - Narration and evidence are perfectly synced
+    success_criteria:
+      - Schema-valid source_commentary_edit_plan artifact
+
+  - name: compose
+    skill: pipelines/source-commentary/compose-director
+    required_artifacts_in:
+      - source_commentary_edit_plan
+      - approved_clip_manifest
+    produces:
+      - source_commentary_render_report
+    required_tools:
+      - video_compose
+      - audio_mixer
+    tools_available:
+      - video_compose
+      - audio_mixer
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Audio balance between narration and source
+      - Overlay and source-label visibility
+    success_criteria:
+      - Schema-valid source_commentary_render_report
+
+  - name: qc
+    skill: pipelines/source-commentary/qc-director
+    required_artifacts_in:
+      - source_commentary_render_report
+      - research_brief
+    produces:
+      - source_commentary_qc_report
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Final video proves the claims in the research brief
+      - Narrative integrity
+    success_criteria:
+      - Schema-valid source_commentary_qc_report

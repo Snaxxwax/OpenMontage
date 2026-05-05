@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/artifacts/transcript_index",
+  "title": "Transcript Index",
+  "description": "Searchable timestamped segments extracted from source candidates.",
+  "type": "object",
+  "required": ["version", "project_id", "source_segments"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "project_id": { "type": "string" },
+    "source_segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source_id", "segment_id", "start_seconds", "end_seconds", "text"],
+        "properties": {
+          "source_id": { "type": "string" },
+          "segment_id": { "type": "string" },
+          "start_seconds": { "type": "number", "minimum": 0 },
+          "end_seconds": { "type": "number", "minimum": 0 },
+          "text": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
