@@ -88,97 +88,19 @@ function shiftColor(hex: string, amount: number): string {
 }
 
 const AnimatedBackground: React.FC<{ theme: ThemeConfig }> = ({ theme }) => {
-  const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
-
+  // Flat near-black fill — systemic-pulse brand: no animated orbs, no gradients.
+  // Static grid at 2% opacity gives documentary texture without GPU cost.
   const bg = theme.backgroundColor;
-  const primary = theme.primaryColor;
-  const accent = theme.accentColor;
-  const surface = theme.surfaceColor;
-  const light = isLightColor(bg);
-
-  // Slow-moving gradient angles
-  const angle1 = 135 + Math.sin(frame / (fps * 8)) * 30;
-
-  // Build gradient from theme colors instead of hardcoded dark blue
-  const { r: bgR, g: bgG, b: bgB } = hexToRgb(bg);
-  const { r: priR, g: priG, b: priB } = hexToRgb(primary);
-  const { r: accR, g: accG, b: accB } = hexToRgb(accent);
-
-  const gradient = `
-    radial-gradient(ellipse at ${30 + Math.sin(frame / (fps * 10)) * 20}% ${40 + Math.cos(frame / (fps * 8)) * 20}%,
-      rgba(${priR}, ${priG}, ${priB}, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse at ${70 + Math.cos(frame / (fps * 7)) * 20}% ${60 + Math.sin(frame / (fps * 9)) * 25}%,
-      rgba(${accR}, ${accG}, ${accB}, 0.1) 0%, transparent 55%),
-    linear-gradient(${angle1}deg, ${bg} 0%, ${shiftColor(bg, light ? -0.05 : 0.05)} 40%, ${surface} 70%, ${bg} 100%)
-  `;
-
-  // Floating orbs — derived from theme chart colors with low opacity
-  const orbColors = theme.chartColors.slice(0, 5);
-  const orbOpacity = light ? 0.06 : 0.08;
-  const orbs = [
-    { x: 20, y: 30, size: 300, color: orbColors[0] || primary, speedX: 7, speedY: 11 },
-    { x: 70, y: 60, size: 250, color: orbColors[1] || accent, speedX: 9, speedY: 8 },
-    { x: 40, y: 80, size: 200, color: orbColors[2] || primary, speedX: 13, speedY: 6 },
-    { x: 80, y: 20, size: 350, color: orbColors[3] || accent, speedX: 11, speedY: 14 },
-    { x: 10, y: 70, size: 180, color: orbColors[4] || primary, speedX: 8, speedY: 10 },
-  ];
-
-  // Grid and overlay colors adapt to light vs dark backgrounds
-  const gridColor = light ? "rgba(0,0,0,0.03)" : "rgba(255,255,255,0.02)";
-  const fadeColor = light
-    ? `rgba(${bgR},${bgG},${bgB},0.2)`
-    : `rgba(${bgR},${bgG},${bgB},0.4)`;
-
   return (
-    <AbsoluteFill style={{ background: gradient }}>
-      {/* Floating glow orbs */}
-      {orbs.map((orb, i) => {
-        const ox = orb.x + Math.sin(frame / (fps * orb.speedX)) * 15;
-        const oy = orb.y + Math.cos(frame / (fps * orb.speedY)) * 12;
-        const { r, g, b } = hexToRgb(orb.color);
-        return (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              left: `${ox}%`,
-              top: `${oy}%`,
-              width: orb.size,
-              height: orb.size,
-              borderRadius: "50%",
-              background: `rgba(${r}, ${g}, ${b}, ${orbOpacity})`,
-              filter: `blur(${orb.size * 0.4}px)`,
-              transform: "translate(-50%, -50%)",
-              willChange: "transform",
-            }}
-          />
-        );
-      })}
-
-      {/* Subtle grid overlay */}
+    <AbsoluteFill style={{ background: bg }}>
+      {/* Static grid — 2% opacity, zero animation cost */}
       <div
         style={{
           position: "absolute",
           inset: 0,
-          backgroundImage: `
-            linear-gradient(${gridColor} 1px, transparent 1px),
-            linear-gradient(90deg, ${gridColor} 1px, transparent 1px)
-          `,
-          backgroundSize: "60px 60px",
-          opacity: 0.5 + Math.sin(frame / (fps * 20)) * 0.2,
-        }}
-      />
-
-      {/* Top gradient fade for depth */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "30%",
-          background: `linear-gradient(to bottom, ${fadeColor}, transparent)`,
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
         }}
       />
     </AbsoluteFill>
@@ -246,6 +168,7 @@ interface Cut {
   animation?: string;
   transition_in?: string;
   transition_out?: string;
+  reason?: string;
   transform?: {
     animation?: string;
     scale?: number;
@@ -325,6 +248,10 @@ function isImage(source: string): boolean {
 function isVideo(source: string): boolean {
   const lower = source.toLowerCase();
   return VIDEO_EXTENSIONS.some((ext) => lower.endsWith(ext));
+}
+
+function isRouteSpec(source: string): boolean {
+  return source.toLowerCase().endsWith(".json");
 }
 
 // ---------------------------------------------------------------------------
@@ -445,6 +372,249 @@ const VideoScene: React.FC<{ src: string; startFrom?: number }> = ({
         muted
       />
       <Vignette />
+    </AbsoluteFill>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Route Scene — Asymmetric app-store documentary grammar
+// ---------------------------------------------------------------------------
+
+const RouteScene: React.FC<{ cut: Cut; theme: ThemeConfig }> = ({ cut, theme }) => {
+  const frame = useCurrentFrame();
+  const { fps, durationInFrames } = useVideoConfig();
+  const progress = interpolate(frame, [0, durationInFrames], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  const phase = Math.floor(progress * 6);
+  const routeDraw = interpolate(frame, [0, Math.max(1, durationInFrames * 0.42)], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const pulse = (frame % Math.round(fps * 1.2)) / Math.round(fps * 1.2);
+  const impact = spring({ frame: frame - Math.round(durationInFrames * 0.18), fps, config: { damping: 14, stiffness: 130 } });
+
+  const reason = cut.reason || cut.transform?.animation || cut.id;
+  const sceneLabel = cut.id.replace("cut-", "SCENE ");
+  const payoffMatch = reason.match(/(THE ROUTE IS THE PRODUCT|THE ROUTE TO USERS IS THE LEVER)/i);
+  const exactPayoff = payoffMatch?.[1]?.toUpperCase();
+  const isPayoff = Boolean(exactPayoff);
+  const beatAction = reason.match(
+    /story beat:\s*(Reveal|Collapse|Compare|Prove|Route|Lock|Show consequence):?\s*([^.;]*)/i,
+  );
+  const action = beatAction?.[1]?.toUpperCase() || (cut.title || cut.id).toUpperCase();
+  const actionDetail = beatAction?.[2] || "";
+  const stateLabel =
+    /developer|pulse|straight route|direct route/i.test(actionDetail)
+      ? "DIRECT ROUTE APPEARS"
+      : /gate|permission|review|warning|pay/i.test(actionDetail)
+        ? "GATE DROPS"
+        : /toll|fee|commission|payment/i.test(actionDetail)
+          ? "TOLL APPEARS"
+          : /collapse|compress|squeeze/i.test(actionDetail)
+            ? "ROUTE COMPRESSES"
+            : /compare|fork|alternative/i.test(actionDetail)
+              ? "ROUTES SPLIT"
+              : /lock|blocked|stop/i.test(actionDetail)
+                ? "ROUTE LOCKS"
+                : "ROUTE CHANGES STATE";
+  const beatText = `${action}: ${stateLabel}`;
+  const amber = cut.accentColor || theme.accentColor || "#FFB84D";
+  const route = theme.primaryColor || "#39A7FF";
+  const bg = "#071018";
+  const text = "#F7FAFC";
+
+  const nodes = [
+    { x: 210, y: 565, label: "DEV" },
+    { x: 520, y: phase >= 1 ? 450 : 565, label: phase >= 1 ? "REVIEW" : "APP" },
+    { x: 850, y: phase >= 2 ? 642 : 520, label: phase >= 2 ? "PAY" : "STORE" },
+    { x: 1190, y: phase >= 3 ? 430 : 565, label: phase >= 3 ? "WARN" : "TRUST" },
+    { x: 1590, y: 560, label: "USER" },
+  ];
+
+  const path = `M ${nodes[0].x} ${nodes[0].y} C 390 ${nodes[0].y - 180}, 440 ${nodes[1].y}, ${nodes[1].x} ${nodes[1].y} S 690 ${nodes[2].y}, ${nodes[2].x} ${nodes[2].y} S 1030 ${nodes[3].y}, ${nodes[3].x} ${nodes[3].y} S 1400 ${nodes[4].y}, ${nodes[4].x} ${nodes[4].y}`;
+  const altOpacity = interpolate(progress, [0.34, 0.48, 0.86], [0, 0.85, 0.35], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const gateScale = 0.9 + Math.sin(frame / 9) * 0.035;
+  const cameraScale = 1 + Math.sin(progress * Math.PI) * 0.035;
+
+  return (
+    <AbsoluteFill
+      style={{
+        background: `radial-gradient(circle at 50% 48%, rgba(57,167,255,0.12), transparent 34%), linear-gradient(135deg, ${bg}, #0B1722 52%, #05080D)`,
+        color: text,
+        overflow: "hidden",
+        fontFamily: theme.headingFont,
+      }}
+    >
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
+          transform: `translateY(${(frame % 72) * -0.16}px)`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          left: 58,
+          top: 48,
+          fontSize: 24,
+          letterSpacing: 0,
+          color: "rgba(247,250,252,0.66)",
+          fontWeight: 700,
+        }}
+      >
+        ASYMMETRIC / ROUTE TO USERS
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          right: 64,
+          top: 50,
+          fontSize: 22,
+          color: "rgba(247,250,252,0.52)",
+          fontFamily: theme.monoFont,
+        }}
+      >
+        {sceneLabel}
+      </div>
+
+      <svg
+        viewBox="0 0 1920 1080"
+        style={{
+          position: "absolute",
+          inset: 0,
+          transform: `scale(${cameraScale})`,
+          transformOrigin: "50% 54%",
+        }}
+      >
+        <defs>
+          <filter id={`glow-${cut.id}`} x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="8" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <marker id={`arrow-${cut.id}`} viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill={route} />
+          </marker>
+        </defs>
+
+        <path d={path} fill="none" stroke="rgba(255,255,255,0.13)" strokeWidth="18" strokeLinecap="round" />
+        <path
+          d={path}
+          fill="none"
+          stroke={route}
+          strokeWidth="9"
+          strokeLinecap="round"
+          markerEnd={`url(#arrow-${cut.id})`}
+          pathLength={1}
+          strokeDasharray={1}
+          strokeDashoffset={1 - routeDraw}
+          filter={`url(#glow-${cut.id})`}
+        />
+
+        <path
+          d="M 450 740 C 650 890, 1120 850, 1450 715"
+          fill="none"
+          stroke={amber}
+          strokeWidth="5"
+          strokeLinecap="round"
+          pathLength={1}
+          strokeDasharray="0.025 0.025"
+          strokeDashoffset={1 - routeDraw}
+          opacity={altOpacity}
+        />
+
+        {nodes.map((node, i) => {
+          const appear = interpolate(progress, [i * 0.08, i * 0.08 + 0.12], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          });
+          const isControl = i > 0 && i < nodes.length - 1;
+          return (
+            <g key={node.label} opacity={appear}>
+              <circle
+                cx={node.x}
+                cy={node.y}
+                r={isControl ? 54 * gateScale : 46}
+                fill={isControl ? "rgba(255,184,77,0.13)" : "rgba(57,167,255,0.16)"}
+                stroke={isControl ? amber : route}
+                strokeWidth={4}
+              />
+              {isControl && (
+                <rect
+                  x={node.x - 34}
+                  y={node.y - 48}
+                  width={68}
+                  height={96}
+                  rx={10}
+                  fill="rgba(7,16,24,0.92)"
+                  stroke={amber}
+                  strokeWidth={3}
+                />
+              )}
+              <text x={node.x} y={node.y + (isControl ? 86 : 78)} textAnchor="middle" fill={text} fontSize="25" fontWeight="700">
+                {node.label}
+              </text>
+            </g>
+          );
+        })}
+
+        <circle
+          cx={210 + pulse * 1380}
+          cy={565 + Math.sin(pulse * Math.PI * 2 + phase) * 72}
+          r={18 + impact * 8}
+          fill={text}
+          opacity={0.88}
+          filter={`url(#glow-${cut.id})`}
+        />
+      </svg>
+
+      <div
+        style={{
+          position: "absolute",
+          left: 150,
+          right: 150,
+          ...(isPayoff ? { bottom: 360 } : { top: 168 }),
+          fontSize: isPayoff ? 76 : 30,
+          lineHeight: 1.05,
+          fontWeight: 800,
+          textAlign: "center",
+          color: text,
+          textShadow: "0 0 28px rgba(57,167,255,0.34)",
+          opacity: interpolate(progress, [0.08, 0.22], [0, 1], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      >
+        {isPayoff ? exactPayoff || "THE ROUTE TO USERS IS THE LEVER" : beatText}
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          left: 140,
+          right: 140,
+          bottom: 54,
+          height: 5,
+          background: "rgba(255,255,255,0.10)",
+          borderRadius: 999,
+          overflow: "hidden",
+        }}
+      >
+        <div style={{ width: `${progress * 100}%`, height: "100%", background: `linear-gradient(90deg, ${route}, ${amber})` }} />
+      </div>
     </AbsoluteFill>
   );
 };
@@ -708,6 +878,10 @@ const SceneRenderer: React.FC<{ cut: Cut; theme: ThemeConfig }> = ({ cut, theme 
   // --- Media types (image / video fallback) ---
   const animation = cut.animation || cut.transform?.animation;
 
+  if ((cut.type === "route_scene" || (cut.source && isRouteSpec(cut.source)))) {
+    return maybeWrapWithBg(<RouteScene cut={cut} theme={theme} />);
+  }
+
   if (cut.source && isImage(cut.source)) {
     return maybeWrapWithBg(<ImageScene src={cut.source} animation={animation} />);
   }
@@ -733,7 +907,7 @@ const OverlayRenderer: React.FC<{ overlay: Overlay }> = ({ overlay }) => {
   if (overlay.type === "section_title") {
     return (
       <SectionTitle
-        title={overlay.text}
+        title={overlay.text || ""}
         subtitle={overlay.subtitle}
         accentColor={overlay.accentColor}
         position={(overlay.position as any) || "top-left"}
@@ -743,7 +917,7 @@ const OverlayRenderer: React.FC<{ overlay: Overlay }> = ({ overlay }) => {
   if (overlay.type === "stat_reveal") {
     return (
       <StatReveal
-        stat={overlay.text}
+        stat={overlay.text || ""}
         label={overlay.subtitle}
         accentColor={overlay.accentColor}
         position={(overlay.position as any) || "bottom-right"}
@@ -751,7 +925,7 @@ const OverlayRenderer: React.FC<{ overlay: Overlay }> = ({ overlay }) => {
     );
   }
   if (overlay.type === "hero_title") {
-    return <HeroTitle title={overlay.text} subtitle={overlay.subtitle} />;
+    return <HeroTitle title={overlay.text || ""} subtitle={overlay.subtitle} />;
   }
   if (overlay.type === "provider_chip" && overlay.providers) {
     return (
