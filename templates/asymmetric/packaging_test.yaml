@@ -1,0 +1,224 @@
+# Asymmetric Packaging Test Template
+# Version: 1.0
+# Packaging (title + thumbnail + viewer promise) is locked before research begins.
+# This artifact must be operator-approved before Step 4 (research and source discovery).
+#
+# Rule: If you don't know what you're selling the viewer before researching,
+# you cannot evaluate whether the evidence is sufficient. Packaging defines the proof standard.
+
+project_id: ""
+episode_concept: ""
+editorial_pillar: ""             # hidden_control | system_leverage | extraction_layers | power_networks | optimization_warfare
+created_date: ""
+operator_approved: false
+approved_title_id: ""
+approved_thumbnail_id: ""
+operator_approval_notes: ""
+
+---
+
+# SECTION 1: Title Candidates
+# Minimum 3 candidates. Each must be tested against the title gate.
+# Use the title engine library from CLAUDE.md as the source of candidate patterns.
+
+title_candidates:
+
+  - title_id: "title-001"
+    text: ""
+    title_engine_pattern: ""           # e.g. "Who Really Controls [System]?" or "Where the Leverage Is in X"
+    curiosity_gap: ""                  # what does the viewer not know that this title hints at?
+    mechanism_visible: false           # does the title imply a hidden mechanism or chokepoint?
+    specificity: ""                    # what specific system or actor does the title name?
+    mobile_readability: false          # is the title readable when truncated to 60 characters?
+    title_gate_notes: ""
+    decision: ""                       # PASS | REVISE | REJECT
+
+  - title_id: "title-002"
+    text: ""
+    title_engine_pattern: ""
+    curiosity_gap: ""
+    mechanism_visible: false
+    specificity: ""
+    mobile_readability: false
+    title_gate_notes: ""
+    decision: ""
+
+  - title_id: "title-003"
+    text: ""
+    title_engine_pattern: ""
+    curiosity_gap: ""
+    mechanism_visible: false
+    specificity: ""
+    mobile_readability: false
+    title_gate_notes: ""
+    decision: ""
+
+# Title gate pass conditions:
+# - Creates a curiosity gap without giving away the mechanism
+# - Names a specific system, actor, or chokepoint (not a broad topic)
+# - Does not sound generic or educational
+# - Readable on mobile when truncated
+# Title reject conditions:
+# - Sounds like a business school case study title
+# - Explains the mechanism in the title (kills curiosity gap)
+# - Could belong to a generic explainer channel
+# - Uses words like "explained," "overview," "guide," "introduction"
+
+---
+
+# SECTION 2: Thumbnail Concepts
+# Minimum 3 variants: power / mechanism / consequence.
+# Each variant must be materially different — not cosmetic variation.
+
+thumbnail_concepts:
+
+  - thumbnail_id: "thumb-power"
+    variant_type: "power"              # power | mechanism | consequence
+    thumbnail_family: ""              # hidden_operator | system_map | the_breach | extraction
+    visual_role: ""                   # gatekeeper | strategist | broker | extractor | swarm
+    role_meaning: ""                  # what the role signals: blocked | decoded | connected | harvested | moved
+    hero_object: ""                   # one object from the hero object library
+    signal_color: ""                  # amber | cyan | red — which signal color and why
+    leverage_marker: ""               # where is the chokepoint marked in the composition?
+    headline_text: ""                 # 2-5 words maximum
+    composition_description: ""       # one sentence: what is the visual composition?
+    two_second_test: false            # can a viewer identify the leverage point in under 2 seconds on mobile?
+    mobile_readability: false         # is the headline readable at thumbnail size on mobile?
+    clutter_free: false               # does the thumbnail pass the no-clutter rule?
+    thumbnail_gate_notes: ""
+    decision: ""                      # PASS | REVISE | REJECT
+
+  - thumbnail_id: "thumb-mechanism"
+    variant_type: "mechanism"
+    thumbnail_family: ""
+    visual_role: ""
+    role_meaning: ""
+    hero_object: ""
+    signal_color: ""
+    leverage_marker: ""
+    headline_text: ""
+    composition_description: ""
+    two_second_test: false
+    mobile_readability: false
+    clutter_free: false
+    thumbnail_gate_notes: ""
+    decision: ""
+
+  - thumbnail_id: "thumb-consequence"
+    variant_type: "consequence"
+    thumbnail_family: ""
+    visual_role: ""
+    role_meaning: ""
+    hero_object: ""
+    signal_color: ""
+    leverage_marker: ""
+    headline_text: ""
+    composition_description: ""
+    two_second_test: false
+    mobile_readability: false
+    clutter_free: false
+    thumbnail_gate_notes: ""
+    decision: ""
+
+# Thumbnail gate pass conditions:
+# - One dominant idea and one focal subject
+# - Leverage point identifiable in under 2 seconds on mobile
+# - Minimal text (2-5 words maximum)
+# - No clutter, no generic collage layouts
+# - Signal color is semantically correct (amber for leverage, red for cost, cyan for structure)
+# Thumbnail reject conditions:
+# - Too many competing focal subjects
+# - Text requires more than 2 seconds to parse on mobile
+# - Color used decoratively rather than semantically
+# - Looks like a generic business YouTube thumbnail
+
+---
+
+# SECTION 3: Viewer Promise
+# One viewer promise per episode. This is the standard that determines whether research succeeded.
+
+viewer_promise:
+  template: "By the end of this video you will understand [mechanism] well enough to recognize it in [adjacent system] — and know what [insight or action] it implies for anyone operating inside it."
+  completed: ""                        # fill in the completed viewer promise
+  mechanism: ""                        # what mechanism will the viewer understand?
+  adjacent_system: ""                  # what adjacent system should they be able to recognize it in?
+  operator_insight: ""                 # what should an operator do differently after watching?
+  specific_enough: false               # could this promise be made about any documentary on this topic? if yes, too broad.
+  falsifiable: false                   # could you evaluate after watching whether the promise was kept? if no, too vague.
+
+---
+
+# SECTION 4: Curiosity Gap
+# What does the viewer not know that they should?
+# The curiosity gap drives click behavior. Without it, the title and thumbnail are informational, not magnetic.
+
+curiosity_gap:
+  what_viewer_assumes: ""              # what does the viewer believe about this topic before watching?
+  what_viewer_will_learn: ""           # what will shatter or complicate that assumption?
+  gap_description: ""                  # one sentence: the distance between assumption and reality
+  gap_strong_enough: false            # will a viewer who sees the title feel compelled to close the gap?
+
+---
+
+# SECTION 5: Emotional Trigger
+# What emotion carries the viewer forward?
+# This is not about manipulation — it is about which emotion is structurally correct for this topic.
+
+emotional_trigger:
+  primary_emotion: ""                  # unease | disbelief | recognition | urgency | intellectual_pull | quiet_alarm
+  trigger_description: ""             # what creates this emotion for the viewer in the first 30 seconds?
+  emotion_sustained_how: ""          # how does the video sustain this emotion through the mechanism section?
+
+---
+
+# SECTION 6: Proof Promise
+# What primary source evidence does the viewer expect to see?
+# The packaging makes a proof promise. The research must find evidence that keeps it.
+
+proof_promise:
+  implied_proof_type: ""              # what kind of evidence does the title/thumbnail imply? (regulatory action, testimony, document, data)
+  minimum_proof_required: ""          # what is the minimum evidence that would make the viewer feel the promise was kept?
+  ideal_proof: ""                     # what would make the proof undeniable?
+  proof_already_identified: false     # is the primary source already known? (ideally yes before packaging is locked)
+  proof_source: ""                    # if known: name the institution or document
+
+---
+
+# SECTION 7: Alignment Check
+# Title / thumbnail / opening sequence must be aligned.
+# They must promise the same thing to the same viewer.
+
+alignment_check:
+  title_thumbnail_aligned: false       # do the title and thumbnail promise the same mechanism/consequence?
+  title_opening_aligned: false        # does the approved opening variant deliver on what the title promises?
+  thumbnail_opening_aligned: false    # does the opening sequence's visual world match the thumbnail's visual logic?
+  viewer_promise_achievable: false    # can the episode actually deliver on the viewer promise given available evidence?
+  alignment_notes: ""
+
+---
+
+# SECTION 8: Why Someone Clicks / Why Someone Stays
+
+click_and_keep_analysis:
+  why_someone_clicks: ""              # one sentence: what makes someone click this title+thumbnail combination?
+  why_someone_keeps_watching: ""      # one sentence: what makes someone stay past the 30-second mark?
+  drop_risk: ""                       # what is the most likely point where viewers leave? why?
+  rewatch_potential: ""               # is there something in this video a viewer would want to show someone else?
+  share_hook: ""                      # what is the sentence or moment a viewer would quote when sharing?
+
+---
+
+# SECTION 9: Compliance Summary
+
+compliance:
+  total_title_candidates: 0
+  title_candidates_passing: 0
+  total_thumbnail_concepts: 0
+  thumbnail_concepts_passing: 0
+  viewer_promise_complete: false
+  curiosity_gap_identified: false
+  proof_promise_identified: false
+  alignment_confirmed: false
+  all_gates_pass: false               # true only when all sections have at least one passing candidate and alignment is confirmed
+  production_may_proceed: false       # true only when operator_approved: true
+  blocker_notes: ""

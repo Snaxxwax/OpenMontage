@@ -1,0 +1,170 @@
+# Asymmetric Pattern Break Plan Template
+# Version: 2.0
+# A pattern break plan is written alongside the scene event plan.
+# It enforces the break cadence before render — not as a QC catch after.
+
+project_id: ""
+render_version: ""
+target_duration_seconds: 75
+
+# Break cadence requirements (from edit grammar)
+cadence_requirements:
+  minimum_break_every_n_seconds: 12      # hard rule
+  max_consecutive_same_visual_mode: 2    # before a break is required
+  every_diagram_section_must_have: "motion, interruption, or clip contrast"
+  minimum_breaks_total: 0               # computed: floor(duration / 12)
+
+# Break inventory
+# One entry per planned pattern break in the render.
+# A pattern break is any event that interrupts the established visual mode.
+
+breaks:
+
+  - break_id: "brk-001"
+    timestamp_seconds: 0.0
+    type: "conflict_clip"                    # the most powerful break type
+    from_mode: ""                            # what visual mode is being broken
+    to_mode: "conflict_clip"
+    duration_seconds: 0.0
+    prior_mode_duration_seconds: 0.0        # how long the broken mode had been running
+    scene_event_ref: "evt-001"              # corresponding event in the scene event plan
+    narration_shift: false                   # does narration rhythm change at this break?
+    audio_accent: false                      # is there a sound accent at this break? (if audio system supports it)
+    purpose: "cold_punch"
+    grammar_rule_enforced: "first_3_seconds_rule"
+    notes: ""
+
+  - break_id: "brk-002"
+    timestamp_seconds: 0.0
+    type: "hard_text_flash"
+    from_mode: "conflict_clip"
+    to_mode: "hard_text_flash"
+    duration_seconds: 2.0
+    prior_mode_duration_seconds: 0.0
+    scene_event_ref: ""
+    narration_shift: true                    # narration often punches in on a flash
+    audio_accent: false
+    purpose: "proof_hit_label"
+    grammar_rule_enforced: "clip_exit_to_flash"
+    notes: "Flash text converts the clip's content into a structural label."
+
+  - break_id: "brk-003"
+    timestamp_seconds: 0.0
+    type: "hard_cut_to_diagram"
+    from_mode: "hard_text_flash"
+    to_mode: "pressure_map_insert"
+    duration_seconds: 0.0                   # not a timed break; the cut is the break
+    prior_mode_duration_seconds: 0.0
+    scene_event_ref: ""
+    narration_shift: false
+    audio_accent: false
+    purpose: "mechanism_reveal"
+    grammar_rule_enforced: "diagram_earned_by_prior_clip_or_flash"
+    notes: "Diagram must enter immediately after flash — no neutral transition."
+
+  - break_id: "brk-004"
+    timestamp_seconds: 0.0
+    type: "hard_cut_clip_to_clip"           # consecutive clips from different sources
+    from_mode: "conflict_clip"
+    to_mode: "conflict_clip"
+    duration_seconds: 0.0
+    prior_mode_duration_seconds: 0.0
+    scene_event_ref: ""
+    narration_shift: false
+    audio_accent: false
+    purpose: "proof_escalation"
+    grammar_rule_enforced: "second_proof_hit_by_t40"
+    notes: "Second clip must add new proof, not restate the first clip's content."
+
+  - break_id: "brk-005"
+    timestamp_seconds: 0.0
+    type: "rule_zoom"
+    from_mode: "pressure_map_insert"
+    to_mode: "rule_zoom"
+    duration_seconds: 0.0
+    prior_mode_duration_seconds: 0.0
+    scene_event_ref: ""
+    narration_shift: true
+    audio_accent: false
+    purpose: "peak_proof_hit"
+    grammar_rule_enforced: "pattern_break_in_diagram_section"
+    notes: "Strongest interruption inside a diagram section. Pulls from the system map into the primary source rule text."
+
+  - break_id: "brk-006"
+    timestamp_seconds: 0.0
+    type: "number_slam"
+    from_mode: "pressure_map_insert"
+    to_mode: "hard_text_flash"
+    duration_seconds: 1.5
+    prior_mode_duration_seconds: 0.0
+    scene_event_ref: ""
+    narration_shift: true
+    audio_accent: false
+    purpose: "proof_hit"
+    grammar_rule_enforced: "proof_density_minimum"
+    notes: "IBM Plex Mono, large, amber number. Narration states the number at the same moment it appears."
+
+  - break_id: "brk-007"
+    timestamp_seconds: 0.0
+    type: "trap_closure_cut"               # hard cut from clip back to diagram at moment of maximum compression
+    from_mode: "conflict_clip"
+    to_mode: "trap_closure"
+    duration_seconds: 0.0
+    prior_mode_duration_seconds: 0.0
+    scene_event_ref: ""
+    narration_shift: false
+    audio_accent: false
+    purpose: "peak_tension"
+    grammar_rule_enforced: "trap_visible_at_peak_tension"
+    notes: "The diagram's trap closure completes what the clip's testimony started. The viewer sees the mechanism close."
+
+# Hard rules (enforced at pattern break plan review)
+hard_rules:
+
+  no_dissolve_between_clips:
+    description: "Never dissolve between two source clips. Hard cut only."
+    enforced: true
+
+  no_dissolve_between_modes:
+    description: "Never dissolve between a clip and a diagram, or a diagram and a flash. Hard cut only."
+    enforced: true
+
+  no_repeated_mode_three_in_row:
+    description: "No visual mode may repeat three times in a row without a break between the second and third instance."
+    enforced: true
+
+  every_diagram_section_gets_interrupted:
+    description: "Every continuous diagram section longer than 6 seconds must contain a hard text flash, rule zoom, or clip cut within it."
+    enforced: true
+
+  hard_cut_from_polished_to_ugly_proof:
+    description: "If the render contains polished institutional footage and raw proof footage, they must be cut together hard — the contrast is the break."
+    enforced: true
+
+  hearing_clip_interrupts_diagram:
+    description: "If a hearing clip is available and a diagram section runs longer than the clip's cut value, the clip must interrupt the diagram. The diagram is not more important than the testimony."
+    enforced: true
+
+  rule_text_punch_in_minimum:
+    description: "Every render with a policy or rule claim must contain at least one rule text punch-in (rule_zoom or document_punch_in). Narration alone cannot carry a rule claim."
+    enforced: true
+
+  no_audio_accent_without_system_support:
+    description: "Do not plan audio accents unless the render pipeline supports audio event markers. If unsupported, mark audio_accent: false and use visual break instead."
+    enforced: true
+
+# Compliance summary (filled after plan review)
+compliance:
+  total_planned_breaks: 0
+  breaks_per_30s:
+    t0_30: 0
+    t30_60: 0
+    t60_90: 0
+  minimum_break_cadence_met: false     # floor(duration/12) <= total_planned_breaks
+  longest_gap_between_breaks_seconds: 0.0
+  longest_gap_between_breaks_start: null
+  longest_gap_between_breaks_end: null
+  no_mode_repeats_three_in_row: false
+  every_diagram_section_interrupted: false
+  at_least_one_rule_text_event: false
+  plan_approved: false

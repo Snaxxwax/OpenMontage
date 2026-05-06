@@ -1,0 +1,168 @@
+# Asymmetric Scene Event Plan Template
+# Version: 2.0
+# One event per cut or visual state change.
+# More granular than the visual rhythm plan — every event is scored for retention function.
+# Use this instead of the visual_rhythm_plan.yaml for Phase 2+ productions.
+
+project_id: ""
+render_version: ""
+total_planned_events: 0
+total_planned_duration_seconds: 0.0
+
+# Allowed event types:
+#   conflict_clip       — source video from institutional hearing, testimony, or enforcement
+#   proof_hit           — document, rule text, numbered evidence (primary source)
+#   hard_text_flash     — 2–5 word structural claim, amber highlight, kinetic entrance
+#   rule_zoom           — crop-and-scale into policy document or rule text quote
+#   pressure_map_insert — diagram element appearing or updating (node, arrow, gate)
+#   split_screen        — simultaneous contrast (before/after, surface/mechanism)
+#   institutional_cut   — cut directly into hearing, court, or enforcement footage
+#   document_punch_in   — screenshot of official document inserted as frame insert
+#   route_snap          — route arrow extending or snapping to destination
+#   trap_closure        — diagram elements compressing toward chokepoint
+#   payoff_lock         — final diagram at most compressed state, payoff line plays over it
+
+events:
+
+  - event_id: "evt-001"
+    timestamp_seconds: 0.0
+    event_type: conflict_clip                # one of the allowed types above
+    source_asset: ""                         # path to clip, image, or diagram element
+    duration_seconds: 0.0
+    motion_behavior: "hard_cut_in"           # hard_cut_in | snap | slide_lock | kinetic_entrance | gate_compression | map_reveal | route_snap | payoff_hold
+    retention_purpose: "cold_punch"          # cold_punch | proof_hit | mechanism_reveal | pattern_break | tension_escalation | open_loop_plant | open_loop_close | payoff_delivery
+    viewer_question_answered: ""             # what question does this event answer? (empty if it only plants)
+    viewer_question_planted: ""              # what question does this event create?
+    tension_level: 5                         # 1=neutral, 5=peak
+    novelty_level: 4                         # 1=expected, 5=unexpected
+    pattern_break: false                     # true if this event breaks the prior visual mode
+    narration_under: ""                      # narration text playing under this event (or "silent" if narration pauses)
+    source_label_text: ""                    # source label for clips/docs; empty for diagrams and flashes
+    risk_if_static: "viewer leaves by t=3"   # what happens if this event is static or boring
+    fallback_if_boring: ""                   # alternative event type or asset if this event fails QC
+
+  - event_id: "evt-002"
+    timestamp_seconds: 0.0
+    event_type: hard_text_flash
+    source_asset: ""                         # generated text: specify the flash text here
+    flash_text: ""                           # 2–5 words; amber highlight word marked with *word*
+    duration_seconds: 2.0
+    motion_behavior: kinetic_entrance
+    retention_purpose: proof_hit
+    viewer_question_answered: ""
+    viewer_question_planted: ""
+    tension_level: 4
+    novelty_level: 4
+    pattern_break: true                      # always true for hard_text_flash after a clip
+    narration_under: ""
+    source_label_text: ""
+    risk_if_static: "flash with no kinetic entrance reads as a slide, not a claim"
+    fallback_if_boring: "replace flash text with a shorter, more direct phrase"
+
+  - event_id: "evt-003"
+    timestamp_seconds: 0.0
+    event_type: pressure_map_insert
+    source_asset: ""
+    diagram_element: ""                      # name the element being added: node_X | arrow_X | gate_X | label_X
+    duration_seconds: 0.0
+    motion_behavior: snap                    # snap | slide_lock | route_snap | gate_compression
+    retention_purpose: mechanism_reveal
+    viewer_question_answered: ""
+    viewer_question_planted: ""
+    tension_level: 3
+    novelty_level: 3
+    pattern_break: false
+    narration_under: ""
+    source_label_text: ""
+    risk_if_static: "diagram holds without motion — viewer reads it in 2 seconds and waits"
+    fallback_if_boring: "add amber highlight to this element or add a second diagram element in same second"
+
+  - event_id: "evt-004"
+    timestamp_seconds: 0.0
+    event_type: conflict_clip
+    source_asset: ""
+    duration_seconds: 0.0
+    motion_behavior: hard_cut_in
+    retention_purpose: tension_escalation
+    viewer_question_answered: ""
+    viewer_question_planted: ""
+    tension_level: 5
+    novelty_level: 3
+    pattern_break: true                      # true — cuts from diagram to clip
+    narration_under: ""
+    source_label_text: ""
+    risk_if_static: "clip that is calm or explanatory drops tension at the peak escalation point"
+    fallback_if_boring: "replace with higher-energy clip from candidate list or rule_zoom"
+
+  - event_id: "evt-005"
+    timestamp_seconds: 0.0
+    event_type: rule_zoom
+    source_asset: ""
+    zoom_target_text: ""                     # the specific phrase being zoomed into
+    duration_seconds: 0.0
+    motion_behavior: "crop_scale_linear"
+    retention_purpose: proof_hit
+    viewer_question_answered: ""
+    viewer_question_planted: ""
+    tension_level: 4
+    novelty_level: 5
+    pattern_break: true
+    narration_under: ""
+    source_label_text: ""
+    risk_if_static: "document shown without zoom feels like a research slide"
+    fallback_if_boring: "use document_punch_in with amber border and IBM Plex Mono rule text instead"
+
+  - event_id: "evt-006"
+    timestamp_seconds: 0.0
+    event_type: trap_closure
+    source_asset: ""
+    trap_elements: []                        # list of diagram elements being compressed
+    duration_seconds: 0.0
+    motion_behavior: gate_compression
+    retention_purpose: tension_escalation
+    viewer_question_answered: ""
+    viewer_question_planted: ""
+    tension_level: 5
+    novelty_level: 4
+    pattern_break: false                     # continuing diagram section; break came before it
+    narration_under: ""
+    source_label_text: ""
+    risk_if_static: "trap never visibly closes — the mechanism is described but not shown"
+    fallback_if_boring: "use hard_text_flash with the chokepoint label immediately after"
+
+  - event_id: "evt-007"
+    timestamp_seconds: 0.0
+    event_type: payoff_lock
+    source_asset: ""
+    duration_seconds: 0.0
+    motion_behavior: payoff_hold
+    retention_purpose: payoff_delivery
+    viewer_question_answered: ""             # closes all open loops
+    viewer_question_planted: ""
+    tension_level: 3                         # tension releases as model is delivered
+    novelty_level: 5                         # the model is the novelty
+    pattern_break: false
+    narration_under: ""                      # the payoff line
+    source_label_text: ""
+    risk_if_static: "payoff over a text card instead of the diagram — model delivered without proof visible"
+    fallback_if_boring: "ensure diagram is at its most compressed state; amber chokepoint node is dominant"
+
+# Event sequence analysis (filled after planning, before beat map review)
+sequence_analysis:
+  total_events: 0
+  events_per_30s:
+    t0_30: 0
+    t30_60: 0
+    t60_90: 0
+  first_proof_hit_event_id: ""
+  first_proof_hit_timestamp: null
+  first_stakes_event_id: ""
+  open_loop_plant_event_ids: []
+  open_loop_close_event_ids: []
+  pattern_break_event_ids: []
+  peak_tension_window_start: null
+  peak_tension_window_end: null
+  longest_unbroken_visual_mode_seconds: 0.0
+  longest_unbroken_visual_mode_type: ""
+  grammar_violations: []           # list any grammar rule violations found in the plan
+  plan_approved: false

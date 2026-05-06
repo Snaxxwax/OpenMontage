@@ -1,0 +1,277 @@
+# Asymmetric Retention Postmortem Template
+# Version: 1.0
+# Completed after every render — pass or fail.
+# This is the retention-specific layer of the standard postmortem.
+# Run alongside postmortem.md, not instead of it.
+#
+# Purpose: Capture frame-level retention failures and feed them back into
+# the next project's scene event plan, pattern break plan, and opening sequence proof.
+
+project_id: ""
+render_version: ""
+render_file: ""
+render_duration_seconds: 0.0
+postmortem_date: ""
+completed_by: "om-qc-reviewer"
+
+---
+
+# SECTION 1: First Frame Result
+# Was the first frame a retention-class opening?
+
+first_frame:
+  visual_mode_at_t0: ""              # what was in frame at t=0?
+                                     # target: conflict_clip | number_slam | animated_map_start | proof_document
+                                     # failure: title_card | logo | empty_background | slow_fade_in
+  creates_required_sensation: false  # did t=0 create curiosity, pressure, consequence, conflict, or visual novelty?
+  scroll_stop_test: ""               # honest judgment: would a scrolling viewer stop at this frame?
+  failure_description: ""            # if not a pass, what was wrong?
+  fix_required: ""                   # what must change in the opening sequence proof for the next render?
+
+---
+
+# SECTION 2: Opening Sequence Result (first 30 seconds)
+# Every opening gate evaluated against what actually rendered.
+
+opening_sequence:
+  first_proof_hit_timestamp_seconds: null    # when was the first proof hit? target: ≤10
+  first_proof_hit_type: ""                   # clip | document | number | rule_text | named_institution
+  first_stakes_timestamp_seconds: null       # when did stakes appear? target: ≤8
+  open_loop_planted_timestamp_seconds: null  # when was the open loop planted? target: ≤15
+  visual_modes_by_second_30: []              # list of visual modes that appeared before t=30
+  visual_mode_count_by_second_30: 0          # target: ≥2
+  pattern_breaks_by_second_30: 0             # target: ≥1
+  visual_state_changes_by_second_30: 0       # target: ≥7
+  mechanism_begun_before_second_30: false    # target: true
+
+  gate_results:
+    first_frame_creates_sensation: false
+    no_title_card_opening: false
+    no_context_dump: false
+    stakes_appear_by_second_8: false
+    viewer_question_created_by_second_10: false
+    viewer_promise_clear_by_second_30: false
+    proof_or_conflict_in_opening: false
+    mechanism_starts_before_second_30: false
+    pattern_break_in_opening: false
+    visual_state_couples_to_narration: false
+    no_corporate_explainer_feel: false
+
+  gates_passed_count: 0
+  gates_required: 11
+  opening_sequence_result: ""        # PASS | FAIL
+  opening_failure_summary: ""        # if FAIL: what specifically failed?
+
+---
+
+# SECTION 3: Full-Video Retention Risk Moments
+# Every moment where a viewer was likely to leave.
+# Be specific — name the timestamp and the cause.
+
+retention_risk_moments:
+
+  # Template entry — duplicate as needed
+  - moment_id: "risk-001"
+    timestamp_seconds: 0.0
+    risk_type: ""                    # static_hold | mode_repetition | narration_only_gap | low_energy_clip | proof_delay | corporate_tone | weak_payoff
+    description: ""                  # what was happening at this timestamp that created retention risk?
+    duration_seconds: 0.0            # how long did the risky state persist?
+    threshold_exceeded: false        # did this exceed the relevant threshold for its mode type?
+    threshold_value_seconds: 0.0    # the threshold that was exceeded (e.g., 4s for diagrams)
+    actual_value_seconds: 0.0       # the actual duration
+    fix: ""                          # what would have prevented this risk?
+
+---
+
+# SECTION 4: Proof Timing Evaluation
+
+proof_timing:
+  target_first_proof_seconds: 10
+  actual_first_proof_seconds: null
+  first_proof_on_target: false
+
+  total_proof_events: 0
+  target_minimum_proof_events: 3
+  proof_target_met: false
+
+  proof_events:
+    # Template entry — one per proof event in the render
+    - proof_event_id: "proof-001"
+      timestamp_seconds: 0.0
+      proof_type: ""                 # institutional_clip | rule_zoom | number_flash | document_punch_in | named_entity
+      source: ""                     # what institution or document?
+      simultaneous_with_narration: false   # did the visual appear at the same moment as the narration claim?
+      timing_delta_seconds: 0.0     # how many seconds off from the narration claim?
+
+  proof_timing_result: ""            # PASS | FAIL
+  proof_timing_notes: ""
+
+---
+
+# SECTION 5: Visual Event Cadence Evaluation
+
+visual_cadence:
+  # Per-window counts
+  events_t0_30: 0
+  events_t30_60: 0
+  events_t60_90: 0
+
+  # Targets
+  target_events_t0_30: 7
+  target_events_t30_60: 7
+  target_events_t60_90: 7
+  target_total_per_75s: 17
+
+  events_total: 0
+  cadence_target_met: false
+
+  # Seconds-per-event
+  actual_seconds_per_event: 0.0
+  target_seconds_per_event: 4.5
+  max_allowed_seconds_per_event: 5.5
+
+  cadence_result: ""                 # PASS | FAIL
+  cadence_notes: ""
+
+---
+
+# SECTION 6: Static Hold Failures
+# Any visual state held longer than the threshold for its mode type.
+
+static_hold_failures:
+
+  target_diagram_max_seconds: 4.0
+  target_clip_max_seconds: 8.0
+  target_text_card_max_seconds: 3.0
+  target_payoff_max_seconds: 6.0
+
+  failures:
+    # Template entry — one per failure
+    - failure_id: "hold-001"
+      timestamp_start_seconds: 0.0
+      timestamp_end_seconds: 0.0
+      hold_duration_seconds: 0.0
+      visual_mode: ""                # diagram | clip | text_card | payoff | other
+      threshold_seconds: 0.0
+      exceeded_by_seconds: 0.0
+      fix: ""
+
+  total_static_hold_failures: 0
+  static_hold_result: ""             # PASS | FAIL
+  worst_hold_duration_seconds: 0.0
+  worst_hold_timestamp_seconds: 0.0
+  worst_hold_visual_mode: ""
+
+---
+
+# SECTION 7: Pattern Break Failures
+# Any gap between pattern breaks exceeding 12 seconds.
+
+pattern_break_evaluation:
+  target_max_gap_seconds: 12
+  target_min_breaks_per_75s: 6
+
+  actual_breaks_total: 0
+  actual_longest_gap_seconds: 0.0
+  actual_longest_gap_start_seconds: 0.0
+  actual_longest_gap_end_seconds: 0.0
+
+  break_cadence_met: false
+
+  break_inventory:
+    # Template entry — one per break
+    - break_id: "brk-001"
+      timestamp_seconds: 0.0
+      break_type: ""                 # conflict_clip_cut | hard_text_flash | rule_zoom | split_screen | number_slam | map_compression | source_label_burn
+      from_mode: ""
+      to_mode: ""
+      was_effective: false           # in the operator's judgment, did this break work?
+      notes: ""
+
+  pattern_break_result: ""           # PASS | FAIL
+  pattern_break_notes: ""
+
+---
+
+# SECTION 8: Visual State / Narration Coupling Failures
+# Any narration data point without a simultaneous visual state change.
+
+coupling_evaluation:
+  coupling_target: "every narration data point has visual event within ±1 second"
+  coupling_verified: false           # was this manually checked against the beat map?
+
+  failures:
+    # Template entry — one per coupling failure
+    - failure_id: "coup-001"
+      narration_text: ""             # the data-bearing narration statement
+      narration_timestamp_seconds: 0.0
+      nearest_visual_event_timestamp_seconds: 0.0
+      delta_seconds: 0.0             # how many seconds off from coupling target
+      fix: ""
+
+  total_coupling_failures: 0
+  coupling_result: ""                # PASS | FAIL
+  coupling_notes: ""
+
+---
+
+# SECTION 9: Payoff Evaluation
+
+payoff:
+  payoff_timestamp_seconds: null
+  payoff_type: ""                    # mental_model | operator_insight | revelation | summary (summary = FAIL)
+  payoff_line: ""                    # the actual final narration line
+  payoff_passes_test: false          # does it sound like a tool the viewer now possesses? (not a summary of what was shown)
+  payoff_visual_state: ""            # what was on screen during payoff delivery?
+  payoff_visual_correct: false       # was the diagram at its most compressed state? (required)
+  payoff_hold_seconds: 0.0          # how long was the payoff held?
+  payoff_hold_within_limit: false   # was the hold ≤6 seconds?
+  payoff_result: ""                  # PASS | FAIL
+  payoff_notes: ""
+
+---
+
+# SECTION 10: System Changes — What to Update
+
+system_changes:
+  # For each failure, identify whether the root cause is:
+  # - planning_failure: the scene event plan or pattern break plan did not enforce the rule
+  # - component_failure: no Remotion component exists to support the required behavior
+  # - structural_failure: the episode structure makes the target impossible with current components
+
+  changes_required:
+
+    - change_id: "chg-001"
+      failure_category: ""           # opening_sequence | proof_timing | visual_cadence | static_hold | pattern_break | coupling | payoff
+      root_cause_type: ""            # planning_failure | component_failure | structural_failure
+      root_cause_description: ""
+      recommended_fix: ""
+      fix_applies_to: ""             # scene_event_plan | pattern_break_plan | opening_sequence_proof | remotion_component | narration
+      priority: ""                   # critical | high | medium | low
+      blocks_next_render: false      # must this be fixed before the next render?
+
+  total_changes_required: 0
+  critical_changes: 0
+  changes_blocking_next_render: 0
+
+---
+
+# SECTION 11: Overall Retention Score
+
+overall_result:
+  first_frame_result: ""             # PASS | FAIL
+  opening_sequence_result: ""        # PASS | FAIL
+  proof_timing_result: ""            # PASS | FAIL
+  visual_cadence_result: ""          # PASS | FAIL
+  static_hold_result: ""             # PASS | FAIL
+  pattern_break_result: ""           # PASS | FAIL
+  coupling_result: ""                # PASS | FAIL
+  payoff_result: ""                  # PASS | FAIL
+
+  sections_passing: 0
+  sections_total: 8
+  overall_retention_grade: ""        # A (7-8 pass) | B (5-6 pass) | C (3-4 pass) | F (<3 pass)
+
+  next_render_plan_summary: ""       # one paragraph: what must change in the next render?
+  lessons_for_system: ""             # what must change in the channel-wide system (not just this episode)?
+  remotion_components_blocking: []   # list any Phase 2B components whose absence caused failures

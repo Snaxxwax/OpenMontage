@@ -1,0 +1,264 @@
+# Asymmetric Opening Sequence Proof Template
+# Version: 1.0
+# One instance per episode. Generate 3-5 variants. At least one must pass all gates before production proceeds.
+# Use /om-asymmetric-opening-proof to generate and score variants.
+#
+# Rule: No script, no research, no clip acquisition, no render may proceed until
+# the operator has approved at least one passing opening variant.
+
+project_id: ""
+render_version: ""
+episode_title_working: ""
+editorial_pillar: ""             # hidden_control | system_leverage | extraction_layers | power_networks | optimization_warfare
+created_date: ""
+operator_approved: false
+approved_variant_id: ""
+operator_approval_notes: ""
+
+---
+
+# Opening sequence gate requirements (all must pass for PASS decision)
+gate_requirements:
+  first_frame_rule:
+    description: "First frame must create curiosity, pressure, consequence, conflict, or visual novelty. Not a title card."
+    test: "Would a viewer who landed at t=0 stop scrolling before the third second?"
+
+  no_title_card_opening:
+    description: "The opening sequence must not begin with a clean title card, logo, or channel intro."
+    test: "Does the first frame contain a visual that is not the channel logo or a text-only card?"
+
+  no_context_dump:
+    description: "The first 10 seconds must not be context-building narration. Tension first."
+    test: "Is the first narration line a concrete fact, conflict, consequence, or constraint — not a topic introduction?"
+
+  stakes_appear_early:
+    description: "Viewer stakes (person, number, institution, consequence) visible by second 8."
+    test: "By t=8, does the viewer know what is at risk and for whom?"
+
+  viewer_question_created_early:
+    description: "A viewer question — one the video will answer — is created by second 10."
+    test: "Does the viewer have an unanswered question they want answered before the 10-second mark?"
+
+  viewer_promise_clear:
+    description: "By second 30, the viewer understands what they will learn and why it matters to them."
+    test: "Could the viewer describe what this video promises before the 30-second mark?"
+
+  proof_or_conflict_in_opening:
+    description: "The opening sequence must contain at least one of: institutional clip, document, rule text, named regulator, or human conflict visible under pressure."
+    test: "Is there a primary source event before second 30?"
+
+  mechanism_starts_before_second_30:
+    description: "The hidden mechanism or chokepoint must begin to become visible before second 30."
+    test: "Has the opening established what the hidden structure is, even if not fully explained?"
+
+  pattern_break_in_opening:
+    description: "At least one pattern break must occur before second 30."
+    test: "Does the opening sequence contain a hard cut to a different visual mode (clip→diagram, diagram→flash, etc.)?"
+
+  visual_state_couples_to_narration:
+    description: "Every data point stated in the opening narration has a corresponding visual state change within ±1 second."
+    test: "Is there any narration data point with no simultaneous visual event?"
+
+  no_corporate_explainer_feel:
+    description: "The opening must not feel like a corporate training video, school presentation, or neutral explainer."
+    test: "Would someone mistake this opening for a corporate or academic video?"
+
+---
+
+# Reject criteria — any one triggers automatic rejection
+reject_if:
+  - starts_with_clean_title_card: "Opening begins with channel name or episode title card as first visual"
+  - starts_with_generic_context: "First narration line provides background context before creating tension"
+  - first_line_is_you_think: "First line begins with 'You think...' or 'You might think...'"
+  - explains_before_tension: "Narration explains the mechanism before establishing conflict or stakes"
+  - diagram_before_stakes: "First diagram appears before any clip, proof, or stakes have been established"
+  - proof_delayed_past_second_15: "No proof hit, clip, or institutional source appears before second 15"
+  - could_belong_to_corporate_training: "Opening is emotionally neutral, institutional-overview in tone"
+  - could_belong_to_school_presentation: "Opening walks through context step by step before reaching tension"
+
+---
+
+# Opening variants
+# Generate 3-5. Each must try a materially different entry point: different first visual, first line, hook type, proof type.
+
+variants:
+
+  - opening_variant_id: "open-001"
+
+    # --- Packaging alignment ---
+    title_direction: ""                # which title candidate this opening pairs with
+    thumbnail_direction: ""            # which thumbnail variant (power/mechanism/consequence)
+    viewer_promise: ""                 # "By the end of this video you will understand [X] well enough to recognize it in [Y]"
+
+    # --- First frame (t=0) ---
+    first_frame: ""                    # exact description of what the viewer sees at t=0
+                                       # must be: conflict_clip | proof_document | number_slam | animated_map_start
+                                       # must NOT be: title_card | logo | empty_background | slow_fade_in
+    first_visual_mode: ""              # conflict_clip | proof_document | hard_text_flash | animated_diagram | number_slam
+
+    # --- Hook mechanics ---
+    hook_type: ""                      # conflict_in_progress | consequence_first | mechanism_contradiction | question_gap | stakes_announcement | false_choice_reveal
+    first_narration_line: ""           # exact first line of narration — must be speakable in under 4 seconds
+    first_text_flash: ""               # 2-5 word text flash if used; empty if opening begins with clip
+    source_or_proof_used: ""           # what primary source appears first in this opening
+
+    # --- Viewer psychology ---
+    viewer_question_created: ""        # what question does the viewer have before second 10?
+    stakes_created_early: false        # true if stakes (person, number, institution) appear before second 8
+    viewer_promise_clear: false        # true if viewer can state what the video promises before second 30
+    first_proof_or_conflict: false     # true if clip, document, or institutional source appears before second 15
+    story_locked_by_second_30: false   # true if open loop is explicit and mechanism has begun
+
+    # --- Retention mechanics ---
+    visual_state_changes_by_second_30: 0        # count of meaningful visual state changes before t=30
+    pattern_breaks_by_second_30: 0              # count of pattern breaks before t=30
+    first_proof_hit_timestamp_seconds: null     # when does first proof hit occur?
+    visual_narration_coupled: false             # true if every data point has simultaneous visual event
+
+    # --- Competitive evaluation ---
+    why_this_stops_scroll: ""          # one sentence: what makes a scrolling viewer stop at t=0?
+    why_this_keeps_viewing: ""         # one sentence: what makes the viewer stay past t=30?
+    risk: ""                           # what could go wrong with this opening? be honest.
+
+    # --- Rejection checks ---
+    starts_with_clean_title_card: false
+    starts_with_generic_context: false
+    first_line_is_you_think: false
+    explains_before_tension: false
+    diagram_before_stakes: false
+    proof_delayed_past_second_15: false
+    could_belong_to_corporate_training: false
+    could_belong_to_school_presentation: false
+
+    # --- Gate results ---
+    gates_passed:
+      first_frame_rule: false
+      no_title_card_opening: false
+      no_context_dump: false
+      stakes_appear_early: false
+      viewer_question_created_early: false
+      viewer_promise_clear: false
+      proof_or_conflict_in_opening: false
+      mechanism_starts_before_second_30: false
+      pattern_break_in_opening: false
+      visual_state_couples_to_narration: false
+      no_corporate_explainer_feel: false
+
+    # --- Scoring and decision ---
+    gates_passed_count: 0              # computed: sum of true gates
+    gates_required: 11                 # all gates must pass
+    reject_criteria_triggered: []      # list any reject criteria that fired
+    score: 0                           # 0–11 gate score
+    decision: ""                       # PASS | REJECT — PASS requires all 11 gates true and 0 reject criteria
+
+  - opening_variant_id: "open-002"
+
+    title_direction: ""
+    thumbnail_direction: ""
+    viewer_promise: ""
+    first_frame: ""
+    first_visual_mode: ""
+    hook_type: ""
+    first_narration_line: ""
+    first_text_flash: ""
+    source_or_proof_used: ""
+    viewer_question_created: ""
+    stakes_created_early: false
+    viewer_promise_clear: false
+    first_proof_or_conflict: false
+    story_locked_by_second_30: false
+    visual_state_changes_by_second_30: 0
+    pattern_breaks_by_second_30: 0
+    first_proof_hit_timestamp_seconds: null
+    visual_narration_coupled: false
+    why_this_stops_scroll: ""
+    why_this_keeps_viewing: ""
+    risk: ""
+    starts_with_clean_title_card: false
+    starts_with_generic_context: false
+    first_line_is_you_think: false
+    explains_before_tension: false
+    diagram_before_stakes: false
+    proof_delayed_past_second_15: false
+    could_belong_to_corporate_training: false
+    could_belong_to_school_presentation: false
+    gates_passed:
+      first_frame_rule: false
+      no_title_card_opening: false
+      no_context_dump: false
+      stakes_appear_early: false
+      viewer_question_created_early: false
+      viewer_promise_clear: false
+      proof_or_conflict_in_opening: false
+      mechanism_starts_before_second_30: false
+      pattern_break_in_opening: false
+      visual_state_couples_to_narration: false
+      no_corporate_explainer_feel: false
+    gates_passed_count: 0
+    gates_required: 11
+    reject_criteria_triggered: []
+    score: 0
+    decision: ""
+
+  - opening_variant_id: "open-003"
+
+    title_direction: ""
+    thumbnail_direction: ""
+    viewer_promise: ""
+    first_frame: ""
+    first_visual_mode: ""
+    hook_type: ""
+    first_narration_line: ""
+    first_text_flash: ""
+    source_or_proof_used: ""
+    viewer_question_created: ""
+    stakes_created_early: false
+    viewer_promise_clear: false
+    first_proof_or_conflict: false
+    story_locked_by_second_30: false
+    visual_state_changes_by_second_30: 0
+    pattern_breaks_by_second_30: 0
+    first_proof_hit_timestamp_seconds: null
+    visual_narration_coupled: false
+    why_this_stops_scroll: ""
+    why_this_keeps_viewing: ""
+    risk: ""
+    starts_with_clean_title_card: false
+    starts_with_generic_context: false
+    first_line_is_you_think: false
+    explains_before_tension: false
+    diagram_before_stakes: false
+    proof_delayed_past_second_15: false
+    could_belong_to_corporate_training: false
+    could_belong_to_school_presentation: false
+    gates_passed:
+      first_frame_rule: false
+      no_title_card_opening: false
+      no_context_dump: false
+      stakes_appear_early: false
+      viewer_question_created_early: false
+      viewer_promise_clear: false
+      proof_or_conflict_in_opening: false
+      mechanism_starts_before_second_30: false
+      pattern_break_in_opening: false
+      visual_state_couples_to_narration: false
+      no_corporate_explainer_feel: false
+    gates_passed_count: 0
+    gates_required: 11
+    reject_criteria_triggered: []
+    score: 0
+    decision: ""
+
+# Add open-004 and open-005 if generating additional variants.
+
+---
+
+# Compliance summary (completed after all variants are scored)
+compliance:
+  total_variants_generated: 0
+  total_variants_passing: 0
+  strongest_variant_id: ""
+  weakest_variant_id: ""
+  most_common_failure_gate: ""
+  production_may_proceed: false         # true only when operator_approved: true AND approved_variant_id is set
+  blocker_note: ""                      # if no variant passes, document what must change

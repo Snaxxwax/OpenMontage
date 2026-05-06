@@ -1,0 +1,185 @@
+# Asymmetric Retention Timeline Template
+# Version: 2.0
+# Use this template to plan any 60–90 second Asymmetric source-commentary production.
+# Fill in one instance per render. Do not modify the structure — extend with project-specific values.
+
+project_id: ""
+render_version: ""
+target_duration_seconds: 75  # default; adjust between 60 and 90
+
+# Pacing DNA (filled from reference analysis)
+pacing_dna:
+  avg_shot_duration_first_30s_seconds: null       # from reference analysis
+  target_events_per_30s_window_min: 5             # minimum meaningful visual events per 30s
+  target_events_per_30s_window_peak: 9            # peak section target
+  max_unbroken_visual_mode_seconds: 8             # hard ceiling for narrative/clip sections
+  max_unbroken_diagram_seconds: 4                 # hard ceiling for diagram sections
+  target_wpm: 150                                 # narration words per minute (140–165 range)
+  first_proof_hit_by_second: 12
+  first_stakes_by_second: 10
+  hook_type: ""  # contradiction | consequence_first | conflict_in_progress | question_gap | false_choice_reveal
+  payoff_type: mental_model  # mental_model | revelation | operator (never: summary)
+
+# Timeline sections — fill in all fields for the specific render
+# Each section must list: what clip/asset drives it, what pattern break ends it, and what viewer question it answers
+
+sections:
+
+  - section_id: cold_punch
+    window_start_sec: 0.0
+    window_end_sec: 3.0
+    required_elements:
+      - type: conflict_clip or hard_text_flash
+        description: "Conflict or consequence. No context. No setup. A person under pressure, a rule being named, or a concrete consequence already in motion."
+    narration_requirement: "1–2 sentences maximum. State the conflict. Do not explain it."
+    tension_floor: 4
+    open_loop_planted: false
+    proof_hit_required: false
+    visual_mode_required: conflict_clip  # preferred; hard_text_flash acceptable
+    grammar_check:
+      - viewer_would_stop_scrolling: true
+      - no_context_building: true
+      - no_questions_posed_to_viewer: true
+    asset: ""
+    narration_draft: ""
+    notes: ""
+
+  - section_id: proof_and_stakes
+    window_start_sec: 3.0
+    window_end_sec: 10.0
+    required_elements:
+      - type: proof_hit
+        description: "First institutional source hit. Named institution, rule text, or primary source clip showing the constraint operating."
+      - type: viewer_stakes
+        description: "A concrete person, number, or entity that makes the mechanism personal or observable."
+    narration_requirement: "Stakes stated concretely. A developer, a company, a dollar amount. Not an abstraction."
+    tension_floor: 4
+    open_loop_planted: true  # required — the question that carries the viewer to t=30
+    proof_hit_required: true
+    visual_mode_required: conflict_clip  # clip showing constraint preferred
+    grammar_check:
+      - first_proof_hit_by_second_12: true
+      - concrete_entity_named: true
+      - open_loop_explicit: true
+    asset: ""
+    narration_draft: ""
+    notes: ""
+
+  - section_id: mechanism_starts
+    window_start_sec: 10.0
+    window_end_sec: 20.0
+    required_elements:
+      - type: first_visual_interruption
+        description: "Hard text flash or rule zoom that converts the clip's content into a structural label. The mechanism is becoming visible."
+      - type: diagram_first_state
+        description: "First diagram element appears — a node, a gate, or a route being drawn. Not a full diagram. The first element of the map."
+    narration_requirement: "Mechanism introduced. The surface story is named and immediately contradicted by the mechanism under it."
+    tension_floor: 3
+    open_loop_planted: true  # second open loop optional here
+    proof_hit_required: false
+    visual_mode_required: hard_text_flash or pressure_map_first_state
+    grammar_check:
+      - no_narration_only_passage_over_6s: true
+      - diagram_earned_by_prior_clip_or_flash: true
+      - mechanism_implied_not_explained: true
+    asset: ""
+    narration_draft: ""
+    notes: ""
+
+  - section_id: clip_proof_escalation
+    window_start_sec: 20.0
+    window_end_sec: 35.0
+    required_elements:
+      - type: second_source_clip
+        description: "Second institutional clip. Deepens the proof. Must add new information — not repeat the first clip's content."
+      - type: diagram_reveal
+        description: "Diagram section: 6–12 seconds. Elements building toward the chokepoint. Amber activates on the control node."
+      - type: pattern_break
+        description: "At least one hard text flash or rule zoom breaking the diagram section."
+    narration_requirement: "Mechanism deepening. Each sentence advances toward the chokepoint. No neutral bridges."
+    tension_floor: 4
+    open_loop_planted: false  # open loop from earlier is still open; do not plant new ones here
+    proof_hit_required: true  # second proof hit required in this window
+    pattern_break_required: true
+    visual_mode_sequence: [conflict_clip, hard_text_flash, pressure_map_build]
+    grammar_check:
+      - no_clip_diagram_clip_rhythm_without_break: true
+      - diagram_holds_under_4s_each_state: true
+      - each_sentence_advances_mechanism: true
+    asset: ""
+    narration_draft: ""
+    notes: ""
+
+  - section_id: second_proof_hit
+    window_start_sec: 35.0
+    window_end_sec: 50.0
+    required_elements:
+      - type: third_source_clip_or_rule_zoom
+        description: "Third institutional clip OR a rule text zoom. This is the strongest proof hit — the clearest evidence that the mechanism operates as described."
+      - type: trap_closure_start
+        description: "Diagram elements begin compressing. The gate is visible. The route is narrowing. The chokepoint is identifiable."
+      - type: pattern_break
+        description: "Required. A hard text flash or number slam must interrupt the diagram section."
+    narration_requirement: "Trap closing. Narration sentences are shortest here — 5–8 words. Rhythm speeds up."
+    tension_floor: 5  # peak tension window
+    open_loop_planted: false  # holding for close
+    proof_hit_required: true  # third proof hit
+    pattern_break_required: true
+    grammar_check:
+      - peak_tension_visual_state: true
+      - shortest_sentences_in_render: true
+      - trap_visible_in_diagram: true
+    asset: ""
+    narration_draft: ""
+    notes: ""
+
+  - section_id: leverage_map_and_payoff_setup
+    window_start_sec: 50.0
+    window_end_sec: 65.0
+    required_elements:
+      - type: trap_closure_complete
+        description: "Diagram at its most compressed. The chokepoint is labeled. The amber node is dominant. No alternate route visible."
+      - type: open_loop_close
+        description: "The question planted at t=3–10 is answered. The mechanism is now fully visible."
+    narration_requirement: "The full mechanism stated. Not explained — stated. The viewer should feel like they have just understood something they cannot unlearn."
+    tension_floor: 4
+    open_loop_close: true  # required
+    proof_hit_required: false  # proof already established; narration closes the argument
+    grammar_check:
+      - diagram_at_most_compressed_state: true
+      - open_loop_from_section_2_answered: true
+      - no_new_claims_introduced: true
+    asset: ""
+    narration_draft: ""
+    notes: ""
+
+  - section_id: payoff_lock
+    window_start_sec: 65.0
+    window_end_sec: 75.0  # adjust to actual render end
+    required_elements:
+      - type: payoff_line
+        description: "The one sentence that is the reusable mental model. Delivered over the final diagram state. No text card. No blank screen."
+      - type: final_diagram_hold
+        description: "The diagram holds at its final state through the payoff line. The mechanism is visible while the model is spoken."
+    narration_requirement: "One sentence. Structural insight. Statable without context. Applies beyond this specific example."
+    tension_floor: 3  # tension releases slightly — the viewer is receiving the model
+    open_loop_close: true  # final close
+    grammar_check:
+      - payoff_is_mental_model_not_summary: true
+      - final_frame_is_diagram_not_text_card: true
+      - no_silent_tail: true
+    asset: ""
+    payoff_line_draft: ""
+    notes: ""
+
+# Retention compliance summary (filled at scene event plan review)
+retention_compliance:
+  first_proof_hit_timestamp: null
+  first_stakes_timestamp: null
+  open_loop_planted_at: null
+  open_loop_closed_at: null
+  peak_tension_section: null
+  payoff_line: ""
+  total_meaningful_visual_events: null
+  grammar_passes: false
+  notes: ""
