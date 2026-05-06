@@ -1,0 +1,262 @@
+channel_id: asymmetric
+version: "1.0"
+last_updated: "2026-05-06"
+pipeline: source-commentary
+doctrine: docs/asymmetric/production_doctrine.md
+
+brand_promise: >
+  Where the leverage is.
+  Every Asymmetric video reveals the hidden structure inside a visible system —
+  who controls it, where it narrows, and why that matters to the viewer.
+
+viewer_promise_template: >
+  By the end of this video you will understand [mechanism] well enough to
+  recognize it in [adjacent system] — and know what [action/insight] it
+  implies for anyone operating inside it.
+
+tone_rules:
+  required:
+    - direct
+    - precise
+    - unsentimental
+    - analytical
+    - controlled
+    - high-signal
+  forbidden:
+    - self-help
+    - startup copy
+    - sponsor voice
+    - generic business YouTube
+    - finance hype
+    - vague motivational language
+    - academic passive voice
+    - "as we can see" constructions
+    - "in conclusion" or "to summarize" payoffs
+  emotional_posture:
+    - restrained skepticism
+    - quiet severity
+    - calm under complexity
+    - useful — never impressive for its own sake
+
+hook_rules:
+  required:
+    - open with a concrete already-happened fact or visible contradiction
+    - establish viewer stakes within the first 60 seconds
+    - create an open loop in the first 60 seconds that is not answered until late
+    - the first sentence must not be a question
+    - the first sentence must not be institutional background
+  forbidden:
+    - opening with history or timeline setup
+    - opening with a rhetorical question
+    - opening with a statistic without stakes
+    - soft-building before the tension appears
+  hook_strength_gate:
+    test: "would a viewer who stumbled onto this at 0:00 stay for the next 60 seconds?"
+    required_answer: yes
+
+visual_rules:
+  style: high-velocity systems documentary
+  not:
+    - static dossier-only content
+    - cyberpunk UI soup
+    - glossy tech spectacle
+    - flat infographic boredom
+  is:
+    - private briefing coming alive
+    - map room in motion
+    - hidden system becoming legible
+  color_system:
+    base:
+      near_black: "#050608"
+      deep_slate: "#11151C"
+      graphite: "#2A3142"
+      bone: "#F3F5F7"
+      muted_steel: "#8A95A6"
+    signal:
+      institutional_amber: "#F5A400"  # control, leverage, chokepoint
+      muted_steel_cyan: "#3F8FA3"    # structure, flow, map logic
+      deep_system_red: "#D64545"     # pressure, extraction, failure, cost
+    color_rules:
+      - one signal color per frame by default
+      - amber is the main brand signal
+      - cyan supports structure only
+      - red appears only when cost, damage, failure, or extraction is explicit
+      - never use signal colors as decoration
+      - never use all three signal colors in one frame
+  typography:
+    primary: Inter
+    display: Space Grotesk
+    data: IBM Plex Mono
+    rules:
+      - max two families per frame
+      - readability first
+      - no novelty futuristic fonts
+
+clip_rules:
+  purpose: >
+    Source clips must create pressure — not confirm narration, not decorate, not explain.
+    Every approved clip must do at least one of: show a constraint operating in real time,
+    deliver authority the narration cannot, reveal a confrontation or conflict, or punch-cut
+    to a moment that makes the mechanism feel real before the narration explains it.
+  preferred_sources:
+    - official government hearings (Senate, House, EU regulators)
+    - regulator press briefings
+    - court-record footage
+    - developer or executive testimony under oath or public scrutiny
+    - verified screen-recording evidence of the constraint in practice
+    - recognized news organization coverage with editorial authority
+  reject:
+    - calm keynote or product launch footage (shows the system as it wants to be seen)
+    - developer tutorial or training material (explains, does not constrain)
+    - generic B-roll of products, offices, interfaces (decorative, not evidential)
+    - any clip that could be removed without changing the emotional trajectory
+    - clips where the best moment requires more than 15 seconds of context
+  cut_target_seconds:
+    min: 4
+    max: 14
+    preferred: 8
+
+source_label_rules:
+  required: true
+  placement: bottom strip — no higher than lower 20% of frame
+  safe_zone: bottom strip, does not overlap body text, proof text, or diagram labels
+  timing: label must be visible for the full duration of the clip or proof card
+  format: "Source: [publisher or channel name]"
+  format_extended: "Source: [source name] / [context if needed]"
+  hard_rule: source label must never overlap body text, proof visual, or key diagram element
+  failure_mode: any overlap between source label and body content is a technical failure
+
+narration_rules:
+  write_for_ears: every line must be writable aloud without sounding like a report
+  density: approximately 150-175 words per minute at target pacing
+  sentence_style:
+    - dense mechanism sections use short punchy sentences
+    - narrative sections may breathe
+    - alternate between dense and open to prevent fatigue
+  forbidden_constructions:
+    - passive voice in hook or payoff sections
+    - "as we can see"
+    - "in conclusion" / "to summarize" / "as we discussed"
+    - "this is important because"
+    - filler transitions that do not advance the story
+  every_line_must:
+    - create tension, reveal mechanism, or land payoff
+    - earn its duration
+    - be cut-testable: if removing it doesn't hurt the video, remove it
+
+diagram_rules:
+  function: >
+    Diagrams are pressure maps, trap maps, route maps, chokepoint maps, or extraction maps.
+    They reveal hidden structure. They are not step-by-step explainer slides.
+  required:
+    - every diagram must be earned with a verbal setup before appearing
+    - diagram must be readable in under 3 seconds for a first-time viewer
+    - every diagram state must change meaningfully within 5 seconds
+    - every element not directly supporting the argument must be removed
+  forbidden:
+    - step-by-step labeled flow that walks through a process neutrally
+    - diagrams that illustrate only what the narration already said
+    - diagram holds over 5 seconds without a meaningful state change
+  primitives:
+    - circles = nodes
+    - lines = flows
+    - wedges = leverage
+    - boxes = boundaries
+    - splits = hidden layers
+    - stacks = hierarchy
+    - valves or gates = control points
+  core_types:
+    - chokepoint map
+    - ownership web
+    - value flow
+    - leverage map
+    - pressure map
+    - control hierarchy
+
+music_rules:
+  function: underscore tension without overwhelming narration or clip audio
+  target_loudness: narration must remain intelligible at all times
+  clip_treatment: reduce music during source clips, restore after
+  avoid:
+    - inspirational or uplifting corporate background music
+    - generic lo-fi beats without editorial character
+    - music that competes with narration for attention
+  prefer:
+    - dark ambient, restrained electronic, or sparse instrumental
+    - music that creates weight or unease, not comfort
+
+banned_output_modes:
+  - cards_only_render_for_clip_required_milestone
+  - neutral_corporate_explainer
+  - school_diagram_walkthrough
+  - evidence_insert_montage
+  - ai_documentary_sterile_output
+  - intellectual_hook_without_stakes
+  - low_energy_keynote_or_training_footage_clips
+  - payoff_as_summary_instead_of_framework
+
+quality_gates:
+  performance_package:
+    hook_strength_min: 4
+    viewer_stakes_min: 4
+    leverage_clarity_required: 5
+    visual_energy_min: 4
+    boredom_risk_required: low
+    asymmetric_fit_min: 4
+    title_thumbnail_potential_min: 4
+
+  source_clip_quality:
+    clip_energy_min: 4
+    claim_relevance_min: 4
+    visual_texture_min: 3
+    authority_min: 4
+    cut_value_min: 4
+    cut_target_max_seconds: 14
+    primary_clip_minimum_pass_count: 3
+
+  visual_rhythm:
+    target_change_seconds_min: 3
+    target_change_seconds_max: 5
+    max_static_diagram_hold_seconds: 5
+    max_static_narrative_hold_seconds: 8
+    min_visual_events_per_75s: 12
+    pattern_interrupt_every_seconds_max: 15
+
+  render_qc:
+    no_silence_over_seconds: 1.0
+    no_blank_screen: true
+    source_labels_required: true
+    source_label_safe_zone_required: true
+    source_label_no_body_text_overlap: true
+    audio_loudness_min_lufs: -23
+    audio_loudness_max_lufs: -14
+
+  creative_review:
+    operator_watch_required: true
+    creative_pass_operator_only: true
+    agent_may_set_creative_pass: false
+
+pass_fail_thresholds:
+  performance_package:
+    pass: all dimensions at or above minimum
+    revise: one or two dimensions below minimum — hook or stakes recoverable
+    reject: leverage_clarity below 4, or boredom_risk is high, or asymmetric_fit below 3
+
+  source_clip_quality:
+    pass_for_primary: all five scores >= 4
+    pass_for_texture_support: all five scores >= 3 and clip_energy >= 3
+    reject: clip_energy < 3 or cut_value < 3
+
+  visual_rhythm:
+    pass: plan achieves targets across full runtime
+    revise: one section misses target but overall rhythm is recoverable
+    fail: any section has more than 15 consecutive seconds without a visual event
+
+  render_qc:
+    pass: all hard rules met
+    fail: any silence event > 1s, any blank screen event, any source label overlap with body content
+
+  creative_review:
+    pass: operator declares creative_pass after watching full render
+    conditional_pass: operator approves with documented revision notes for next episode
+    fail: operator rejects — trigger postmortem before planning next render

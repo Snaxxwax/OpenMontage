@@ -1,0 +1,115 @@
+# Asymmetric Visual Rhythm Plan
+# Purpose: Ensure every 3-5 seconds has a meaningful visual event. No blank screens.
+#   No silent tails. No static map holds over 5 seconds in diagram sections.
+# Reference: channels/asymmetric/channel_profile.yaml quality_gates.visual_rhythm
+# Doctrine: docs/asymmetric/production_doctrine.md sections 3, 4
+
+project_id: ""
+video_title: ""
+target_duration_seconds: 0
+date: ""
+
+hard_rules:
+  no_blank_screen: true
+  no_silence_over_seconds: 1.0
+  no_silent_tail: true
+  max_static_diagram_hold_seconds: 5
+  max_static_narrative_hold_seconds: 8
+  min_visual_events_per_75s: 12
+  pattern_interrupt_every_seconds_max: 15
+  source_label_safe_zone_required: true
+  source_label_no_body_text_overlap: true
+
+# Visual event types:
+#   clip_cut         = new source clip begins
+#   clip_end         = source clip ends, return to cards/diagram
+#   diagram_state    = diagram changes: new node highlight, arrow extension, label change, layer reveal
+#   card_transition  = new text card, stat card, or proof card appears
+#   text_flash       = hard cut to full-screen text or stat
+#   chapter_card     = full-screen chapter title card (for long-form, every 3-5 minutes)
+#   crop_shift       = camera or composition reframing within a scene
+#   label_replace    = label in diagram is replaced with a new value
+#   number_change    = stat or number in frame updates
+#   route_reroute    = path in diagram changes direction or adds a gate
+#   proof_punch_in   = source-labeled proof moment begins
+#   overlay_add      = text or graphic overlay appears on existing visual
+#   overlay_remove   = overlay is cleared
+
+timeline:
+  - event_id: "v-001"
+    timecode_seconds: 0
+    type: ""              # from event types above
+    description: ""       # what the viewer sees
+    asset_ref: ""         # clip candidate_id, card name, or diagram state label
+    source_label: false   # true if this event requires a source label
+    source_label_text: ""
+    safe_zone_check: false  # true = label placement verified against safe zone rule
+    section: ""           # which script section this belongs to
+    tension_function: ""  # what does this visual event do for pacing/pressure?
+
+  # Add one entry per visual event across the full timeline.
+  # Verify no gap between consecutive events exceeds 8 seconds.
+  # In diagram sections verify no gap exceeds 5 seconds.
+
+# Rhythm audit — fill after full timeline is mapped
+rhythm_audit:
+  total_events: 0
+  average_seconds_between_events: 0
+  longest_gap_seconds: 0
+  longest_gap_timecode: ""
+  longest_gap_section: ""
+  diagram_section_max_hold_seconds: 0
+  narrative_section_max_hold_seconds: 0
+  events_per_75s_windows:
+    - window: "0-75s"
+      event_count: 0
+      passes: false
+    - window: "76-150s"
+      event_count: 0
+      passes: false
+  # Add windows as needed for full runtime
+
+source_label_audit:
+  all_clips_labeled: false
+  all_proof_cards_labeled: false
+  any_overlap_detected: false
+  overlap_details: ""   # if overlap detected, describe which timecode and elements
+
+diagram_insert_rules:
+  required_verbal_setup: true
+  # Every diagram must be set up verbally before it appears.
+  # The viewer should not be surprised by a diagram — they should be ready to read it.
+  max_hold_before_state_change: 5
+  must_reveal_not_explain: true
+  # The diagram reveals hidden structure, not explains visible structure.
+
+clip_interruption_plan:
+  # Document where clips interrupt card or diagram sequences
+  # to prevent static run-on sections
+  clip_positions:
+    - position_timecode: 0
+      candidate_id: ""
+      interrupts_section: ""
+      duration_seconds: 0
+      what_it_adds: ""
+
+pattern_interrupt_plan:
+  # Every 10-15 seconds, one of these must occur in long-form sections:
+  #   - Cut to new clip angle or subject
+  #   - Animated text overlay on footage
+  #   - Stat card or figure reveal
+  #   - Map zoom or location cut
+  #   - Diagram node highlight or arrow extension
+  #   - Chapter title card
+  interrupts:
+    - timecode: 0
+      type: ""
+      description: ""
+
+status:
+  rhythm_plan_complete: false
+  rhythm_passes_targets: false
+  source_labels_verified: false
+  diagram_rules_verified: false
+  operator_reviewed: false
+  notes: ""

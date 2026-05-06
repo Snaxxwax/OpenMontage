@@ -1,0 +1,130 @@
+# Asymmetric Source Clip Quality Manifest
+# Reference: channels/asymmetric/channel_profile.yaml quality_gates.source_clip_quality
+# Doctrine: docs/asymmetric/production_doctrine.md sections 7, 10
+#
+# Instructions:
+#   - Fill out one candidate block per source clip candidate
+#   - All five quality scores must be 4+ for a primary clip to be approved
+#   - A score of 3 in visual_texture_score is acceptable for texture support only
+#   - acquisition_allowed must remain false until operator explicitly approves
+#   - Do not acquire any clip until approval_status is set to "approved" by the operator
+
+project_id: ""
+phase: ""
+purpose: ""
+scope:
+  source_discovery_only: true
+  clip_quality_evaluation_only: true
+  render_created: false
+  final_clip_acquisition_performed: false
+
+quality_gate:
+  primary_clip_thresholds:
+    clip_energy_min: 4
+    claim_relevance_min: 4
+    visual_texture_min: 3
+    authority_min: 4
+    cut_value_min: 4
+  texture_support_thresholds:
+    all_scores_min: 3
+    clip_energy_min: 3
+  required_primary_clip_count: 3
+
+candidates:
+  - candidate_id: ""
+    target_beat: ""
+    # Beat examples: pressure_first | gate_closes | institutional_pressure |
+    #   escape_attempt | money_route | leverage_payoff | polished_surface_contrast
+
+    source_title: ""
+    source_url_or_search_target: ""
+    source_owner_or_publisher: ""
+    source_type: ""
+    # Source type examples: public_hearing | regulator_video | court_record |
+    #   developer_testimony | official_document_read | screen_recording_evidence |
+    #   news_broadcast | official_channel
+
+    proposed_timestamp_range:
+      start_sec: 0
+      end_sec: 0
+    proposed_clip_duration_target_sec: 0
+    final_cut_target_sec: 0
+    # final_cut_target should be 8-14 seconds for primary clips
+
+    source_label_text: ""
+    # Format: "Source: [publisher]" or "Source: [publisher] / [context]"
+
+    why_relevant: ""
+    # Explain what pressure, conflict, constraint, or authority this clip creates.
+    # One paragraph. Must describe what the clip does, not just what it shows.
+
+    clip_energy_score: 0
+    # 5 = visible conflict, confrontation, or constraint — viewer feels pressure immediately
+    # 4 = clear tension or stakes visible in the clip
+    # 3 = some texture, limited force
+    # 2 = calm, educational, or polished
+    # 1 = decorative or generic
+
+    claim_relevance_score: 0
+    # 5 = clip directly proves or demonstrates the specific claim it is paired with
+    # 4 = clip strongly supports the claim
+    # 3 = clip is contextually related
+    # 2 = clip is tangentially related
+    # 1 = clip is in the wrong category
+
+    visual_texture_score: 0
+    # 5 = rich, varied, pressure-signaling visuals with visible human stakes
+    # 4 = clear readable visuals with some energy
+    # 3 = adequate but limited visual variation
+    # 2 = flat, static, or generic visuals
+    # 1 = unusable visual quality
+
+    authority_score: 0
+    # 5 = official government/regulator channel, court record, or direct executive testimony
+    # 4 = recognized news organization with full editorial authority
+    # 3 = credible secondary source with clear attribution
+    # 2 = unofficial or questionable provenance
+    # 1 = unknown or unverifiable source
+
+    cut_value_score: 0
+    # 5 = can be trimmed to 8-14 seconds of maximum-force material with no setup required
+    # 4 = trimmable to a strong beat with minimal context
+    # 3 = usable but requires more than 15 seconds for the best moment to land
+    # 2 = the clip does not have a clearly cuttable high-force moment
+    # 1 = the clip is not cuttable to a usable beat
+
+    phase_ready: false
+    # Set to true only if all five scores meet primary clip thresholds
+
+    risk_notes: ""
+    # Document any rights, accuracy, timestamp verification, or editorial posture concerns
+
+    acquisition_allowed: false
+    # Must remain false until operator explicitly approves this specific candidate
+    # Do not change to true without documented operator approval below
+
+    approval_status: pending
+    # pending | approved | rejected | conditionally_approved
+    # Only the operator may set this to "approved"
+
+    operator_approval_notes: ""
+    # Record operator approval date and any conditions
+
+# --- Template ends. Add additional candidate blocks as needed. ---
+
+recommended_primary_clips: []
+# List candidate_ids that are recommended as primary clips after evaluation
+
+texture_support_clips: []
+# List candidate_ids suitable only for texture support (minimum 3 in all dimensions)
+
+discard: []
+# List candidate_ids that fail the gate and should not be acquired
+
+operator_final_approval:
+  approved_for_acquisition: []
+  # Operator lists the candidate_ids approved for acquisition
+  approval_date: ""
+  approval_notes: ""
+  acquisition_now_allowed: false
+  # Operator sets this to true after reviewing all approved candidates

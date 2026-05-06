@@ -1,0 +1,140 @@
+# Asymmetric Script Beat Map
+# Purpose: Map narration beats to clips, proof moments, and visual events.
+# Reference: channels/asymmetric/channel_profile.yaml narration_rules, clip_rules
+# Doctrine: docs/asymmetric/production_doctrine.md sections 7, 8
+
+project_id: ""
+video_title: ""
+target_duration_seconds: 0
+date: ""
+
+# Narrator mode key:
+# cartographer = map the system
+# operator     = find the leverage point
+# skeptic      = compare stated incentives to actual incentives
+# realist      = show who wins, who pays, what changes
+# subject      = follow a person or institution whose decisions reveal the hidden structure
+
+sections:
+  - section_id: "cold_open"
+    section_name: "Cold Open"
+    target_duration_seconds: 35
+    narrator_mode: ""        # cartographer | operator | skeptic | realist | subject
+    narrator_mode_notes: ""  # what this mode must accomplish in this section
+    start_with: fact         # fact | contradiction | constraint_in_motion
+    open_loop_planted: false # must be true before section ends
+
+    beats:
+      - beat_id: "co-01"
+        type: narration
+        script_line: ""
+        duration_seconds: 0
+        visual_event:
+          type: ""           # clip | diagram | text_card | stat_card | proof_card
+          asset_ref: ""      # candidate_id for clips, or description for cards
+          note: ""
+        tension_purpose: ""  # what does this beat create or sustain?
+
+  - section_id: "surface_story"
+    section_name: "Surface Story"
+    target_duration_seconds: 85
+    narrator_mode: cartographer
+    narrator_mode_notes: "map the system as it appears — establish the stated logic before the flip"
+    open_loop_active: true
+
+    beats:
+      - beat_id: "ss-01"
+        type: narration
+        script_line: ""
+        duration_seconds: 0
+        visual_event:
+          type: ""
+          asset_ref: ""
+          note: ""
+        tension_purpose: ""
+
+  - section_id: "mechanism"
+    section_name: "Mechanism"
+    target_duration_seconds: 210
+    narrator_mode: operator
+    narrator_mode_notes: "show how the system actually works — not how it is described"
+    clip_pressure_required: true
+    diagram_required: true
+
+    beats:
+      - beat_id: "mech-01"
+        type: narration
+        script_line: ""
+        duration_seconds: 0
+        visual_event:
+          type: ""
+          asset_ref: ""
+          note: ""
+        tension_purpose: ""
+
+  - section_id: "leverage_reveal"
+    section_name: "Leverage Reveal"
+    target_duration_seconds: 150
+    narrator_mode: skeptic
+    narrator_mode_notes: "show where the asymmetry sits — who benefits and who cannot leave"
+    close_open_loop: true   # must close the loop opened in cold_open
+
+    beats:
+      - beat_id: "lev-01"
+        type: narration
+        script_line: ""
+        duration_seconds: 0
+        visual_event:
+          type: ""
+          asset_ref: ""
+          note: ""
+        tension_purpose: ""
+
+  - section_id: "consequence"
+    section_name: "Consequence"
+    target_duration_seconds: 180
+    narrator_mode: realist
+    narrator_mode_notes: "who wins, who loses, what changes — make the stakes concrete"
+
+    beats:
+      - beat_id: "con-01"
+        type: narration
+        script_line: ""
+        duration_seconds: 0
+        visual_event:
+          type: ""
+          asset_ref: ""
+          note: ""
+        tension_purpose: ""
+
+  - section_id: "payoff"
+    section_name: "Strategic Takeaway"
+    target_duration_seconds: 120
+    narrator_mode: operator
+    narrator_mode_notes: "deliver the reusable mental model — not a summary of facts"
+    reusable_model_required: true
+
+    beats:
+      - beat_id: "pay-01"
+        type: narration
+        script_line: ""
+        duration_seconds: 0
+        visual_event:
+          type: ""
+          asset_ref: ""
+          note: ""
+        tension_purpose: ""
+
+# Beat map review checklist
+review:
+  hook_in_first_sentence: false
+  open_loop_planted_by_60s: false
+  viewer_stakes_stated_by_60s: false
+  clip_pressure_in_mechanism: false
+  diagram_in_mechanism: false
+  no_section_over_300s_without_pattern_interrupt: false
+  open_loop_closed_before_payoff: false
+  payoff_is_mental_model_not_summary: false
+  every_clip_creates_pressure: false
+  no_line_that_only_summarizes: false
+  read_aloud_passes: false
