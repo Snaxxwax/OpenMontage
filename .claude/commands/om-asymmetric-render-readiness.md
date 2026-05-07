@@ -13,7 +13,7 @@ Provide the project ID. The command reads all required artifacts and verifies ea
 
 ## What This Command Does
 
-Checks all 7 render readiness gates against the `channels/asymmetric/channel_profile.yaml` thresholds:
+Checks all 8 render readiness gates against the `channels/asymmetric/channel_profile.yaml` thresholds:
 
 ### Gate 1: Performance Package
 - Performance package exists in artifacts
@@ -65,6 +65,57 @@ Checks all 7 render readiness gates against the `channels/asymmetric/channel_pro
 - audio_mixer available
 - source-commentary pipeline manifest unmodified
 
+### Gate 8: Local Tool Readiness
+Policy: `docs/asymmetric/local_gpu_tool_orchestration.md`
+Discovery: `scripts/asymmetric_discover_local_tools.sh` — runs automatically if config is missing or unverified
+Validation: `scripts/asymmetric_validate_local_tool.sh <tool_name>`
+
+**Evaluation procedure:**
+
+1. Identify which local GPU tools are required for this render phase (narration, image, video).
+2. Check `config/asymmetric_local_tools.local.yaml`, then `config/asymmetric_local_tools.yaml`.
+3. **If any required tool has no config entry, or has `operator_verified: false`, or has null commands:** run `bash scripts/asymmetric_discover_local_tools.sh` immediately. Do not mark BLOCKED until after discovery has run. Discovery is automatic — it does not require an operator instruction.
+4. After discovery, run `bash scripts/asymmetric_validate_local_tool.sh <tool_name>` for each found candidate.
+5. Assign gate state based on discovery result (see below).
+
+**Gate 8 has four possible states:**
+
+#### PASS
+All of the following are true:
+- Required local GPU tools identified
+- Each required tool has a config entry with `operator_verified: true` and `safe_to_autostart: true`
+- GPU conflict check run (`asymmetric_gpu_tool_status.sh`) — no unknown processes blocking required tools
+- TTS provider is channel-quality (Fish Speech confirmed, or cloud API with valid key and quota)
+- Local tool receipt written or confirmed not needed
+
+#### REVIEW_REQUIRED
+Discovery ran and found candidates, but operator has not yet verified them. Specifically:
+- Discovery found a running process, a listening port, or an install path for the required tool
+- Config was written with `discovery_status: likely` or `candidate`, `operator_verified: false`
+- Operator must review the discovered command, confirm it is correct, and set `operator_verified: true`
+
+**Action:** Present discovered candidates with confidence level. Gate clears when operator approves. Production may not proceed to render until operator responds. Do not interpret silence as approval.
+
+#### DRAFT_ONLY
+All channel-quality TTS paths are unavailable:
+- Fish Speech: not found by discovery or cannot be started
+- ElevenLabs: API key missing or quota exhausted
+- OpenAI TTS: API key missing or quota exhausted
+- Operator has explicitly authorized a draft pass
+- `draft_quality_audio: true` will be set in all receipts for this render
+- Output will be labeled draft in the render receipt — not channel-ready
+
+This state allows draft validation passes only. Operator authorization is required to enter this state.
+
+#### BLOCKED
+Any of the following — after discovery has already run:
+- Discovery found nothing (discovery_status: unknown) for a required tool, and operator has not provided a command manually
+- An unknown GPU process is consuming VRAM and cannot be identified — operator must resolve before render proceeds
+- Config entry has `safe_to_autostart: true` but `operator_verified: false` — unsafe state requiring operator correction
+- All TTS paths unavailable and operator has not authorized a draft pass
+
+Note: "config file missing" alone is NOT a BLOCKED condition. Run discovery first. Only mark BLOCKED if discovery also fails.
+
 ## Output
 
 A completed render readiness gate report, written to:
@@ -88,6 +139,10 @@ The operator's render approval must be explicit. It is not implied by the gate r
 - Rendering with a payoff section that delivers a summary instead of a reusable model
 - Rendering with source labels planned to overlap body text
 - Rendering with uncommitted product-code changes in the working tree
+- Rendering narration with edge-tts or Piper without marking the output as draft-quality
+- Starting a GPU-heavy tool without checking for conflicts first
+- Killing an unknown GPU process without operator confirmation
+- Silently falling back to a low-quality TTS tool without recording the failure reason
 
 ## Notes
 

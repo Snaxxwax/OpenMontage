@@ -142,15 +142,25 @@ git status --short
 
 ### STEP 9: Render Readiness Gate
 
-**What:** Verify all gates pass before render.
+**What:** Verify all 8 gates pass before render. Gate 8 (Local Tool Readiness) runs automatic local tool discovery if config is missing or unverified — the operator does not need to provide commands manually.
 
 **Command:** `/om-asymmetric-render-readiness`
 
 **Output:** `shared_studio/projects/<project_id>/artifacts/render_readiness_gate.md`
 
-**Pass condition:** All 7 gates show PASS.
+**Gate 8 automatic behavior:**
+- If required local tool config is missing or unverified, discovery runs immediately: `bash scripts/asymmetric_discover_local_tools.sh`
+- Discovery writes candidates to `config/asymmetric_local_tools.local.yaml` with `operator_verified: false`
+- Validation runs: `bash scripts/asymmetric_validate_local_tool.sh <tool_name>`
+- Gate 8 result is REVIEW_REQUIRED (not BLOCKED) if candidates were found
+- Gate 8 result is BLOCKED only if discovery found nothing and no fallback is available
+- Gate 8 result is DRAFT_ONLY if only draft-quality TTS fallback is available
 
-**Blocker:** Any gate shows BLOCKED — resolve before proceeding.
+**Pass condition:** All 8 gates show PASS. Gate 8 REVIEW_REQUIRED requires operator to confirm discovered tool config before Step 10 approval is valid.
+
+**Blocker:** Any gate shows BLOCKED. Gate 8 DRAFT_ONLY requires explicit operator authorization before proceeding.
+
+**Operator note:** You do not need to remember or provide Fish Speech or ComfyUI start commands. Discovery finds them. You only need to confirm the discovered config is correct.
 
 ---
 
@@ -159,6 +169,10 @@ git status --short
 **What:** Operator reviews the render readiness gate report and explicitly approves the render.
 
 **Required operator action:** Confirm render approval. State the approved render runtime (remotion / hyperframes / ffmpeg).
+
+**If Gate 8 was REVIEW_REQUIRED:** also confirm the discovered local tool config is correct (i.e., explicitly state "local tool config looks correct, proceed" or set `operator_verified: true` in the config). This confirmation is required before the render may start. Silence does not clear REVIEW_REQUIRED.
+
+**If Gate 8 was DRAFT_ONLY:** explicitly authorize the draft pass ("proceed as draft"). The render receipt will be labeled draft — not channel-ready.
 
 **Blocker:** Operator has not reviewed the gate report. Render does not start without this approval.
 
@@ -172,13 +186,19 @@ git status --short
 
 **Steps:**
 1. Git preflight (clean tree confirmed)
-2. Asset staging and staging receipt
-3. Pipeline execution through source-commentary stages
-4. Render receipt written
+2. **Local Tool Resolution** — mandatory before any narration or asset generation (see om-render-operator.md LTR steps):
+   - Run `bash scripts/asymmetric_gpu_tool_status.sh`
+   - If required tool has `operator_verified: true` and `safe_to_autostart: true`: start it
+   - If a conflicting GPU tool is running and `safe_to_autostop: true`: stop it first, verify port clears
+   - If an unknown GPU process is found: stop and surface to operator — do not kill
+   - Write local tool receipt
+3. Asset staging and staging receipt
+4. Pipeline execution through source-commentary stages
+5. Render receipt written
 
 **Pass condition:** Render completes without pipeline errors. Render file exists at expected path.
 
-**Blocker:** Pipeline error, missing asset, or tool unavailability — surface to operator with structured blocker report (what failed, why, options available).
+**Blocker:** Pipeline error, missing asset, or tool unavailability — surface to operator with structured blocker report. Do not silently fall back to draft-quality tools.
 
 ---
 

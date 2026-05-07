@@ -42,6 +42,117 @@ Also verify:
 3. `pipeline_defs/source-commentary.yaml` — stage sequence and required tools
 4. The project's approved `render_readiness_gate.md`
 
+## Local Tool Resolution (Mandatory Before Any Generation Step)
+
+**This step is required before narration generation, image generation, video generation, or any local GPU tool use. It is not optional and does not require an explicit operator instruction to run.**
+
+Policy: `docs/asymmetric/local_gpu_tool_orchestration.md`
+
+### LTR-1 — Identify required tools
+
+Determine which local GPU tools this render phase needs:
+- Narration audio to generate → Fish Speech needed (GPU)
+- Thumbnail or image asset to generate → ComfyUI needed (GPU)
+- Audio transcription → Whisper (CPU-mode preferred)
+
+If none of these apply (e.g. narration WAV already exists, no image generation needed), skip to the Preflight Sequence.
+
+### LTR-2 — Check existing config
+
+Look for `config/asymmetric_local_tools.local.yaml`, then `config/asymmetric_local_tools.yaml`.
+
+For each required tool, evaluate:
+
+| Config state | Action |
+|---|---|
+| Entry found, `operator_verified: true`, `safe_to_autostart: true` | Proceed to LTR-4 (start tool) |
+| Entry found but `operator_verified: false` or commands null | Run discovery (LTR-3) |
+| No config file found | Run discovery (LTR-3) |
+
+### LTR-3 — Run automatic discovery
+
+If required tool config is missing, incomplete, or unverified, run discovery immediately without waiting for operator instruction:
+
+```bash
+bash scripts/asymmetric_discover_local_tools.sh
+```
+
+After reviewing discovery output, for each required tool:
+
+**If a running process is found with health check passing (confidence: confirmed):**
+- Extract working directory and full command line from `/proc/<pid>/cwd` and `/proc/<pid>/cmdline`
+- Write or update `config/asymmetric_local_tools.local.yaml` with `discovery_status: confirmed`, `operator_verified: false`, `safe_to_autostart: false`
+- Run `bash scripts/asymmetric_validate_local_tool.sh <tool_name> config/asymmetric_local_tools.local.yaml`
+- Present findings to operator: "Fish Speech found running at [path]. Command: [cmd]. Health check passes. Ready to add to config — please confirm `operator_verified: true` to authorize future autonomous use."
+- **Do not start or stop anything. Wait for operator confirmation.**
+
+**If a port or path is found but no running process (confidence: likely):**
+- Write candidates to `config/asymmetric_local_tools.local.yaml` with `discovery_status: likely`, `operator_verified: false`
+- Run `bash scripts/asymmetric_validate_local_tool.sh <tool_name> config/asymmetric_local_tools.local.yaml`
+- Present findings: "Likely Fish Speech install at [path]. Inferred start command: [cmd]. Not currently running. Please confirm this is correct and set `operator_verified: true`."
+- **Wait for operator confirmation.**
+
+**If only history or path hints (confidence: candidate):**
+- Write candidates with `discovery_status: candidate`, `operator_verified: false`
+- Present findings and ask operator to confirm or correct
+- **Wait for operator confirmation.**
+
+**If nothing found (confidence: unknown):**
+- Do not write a config entry
+- Inform operator: "Fish Speech not found. No running process, no known port, no install path detected. Local tool unavailable."
+- Proceed to LTR-5 (fallback)
+
+### LTR-4 — Start required tool (only after authorization)
+
+Only proceed here if:
+- Config entry exists
+- `operator_verified: true`
+- `safe_to_autostart: true`
+
+**GPU conflict check first:**
+```bash
+bash scripts/asymmetric_gpu_tool_status.sh
+```
+
+If another known GPU-heavy tool is running and needs to be stopped:
+- Verify that tool's config entry has `safe_to_autostop: true`
+- If yes: stop it using its configured `stop_command`; verify port releases; wait 3 seconds; recheck
+- If no: surface to operator — "ComfyUI is running. I need to stop it to start Fish Speech. `safe_to_autostop` is not yet authorized. Confirm?"
+
+**If an unknown GPU process is found:** Stop. Do not kill it. Surface to operator with PID, process name, and VRAM usage. Wait for explicit instruction.
+
+**Never use:** `pkill python`, `killall python`, or any pattern that matches more than one specific service. Only use the `stop_command` from the verified config entry.
+
+Start the required tool using its `start_command`. Wait for `healthcheck_command` to pass. Timeout per config. If startup fails, record in receipt and proceed to LTR-5.
+
+### LTR-5 — TTS fallback decision (if Fish Speech unavailable)
+
+If Fish Speech is unavailable and narration must be generated:
+
+1. Try ElevenLabs (cloud, channel-quality) — check for `ELEVENLABS_API_KEY` in `.env` and test for quota
+2. Try OpenAI TTS (cloud, channel-quality) — check for `OPENAI_API_KEY` in `.env` and test for quota
+3. If both unavailable:
+   - **Stop. Inform operator:** "All channel-quality TTS paths are unavailable. Only draft-quality fallback (edge-tts, Piper) is available. Authorize draft pass? Output will be marked `draft_quality_audio: true` and is not channel-ready."
+   - Do not proceed to draft fallback without explicit operator authorization
+   - If authorized: use edge-tts or Piper; set `draft_quality_audio: true` in receipt; label output as draft in render receipt
+
+### LTR-6 — Write local tool receipt
+
+After every local tool resolution attempt, write a receipt to:
+`shared_studio/projects/<project_id>/receipts/local_tool_receipt_<tool>_<timestamp>.yaml`
+
+Use `templates/asymmetric/local_tool_receipt.yaml`. Required fields:
+- `preflight_gpu_status` — GPU state before action
+- `conflicting_tool_detected` — true/false
+- `stop_action_taken` — what was stopped and how
+- `start_action_taken` — what was started and how
+- `health_check_result` — pass/fail/timeout
+- `fallback_used` — true/false with reason
+- `draft_quality_output` — true/false
+- `operator_approval_required` — true/false
+
+---
+
 ## Preflight Sequence
 
 Before every render:
