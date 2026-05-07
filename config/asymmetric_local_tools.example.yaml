@@ -1,0 +1,168 @@
+# asymmetric_local_tools.example.yaml
+# Example configuration for local GPU-backed tools in the Asymmetric/OpenMontage pipeline.
+# Policy: docs/asymmetric/local_gpu_tool_orchestration.md
+#
+# To activate:
+#   Copy this file to config/asymmetric_local_tools.local.yaml (machine-specific, gitignored)
+#   OR copy to config/asymmetric_local_tools.yaml (shared, no private paths)
+#
+# Discovery:
+#   Run: bash scripts/asymmetric_discover_local_tools.sh
+#   Then validate: bash scripts/asymmetric_validate_local_tool.sh <tool_name>
+#   Then set discovery_status and ask operator to set operator_verified: true
+#
+# Do NOT put API keys or secrets in this file.
+# Do NOT commit asymmetric_local_tools.local.yaml — it is gitignored.
+
+local_tools:
+
+  - tool_name: fish_speech
+    display_name: "Fish Speech (local TTS)"
+    gpu_required: true
+    quality_tier: channel            # channel / draft
+    category: narration_tts
+
+    # ── Discovery fields ──────────────────────────────────────────────────────
+    discovery_status: unknown        # unknown | candidate | likely | confirmed
+    discovered_from: null            # e.g. "shell_history" | "running_process" | "path_scan" | "operator_provided"
+    confidence_notes: null           # brief explanation of confidence level
+    process_signature: null          # CONFIGURE: e.g. "fish_speech.server" or "api_server.py"
+                                     # Used by validate script to check if process is running
+
+    # ── Runtime fields ────────────────────────────────────────────────────────
+    port: 8080
+    working_directory: null          # CONFIGURE: absolute path to Fish Speech repo/install
+    start_command: null              # CONFIGURE: e.g. "python -m fish_speech.server --listen 0.0.0.0:8080"
+    stop_command: null               # CONFIGURE: e.g. "pkill -SIGTERM -f fish_speech.server"
+                                     # Must be specific — never "pkill python"
+    healthcheck_command: null        # CONFIGURE: e.g. "curl -sf http://127.0.0.1:8080/health"
+    healthcheck_timeout_seconds: 30
+
+    # ── Authorization fields ──────────────────────────────────────────────────
+    operator_verified: false         # Set to true only after operator reviews and approves this config
+    safe_to_autostart: false         # Set to true only after start_command validated and operator_verified
+    safe_to_autostop: false          # Set to true only after stop_command validated and operator_verified
+
+    notes: >
+      Preferred local TTS for channel-quality narration.
+      Requires CUDA GPU with sufficient VRAM.
+      Start command must launch the HTTP inference server.
+      Run discovery script to find install path and command.
+
+  - tool_name: comfyui
+    display_name: "ComfyUI (local image generation)"
+    gpu_required: true
+    quality_tier: channel
+    category: image_generation
+
+    discovery_status: unknown
+    discovered_from: null
+    confidence_notes: null
+    process_signature: null          # e.g. "ComfyUI/main.py"
+
+    port: 8188
+    working_directory: null          # CONFIGURE: absolute path to ComfyUI install
+    start_command: null              # CONFIGURE: e.g. "python main.py --listen 0.0.0.0 --port 8188"
+    stop_command: null               # CONFIGURE: e.g. "pkill -SIGTERM -f ComfyUI/main.py"
+    healthcheck_command: null        # CONFIGURE: e.g. "curl -sf http://127.0.0.1:8188/system_stats"
+    healthcheck_timeout_seconds: 45
+
+    operator_verified: false
+    safe_to_autostart: false
+    safe_to_autostop: false
+
+    notes: >
+      Used for thumbnail generation and visual asset creation.
+      Requires CUDA GPU. Cannot run simultaneously with Fish Speech.
+      Run discovery script to find install path and main.py location.
+
+  - tool_name: whisper_local
+    display_name: "Whisper (local transcription)"
+    gpu_required: false              # Can run CPU-only; set true if using GPU acceleration
+    quality_tier: channel
+    category: transcription
+
+    discovery_status: unknown
+    discovered_from: null
+    confidence_notes: null
+    process_signature: null
+
+    port: null                       # Typically no persistent server — called as CLI
+    working_directory: null
+    start_command: null              # CONFIGURE: e.g. "whisper {input} --model medium --language en"
+    stop_command: null               # Not needed if CLI-only
+    healthcheck_command: null        # e.g. "whisper --help" to verify install
+    healthcheck_timeout_seconds: null
+
+    operator_verified: false
+    safe_to_autostart: false
+    safe_to_autostop: false
+
+    notes: >
+      Used for audio transcription and caption generation.
+      Can run CPU-only (slower). If GPU-accelerated, check conflicts with other GPU tools.
+      Typically a one-shot CLI command rather than a persistent server.
+
+# ── Fallback tools (cloud-only, no local GPU) ─────────────────────────────────
+# These do not require discovery. Configure API keys in .env (never here).
+
+fallback_tools:
+
+  - tool_name: elevenlabs
+    display_name: "ElevenLabs (cloud TTS)"
+    gpu_required: false
+    quality_tier: channel
+    category: narration_tts
+    discovery_status: confirmed      # No discovery needed — cloud API
+    operator_verified: true          # Pre-approved if API key is in .env
+    safe_to_autostart: true
+    safe_to_autostop: true
+    notes: "Cloud API. Requires ElevenLabs API key with quota. See .env for ELEVENLABS_API_KEY."
+
+  - tool_name: openai_tts
+    display_name: "OpenAI TTS (cloud)"
+    gpu_required: false
+    quality_tier: channel
+    category: narration_tts
+    discovery_status: confirmed
+    operator_verified: true
+    safe_to_autostart: true
+    safe_to_autostop: true
+    notes: "Cloud API. Requires OpenAI API key. See .env for OPENAI_API_KEY."
+
+  - tool_name: edge_tts
+    display_name: "edge-tts (draft only)"
+    gpu_required: false
+    quality_tier: draft              # NOT channel-quality
+    category: narration_tts
+    discovery_status: confirmed
+    operator_verified: true
+    safe_to_autostart: true
+    safe_to_autostop: true
+    notes: >
+      Draft quality only. Any output must have draft_quality_audio: true set in
+      the local tool receipt. Not approved for channel narration.
+
+  - tool_name: piper
+    display_name: "Piper TTS (draft only)"
+    gpu_required: false
+    quality_tier: draft              # NOT channel-quality
+    category: narration_tts
+    discovery_status: confirmed
+    operator_verified: true
+    safe_to_autostart: true
+    safe_to_autostop: true
+    notes: >
+      Draft quality only. Any output must have draft_quality_audio: true set in
+      the local tool receipt. Not approved for channel narration.
+
+  - tool_name: flux_bfl_api
+    display_name: "FLUX BFL API (cloud image)"
+    gpu_required: false
+    quality_tier: channel
+    category: image_generation
+    discovery_status: confirmed
+    operator_verified: true
+    safe_to_autostart: true
+    safe_to_autostop: true
+    notes: "Cloud API. Requires BFL API key. See .env for BFL_API_KEY."

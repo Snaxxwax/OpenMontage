@@ -1,0 +1,83 @@
+# Local GPU Tool Receipt
+# Template: templates/asymmetric/local_tool_receipt.yaml
+# Policy: docs/asymmetric/local_gpu_tool_orchestration.md
+#
+# Write completed receipts to:
+#   shared_studio/projects/<project_id>/receipts/local_tool_receipt_<tool>_<timestamp>.yaml
+
+receipt_version: "1.0"
+project_id: null            # e.g. app-store-leverage-p001
+phase: null                 # e.g. phase2t
+timestamp: null             # ISO 8601, e.g. 2026-05-06T19:30:00Z
+generated_by: null          # agent name or session label
+
+# --- What was needed ---
+tool_requested: null        # e.g. fish_speech, comfyui, whisper_local
+tool_needed_for: null       # e.g. narration_generation, thumbnail_image, audio_transcription
+gpu_required: null          # true / false
+
+# --- GPU state before action ---
+preflight_gpu_status:
+  checked: false
+  nvidia_smi_summary: null  # paste key lines: GPU util%, memory used/total
+  gpu_vram_free_mb: null
+  gpu_vram_total_mb: null
+
+running_gpu_processes:
+  # List all compute processes found via nvidia-smi before action
+  # Format: - pid: <pid> / process_name: <name> / vram_mb: <mb>
+  - pid: null
+    process_name: null
+    vram_mb: null
+
+# --- Conflict resolution ---
+conflicting_tool_detected: false
+conflicting_tool_name: null       # name of the conflicting service if any
+conflicting_tool_pid: null        # PID of the conflicting process
+conflicting_tool_in_known_list: null  # true / false / unknown
+
+stop_action_taken:
+  attempted: false
+  method: null              # graceful_stop / sigterm / none
+  stop_command_used: null   # exact command run
+  verification_passed: null # true / false — confirmed process gone and port released
+  stop_notes: null          # any warnings or errors during stop
+
+operator_approval_for_stop: null  # true / false / not_required
+
+# --- Starting the required tool ---
+start_action_taken:
+  attempted: false
+  start_command_used: null  # exact command run (no secrets)
+  start_command_source: null  # config_file / operator_provided / unknown
+  background_pid: null      # PID after start
+
+health_check_result:
+  attempted: false
+  health_command_used: null
+  passed: null              # true / false / timeout
+  http_status: null         # if health check is HTTP
+  response_summary: null
+  timeout_seconds: null
+
+# --- Tool selection and fallback ---
+selected_tool: null         # final tool actually used
+fallback_used: false
+fallback_reason: null       # exact reason: primary_not_running / start_failed / api_quota_exhausted / other
+fallback_tool: null         # name of fallback tool used
+
+draft_quality_output: false
+# IMPORTANT: If draft_quality_output is true, this output is NOT channel-ready.
+# It must be labeled as draft in the render receipt and re-generated before final output.
+
+# --- Operator approval tracking ---
+operator_approval_required: false
+operator_approval_required_reason: null  # why approval is needed
+operator_approval_recorded: null         # true / false / pending
+operator_approval_notes: null
+
+# --- Outcome ---
+final_status: null  # success / failed / awaiting_operator / draft_accepted
+output_file: null   # path to the generated file, if any
+output_duration_sec: null  # for audio/video outputs
+notes: null

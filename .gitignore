@@ -96,3 +96,7 @@ tmp/
 
 # Root-level generated project workspaces
 projects/
+
+# Machine-specific local tool config (private paths, not for commit)
+config/asymmetric_local_tools.local.yaml
+config/asymmetric_local_tools.local.yaml.bak

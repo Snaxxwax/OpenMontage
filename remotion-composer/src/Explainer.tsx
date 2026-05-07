@@ -344,16 +344,19 @@ const ImageScene: React.FC<{ src: string; animation?: string }> = ({
 // Enhanced Video Scene
 // ---------------------------------------------------------------------------
 
-const VideoScene: React.FC<{ src: string; startFrom?: number }> = ({
+const VideoScene: React.FC<{ src: string; startFrom?: number; animation?: string }> = ({
   src,
   startFrom = 0,
+  animation,
 }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
 
-  const fadeIn = spring({ frame, fps, config: { damping: 20 } });
+  // "hard" animation = no fade in or out — true hard cut at scene boundaries
+  const hardCut = animation === "hard" || animation === "hard_cut";
+  const fadeIn = hardCut ? 1 : spring({ frame, fps, config: { damping: 20 } });
   const fadeOutStart = durationInFrames - 8;
-  const fadeOut = interpolate(frame, [fadeOutStart, durationInFrames], [1, 0.3], {
+  const fadeOut = hardCut ? 1 : interpolate(frame, [fadeOutStart, durationInFrames], [1, 0.3], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -887,7 +890,7 @@ const SceneRenderer: React.FC<{ cut: Cut; theme: ThemeConfig }> = ({ cut, theme 
   }
 
   if (cut.source && isVideo(cut.source)) {
-    return maybeWrapWithBg(<VideoScene src={cut.source} startFrom={cut.source_in_seconds ?? 0} />);
+    return maybeWrapWithBg(<VideoScene src={cut.source} startFrom={cut.source_in_seconds ?? 0} animation={animation} />);
   }
 
   // Final fallback — try as image if source exists, otherwise show text_card

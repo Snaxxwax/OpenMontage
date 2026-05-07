@@ -103,6 +103,23 @@ export const THEMES: Record<string, ThemeConfig> = {
     captionHighlightColor: "#FFB347",
     captionBackgroundColor: "rgba(10, 10, 26, 0.8)",
   },
+  // Asymmetric brand — systems documentary, dark editorial
+  "asymmetric": {
+    primaryColor: "#3F8FA3",        // Muted Steel Cyan — structure, flow, map logic
+    accentColor: "#F5A400",         // Institutional Amber — control, leverage, chokepoint
+    backgroundColor: "#050608",     // Near Black
+    surfaceColor: "#11151C",        // Deep Slate
+    textColor: "#F3F5F7",           // Bone
+    mutedTextColor: "#8A95A6",      // Muted Steel
+    headingFont: "Space Grotesk",
+    bodyFont: "Inter",
+    monoFont: "IBM Plex Mono",
+    chartColors: ["#F5A400", "#3F8FA3", "#D64545", "#8A95A6", "#2A3142", "#F3F5F7"],
+    springConfig: { damping: 22, stiffness: 140, mass: 1 },
+    transitionDuration: 0.2,
+    captionHighlightColor: "#F5A400",
+    captionBackgroundColor: "rgba(5, 6, 8, 0.88)",
+  },
 };
 
 // Default theme when none is specified — uses the existing dark style for backwards compatibility
