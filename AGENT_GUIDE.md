@@ -663,6 +663,32 @@ The `.agents/skills/` directory is large. When you're not coming in through a to
 | How should this pipeline stage behave? | `skills/pipelines/<pipeline>/...` |
 | What is the checkpoint/review policy? | `skills/meta/` |
 
+## Asymmetric Production Subagents
+
+For Asymmetric channel productions, six specialist agents handle specific pipeline gates and steps. The main session acts as executive producer — it coordinates, verifies artifacts, and communicates with the operator. It does not do the work that belongs to a specialist agent.
+
+**Hard rule: The main session does not do the work that belongs to a specialist agent.** If the main session is writing narration, conducting source research, generating opening sequence variants, or running render commands inline, it is violating the orchestration contract.
+
+| Agent | Handles |
+|---|---|
+| `om-performance-producer` | F2 Packaging Test + Step 2 Performance Package |
+| `om-researcher` | F1 Pacing DNA (optional) + Step 4 Research |
+| `om-source-clip-curator` | Step 5 Clip Quality Gate |
+| `om-writer` | F3 Opening Sequence Proof + Steps 7+8 Script and Rhythm |
+| `om-render-operator` | Step 11 Render |
+| `om-qc-reviewer` | Step 12 QC Review (conditional) + F4 Retention Postmortem |
+
+**Phase 2S gates (F1–F3) run before the 14-step production sequence.** F2 and F3 require explicit operator approval before production begins.
+
+Key references:
+- Full invocation protocol: `docs/asymmetric/subagent_orchestration.md`
+- Full pipeline status: `/om-asymmetric-format-gate <project_id>`
+- Full run sequence: `.claude/commands/om-asymmetric-run-sequence.md`
+
+Blocker escalation: follow Section 6 of `docs/asymmetric/subagent_orchestration.md`. Do not retry or resolve blockers inline — surface to operator and wait.
+
+---
+
 ## What Not To Do
 
 - **Do not bypass the pipeline.** Never write ad-hoc scripts to call tools directly. All production goes through pipeline stages with director skills. See Rule Zero.

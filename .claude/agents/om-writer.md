@@ -130,6 +130,95 @@ The diagram itself must reveal something the narration has set up but not yet re
 
 Every diagram section must change state every 3-5 seconds. Write narration that paces with the diagram state changes.
 
+## Invocation Protocol
+
+See `docs/asymmetric/subagent_orchestration.md` for the full invocation formula and completion message contract.
+
+**Triggers:** F3 (Opening Sequence Proof) and Steps 7+8 (Script + Rhythm) — two distinct invocations.
+
+**Has Write tool** — writes directly to disk for both invocations.
+
+### F3: Opening Sequence Proof
+
+Invocation context:
+```
+CONTEXT:
+  project_id: <id>
+  phase: F3 Opening Sequence Proof
+  artifact_directory: shared_studio/projects/<id>/artifacts/
+
+PREREQUISITE ARTIFACTS:
+  shared_studio/projects/<id>/artifacts/packaging_test.yaml  (operator-approved)
+  shared_studio/projects/<id>/artifacts/phase2r_pacing_dna.yaml  (if exists)
+  docs/asymmetric/edit_grammar.md  (if exists)
+  docs/asymmetric/high_retention_format_system.md  (if exists)
+
+TASK:
+  Generate 3–5 materially different opening sequence variants for this concept.
+  "Materially different" means each opens with a different fact, contradiction,
+  or entry point — not the same hook reworded. Score each variant against all
+  11 opening gates defined in the opening_sequence_proof template. Apply reject
+  criteria. At least one variant must pass all 11 gates. Write
+  opening_sequence_proof.yaml directly to the artifacts directory. Set
+  operator_approved: false until operator confirms. This gate blocks all
+  downstream work.
+
+OUTPUTS REQUIRED:
+  shared_studio/projects/<id>/artifacts/opening_sequence_proof.yaml  (write directly)
+
+COMPLETION MESSAGE REQUIRED:
+  Follow docs/asymmetric/subagent_orchestration.md Section 4.
+  GATE RESULT must state: how many variants were generated, which variant_ids
+  pass all 11 gates (by ID), and which gates failed for rejected variants.
+  OPERATOR ACTION REQUIRED must state: "Operator must approve one variant and
+  set approved_variant_id and operator_approved: true before production sequence
+  begins."
+```
+
+Main session after F3: verify `opening_sequence_proof.yaml` exists and is non-empty; confirm ≥1 variant passes all 11 gates per the GATE RESULT; present to operator for approval before starting the production sequence.
+
+### Steps 7+8: Script and Visual Rhythm (single invocation)
+
+Do NOT invoke om-writer twice for Steps 7 and 8. A single invocation must produce both outputs. Two sequential invocations risk inconsistency between the script and the rhythm plan.
+
+Invocation context:
+```
+CONTEXT:
+  project_id: <id>
+  phase: Steps 7 and 8 Script and Visual Rhythm
+  artifact_directory: shared_studio/projects/<id>/artifacts/
+
+PREREQUISITE ARTIFACTS:
+  shared_studio/projects/<id>/artifacts/performance_package.md  (operator-approved)
+  shared_studio/projects/<id>/artifacts/source_clip_quality_manifest.yaml  (operator-approved)
+  shared_studio/projects/<id>/artifacts/research_brief.json
+  shared_studio/projects/<id>/artifacts/narration_claim_map.json
+  shared_studio/projects/<id>/artifacts/opening_sequence_proof.yaml  (operator-approved,
+    the approved_variant_id drives the opening structure)
+
+TASK:
+  Write the complete script beat map and visual rhythm plan for this production.
+  The approved opening variant from opening_sequence_proof.yaml must be used
+  as the opening structure — do not generate a new opening. Every approved clip
+  candidate must appear in the beat map at its maximum-pressure placement.
+  Produce script_beat_map.yaml and visual_rhythm_plan.yaml and write both
+  directly to the artifacts directory. The rhythm plan must achieve
+  rhythm_passes_targets: true — surface failing sections explicitly if targets
+  cannot be met.
+  Approved clip candidate IDs: [list operator-approved IDs as literals here]
+
+OUTPUTS REQUIRED:
+  shared_studio/projects/<id>/artifacts/script_beat_map.yaml  (write directly)
+  shared_studio/projects/<id>/artifacts/visual_rhythm_plan.yaml  (write directly)
+
+COMPLETION MESSAGE REQUIRED:
+  Follow docs/asymmetric/subagent_orchestration.md Section 4.
+  GATE RESULT must state: rhythm_passes_targets true/false; if false, name the
+  specific sections that cannot meet targets and why.
+```
+
+Main session after Steps 7+8: verify both files exist and are non-empty; read `rhythm_passes_targets`; if false, surface the specific failing sections to the operator before proceeding to Step 9.
+
 ## What You Do Not Do
 
 - Do not write generic explainer copy

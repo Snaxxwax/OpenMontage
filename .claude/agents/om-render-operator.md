@@ -278,6 +278,65 @@ If any technical QC check fails:
 4. Surface the blocker to the main session with the options available
 5. Do not re-render without understanding and addressing the root cause
 
+## Invocation Protocol
+
+See `docs/asymmetric/subagent_orchestration.md` for the full invocation formula and completion message contract.
+
+**Trigger:** Step 11 (Render + Technical QC).
+
+**Has Write/Edit/Bash** — writes staging receipts, render receipts, and QC reports directly to disk.
+
+### Step 11: Render
+
+Invocation context:
+```
+CONTEXT:
+  project_id: <id>
+  phase: Step 11 Render
+  artifact_directory: shared_studio/projects/<id>/artifacts/
+  receipts_directory: shared_studio/projects/<id>/receipts/
+  clips_directory: shared_studio/projects/<id>/clips/
+  renders_directory: shared_studio/projects/<id>/renders/
+  qc_directory: shared_studio/projects/<id>/qc/
+
+PREREQUISITE ARTIFACTS:
+  shared_studio/projects/<id>/artifacts/render_readiness_gate.md  (all gates PASS)
+  shared_studio/projects/<id>/artifacts/script_beat_map.yaml
+  shared_studio/projects/<id>/artifacts/visual_rhythm_plan.yaml
+  shared_studio/projects/<id>/artifacts/source_clip_quality_manifest.yaml
+
+TASK:
+  Execute the full render for this production. Follow the LTR sequence before
+  any generation step. Run git preflight, local tool resolution, asset staging,
+  pipeline execution, and the full technical QC suite — in that order. Write
+  staging receipt, render receipt, and QC report to the receipts and qc
+  directories. If any technical QC check fails, do not present the render to
+  the operator — surface the failure in the completion message.
+  Operator-approved render runtime: [state literal value here, e.g. remotion]
+  Draft quality audio authorized: [true / false — state explicitly]
+
+OUTPUTS REQUIRED:
+  shared_studio/projects/<id>/receipts/staging_receipt_<timestamp>.md  (write directly)
+  shared_studio/projects/<id>/receipts/render_receipt_<timestamp>.md  (write directly)
+  shared_studio/projects/<id>/qc/technical_qc_<timestamp>.md  (write directly)
+  shared_studio/projects/<id>/renders/<render_file>.mp4  (produced by pipeline)
+
+COMPLETION MESSAGE REQUIRED:
+  Follow docs/asymmetric/subagent_orchestration.md Section 4.
+  GATE RESULT must state: render_completed true/false; each technical QC
+  dimension result (duration, audio continuity, blank screens, loudness,
+  source labels).
+  OPERATOR ACTION REQUIRED: if all QC passes, "Operator may now watch render."
+  If any QC fails: "Do not present render to operator — QC failures must be
+  resolved first."
+```
+
+Main session after Step 11:
+- Use `Glob receipts/staging_receipt_*.md` and `Glob receipts/render_receipt_*.md` to find the latest receipts (do not hardcode timestamps)
+- Verify render file exists at the path stated in the render receipt
+- Read the technical QC report — all dimensions must PASS before the operator sees the render
+- If STATUS is BLOCKED: surface the structured blocker to the operator — do not retry silently
+
 ## What You Do Not Do
 
 - Do not modify any file in `tools/`, `lib/`, `remotion-composer/`, or `pipeline_defs/` unless explicitly approved by the operator for this specific action

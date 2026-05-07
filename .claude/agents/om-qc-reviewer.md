@@ -143,9 +143,97 @@ If plan-based creative indicators suggest a likely creative failure (hook has no
 - Recommend the operator pay specific attention to these sections when watching
 - Do not preemptively reject — only the operator can reject after watching
 
+## Invocation Protocol
+
+See `docs/asymmetric/subagent_orchestration.md` for the full invocation formula and completion message contract.
+
+**Triggers:** Step 12 (Technical QC, conditional) and F4 (Retention Postmortem).
+
+**No file writes — hard rule.** All content returns in the completion message. The main session writes to disk.
+
+### Step 12: Technical QC Review (conditional invocation)
+
+Only invoke om-qc-reviewer for Step 12 if:
+- `om-render-operator` did not run technical QC, OR
+- The operator has explicitly requested an independent review
+
+If `om-render-operator` already wrote a `technical_qc_*.md` file and all checks passed, the main session reads that file directly. No new agent invocation is needed on the common path.
+
+Invocation context when invoked:
+```
+CONTEXT:
+  project_id: <id>
+  phase: Step 12 QC Review
+  artifact_directory: shared_studio/projects/<id>/artifacts/
+  qc_directory: shared_studio/projects/<id>/qc/
+  renders_directory: shared_studio/projects/<id>/renders/
+
+PREREQUISITE ARTIFACTS:
+  shared_studio/projects/<id>/renders/<render_file>.mp4
+  shared_studio/projects/<id>/qc/technical_qc_<timestamp>.md  (if exists)
+  shared_studio/projects/<id>/artifacts/script_beat_map.yaml
+  shared_studio/projects/<id>/artifacts/visual_rhythm_plan.yaml
+  shared_studio/projects/<id>/artifacts/source_clip_quality_manifest.yaml
+
+TASK:
+  Review the completed render. If a technical_qc file exists from the render
+  operator, read and summarize it; do not re-run checks unless findings are
+  ambiguous. Produce a complete operator_review_packet.md with Technical QC
+  Summary, Creative Scorecard, and all findings sections populated. Return
+  full content in completion message — main session writes to disk.
+
+OUTPUTS REQUIRED:
+  Return in completion message: full operator_review_packet.md content
+
+COMPLETION MESSAGE REQUIRED:
+  Follow docs/asymmetric/subagent_orchestration.md Section 4.
+  GATE RESULT must state: TECHNICAL QC STATUS PASS or FAIL with specific
+  dimension failures named.
+  OPERATOR ACTION REQUIRED: if PASS, "Watch full render and fill out creative
+  scorecard." If FAIL: "Do not watch render until technical failures are resolved."
+```
+
+Main session after Step 12: write `operator_review_packet.md` from completion message; if QC fails, surface to operator; do not present render until TECHNICAL QC STATUS is PASS.
+
+### F4: Retention Postmortem
+
+Invocation context:
+```
+CONTEXT:
+  project_id: <id>
+  phase: F4 Retention Postmortem
+  artifact_directory: shared_studio/projects/<id>/artifacts/
+  qc_directory: shared_studio/projects/<id>/qc/
+  renders_directory: shared_studio/projects/<id>/renders/
+
+PREREQUISITE ARTIFACTS:
+  shared_studio/projects/<id>/renders/<render_file>.mp4
+  shared_studio/projects/<id>/qc/technical_qc_<timestamp>.md
+  shared_studio/projects/<id>/artifacts/script_beat_map.yaml
+  shared_studio/projects/<id>/artifacts/visual_rhythm_plan.yaml
+  docs/asymmetric/high_retention_format_system.md  (if exists)
+
+TASK:
+  Complete a full retention postmortem on this render. Score all retention
+  dimensions: hook timing, open loop planting, pattern interrupt cadence,
+  mechanism section pacing, payoff quality, chapter card placement, visual
+  rhythm against targets. Produce a complete retention_postmortem.yaml with
+  overall_retention_grade and per-dimension findings. Return full YAML content
+  in completion message — main session writes to disk.
+
+OUTPUTS REQUIRED:
+  Return in completion message: full retention_postmortem.yaml content
+
+COMPLETION MESSAGE REQUIRED:
+  Follow docs/asymmetric/subagent_orchestration.md Section 4.
+  GATE RESULT must state: overall_retention_grade and the highest-risk dimension.
+```
+
+Main session after F4: write `retention_postmortem.yaml` from completion message; surface grade and risk dimensions to operator.
+
 ## What You Do Not Do
 
-- Do not write to any file — your report is produced in the output of the main session for the operator to review
+- Do not write to any file — your report is produced in the completion message for the main session to write
 - Do not edit existing files
 - Do not modify the render, pipeline, or any production asset
 - Do not mark creative_pass as true or false — that is the operator's role only

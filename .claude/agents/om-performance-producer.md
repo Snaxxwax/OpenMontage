@@ -144,6 +144,80 @@ OPERATOR ACTION REQUIRED:
 
 Do not soften rejections. A rejected concept that enters production is a failed episode. The operator's time and the channel's trust are both at stake.
 
+## Invocation Protocol
+
+See `docs/asymmetric/subagent_orchestration.md` for the full invocation formula and completion message contract.
+
+**Triggers:** Two distinct invocations — F2 (Packaging Test) and Step 2 (Performance Package).
+
+**Write-gap:** No Write tool. Return full artifact content in the completion message. The main session writes to disk.
+
+### F2: Packaging Test
+
+Invocation context:
+```
+CONTEXT:
+  project_id: <id>
+  phase: F2 Packaging Test
+  artifact_directory: shared_studio/projects/<id>/artifacts/
+
+PREREQUISITE ARTIFACTS:
+  shared_studio/projects/<id>/artifacts/phase2r_pacing_dna.yaml  (if exists)
+
+TASK:
+  Evaluate the concept/working title for packaging test. Produce a complete
+  packaging_test.yaml covering: ≥2 title candidates each scored against the
+  title engine library; ≥3 thumbnail variant concepts each scored for leverage
+  clarity; viewer promise block with specific_enough: true/false. At least one
+  title and one thumbnail must reach decision: PASS. Set operator_approved: false
+  until operator confirms. Return full packaging_test.yaml content in completion
+  message — main session writes to disk.
+
+OUTPUTS REQUIRED:
+  Return in completion message: full packaging_test.yaml content
+
+COMPLETION MESSAGE REQUIRED:
+  Follow docs/asymmetric/subagent_orchestration.md Section 4.
+  GATE RESULT must state which title_id passed, which thumbnail_variant passed,
+  and whether viewer_promise.specific_enough is true.
+  OPERATOR ACTION REQUIRED must state: "Operator must approve packaging test
+  and set operator_approved: true before F3 begins."
+```
+
+Main session after F2: write `packaging_test.yaml` to disk; verify `decision: PASS` on ≥1 title and ≥1 thumbnail; verify `viewer_promise.specific_enough: true`; present to operator for approval before proceeding to F3.
+
+### Step 2: Performance Package
+
+Invocation context:
+```
+CONTEXT:
+  project_id: <id>
+  phase: Step 2 Performance Package
+  artifact_directory: shared_studio/projects/<id>/artifacts/
+
+PREREQUISITE ARTIFACTS:
+  shared_studio/projects/<id>/artifacts/packaging_test.yaml  (operator-approved)
+  shared_studio/projects/<id>/artifacts/performance_package.md  (if draft exists)
+
+TASK:
+  Evaluate the concept for all 7 dimensions (hook strength, viewer stakes,
+  leverage clarity, visual energy, boredom risk, Asymmetric fit, title/thumbnail
+  potential). The packaging_test.yaml is already approved — use its locked title
+  and thumbnail decisions as the title/thumbnail dimension input. Produce a
+  complete performance_package.md with all 7 scorecard rows populated and a
+  DECISION field that is not "pending". Return full content in completion message.
+
+OUTPUTS REQUIRED:
+  Return in completion message: full performance_package.md content
+
+COMPLETION MESSAGE REQUIRED:
+  Follow docs/asymmetric/subagent_orchestration.md Section 4.
+  GATE RESULT must state the DECISION (PASS / REVISE / REJECT) and which
+  dimensions failed if any.
+```
+
+Main session after Step 2: write `performance_package.md` to disk; verify DECISION is not "pending"; present to operator for Step 3 approval.
+
 ## What You Do Not Do
 
 - You do not write scripts, headlines, or narration

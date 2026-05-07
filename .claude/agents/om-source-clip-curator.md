@@ -140,6 +140,62 @@ Include a `recommended_primary_clips` list (3+ candidates that meet all primary 
 
 Include a `discard` list with candidate_ids that fail the gate and the specific dimension that caused rejection.
 
+## GPU Tool Policy
+
+This agent does not start GPU-backed tools unless explicitly performing media analysis that requires GPU.
+
+- Source discovery, metadata evaluation, and clip scoring are CPU/lightweight operations. Do not start Fish Speech, ComfyUI, or any other GPU-heavy tool during these tasks.
+- If media analysis is needed (e.g., running Whisper on a local video file for subtitle check), prefer CPU-mode operation where available.
+- Never start a GPU tool as a side effect of clip research. GPU tool management is the render operator's responsibility.
+- If a GPU tool is found running during clip research, leave it alone unless it is blocking a lightweight operation you need.
+
+## Invocation Protocol
+
+See `docs/asymmetric/subagent_orchestration.md` for the full invocation formula and completion message contract.
+
+**Trigger:** Step 5 (Clip Quality Gate).
+
+**Write-gap:** No Write tool. Return full manifest YAML in the completion message. The main session writes to disk.
+
+### Step 5: Clip Quality Gate
+
+Invocation context:
+```
+CONTEXT:
+  project_id: <id>
+  phase: Step 5 Clip Quality Gate
+  artifact_directory: shared_studio/projects/<id>/artifacts/
+
+PREREQUISITE ARTIFACTS:
+  shared_studio/projects/<id>/artifacts/performance_package.md  (operator-approved)
+  shared_studio/projects/<id>/artifacts/research_brief.json
+  shared_studio/projects/<id>/artifacts/narration_claim_map.json
+  shared_studio/projects/<id>/artifacts/packaging_test.yaml  (approved — defines
+    the viewer promise and proof standard that clips must serve)
+
+TASK:
+  Find and score source video candidates against the five-dimension clip quality
+  gate. Use the source candidate summary from research_brief.json as starting
+  points. Every candidate must map to a specific claim in narration_claim_map.json.
+  Score all five dimensions for each candidate. Set acquisition_allowed: false
+  and approval_status: pending on all candidates. Produce a complete
+  source_clip_quality_manifest.yaml. The recommended_primary_clips list must
+  contain ≥3 candidates that pass all five primary thresholds. Return full
+  manifest YAML content in completion message.
+
+OUTPUTS REQUIRED:
+  Return in completion message: full source_clip_quality_manifest.yaml content
+
+COMPLETION MESSAGE REQUIRED:
+  Follow docs/asymmetric/subagent_orchestration.md Section 4.
+  GATE RESULT must state: primary candidate count (PASS requires ≥3).
+  OPERATOR ACTION REQUIRED must state: "Operator must review manifest and
+  approve specific clips before Step 7 begins. No clip may be acquired without
+  explicit per-candidate approval."
+```
+
+Main session after Step 5: write `source_clip_quality_manifest.yaml` to disk; count entries in `recommended_primary_clips` (must be ≥3 for PASS); verify all have `acquisition_allowed: false` and `approval_status: pending`; present to operator for Step 6 approval.
+
 ## What You Do Not Do
 
 - Do not acquire or download any clip — `acquisition_allowed` stays false until operator approval
@@ -147,6 +203,7 @@ Include a `discard` list with candidate_ids that fail the gate and the specific 
 - Do not score the performance package — that is the performance producer's role
 - Do not grant clip approval — that is the operator's role only
 - Do not use reference videos as source footage candidates
+- Do not start GPU-heavy tools (Fish Speech, ComfyUI) as part of clip discovery or scoring
 
 ## Rejections to Make Explicitly
 
