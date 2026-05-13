@@ -1,0 +1,33 @@
+{
+  "1": {
+    "class_type": "FishS2TTS",
+    "inputs": {
+      "model_path": "s2-pro",
+      "text": "The public story made this sound like a bug. It was a trust boundary failure hiding inside normal product behavior.",
+      "language": "en",
+      "device": "auto",
+      "precision": "auto",
+      "attention": "auto",
+      "max_new_tokens": 0,
+      "chunk_length": 200,
+      "temperature": 0.7,
+      "top_p": 0.8,
+      "repetition_penalty": 1.1,
+      "seed": 0,
+      "keep_model_loaded": false,
+      "offload_to_cpu": false,
+      "compile_model": false
+    }
+  },
+  "2": {
+    "class_type": "SaveAudioMP3",
+    "inputs": {
+      "audio": [
+        "1",
+        0
+      ],
+      "filename_prefix": "audio/asymmetric_narration",
+      "quality": "V0"
+    }
+  }
+}
