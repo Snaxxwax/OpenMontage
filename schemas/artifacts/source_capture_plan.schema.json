@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SourceCapturePlan",
+  "type": "object",
+  "required": ["episode", "operator_approved_for_acquisition", "captures"],
+  "properties": {
+    "episode": { "type": "string" },
+    "operator_approved_for_acquisition": { "type": "boolean" },
+    "captures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source_id", "capture_type", "purpose", "approved"],
+        "properties": {
+          "id": { "type": "string" },
+          "source_id": { "type": "string" },
+          "claim_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "capture_type": {
+            "type": "string",
+            "enum": [
+              "web_screenshot",
+              "full_page_screenshot",
+              "youtube_clip",
+              "youtube_transcript_excerpt",
+              "social_screenshot",
+              "document_excerpt",
+              "screen_recording"
+            ]
+          },
+          "url": { "type": "string" },
+          "timestamp_range": {
+            "type": "object",
+            "properties": {
+              "start": { "type": "string" },
+              "end": { "type": "string" }
+            },
+            "additionalProperties": false
+          },
+          "selector_or_region": { "type": "string" },
+          "purpose": { "type": "string" },
+          "rights_risk": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "unknown"]
+          },
+          "approved": { "type": "boolean" },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -34,5 +34,19 @@ Project state is stored in a standardized directory structure. You must never st
 - Model-specific files (e.g., `GEMINI.md`, `CLAUDE.md`) are only for bootstrap notes and MUST defer to this contract.
 - If you find conflicting instructions in other docs, `AGENTS.md` takes precedence.
 
+## Agent skills
+
+### Issue tracker
+
+Issues and PRDs are tracked in GitHub Issues for this repo. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The default Matt Pocock triage label vocabulary is used. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repo; domain docs are consumed from root-level context files and ADRs when present. See `docs/agents/domain.md`.
+
 ---
 *For pipeline-specific technical contracts, see the `CONTRACT.md` within the pipeline's skill directory.*

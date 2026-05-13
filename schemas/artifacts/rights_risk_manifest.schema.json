@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RightsRiskManifest",
+  "type": "object",
+  "required": ["episode", "items"],
+  "properties": {
+    "episode": { "type": "string" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["evidence_id", "rights_status", "risk_level"],
+        "properties": {
+          "evidence_id": { "type": "string" },
+          "rights_status": { "type": "string" },
+          "risk_level": { "type": "string" },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SourceProofManifest",
+  "type": "object",
+  "required": ["ok", "asset_count", "asset_format", "capture_timestamp", "assets"],
+  "properties": {
+    "ok": { "type": "boolean", "const": true },
+    "asset_count": { "type": "integer", "minimum": 0 },
+    "asset_format": { "type": "string", "enum": ["html", "txt"] },
+    "capture_timestamp": { "type": "string" },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source_id", "asset_path", "image_paths", "sidecar_path", "claim_ids"],
+        "properties": {
+          "id": { "type": "string" },
+          "source_id": { "type": "string" },
+          "asset_path": { "type": "string" },
+          "image_paths": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "sidecar_path": { "type": "string" },
+          "evidence_id": { "type": ["string", "null"] },
+          "capture_id": { "type": ["string", "null"] },
+          "claim_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

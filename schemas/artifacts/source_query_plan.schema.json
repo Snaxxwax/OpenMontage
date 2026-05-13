@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SourceQueryPlan",
+  "type": "object",
+  "required": ["topic", "queries"],
+  "properties": {
+    "topic": { "type": "string" },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["intent", "query"],
+        "properties": {
+          "intent": { "type": "string" },
+          "query": { "type": "string" },
+          "platform": {
+            "type": "string",
+            "enum": ["web", "youtube", "reddit", "hacker_news", "x", "github", "archive", "vendor_site", "academic"]
+          },
+          "preferred_sources": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

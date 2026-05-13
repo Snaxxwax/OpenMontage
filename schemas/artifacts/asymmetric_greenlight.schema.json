@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AsymmetricGreenlight",
+  "type": "object",
+  "required": [
+    "topic",
+    "primary_function",
+    "delivery_mechanism",
+    "viewer_problem",
+    "viewer_outcome",
+    "positioning",
+    "audience_equity_score",
+    "sauce_integrity_score",
+    "consistency_score",
+    "greenlight"
+  ],
+  "properties": {
+    "topic": { "type": "string" },
+    "primary_function": { "const": "education" },
+    "delivery_mechanism": { "type": "string" },
+    "viewer_problem": { "type": "string" },
+    "viewer_outcome": { "type": "string" },
+    "positioning": {
+      "type": "object",
+      "required": ["first", "better", "different", "more"],
+      "properties": {
+        "first": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "better": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "different": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "more": { "type": "integer", "minimum": 1, "maximum": 5 }
+      },
+      "additionalProperties": false
+    },
+    "audience_equity_score": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "sauce_integrity_score": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "consistency_score": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "greenlight": { "type": "boolean" },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": false
+}

@@ -76,6 +76,8 @@ assert ALL_MANIFESTS, "No pipeline manifests found"
 # an explicit reason. Everything else is required to follow the contract.
 _EXCLUDED_PIPELINES = {
     "framework-smoke": "minimal 2-stage smoke test, no compose stage",
+    "source-commentary": "legacy research-first pipeline; planning lives in research/claim_map stages",
+    "asymmetric-source-commentary": "custom evidence-gated pipeline with no proposal or idea stage",
 }
 
 

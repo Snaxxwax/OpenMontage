@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
+import yaml
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -41,6 +42,7 @@ from tools.base_tool import BaseTool, ToolResult, ToolTier, ToolStatus
 from tools.tool_registry import ToolRegistry
 from tools.cost_tracker import CostTracker, BudgetMode, BudgetExceededError, ApprovalRequiredError
 from schemas.artifacts import load_schema, validate_artifact, list_schemas
+from schemas.artifacts import ARTIFACT_NAMES
 
 
 def sample_artifact(name: str) -> dict:
@@ -381,6 +383,17 @@ class TestPipelineManifests:
             include_inactive=False,
         )
         assert any(s["name"] == "sample" for s in active_sub_stages)
+
+    def test_pipeline_produced_artifacts_are_registered(self):
+        registry = set(list_schemas()) | set(ARTIFACT_NAMES)
+        for manifest_path in Path("pipeline_defs").glob("*.yaml"):
+            manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+            produced: set[str] = set()
+            for stage in manifest.get("stages", []):
+                produced.update(stage.get("produces", []))
+                for schema_ref in stage.get("outputs", []):
+                    produced.add(Path(schema_ref).name.removesuffix(".schema.json"))
+            assert produced <= registry, f"{manifest_path.stem} produces unregistered artifacts: {sorted(produced - registry)}"
 
 
 # ---- BaseTool ----

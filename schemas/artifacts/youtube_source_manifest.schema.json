@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "YouTubeSourceManifest",
+  "type": "object",
+  "required": ["episode", "videos"],
+  "properties": {
+    "episode": { "type": "string" },
+    "videos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "url", "title", "channel", "source_role", "candidate_ranges", "rights_risk"],
+        "properties": {
+          "id": { "type": "string" },
+          "url": { "type": "string" },
+          "title": { "type": "string" },
+          "channel": { "type": "string" },
+          "upload_date": { "type": "string" },
+          "source_role": {
+            "type": "string",
+            "enum": [
+              "researcher_demo",
+              "vendor_statement",
+              "conference_talk",
+              "participant_interview",
+              "affected_user_recording",
+              "news_segment",
+              "commentary_with_receipts",
+              "context_only"
+            ]
+          },
+          "transcript_available": { "type": "boolean" },
+          "candidate_ranges": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["start", "end", "purpose"],
+              "properties": {
+                "start": { "type": "string" },
+                "end": { "type": "string" },
+                "purpose": { "type": "string" },
+                "claim_ids": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "rights_risk": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "unknown"]
+          },
+          "notes": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

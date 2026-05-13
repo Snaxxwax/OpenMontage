@@ -1,38 +1,41 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "openmontage/artifacts/source_candidate_manifest",
-  "title": "Source Candidate Manifest",
-  "description": "List of discovered source candidates (metadata only). Downloads prohibited.",
+  "title": "SourceCandidateManifest",
   "type": "object",
-  "required": ["version", "project_id", "sources"],
+  "required": ["topic", "sources"],
   "properties": {
-    "version": { "type": "string", "const": "1.0" },
-    "project_id": { "type": "string" },
+    "topic": { "type": "string" },
     "sources": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": [
-          "source_id",
-          "source_url",
-          "source_title",
-          "source_channel",
-          "platform",
-          "transcript_available",
-          "metadata_only_collected"
-        ],
+        "required": ["id", "url", "kind", "relevance"],
         "properties": {
-          "source_id": { "type": "string" },
-          "source_url": { "type": "string", "format": "uri" },
-          "source_title": { "type": "string" },
-          "source_channel": { "type": "string" },
-          "platform": {
+          "id": { "type": "string" },
+          "url": { "type": "string" },
+          "kind": {
             "type": "string",
-            "enum": ["youtube", "vimeo", "tiktok", "instagram", "twitter", "other"]
+            "enum": [
+              "vendor_page",
+              "technical_disclosure",
+              "researcher_post",
+              "paper",
+              "github_issue_or_pr",
+              "news_article",
+              "social_post",
+              "youtube_video",
+              "forum_thread",
+              "archive_snapshot",
+              "documentation",
+              "demo"
+            ]
           },
-          "transcript_available": { "type": "boolean" },
-          "metadata_only_collected": { "type": "boolean", "const": true },
-          "duration_seconds": { "type": "number", "minimum": 0 }
+          "relevance": { "type": "string" },
+          "capture_potential": {
+            "type": "string",
+            "enum": ["none", "screenshot", "clip", "transcript", "screenshot_and_clip", "unknown"]
+          },
+          "credibility_notes": { "type": "string" }
         },
         "additionalProperties": false
       }

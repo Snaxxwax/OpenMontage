@@ -1,0 +1,78 @@
+id: asymmetric-source-commentary
+name: Asymmetric Source Commentary
+description: >
+  Education-led AI security investigation pipeline for source-led commentary,
+  evidence gating, and viewer-lens delivery.
+stages:
+  - id: greenlight
+    director: skills/pipelines/asymmetric-source-commentary/greenlight-director.md
+    outputs:
+      - schemas/artifacts/asymmetric_greenlight.schema.json
+
+  - id: source_discovery
+    director: skills/pipelines/asymmetric-source-commentary/source-discovery-director.md
+    outputs:
+      - schemas/artifacts/source_query_plan.schema.json
+      - schemas/artifacts/source_candidate_manifest.schema.json
+
+  - id: youtube_source_discovery
+    director: skills/pipelines/asymmetric-source-commentary/youtube-source-discovery-director.md
+    outputs:
+      - schemas/artifacts/youtube_source_manifest.schema.json
+
+  - id: capture_plan
+    director: skills/pipelines/asymmetric-source-commentary/capture-plan-director.md
+    outputs:
+      - schemas/artifacts/source_capture_plan.schema.json
+
+  - id: claim_map
+    director: skills/pipelines/asymmetric-source-commentary/claim-map-director.md
+    outputs:
+      - schemas/artifacts/asymmetric_claim_map.schema.json
+
+  - id: evidence_triage
+    director: skills/pipelines/asymmetric-source-commentary/evidence-triage-director.md
+    outputs:
+      - schemas/artifacts/evidence_candidate_manifest.schema.json
+      - schemas/artifacts/rights_risk_manifest.schema.json
+
+  - id: script
+    director: skills/pipelines/asymmetric-source-commentary/script-director.md
+
+  - id: visual_rhythm
+    director: skills/pipelines/asymmetric-source-commentary/visual-rhythm-director.md
+    outputs:
+      - schemas/artifacts/visual_rhythm_plan.schema.json
+
+  - id: segment_approval
+    director: skills/pipelines/asymmetric-source-commentary/segment-approval-director.md
+    outputs:
+      - schemas/artifacts/source_segment_approval_manifest.schema.json
+
+  - id: acquisition
+    director: skills/pipelines/asymmetric-source-commentary/acquisition-director.md
+
+  - id: edit
+    director: skills/pipelines/asymmetric-source-commentary/edit-director.md
+
+  - id: compose
+    director: skills/pipelines/asymmetric-source-commentary/compose-director.md
+
+  - id: qc
+    director: skills/pipelines/asymmetric-source-commentary/qc-director.md
+
+gates:
+  - name: audience_equity_gate
+    rule: no_episode_without_concrete_viewer_lens
+  - name: evidence_gate
+    rule: no_unapproved_acquisition
+  - name: channel_fit_gate
+    rule: must_center_ai_security_or_trust_failure
+  - name: source_material_gate
+    rule: no_script_without_primary_sources_or_labeled_limitations
+  - name: youtube_rights_gate
+    rule: no_youtube_clip_without_purpose_timestamp_and_rights_risk
+  - name: asymmetric_render_readiness_gate
+    rule: scripts/asymmetric_gate.py render-readiness
+  - name: asymmetric_qc_gate
+    rule: scripts/asymmetric_gate.py qc

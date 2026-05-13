@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VisualRhythmPlan",
+  "type": "object",
+  "required": ["episode", "operator_approved_for_render", "segments"],
+  "properties": {
+    "episode": { "type": "string" },
+    "operator_approved_for_render": { "type": "boolean" },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "purpose", "visual_mode", "starts_at_seconds", "event_type", "approved"],
+        "properties": {
+          "id": { "type": "string" },
+          "purpose": { "type": "string" },
+          "visual_mode": { "type": "string" },
+          "starts_at_seconds": { "type": "number", "minimum": 0 },
+          "event_type": {
+            "type": "string",
+            "enum": ["source", "proof", "context", "chapter", "generated_visual"]
+          },
+          "approved": { "type": "boolean" },
+          "source_label_present": { "type": "boolean" },
+          "source_label": { "type": "string" },
+          "evidence_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "transition_note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

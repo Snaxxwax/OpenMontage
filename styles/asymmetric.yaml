@@ -1,139 +1,66 @@
+id: asymmetric
+name: Asymmetric
 identity:
-  name: "Asymmetric"
-  category: systems-briefing-documentary
-  mood: direct, controlled, analytical, quietly severe
-  pace: rapid
-  best_for: "Faceless systems briefings — chokepoints, hidden control surfaces, extraction layers, and leverage maps."
-
+  channel_type: education_led_ai_security_investigation
+  promise: source_led_investigations_that_teach_reusable_lenses
+voice:
+  tone:
+    - forensic
+    - controlled
+    - unsentimental
+    - direct
+  avoid:
+    - hype
+    - tutorializing exploits
+    - gossip voice
 visual_language:
-  color_palette:
-    # Base
-    background: "#050608"   # Near Black
-    surface: "#11151C"      # Deep Slate
-    graphite: "#2A3142"     # Graphite
-    text: "#F3F5F7"         # Bone
-    muted: "#8A95A6"        # Muted Steel
-
-    # Signal (semantic)
-    primary: "#F5A400"      # Institutional Amber — control / leverage / chokepoint
-    accent: "#3F8FA3"       # Muted Steel Cyan — structure / flow / map logic
-    danger: "#D64545"       # Deep System Red — cost / extraction / failure only
-  composition: "Dark editorial framing with map-room clarity: heavy subject on one side, negative space on the other, directional flow lines to the chokepoint, and a single marked control surface."
-  texture: "Flat vector, high contrast, sparse labels. Restrained 2.5D depth only for hierarchy and separation. No glossy 3D, no UI soup, no gradients."
-
+  palette:
+    background: "#0b0d12"
+    panel: "#12161f"
+    text: "#e6edf6"
+    muted: "#94a0b4"
+    receipt: "#d6dde8"
+    amber_chokepoint: "#f2a93b"
+    cyan_system_path: "#56c6d6"
+    lime_anomaly: "#9ad94f"
+    danger: "#de5a63"
+  motifs:
+    - receipt_wall
+    - dossier_frame
+    - timeline_pressure_bar
+    - source_label_tags
+    - trust_boundary_highlights
 typography:
-  headings:
-    font: "Space Grotesk"
-    weight: 700
-    tracking: "-0.01em"
-  body:
-    font: "Inter"
-    weight: 400
-    line_height: 1.55
-  code:
-    font: "IBM Plex Mono"
-    weight: 400
-  stat_card:
-    font: "Space Grotesk"
-    weight: 700
-    size_multiplier: 3.2
-  scale_system: "major_third"
-  weight_matrix:
-    title: 700
-    heading: 600
-    body: 400
-    caption: 300
-
+  display: condensed_grotesk
+  body: neutral_sans
+  captions: mono_ui
 motion:
-  transitions: [cut, fade, slide-up, wipe-right, crop-shift]
-  animation_style: "Fast start, controlled lock. No bounce. Motion serves clarity: micro-beats every 1.5–3s, reframes every 3–6s, pattern interrupts every 8–15s."
-  pacing_rules:
-    min_scene_hold_seconds: 2.0
-    max_scene_hold_seconds: 6.0
-    text_card_hold_seconds: 3.0
-    stat_card_hold_seconds: 2.8
-    transition_duration_seconds: 0.35
-    state_change_max_seconds: 4.0
-    micro_beat_interval_seconds: 2.5
-    reframe_interval_seconds: 4.5
-    pattern_interrupt_interval_seconds: 12.0
-    mode_shift_interval_seconds: 28.0
-  entrance: "fast fade-up (opacity 0->1, translateY 10->0 over 0.35s)"
-  exit: "fade (opacity 1->0 over 0.25s)"
-
+  style:
+    - kinetic_but_restrained
+    - evidence_first
+    - chapter_card_reveals
+    - timeline_escalation
 audio:
-  voice_style: "Direct, precise, controlled. Authority comes from structure and evidence, not personality."
-  music_mood: "Minimal electronic documentary pulse, restrained tension, no vocals."
-  music_volume: 0.08
-  sfx_style: "Subtle mechanical locks, restrained whooshes on reframes, soft ticks on highlights; never playful."
-  ducking_threshold_db: -4
-
-asset_generation:
-  image_prompt_prefix: >
-    dark editorial vector illustration, map-room briefing aesthetic, near-black background (#050608),
-    deep slate surfaces (#11151C), high contrast, sparse labels, flat vector shapes, clean edges,
-    institutional amber (#F5A400) used only to mark control/leverage/chokepoints,
-    muted steel cyan (#3F8FA3) used only for structure/flows/map logic,
-    deep system red (#D64545) used only when cost/damage/extraction/failure is explicit,
-    one dominant idea, single focal subject, negative space for readability,
-    restrained depth layering (2.5D) for hierarchy only, no UI soup,
-  image_negative_prompt: >
-    photorealistic, 3D render, CGI, glossy, neon cyberpunk, HUD UI soup, busy infographic collage,
-    grain, noise, gradients, glow, bloom, lens flare, bokeh, realistic lighting, white background,
-    clutter, tiny unreadable text, meme style
-  diagram_style: "Flat vector primitives (nodes, flows, gates, valves, wedges) with sparse labels and a single highlighted chokepoint."
-  consistency_anchors:
-    - "Use Near Black (#050608) / Deep Slate (#11151C) as the base — never white or light backgrounds"
-    - "Default to ONE signal color per frame (Amber/Cyan/Red) with semantic meaning"
-    - "Amber (#F5A400) marks control/leverage/chokepoints — never decoration"
-    - "Cyan (#3F8FA3) marks structure/flow/map logic — not the hero highlight"
-    - "Red (#D64545) appears only when cost/damage/extraction/failure is explicit"
-    - "High contrast, mobile readability first; minimal text (2–5 words on thumbnails)"
-    - "No clutter: one dominant idea, one focal subject"
-    - "Flat vector only: no gradients, no texture, no glossy 3D"
-    - "Max 4 colors on screen at once (excluding base neutrals)"
-
+  bed:
+    - low_pulse
+    - restrained_tension
+  cues:
+    - hard_cut_on_receipt
+    - silence_before_key_reveal
+    - ui_tick_for_annotations
 overlays:
-  stat_card:
-    bg: "#11151C"
-    border: "#F5A400"
-    text: "#F3F5F7"
-    radius: 10
-    shadow: "0 10px 40px rgba(0,0,0,0.55)"
-  key_term:
-    bg: "#11151C"
-    text: "#F5A400"
-    radius: 6
-  data_callout:
-    bg: "#11151C"
-    text: "#3F8FA3"
-    radius: 6
-  risk_callout:
-    bg: "#1A0E0E"
-    text: "#D64545"
-    radius: 6
-  code_block:
-    bg: "#050608"
-    text: "#F3F5F7"
-    highlight: "#3F8FA3"
-
+  required:
+    - source_label
+    - claim_status
+    - date_or_timeline_anchor
+  claim_status_values:
+    - confirmed
+    - researcher_reported
+    - vendor_stated
+    - independently_corroborated
+    - unclear
+    - unverified
 quality_rules:
-  - "Leverage point is visibly marked whenever a system diagram is shown"
-  - "Signal colors obey semantics (Amber=control, Cyan=structure, Red=cost only)"
-  - "No scene holds unchanged state longer than ~4 seconds"
-  - "Sparse labels: only label what matters"
-  - "Text must remain high-contrast and readable on mobile"
-  - "No decorative signal colors; no UI soup; no collage clutter"
-
-chart_palette:
-  - "#F5A400" # Amber — primary series / control
-  - "#3F8FA3" # Cyan — structure
-  - "#D64545" # Red — cost / failure
-  - "#F3F5F7" # Bone — labels
-  - "#8A95A6" # Muted — secondary series
-  - "#2A3142" # Graphite — grid / tertiary
-
-color_rules:
-  harmony_type: "split-complementary"
-  contrast_validation: true
-  colorblind_safe: true
+  - every sequence must orient the viewer to the claim status
+  - visuals should reinforce mechanism, not just mood
+  - each episode must end with a named lens

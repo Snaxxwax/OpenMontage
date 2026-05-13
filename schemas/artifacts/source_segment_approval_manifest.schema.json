@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SourceSegmentApprovalManifest",
+  "type": "object",
+  "required": ["episode", "segments"],
+  "properties": {
+    "episode": { "type": "string" },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["segment_id", "approved", "reason"],
+        "properties": {
+          "segment_id": { "type": "string" },
+          "approved": { "type": "boolean" },
+          "reason": { "type": "string" },
+          "required_evidence_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

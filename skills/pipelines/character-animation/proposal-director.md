@@ -26,6 +26,11 @@ Read `skills/meta/animation-runtime-selector.md` before recommending a runtime.
 
 When both Remotion and HyperFrames are available:
 
+- Present both to user.
+- Record `render_runtime_selection` in decision_log.
+- `render_runtime` is the explicit field for the locked choice.
+- `hyperframes` is the alternate runtime name used by contract tests.
+
 - Remotion: best when the final composition needs deterministic React-rendered
   video, captions, audio, scene JSON, and final MP4 governance.
 - HyperFrames: best when the character scene is HTML/SVG/GSAP-heavy and benefits

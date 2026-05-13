@@ -14,6 +14,11 @@ Execute the render and generate the final video file with proper attribution.
 - `video_compose`
 - `audio_mixer`
 
+## 4. Runtime Routing
+- `render_runtime` must be explicit before render.
+- When HyperFrames is a real option, present both runtimes and route by user choice.
+- FFmpeg is post-processing only, not primary compose runtime.
+
 ## 5. Forbidden Actions
 - Rendering without `source_label` overlays for evidence clips.
 - Muting source audio that was flagged as `quote_audio`.

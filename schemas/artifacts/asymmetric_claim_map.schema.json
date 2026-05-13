@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AsymmetricClaimMap",
+  "type": "object",
+  "required": ["topic", "claims"],
+  "properties": {
+    "topic": { "type": "string" },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "claim", "status", "source_ids"],
+        "properties": {
+          "id": { "type": "string" },
+          "claim": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "researcher_reported",
+              "vendor_stated",
+              "independently_corroborated",
+              "unclear",
+              "unverified"
+            ]
+          },
+          "source_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "mechanism_relevance": { "type": "string" },
+          "overstatement_risk": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
