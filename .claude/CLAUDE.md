@@ -242,9 +242,44 @@ Prefer these title systems:
 10. Why [Smaller Actor] Beats [Larger Actor]
 11. This System Fails Exactly Where It Pays
 12. Where the Leverage Is in [System]
+13. The [Actor] [Verb]ing Your [System] — Exposed  *(Viral Vector: "Exposed" names the actor + action + stakes, then lands the reveal modifier)*
+14. How [Mechanism/Event] Could [High-Stakes Consequence] *(Trendjacking: tie the mechanism to a live cultural moment — election, regulation, crisis — to make a timeless system feel urgent now)*
+15. [Absurd Premise That Is Actually True] *(Absurdism: the premise sounds impossible or bizarre but IS the real mechanism — the absurdity is the point, not invented weirdness)*
 
 Flagship recurring format:
 **Where the Leverage Is in X**
+
+### Viral Vector modifier: "Exposed"
+Apply "— Exposed" as a terminal modifier when:
+- The actor controlling the system is named in the title
+- The mechanism has not been widely covered
+- The frame is a reveal, not a question
+
+Pattern: `[The Actor] [Verb]ing [the System] — Exposed`
+Example: `The Private Company Running Your Internet — Exposed`
+
+### Trendjacking
+Tie a timeless leverage mechanism to a live cultural moment (election cycle,
+regulatory hearing, major outage, news event). The mechanism must be real and
+durable — the cultural hook is the entry point, not the thesis.
+
+Example: "How Asymmetric AI Could Flip the 2026 Election" — the leverage
+mechanism (AI persuasion infrastructure) is real; the election gives it urgency.
+
+Rule: The cultural moment must be active or imminent. Do not trendjack a
+moment that has already passed — that is a recap, not a reveal.
+
+### Absurdism
+Premises that sound bizarre but describe real mechanisms outperform analytical
+framing when the absurdity IS the mechanism. The absurd premise must be
+literally true — not invented for shock.
+
+Example: "Hacking a Smart Toaster to Bypass a Corporate Firewall" — absurd
+premise, but the security concept (IoT lateral movement) is real and demonstrates
+the chokepoint more viscerally than an analytical title.
+
+Test: If the premise sounds impossible but is actually true, it passes.
+If the absurdity is invented to be clickbait, it fails brand standards.
 
 Title rule:
 Prefer hidden mechanisms, chokepoints, contradictions, concentrated control, and payoff over generic topic naming.

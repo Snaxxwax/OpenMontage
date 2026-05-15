@@ -73,6 +73,17 @@ done
 | Source label safe zone | No label above lower 20% of frame | Frame inspection |
 | Source label no overlap | No label overlapping body text or diagram elements | Frame inspection |
 
+### Footage ratio scores (from visual rhythm plan and beat map)
+
+| Dimension | Pass threshold | How to check |
+|-----------|---------------|-------------|
+| Footage gap | No consecutive non-footage run >90s | rhythm plan footage_ratio_audit |
+| Stat overlay default | stat_cards_on_black == 0 (or each justified) | beat map review.text_cards_on_black_count |
+| Narrative footage-first | All narrative sections list footage as primary visual | beat map visual_event types in narrative sections |
+| Mechanism bridge | No diagram run >90s without a narrative footage bridge | rhythm plan footage_ratio_audit.longest_footage_gap |
+
+**If footage_gap_passes: false in the rhythm plan, flag this as a critical creative failure.** The cloudflare-chokepoint-test v1 postmortem established that text-card-on-black as the primary medium for narrative sections is the #1 cause of viewer dropout in long-form. It is not a minor style note — it is a structural failure.
+
 ### Creative scores (editorial — from frame samples and render inspection)
 
 Rate 1-5. These scores are advisory for the operator's creative review. You cannot watch the render yourself — score based on what you can observe from frame samples, the beat map, the visual rhythm plan, and the render duration vs. planned rhythm.
@@ -120,9 +131,16 @@ Indicators found (list any):
 Indicators absent:
   - [what the plan correctly avoids]
 
+FOOTAGE RATIO CHECK
+Longest non-footage gap: [from footage_ratio_audit.longest_footage_gap_seconds at timecode]
+footage_gap_passes: [true/false]
+stat_cards_on_black count: [from beat map review]
+Narrative sections footage-primary: [yes/no]
+Verdict: [PASS / CRITICAL FAILURE — see cloudflare-chokepoint-test v1 postmortem]
+
 BOREDOM RISK
 Riskiest window: [timecode range from rhythm plan]
-Reason: [why this window is at risk]
+Reason: [why this window is at risk — note if root cause is footage deficit]
 Plan mitigation: [what the rhythm plan does to address it]
 
 OPERATOR ACTION REQUIRED

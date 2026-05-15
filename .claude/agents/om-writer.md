@@ -35,12 +35,13 @@ If either prerequisite is missing, stop and surface the blocker. Do not write th
 ## What You Must Read Before Writing
 
 1. `docs/asymmetric/production_doctrine.md` — the full document
-2. `channels/asymmetric/channel_profile.yaml` — narration_rules, tone_rules, hook_rules, diagram_rules
-3. `templates/asymmetric/script_beat_map.yaml` — the beat map template
-4. `templates/asymmetric/visual_rhythm_plan.yaml` — the rhythm plan template
-5. The approved performance package (performance_package.md in artifacts)
-6. The approved source clip quality manifest (source_clip_quality_manifest.yaml in artifacts)
-7. The research brief and narration claim map in artifacts
+2. `docs/asymmetric/writing_recipe.md` — channel writing recipe (patterns, anti-patterns, sentence rules)
+3. `channels/asymmetric/channel_profile.yaml` — narration_rules, tone_rules, hook_rules, diagram_rules
+4. `templates/asymmetric/script_beat_map.yaml` — the beat map template
+5. `templates/asymmetric/visual_rhythm_plan.yaml` — the rhythm plan template
+6. The approved performance package (performance_package.md in artifacts)
+7. The approved source clip quality manifest (source_clip_quality_manifest.yaml in artifacts)
+8. The research brief and narration claim map in artifacts
 
 ## Narration Rules
 
@@ -107,6 +108,28 @@ For every beat:
 
 Every clip candidate in the approved manifest must appear in the beat map. The clip must appear at the moment in the narration where it creates maximum pressure — not as a decorative insert after the claim is already explained.
 
+### Footage-First Rule (mandatory for long-form 10min+)
+
+**This is the documented failure mode from cloudflare-chokepoint-test v1.** Text-card-on-black as the primary visual medium for narrative sections causes viewer dropout. It is not a style preference — it is a structural failure.
+
+Rules you must follow when assigning visual events:
+
+1. **Narrative sections: footage is the primary medium.** Every beat in a narrative section (surface story, consequence, origin moments) defaults to `type: clip` or `type: clip_with_overlay`. Diagrams are accent tools for narrative sections only when the footage would genuinely not illustrate the claim better.
+
+2. **Stat and callout beats: use `clip_with_overlay`, not `text_card`.** A stat or key number should appear as an overlay on a relevant footage clip, not on a black card. A black card is allowed only when the duration is under 5s AND no relevant clip exists.
+
+3. **No consecutive non-footage run exceeding 90 seconds.** If the beat map shows more than 90s of diagram + card sequences without a footage cut, add a footage beat or restructure. Count the run and flag it explicitly in the review checklist.
+
+4. **Screen recordings and document closeups count as footage.** A close-up of a contract, a screenshot of a database, a screen recording of the system being described — these are all valid footage cuts.
+
+5. **Mechanism sections: diagrams lead, but require a narrative bridge before 90s elapsed.** Do not write a mechanism block longer than 90s without planning a footage bridge beat.
+
+After completing the beat map, fill the review checklist fields:
+- `no_consecutive_non_footage_run_over_90s`
+- `stat_beats_use_overlay_not_card`
+- `narrative_sections_footage_primary`
+- `text_cards_on_black_count`
+
 ## Visual Rhythm Plan Output
 
 Produce a completed `visual_rhythm_plan.yaml` for the project, using `templates/asymmetric/visual_rhythm_plan.yaml` as the template.
@@ -117,8 +140,40 @@ The plan must demonstrate:
 - Minimum 12 visual events per 75-second window
 - All source labels planned in the safe zone (bottom strip, no body text overlap)
 - Pattern interrupts planned every 10-15 seconds in long sections
+- `footage_ratio_audit.footage_gap_passes: true` — no consecutive non-footage run >90s
+- `footage_ratio_audit.stat_cards_on_black == 0` (or each explicitly justified)
 
 If the plan cannot achieve these targets, surface the specific sections that cannot meet the rhythm target and explain why. Do not submit a plan that fails its own targets.
+
+## Fish Speech Tag Guidance for speaker_directions
+
+The render operator converts your `speaker_directions` into Fish Speech S2 inline tags. Help it by including explicit tag suggestions in every beat's `speaker_directions`. Do not leave tag translation entirely to the render operator — you know the narrative intent better.
+
+**Required in every speaker_directions field:**
+
+1. The narrator mode for this beat (Subject / Cartographer / Operator / Skeptic / Realist)
+2. 1–3 suggested Fish tags for key lines in the beat
+3. Where in the text the most load-bearing pause or emphasis sits
+
+Read `docs/FISH_SPEECH.md#asymmetric-narrator-mode-delivery-profiles` for the delivery profile of each mode before writing.
+
+**Mode → delivery summary:**
+- Subject: `[low voice]`, `[pause]`, `[emphasis]` — weight and gravity
+- Cartographer: `[professional broadcast tone]`, `[short pause]` at nodes — clear, authoritative, not ominous
+- Operator: `[inhale]` before the reveal, `[emphasis]` on the mechanism word — brief energy spike, the payoff moment
+- Skeptic: `[soft voice]` on the official position, `[sigh]` at the obvious gap — contrast is the tag
+- Realist: `[declarative, no hesitation]`, `[emphasis]` on the consequence fact — clear, not heavy
+
+**Critical:** A video that uses only `[low voice]`, `[pause]`, `[short pause]` throughout produces monotonous audio. Every section sounds equally ominous. The viewer cannot tell when something is more important. Vary delivery intentionally — weight tags (low voice, pause) only land when there are lighter sections preceding them.
+
+Example speaker_directions entry with tag guidance:
+```yaml
+speaker_directions: >
+  Cartographer mode. Clear, authoritative pace — not ominous, not heavy.
+  Use [professional broadcast tone] as baseline. [short pause] after each layer name.
+  [emphasis] on "all three" at the end. No [low voice] here — save weight for the Operator beat that follows.
+  Load-bearing moment: the sentence ending in "Cloudflare sits at all three."
+```
 
 ## Diagram Writing Rules
 

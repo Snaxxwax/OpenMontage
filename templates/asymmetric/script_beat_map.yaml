@@ -30,8 +30,18 @@ sections:
         script_line: ""
         duration_seconds: 0
         visual_event:
-          type: ""           # clip | diagram | text_card | stat_card | proof_card
-          asset_ref: ""      # candidate_id for clips, or description for cards
+          # type options:
+          #   clip              = footage cut (primary for narrative sections)
+          #   clip_with_overlay = text/stat overlay on footage (default for callouts)
+          #   diagram           = animated diagram (mechanism sections only)
+          #   proof_card        = source-labeled proof moment
+          #   chapter_card      = full-screen chapter title
+          #   text_card         = text-on-black (last resort — flag each use)
+          # Footage-first rule: no consecutive non-clip run > 90s. Stat beats
+          # default to clip_with_overlay, not text_card.
+          type: ""
+          asset_ref: ""      # candidate_id for clips, or description for cards/diagrams
+          footage_required: false  # true = this beat requires a clip or clip_with_overlay
           note: ""
         tension_purpose: ""  # what does this beat create or sustain?
 
@@ -138,3 +148,8 @@ review:
   every_clip_creates_pressure: false
   no_line_that_only_summarizes: false
   read_aloud_passes: false
+  # Footage ratio checks (mandatory for long-form 10min+)
+  no_consecutive_non_footage_run_over_90s: false  # longest gap < 90s
+  stat_beats_use_overlay_not_card: false           # clip_with_overlay is default
+  narrative_sections_footage_primary: false        # footage leads narrative sections
+  text_cards_on_black_count: 0                     # target: 0; flag each use

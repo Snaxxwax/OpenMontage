@@ -73,7 +73,13 @@ status: pending      # pending | approved | blocked
 - [ ] No source label overlaps body text, diagram labels, or proof visuals in plan
 - [ ] rhythm_passes_targets: true in the plan file
 
-**Blocker if not met:** Revise the visual rhythm plan. Do not render with a failing rhythm.
+**Footage ratio gate (mandatory for long-form 10min+):**
+- [ ] `footage_ratio_audit.footage_gap_passes: true` — no consecutive stretch >90s without a footage cut
+- [ ] Stat/callout beats use text overlays ON footage, not text-card-on-black (stat_cards_on_black == 0 or each is explicitly justified)
+- [ ] Narrative sections use footage as the primary medium, not diagram or card sequences
+- [ ] Mechanism sections do not run longer than 90s without a narrative bridge cut to footage
+
+**Blocker if not met:** Revise the visual rhythm plan. Do not render with a failing rhythm or footage ratio.
 
 ---
 

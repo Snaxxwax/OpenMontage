@@ -35,17 +35,18 @@ Examples:
 [professional broadcast tone] The platform owns the route to users.
 ```
 
-Fish supports both short tags and free-form natural-language tags, including:
+Fish supports both short tags and free-form natural-language tags. Complete reference in `docs/FISH_SPEECH.md`.
 
-- `[whisper]`
-- `[short pause]`
-- `[pause]`
-- `[emphasis]`
-- `[excited]`
-- `[angry]`
-- `[professional broadcast tone]`
-- `[whisper in small voice]`
-- `[pitch up]`
+Key tags by category:
+
+- **Pacing:** `[short pause]`, `[pause]`, `[long pause]`
+- **Register:** `[low voice]`, `[soft voice]`, `[loud voice]`, `[whispering]`
+- **Breath/reaction:** `[sigh]`, `[inhale]`, `[clears throat]`, `[gasp]`
+- **Emotion:** `[excited]`, `[angry]`, `[sad]`
+- **Emphasis:** `[emphasis]`
+- **Open-domain:** `[professional broadcast tone]`, `[speaking with quiet urgency]`, `[declarative, no hesitation]`, `[slightly ironic, controlled]`
+
+For Asymmetric channel narration, read `docs/FISH_SPEECH.md#asymmetric-narrator-mode-delivery-profiles` before tagging. Each narrator mode (Subject, Cartographer, Operator, Skeptic, Realist) has a defined delivery profile. Using only weight tags (`[low voice]`, `[pause]`) throughout a full video produces monotonous output — vary delivery by section.
 
 The core rule:
 

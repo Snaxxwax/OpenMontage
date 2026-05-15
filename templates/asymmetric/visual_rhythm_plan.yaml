@@ -20,6 +20,26 @@ hard_rules:
   source_label_safe_zone_required: true
   source_label_no_body_text_overlap: true
 
+  # Footage ratio rules — mandatory for long-form (10min+)
+  # Root cause of cloudflare-chokepoint-test v1 failure: only ~5 clip uses in 821s.
+  # Text-card-on-black is the failure mode. Footage is the default for narrative sections.
+  max_consecutive_seconds_without_footage: 90
+  # No narrative section, mechanism block, or diagram run may exceed 90s without
+  # a footage cut. Screen recordings and document closeups count as footage.
+  # Diagram-only runs: must have a footage cut before 90s elapsed.
+  stat_callout_default_medium: overlay_on_footage
+  # Stat cards and callout beats use text overlays ON footage by default.
+  # Text-card-on-black is only allowed when no relevant footage exists AND
+  # the card duration is under 5s.
+  narrative_section_primary_medium: footage
+  # For narrative sections (origin, events, character moments, timeline, consequences):
+  # footage is the primary medium. Diagrams are earned accent tools.
+  mechanism_section_primary_medium: diagram
+  # For mechanism sections: diagrams are primary, but max 90s before a narrative bridge.
+  footage_cut_rhythm_seconds_min: 3
+  footage_cut_rhythm_seconds_max: 8
+  # Individual footage clips: 3–8 seconds each. Vary angle and subject aggressively.
+
 # Visual event types:
 #   clip_cut         = new source clip begins
 #   clip_end         = source clip ends, return to cards/diagram
@@ -50,6 +70,19 @@ timeline:
   # Add one entry per visual event across the full timeline.
   # Verify no gap between consecutive events exceeds 8 seconds.
   # In diagram sections verify no gap exceeds 5 seconds.
+
+# Footage ratio audit — fill after full timeline is mapped
+footage_ratio_audit:
+  total_footage_seconds: 0
+  total_non_footage_seconds: 0
+  footage_percentage: 0
+  longest_footage_gap_seconds: 0     # longest stretch with no footage cut
+  longest_footage_gap_timecode: ""
+  longest_footage_gap_section: ""
+  footage_gap_passes: false          # true if longest gap < 90s
+  stat_cards_on_black: 0            # count of text-card-on-black events (target: 0)
+  stat_overlays_on_footage: 0       # count of text overlay on footage events
+  overlay_ratio_passes: false       # true if stat_cards_on_black == 0 OR justified
 
 # Rhythm audit — fill after full timeline is mapped
 rhythm_audit:
