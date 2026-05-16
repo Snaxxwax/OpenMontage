@@ -8,6 +8,7 @@
 
 ## Outputs
 - `artifacts/prepared_media_manifest.json` with `operator_approved_for_staging: false`
+- `qc/prepared_media_qc.md` (written by check script)
 
 ## Allowed Actions
 - Read the three upstream manifests and any explicitly listed screenshot paths
@@ -15,21 +16,32 @@
 - Map `original_audio_use` → `audio_role`: `muted`→`muted`, `ducked`→`ambient`, `quote_audio`→`quoted_audio`
 - Set `preparation_status: "prepared"` on every asset
 - Write `operator_approved_for_staging: false` — operator flips this manually before staging
+- Set screenshot `prepared_path` to a cropped/framed file (square or landscape aspect, ideally 16:9); `input_path` stays pointing to the original
+- Run check script after authoring manifest:
+  ```
+  python3 scripts/asymmetric_check_prepared_media.py \
+    --manifest <project>/artifacts/prepared_media_manifest.json \
+    --output <project>/qc/prepared_media_qc.md
+  ```
 
 ## Forbidden Actions
 - Scanning `assets/`, `clips/`, `narration/`, or any directory to discover assets
 - Adding assets not in `approved_clip_manifest` or not explicitly listed
-- Cropping, transcoding, or acquiring media
+- Auto-cropping, transcoding, or acquiring media (operator crops manually before this stage)
 - Setting `operator_approved_for_staging: true`
 - Inferring `source_label` from filenames or paths
+- Setting screenshot `prepared_path` equal to `input_path`
 
 ## Stop Conditions
 - Any clip with `approved_for_edit: true` is missing from `extracted_clip_manifest`
 - `source_label_text` is empty for a `source_label_required: true` clip
 - Narration asset present but `loudness_lufs` is unknown
 - Any asset path does not exist on disk
+- Screenshot `prepared_path` equals `input_path`
+- Check script exits nonzero — read `qc/prepared_media_qc.md` for failures
 
 ## Handoff Requirements
 - `artifacts/prepared_media_manifest.json` schema-valid against `schemas/artifacts/prepared_media_manifest.schema.json`
+- `qc/prepared_media_qc.md` exists with `verdict: PASS`
 - `operator_approved_for_staging: false`
-- Operator reviews, confirms paths and labels, then sets `operator_approved_for_staging: true` to unlock `render_asset_staging`
+- Operator reviews manifest and QC report, then sets `operator_approved_for_staging: true` to unlock `render_asset_staging`
