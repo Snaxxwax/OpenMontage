@@ -1,6 +1,6 @@
 blocking_conflicts: false
 bootstrap_ok: true
-compiled_at: '2026-05-16T04:07:48.603757+00:00'
+compiled_at: '2026-05-16T04:23:32.444836+00:00'
 missing_sources: []
 sources:
   .agent/allowed_paths.yaml:
@@ -38,7 +38,7 @@ sources:
   pipeline_defs/screen-demo.yaml:
     sha256: f8769caa2e732fc3e4dbab0cab659a272c500ef83e8e6ee7b5dd161a1b2358bb
   pipeline_defs/source-commentary.yaml:
-    sha256: e82e58770029840431ff75a1b61b691ebf0e44d3e09fe2aa65f02fc49c764aa5
+    sha256: 383c5d8728ce383432b4a9937ceed1055b11f0e02ba4601f22c2fa344aafa308
   pipeline_defs/talking-head.yaml:
     sha256: 85ff02def977c8b11332a48170eec4f1e7ce74081d9f973bb11ef3100dbcc74c
   schemas/artifacts/action_timeline.schema.json:

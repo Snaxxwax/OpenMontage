@@ -25,6 +25,7 @@ required_skills:
   - pipelines/source-commentary/clip_use_gate-director
   - pipelines/source-commentary/clip_acquisition-director
   - pipelines/source-commentary/media_qc-director
+  - pipelines/source-commentary/visual_evidence_prep-director
   - pipelines/source-commentary/edit_plan-director
   - pipelines/source-commentary/render_asset_staging-director
   - pipelines/source-commentary/compose-director
@@ -169,6 +170,26 @@ stages:
       - Visual alignment with evidence claims
     success_criteria:
       - Schema-valid approved_clip_manifest
+
+  - name: visual_evidence_prep
+    skill: pipelines/source-commentary/visual_evidence_prep-director
+    required_artifacts_in:
+      - approved_clip_manifest
+      - extracted_clip_manifest
+      - clip_use_receipts
+    produces:
+      - prepared_media_manifest
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Every approved clip has an entry with correct timing and audio role
+      - source_label populated for all source_label_required assets
+      - Screenshot assets are explicitly listed (no directory scanning)
+      - operator_approved_for_staging is false on first write
+    success_criteria:
+      - Schema-valid prepared_media_manifest with operator_approved_for_staging false
+      - Operator reviews and sets operator_approved_for_staging true before render_asset_staging
 
   - name: edit_plan
     skill: pipelines/source-commentary/edit_plan-director

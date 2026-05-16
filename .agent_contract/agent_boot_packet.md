@@ -1,5 +1,5 @@
 # Agent Boot Packet
-**Compiled:** 2026-05-16T04:07:48.603757+00:00
+**Compiled:** 2026-05-16T04:23:32.444836+00:00
 
 ## Stop Conditions
 - If `contract_status.yaml` shows `stale: true` or `blocking_conflicts: true`: **halt and report to operator**.
