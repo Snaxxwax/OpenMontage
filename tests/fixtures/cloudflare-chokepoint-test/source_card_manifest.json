@@ -1,0 +1,13 @@
+{
+  "episode_id": "cloudflare-chokepoint-test",
+  "cards": [
+    {
+      "card_id": "SC-02",
+      "card_type": "quote_proof",
+      "source_path": "assets/SC-02.png",
+      "crop": { "x": 0, "y": 2700, "w": 752, "h": 322 },
+      "canvas": { "w": 752, "h": 422, "top_margin": 10, "bottom_safe_margin_px": 90 },
+      "output_path": "assets/composed/SC-02-card.png"
+    }
+  ]
+}
