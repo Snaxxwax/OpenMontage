@@ -348,6 +348,53 @@ class StagedRendererTests(unittest.TestCase):
             with self.assertRaisesRegex(RenderError, "invalid JSON"):
                 load_staged_manifest(manifest_path)
 
+    def test_staged_crf_flag_overrides_default(self) -> None:
+        """--crf 18 is passed through to the FFmpeg command."""
+        with tempfile.TemporaryDirectory() as tmp:
+            staging_root = Path(tmp)
+            manifest_path = _staged_manifest(staging_root, [_screenshot_asset()])
+            output_path = staging_root / "out_crf18.mp4"
+
+            proc = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/asymmetric_ffmpeg_renderer.py",
+                    "--staging-manifest", str(manifest_path),
+                    "--output", str(output_path),
+                    "--crf", "18",
+                    "--overwrite",
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            log = (staging_root / "logs" / "ffmpeg_staged_render.log").read_text()
+            self.assertIn("-crf 18", log)
+
+    def test_staged_default_crf_is_28(self) -> None:
+        """Without --crf, the FFmpeg command uses the default -crf 28."""
+        with tempfile.TemporaryDirectory() as tmp:
+            staging_root = Path(tmp)
+            manifest_path = _staged_manifest(staging_root, [_screenshot_asset()])
+            output_path = staging_root / "out_default.mp4"
+
+            proc = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/asymmetric_ffmpeg_renderer.py",
+                    "--staging-manifest", str(manifest_path),
+                    "--output", str(output_path),
+                    "--overwrite",
+                ],
+                cwd=REPO_ROOT,
+                text=True,
+                capture_output=True,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            log = (staging_root / "logs" / "ffmpeg_staged_render.log").read_text()
+            self.assertIn("-crf 28", log)
+
     def test_no_mode_specified_returns_error(self) -> None:
         """Calling without --staging-manifest or --legacy-no-staging exits nonzero."""
         proc = subprocess.run(

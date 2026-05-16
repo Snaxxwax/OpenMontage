@@ -305,6 +305,7 @@ def render_from_staged_manifest(
     *,
     output_path: Path | None = None,
     overwrite: bool = False,
+    crf: int = 28,
 ) -> dict[str, Any]:
     """Staged render path. Reads only from staged_asset_manifest.json.
 
@@ -374,7 +375,7 @@ def render_from_staged_manifest(
             "-r", "30",
             "-c:v", "libx264",
             "-preset", "veryfast",
-            "-crf", "28",
+            "-crf", str(crf),
             "-c:a", "aac",
             "-b:a", "128k",
             "-movflags", "+faststart",
@@ -405,6 +406,7 @@ def render_episode(
     episode_id: str | None = None,
     overwrite: bool = False,
     output_name: str | None = None,
+    crf: int = 28,
 ) -> dict[str, Any]:
     bus = ArtifactBus(root=run_dir)
     artifact_path = bus.artifacts / "visual_rhythm_plan.json"
@@ -452,7 +454,7 @@ def render_episode(
                 "-preset",
                 "veryfast",
                 "-crf",
-                "28",
+                str(crf),
                 "-c:a",
                 "aac",
                 "-b:a",
@@ -511,6 +513,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--episode-id")
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--output-name")
+    parser.add_argument("--crf", type=int, default=28, help="FFmpeg CRF value (default: 28)")
     return parser
 
 
@@ -523,6 +526,7 @@ def main() -> int:
                 args.staging_manifest,
                 output_path=args.output,
                 overwrite=args.overwrite,
+                crf=args.crf,
             )
             print_json(result)
             return 0
@@ -551,6 +555,7 @@ def main() -> int:
             episode_id=args.episode_id,
             overwrite=args.overwrite,
             output_name=args.output_name,
+            crf=args.crf,
         )
         print_json(result)
         return 0
