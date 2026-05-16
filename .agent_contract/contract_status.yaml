@@ -1,6 +1,6 @@
 blocking_conflicts: false
 bootstrap_ok: true
-compiled_at: '2026-05-16T04:23:32.444836+00:00'
+compiled_at: '2026-05-16T04:37:00.813785+00:00'
 missing_sources: []
 sources:
   .agent/allowed_paths.yaml:
