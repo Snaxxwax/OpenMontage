@@ -1,6 +1,6 @@
 blocking_conflicts: false
 bootstrap_ok: true
-compiled_at: '2026-05-16T05:43:55.421423+00:00'
+compiled_at: '2026-05-16T08:43:13.571399+00:00'
 missing_sources: []
 sources:
   .agent/allowed_paths.yaml:
@@ -103,6 +103,8 @@ sources:
     sha256: 73b5f08286706095b921e1103b182702f3bab22994213707beccb7fff242c2b5
   schemas/artifacts/source_capture_plan.schema.json:
     sha256: 064b3c4151ddd6d816c952bd861002c0107ed304390ec3db0ab8b877baa4b77b
+  schemas/artifacts/source_card_manifest.schema.json:
+    sha256: 73b54fe567bfe050ccc6d4396a60d049ebe1f1eb8cd1c0417b93bc02a459a62a
   schemas/artifacts/source_commentary_edit_plan.schema.json:
     sha256: 44fb67689b4ab5f0311804754b96d3e8500433e86cc435dae9e79ac5b7e2e075
   schemas/artifacts/source_commentary_qc_report.schema.json:

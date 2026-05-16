@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SourceCardManifest",
+  "description": "Input manifest for the source proof card composer.",
+  "type": "object",
+  "required": ["episode_id", "cards"],
+  "additionalProperties": false,
+  "properties": {
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["card_id", "card_type", "source_path", "crop", "canvas", "output_path"],
+        "additionalProperties": false,
+        "properties": {
+          "card_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "card_type": {
+            "type": "string",
+            "enum": ["article_header", "quote_proof"]
+          },
+          "source_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "crop": {
+            "type": "object",
+            "required": ["x", "y", "w", "h"],
+            "additionalProperties": false,
+            "properties": {
+              "x": { "type": "integer", "minimum": 0 },
+              "y": { "type": "integer", "minimum": 0 },
+              "w": { "type": "integer", "minimum": 1 },
+              "h": { "type": "integer", "minimum": 1 }
+            }
+          },
+          "canvas": {
+            "type": "object",
+            "required": ["w", "h", "top_margin"],
+            "additionalProperties": false,
+            "properties": {
+              "w": { "type": "integer", "minimum": 1 },
+              "h": { "type": "integer", "minimum": 1 },
+              "top_margin": { "type": "integer", "minimum": 0 },
+              "bottom_safe_margin_px": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "output_path": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^assets/composed/[^.][^/]*(/.+)*$",
+            "not": { "pattern": "\\.\\." }
+          }
+        }
+      }
+    }
+  }
+}
