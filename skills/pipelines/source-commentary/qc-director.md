@@ -1,31 +1,37 @@
-# QC Director - Source-Commentary Pipeline
+# Stage: qc
 
-## 1. Stage Purpose
-Final audit of narrative integrity and evidence traceability.
-
-## 2. Inputs
-- `render_report`
+## Inputs
+- `source_commentary_render_report`
+- `source_commentary_qc_report`
+- `staging/<render_id>/staged_asset_manifest.json`
+- `approved_clip_manifest`
 - `research_brief`
-- `clip_use_receipts`
 
-## 3. Outputs
-- `final_review`
+## Outputs
+- `qc/final_qc.md`
 
-## 4. Allowed Tools
-- None.
+## Allowed Actions
+- Read the five input artifacts listed above
+- Run:
+  ```
+  python3 scripts/asymmetric_write_final_qc.py \
+    --render-report <project>/artifacts/source_commentary_render_report.json \
+    --qc-report <project>/artifacts/source_commentary_qc_report.json \
+    --staged-manifest <project>/staging/<render_id>/staged_asset_manifest.json \
+    --approved-clips <project>/artifacts/approved_clip_manifest.json \
+    --output <project>/qc/final_qc.md
+  ```
+- Write only to `qc/`
 
-## 5. Forbidden Actions
-- Approving a video that deviates from the `research_brief` truth.
-- Overlooking missing source attributions.
+## Forbidden Actions
+- Modifying source clips, narration, or staged files
+- Overriding `qc_passed` or `gate_passed` values
+- Proceeding to publish_package if the script exits nonzero
 
-## 6. Required Checks
-- **Traceability**: "Does Clip X in the final render prove Claim Y from the map?"
-- **Labeling**: Are all source clips attributed on-screen?
-- **Accuracy**: Does the narration align with the research facts?
+## Stop Conditions
+- Script exits nonzero — read `qc/final_qc.md` for failures
+- Any required input file missing
 
-## 7. Failure Conditions
-- "Hallucinated" claims not supported by the evidence clips.
-- Technical glitches (audio pops, visual jitter).
-
-## 8. Handoff Artifact Requirements
-- Structured `final_review` with pass/fail verdict.
+## Handoff Requirements
+- `qc/final_qc.md` exists with `verdict: PASS`
+- Script exit code is 0

@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PublishPackage",
+  "description": "Machine-readable publish package for a completed episode. Written to exports/publish_package/publish_package.json.",
+  "type": "object",
+  "required": [
+    "version",
+    "episode_id",
+    "render_path",
+    "duration_seconds",
+    "package_status",
+    "generated_at",
+    "title_options",
+    "description",
+    "tags",
+    "chapters",
+    "thumbnail_brief",
+    "source_credits"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "version":          { "type": "string", "minLength": 1 },
+    "episode_id":       { "type": "string", "minLength": 1 },
+    "render_path":      { "type": "string", "minLength": 1 },
+    "duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+    "package_status":   { "type": "string", "enum": ["pending_review", "approved"] },
+    "generated_at":     { "type": "string", "minLength": 1 },
+    "title_options": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["title", "pillar", "why"],
+        "properties": {
+          "title":  { "type": "string", "minLength": 1 },
+          "pillar": { "type": "string", "minLength": 1 },
+          "why":    { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": true
+      }
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "chapters": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["timecode", "label"],
+        "properties": {
+          "timecode": { "type": "string", "minLength": 1 },
+          "label":    { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": true
+      }
+    },
+    "thumbnail_brief": {
+      "type": "object",
+      "required": ["variant", "hero_object", "signal_color", "headline_text", "composition_notes"],
+      "properties": {
+        "variant":           { "type": "string", "minLength": 1 },
+        "hero_object":       { "type": "string", "minLength": 1 },
+        "signal_color":      { "type": "string", "minLength": 1 },
+        "headline_text":     { "type": "string", "minLength": 1 },
+        "composition_notes": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "source_credits": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}

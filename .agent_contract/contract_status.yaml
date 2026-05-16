@@ -1,6 +1,6 @@
 blocking_conflicts: false
 bootstrap_ok: true
-compiled_at: '2026-05-16T04:37:00.813785+00:00'
+compiled_at: '2026-05-16T05:05:05.371648+00:00'
 missing_sources: []
 sources:
   .agent/allowed_paths.yaml:
@@ -38,7 +38,7 @@ sources:
   pipeline_defs/screen-demo.yaml:
     sha256: f8769caa2e732fc3e4dbab0cab659a272c500ef83e8e6ee7b5dd161a1b2358bb
   pipeline_defs/source-commentary.yaml:
-    sha256: 383c5d8728ce383432b4a9937ceed1055b11f0e02ba4601f22c2fa344aafa308
+    sha256: feb1007661139e05f56229ae9f7b0bcd80f3dece359cc220d9eefda082bb78bd
   pipeline_defs/talking-head.yaml:
     sha256: 85ff02def977c8b11332a48170eec4f1e7ce74081d9f973bb11ef3100dbcc74c
   schemas/artifacts/action_timeline.schema.json:
@@ -83,6 +83,8 @@ sources:
     sha256: 1636718b7c7c7592f4a95335e229f9f05b30b29ef313fb83a141c0a872308928
   schemas/artifacts/publish_log.schema.json:
     sha256: bab332eefac416b8b572d7fcc4eaaa2bb71dd12f27c62042f139aa38d6bb6282
+  schemas/artifacts/publish_package.schema.json:
+    sha256: 28ff2436312e3c777f67c002972de2d8644bdbd3e2e72afd5158d83eff42a9aa
   schemas/artifacts/render_report.schema.json:
     sha256: 338476ffcd3b8c4c064b621d948544dd2835cb817faed1602ee9d07d0af4a95c
   schemas/artifacts/research_brief.schema.json:

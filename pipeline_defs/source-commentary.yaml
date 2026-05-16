@@ -30,6 +30,7 @@ required_skills:
   - pipelines/source-commentary/render_asset_staging-director
   - pipelines/source-commentary/compose-director
   - pipelines/source-commentary/qc-director
+  - pipelines/source-commentary/publish_package-director
   - meta/reviewer
   - meta/checkpoint-protocol
 
@@ -263,3 +264,24 @@ stages:
       - Narrative integrity
     success_criteria:
       - Schema-valid source_commentary_qc_report
+
+  - name: publish_package
+    skill: pipelines/source-commentary/publish_package-director
+    required_artifacts_in:
+      - source_commentary_qc_report
+      - source_commentary_render_report
+      - research_brief
+      - narration_claim_map
+      - approved_clip_manifest
+    produces:
+      - publish_package
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - publish_package.json validates against publish_package.schema.json
+      - publish_package.md is consolidated into one human review file
+      - package_status is pending_review
+    success_criteria:
+      - exports/publish_package/publish_package.json exists
+      - exports/publish_package/publish_package.md exists
