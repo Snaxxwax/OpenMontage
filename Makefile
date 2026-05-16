@@ -83,5 +83,11 @@ lint:
 	$(PYTHON) -m py_compile tools/cost_tracker.py
 	$(PYTHON) -m py_compile tools/composition_validator.py
 
+contract-compile:
+	$(PYTHON) -m tools.contract.compiler
+
+contract-check:
+	$(PYTHON) -m tools.contract.checker
+
 clean:
 	$(PYTHON) -c "import pathlib, shutil; [shutil.rmtree(p) for p in pathlib.Path('.').rglob('__pycache__')]; [p.unlink() for p in pathlib.Path('.').rglob('*.pyc')]"

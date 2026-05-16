@@ -1,0 +1,136 @@
+blocking_conflicts: false
+bootstrap_ok: true
+compiled_at: '2026-05-16T03:54:13.223852+00:00'
+missing_sources: []
+sources:
+  .agent/allowed_paths.yaml:
+    sha256: 20c191e7e59c068d7c5a9ea305bf92f71042d9fa0ec12ce54ae4d175a2194a75
+  .agent/repo_policy.yaml:
+    sha256: a5f49c688c53662ddedbdac3fce4a81a5e7613aca2fc2b98fbf0331dd465c4c8
+  AGENTS.md:
+    sha256: 521719a91dc162666ba0aed21e13f0215aa34cf359ae09a9bdd8f0c9c5826211
+  AGENT_GUIDE.md:
+    sha256: 24248b58aae9a7be4571e5ed52554dc423d72c36944b9079b2974667c7b01fb7
+  pipeline_defs/animated-explainer.yaml:
+    sha256: 12ab7bc8d599af6a64e93e8f231e31a9adbd27d0c944e5d33e5bef5ea7feada5
+  pipeline_defs/animation.yaml:
+    sha256: 0e33d89bb6b6888bff9458b58dcaf93223922183d216498399dd87a59dbcb0f7
+  pipeline_defs/asymmetric-source-commentary.yaml:
+    sha256: 4cdc36801f8077fb59158a08884a23060bb59edfe03c46954096840593708983
+  pipeline_defs/avatar-spokesperson.yaml:
+    sha256: b0a296f2a1047871e6a3aaf9c3e1c128261ce2c739240be02bd7f6bacb475967
+  pipeline_defs/character-animation.yaml:
+    sha256: e2eb0774231987d30d883f655347885f785c7afb8110e3c9a5313a14d7c7461c
+  pipeline_defs/cinematic.yaml:
+    sha256: 7bad92dc97cd63b819e2dedde129992203aaa840f8a409b22dfc74d3e04531d2
+  pipeline_defs/clip-factory.yaml:
+    sha256: a1fd12e06921906ae3d96b24e48b9a750e207f88832559c7c8e5da87b75ea674
+  pipeline_defs/documentary-montage.yaml:
+    sha256: 3bcb8a86e4ecc1db90b6f421c6186543dbd98edaee034ed21b6ebea09a0496e1
+  pipeline_defs/framework-smoke.yaml:
+    sha256: 597b46b3a160341d18d61ab4e9033e995875013dd80720746ca0c8801553313d
+  pipeline_defs/hybrid.yaml:
+    sha256: ccf90d151269ed61448bd8deabbc822f20947bdc7989dfd3e4e3738b05ce9cfe
+  pipeline_defs/localization-dub.yaml:
+    sha256: bab3e3621bfd34cd9628d7d91a2ee51991ac5e983a6fd224c74e74b6171de0fd
+  pipeline_defs/podcast-repurpose.yaml:
+    sha256: ddf9495c09702056e46f8f58010ad6d0009d6e36587a52bbf5b50d1ee323953c
+  pipeline_defs/screen-demo.yaml:
+    sha256: f8769caa2e732fc3e4dbab0cab659a272c500ef83e8e6ee7b5dd161a1b2358bb
+  pipeline_defs/source-commentary.yaml:
+    sha256: 66fc88bfdead15f396aa163e8e73bb1797a7322de2b8f74a6f243470956b7652
+  pipeline_defs/talking-head.yaml:
+    sha256: 85ff02def977c8b11332a48170eec4f1e7ce74081d9f973bb11ef3100dbcc74c
+  schemas/artifacts/action_timeline.schema.json:
+    sha256: dd5f573be4dbd32e37a809c37934cdd781b8d97d4fba48d48a6a3c59648c289d
+  schemas/artifacts/approved_clip_manifest.schema.json:
+    sha256: cf2c02b3d848c6ae1a15f9fd531c06f5e2e7fe4d2ab062ab3977bb23e941be5c
+  schemas/artifacts/asset_manifest.schema.json:
+    sha256: 3b9fd33aabb4d51eb2c426dfabad7a55d073af5f8e661bf268f0883eecddaf10
+  schemas/artifacts/asymmetric_claim_map.schema.json:
+    sha256: 2b6e0701c55f39bb0d4dac4b5b215a39591401455a809011843d842a05b5fe72
+  schemas/artifacts/asymmetric_greenlight.schema.json:
+    sha256: a2d1b2e593b1c2bf900488183c483afb98727e141b1988244886c0269910cf0f
+  schemas/artifacts/brief.schema.json:
+    sha256: c56677fed4946c52252d101c956b7005ef00f74596f19d3b5f7bbb577e283fa0
+  schemas/artifacts/character_design.schema.json:
+    sha256: 60dce8eece7fb6195e3b498967e809e4ed87964db70968588b02ff8b70ad321b
+  schemas/artifacts/character_qa_report.schema.json:
+    sha256: 35ebd97c10d6dd10a595c47a7eda69f123d2d3481389a2a7577010052c831dcc
+  schemas/artifacts/clip_use_receipt.schema.json:
+    sha256: 27fe36f8041483b01010df84c6c12b4518fd1c059f4f46658e5c8694748e4023
+  schemas/artifacts/clip_use_receipts.schema.json:
+    sha256: 1b08d9ff3d45a682fc43160123e8303d6ff0ecef3af419781058db2e3a98f6cc
+  schemas/artifacts/cost_log.schema.json:
+    sha256: 505e1530ca43b652d8de83cdd80d81c2206b0c90a8f6ce82e8d1eaaf114e6a1c
+  schemas/artifacts/decision_log.schema.json:
+    sha256: 2a468ae22e1d2b6b48cd7d45bce131baaef662e4edd8e3362b9d34e008a24725
+  schemas/artifacts/edit_decisions.schema.json:
+    sha256: 92e3f882781a9774583aa50cbcb1ab277bd17712a042902483c631ed3528ea22
+  schemas/artifacts/evidence_candidate_manifest.schema.json:
+    sha256: 40002f5da5460397a4df2ac78a500f6ffe18d1e0b2659f178488bd1c605eecb3
+  schemas/artifacts/extracted_clip_manifest.schema.json:
+    sha256: df28e260cb4f3be97a53941171fbe8aff803f57a8f820e3ab7d2d3bf2a09899f
+  schemas/artifacts/final_review.schema.json:
+    sha256: 691f14b89c5abbf857e37daff3eeb7a014815c59cef781645db2a2b4668e986a
+  schemas/artifacts/narration_claim_map.schema.json:
+    sha256: 83c3b256360b7c27af800398f0b7b64b79a077982930e58cc5b0b71619c33c07
+  schemas/artifacts/pose_library.schema.json:
+    sha256: fa096746da1a68db942ba4bad7002392f4ec886c0dd4b71bd9fcfe6d251bf8f5
+  schemas/artifacts/prepared_media_manifest.schema.json:
+    sha256: 58c37438b9e649abad14d994531bb9151228d935f150c68b5b8aef70e582afbc
+  schemas/artifacts/proposal_packet.schema.json:
+    sha256: 1636718b7c7c7592f4a95335e229f9f05b30b29ef313fb83a141c0a872308928
+  schemas/artifacts/publish_log.schema.json:
+    sha256: bab332eefac416b8b572d7fcc4eaaa2bb71dd12f27c62042f139aa38d6bb6282
+  schemas/artifacts/render_report.schema.json:
+    sha256: 338476ffcd3b8c4c064b621d948544dd2835cb817faed1602ee9d07d0af4a95c
+  schemas/artifacts/research_brief.schema.json:
+    sha256: 0d263fb8f46c6ef8e8f31492d679506c22ecfe0dd379d44432dac658ff0401f3
+  schemas/artifacts/review.schema.json:
+    sha256: c7207f0150991669c0d44cc31dfa005b8637a505cd58cc9d7c593dadc5f6b15b
+  schemas/artifacts/rig_plan.schema.json:
+    sha256: f872a6b322f7948adfcc700a25c0dd001f554f99cdcb6c70cf02c98431a04e34
+  schemas/artifacts/rights_risk_manifest.schema.json:
+    sha256: 301d47ffe8fe557eb5b21f804c0c3a703d0031fd11179c9961d3836d1e350173
+  schemas/artifacts/scene_plan.schema.json:
+    sha256: 7b833b7643a73921011270189e5baf645ca67d09390a5d143f6a4b55a667d7a9
+  schemas/artifacts/script.schema.json:
+    sha256: f9066ecda0582584dee9cbd9da176e15f8ed3cfdad0be9e7324a784d9b85f704
+  schemas/artifacts/source_candidate_manifest.schema.json:
+    sha256: 73b5f08286706095b921e1103b182702f3bab22994213707beccb7fff242c2b5
+  schemas/artifacts/source_capture_plan.schema.json:
+    sha256: 064b3c4151ddd6d816c952bd861002c0107ed304390ec3db0ab8b877baa4b77b
+  schemas/artifacts/source_commentary_edit_plan.schema.json:
+    sha256: 44fb67689b4ab5f0311804754b96d3e8500433e86cc435dae9e79ac5b7e2e075
+  schemas/artifacts/source_commentary_qc_report.schema.json:
+    sha256: 314b321f81cb8c5309fbc7547f9f69c9228abe23a74b3cf588acb9f930e945f8
+  schemas/artifacts/source_commentary_render_report.schema.json:
+    sha256: 3e0f4a8ff393a069fa7ff5616619ee5efa79c5fc9f28e34fc0569c2a24aeec83
+  schemas/artifacts/source_media_review.schema.json:
+    sha256: ed2e5e5f3093466b03e400db5289376b86127198009f23a8b11665da6acc16e2
+  schemas/artifacts/source_proof_manifest.schema.json:
+    sha256: f53201279f54f0b61295214a58bc4ac517a91f24579b8af0c5a8f2d59bf19a83
+  schemas/artifacts/source_query_plan.schema.json:
+    sha256: 9707dbf06950791f41a72c8e9fcce63c8eb9f0aa050d8911b9ecb384c7794ce0
+  schemas/artifacts/source_segment_approval_manifest.schema.json:
+    sha256: 3bb88cb77abc6bfc30249ad51c9c508e05d8ac78075dfe121b37b2af047ac57e
+  schemas/artifacts/staged_asset_manifest.schema.json:
+    sha256: 08077c00f5029af5e8df63d8e193e9b0801fcf6d37f174d8e7175a93d6067970
+  schemas/artifacts/transcript_index.schema.json:
+    sha256: 397da324032d37de555ef5a61bebf29817c7217c16680b13e6a8e8d5f7d11dbe
+  schemas/artifacts/video_analysis_brief.schema.json:
+    sha256: 75515b0560d3af2a46aaa7d6309de5be5467e0077f698f8c14466845d376a7ef
+  schemas/artifacts/visual_rhythm_plan.schema.json:
+    sha256: 81d90b19a81416015029638ce4caa743a87c2ba1e0a49fd159ffcbe130c40d9f
+  schemas/artifacts/youtube_source_manifest.schema.json:
+    sha256: d0d3c9c93221efeb0be9a3817fd1705515a85d97c6a7c91d603e04729ea824a0
+  schemas/pipelines/pipeline_manifest.schema.json:
+    sha256: 22b54d7fb315cc3443be4f431d65e8ec764b9e57c121227414781b10d0157daf
+  skills/INDEX.md:
+    sha256: d8cca34d7d9c2bd180f24acde21ff517f56d8b54017514ce94f718d87530b1f9
+  skills/pipelines/source-commentary/CONTRACT.md:
+    sha256: f07f56754df3c8919ac5e3d1cee0d1a321388b69c991b61ca00aa9427f39ad9d
+  tools/tool_registry.py:
+    sha256: e06858ec214dd8882fd6e363bbcda5255a54ce0a58296d57501b4118ac994b3c
+stale: false

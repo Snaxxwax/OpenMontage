@@ -1,5 +1,7 @@
 # OpenMontage - Agent Operating Contract (AGENTS.md)
 
+**Before any action:** read `.agent_contract/agent_boot_packet.md`. If `contract_status.yaml` shows `stale: true` or `blocking_conflicts: true`, halt and report to operator.
+
 This is the **canonical, model-agnostic operating contract** for all AI agents (Gemini, Claude, Codex, etc.) working in the OpenMontage workspace.
 
 ## 1. Agent Role
