@@ -26,6 +26,7 @@ required_skills:
   - pipelines/source-commentary/clip_acquisition-director
   - pipelines/source-commentary/media_qc-director
   - pipelines/source-commentary/edit_plan-director
+  - pipelines/source-commentary/render_asset_staging-director
   - pipelines/source-commentary/compose-director
   - pipelines/source-commentary/qc-director
   - meta/reviewer
@@ -184,6 +185,26 @@ stages:
       - Narration and evidence are perfectly synced
     success_criteria:
       - Schema-valid source_commentary_edit_plan artifact
+
+  - name: render_asset_staging
+    skill: pipelines/source-commentary/render_asset_staging-director
+    required_artifacts_in:
+      - prepared_media_manifest
+    optional_artifacts_in:
+      - source_commentary_edit_plan
+    produces:
+      - staged_asset_manifest
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - prepared_media_manifest.json has operator_approved_for_staging true
+      - staged_asset_manifest.json present with gate_passed true
+      - sha256 verified for every staged file
+      - no orphan files in media/ or audio/
+    success_criteria:
+      - staged_asset_manifest.json exists with gate_passed true
+      - scripts/asymmetric_gate.py render-asset-staging exits 0
 
   - name: compose
     skill: pipelines/source-commentary/compose-director
