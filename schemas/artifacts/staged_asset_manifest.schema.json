@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StagedAssetManifest",
+  "description": "Records all staged assets for a render pass. Renderer reads this file only — never raw asset paths.",
+  "type": "object",
+  "required": ["render_id", "episode_id", "staged_at", "gate_passed", "assets"],
+  "additionalProperties": false,
+  "properties": {
+    "render_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "episode_id":  { "type": "string", "minLength": 1 },
+    "staged_at":   { "type": "string", "minLength": 1 },
+    "gate_passed": { "type": "boolean" },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/staged_asset" }
+    }
+  },
+  "definitions": {
+    "staged_asset": {
+      "type": "object",
+      "required": [
+        "asset_id",
+        "asset_type",
+        "role",
+        "source_path",
+        "staged_path",
+        "sha256",
+        "source_label_required",
+        "qc_status"
+      ],
+      "properties": {
+        "asset_id":   { "type": "string", "minLength": 1 },
+        "asset_type": { "type": "string", "enum": ["screenshot", "video", "audio"] },
+        "role":       { "type": "string", "minLength": 1 },
+        "source_path": { "type": "string", "minLength": 1 },
+        "staged_path": {
+          "type": "string",
+          "pattern": "^(media|audio)/[^.][^/]*(/[^.][^/]*)*$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_label_required": { "type": "boolean" },
+        "source_label": { "type": "string", "minLength": 1 },
+        "qc_status":    { "type": "string", "enum": ["pass", "fail", "pending"] },
+        "dimensions": {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": {
+            "width":  { "type": "integer", "minimum": 1 },
+            "height": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+        "in_seconds":       { "type": "number", "minimum": 0 },
+        "out_seconds":      { "type": "number", "minimum": 0 },
+        "audio_role":       { "type": "string", "minLength": 1 },
+        "loudness_lufs":    { "type": "number" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "source_label_required": { "const": true } },
+            "required": ["source_label_required"]
+          },
+          "then": { "required": ["source_label"] }
+        },
+        {
+          "if": {
+            "properties": { "asset_type": { "const": "screenshot" } },
+            "required": ["asset_type"]
+          },
+          "then": { "required": ["dimensions"] }
+        },
+        {
+          "if": {
+            "properties": { "asset_type": { "const": "video" } },
+            "required": ["asset_type"]
+          },
+          "then": { "required": ["duration_seconds", "in_seconds", "out_seconds", "audio_role"] }
+        },
+        {
+          "if": {
+            "properties": { "asset_type": { "const": "audio" } },
+            "required": ["asset_type"]
+          },
+          "then": { "required": ["duration_seconds", "audio_role"] }
+        },
+        {
+          "if": {
+            "properties": { "role": { "const": "narration" } },
+            "required": ["role"]
+          },
+          "then": { "required": ["loudness_lufs"] }
+        }
+      ]
+    }
+  }
+}

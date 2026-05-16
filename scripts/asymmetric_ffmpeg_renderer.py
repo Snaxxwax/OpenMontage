@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Deterministic FFmpeg source/proof smoke renderer for Asymmetric runs."""
+"""Deterministic FFmpeg source/proof smoke renderer for Asymmetric runs.
+
+Two render modes:
+  --staging-manifest  Staged render path (MVP). Reads only staged_asset_manifest.json.
+  --legacy-no-staging Legacy path. Uses ArtifactBus + visual_rhythm_plan.json.
+"""
 
 from __future__ import annotations
 
@@ -23,6 +28,7 @@ from lib.source_proof import SourceProofManifest, load_optional_source_proof_man
 DEFAULT_RUN_BASE_DIR = DEFAULT_PROJECTS_DIR
 ASSET_SUFFIXES = (".png", ".jpg", ".jpeg", ".webp", ".ppm")
 SOURCE_PROOF_EVENTS = {"source", "proof"}
+DEFAULT_SCREENSHOT_HOLD = 4.0  # seconds per screenshot in staged mode
 
 
 class RenderError(RuntimeError):
@@ -128,6 +134,7 @@ def validate_source_labels(segments: list[dict[str, Any]]) -> None:
         )
 
 
+# [LEGACY] Used only by --legacy-no-staging path. Retained for backwards compatibility.
 def asset_candidates(segment: dict[str, Any], assets_dir: Path) -> list[Path]:
     names = [str(segment.get("id", ""))]
     names.extend(str(item) for item in segment.get("evidence_ids") or [])
@@ -140,6 +147,7 @@ def asset_candidates(segment: dict[str, Any], assets_dir: Path) -> list[Path]:
     return candidates
 
 
+# [LEGACY] Used only by --legacy-no-staging path. Retained for backwards compatibility.
 def resolve_asset(
     segment: dict[str, Any],
     assets_dir: Path,
@@ -221,6 +229,175 @@ def build_filter_complex(segments: list[RenderSegment], label_dir: Path) -> str:
     chains.append("".join(labels) + f"concat=n={len(segments)}:v=1:a=0[v]")
     return ";".join(chains)
 
+
+# ── staged render path ────────────────────────────────────────────────────────
+
+def load_staged_manifest(manifest_path: Path) -> dict[str, Any]:
+    """Load staged_asset_manifest.json. Raises RenderError if gate_passed is not true."""
+    data = load_json(manifest_path)
+    if data.get("gate_passed") is not True:
+        raise RenderError(
+            f"gate_passed is not true — run 'asymmetric_gate.py render-asset-staging' first: "
+            f"{manifest_path}"
+        )
+    return data
+
+
+def resolve_staged_paths(manifest: dict[str, Any], staging_root: Path) -> list[dict[str, Any]]:
+    """Resolve staged_path values relative to staging_root. Raises RenderError if any file missing.
+
+    Never calls resolve_asset or asset_candidates. Uses staged_path exclusively.
+    """
+    resolved = []
+    for asset in manifest.get("assets", []):
+        asset_id = asset.get("asset_id", "<unknown>")
+        staged_path = asset.get("staged_path", "")
+        full_path = (staging_root / staged_path).resolve()
+        if not full_path.exists():
+            raise RenderError(
+                f"staged file not found: {staged_path} (asset_id={asset_id!r})"
+            )
+        resolved.append({**asset, "_resolved_path": full_path})
+    return resolved
+
+
+def _segment_duration_staged(asset: dict[str, Any]) -> float:
+    if asset["asset_type"] == "video":
+        return max(
+            float(asset.get("out_seconds", 0)) - float(asset.get("in_seconds", 0)),
+            1.0,
+        )
+    return DEFAULT_SCREENSHOT_HOLD
+
+
+def build_staged_filter_complex(
+    visual_assets: list[dict[str, Any]],
+    label_dir: Path,
+) -> str:
+    chains: list[str] = []
+    out_labels: list[str] = []
+    for idx, asset in enumerate(visual_assets):
+        source_label = asset.get("source_label", "")
+        out_label = f"v{idx}"
+        chain = (
+            f"[{idx}:v]"
+            "scale=1280:720:force_original_aspect_ratio=decrease,"
+            "pad=1280:720:(ow-iw)/2:(oh-ih)/2:color=0x111111,"
+            "setsar=1,format=yuv420p"
+        )
+        if asset.get("source_label_required") and source_label:
+            label_path = label_dir / f"{idx:03d}_label.txt"
+            write_textfile(label_path, source_label)
+            escaped = ffmpeg_filter_escape(str(label_path))
+            chain += (
+                ",drawbox=x=0:y=ih-80:w=iw:h=80:color=black@0.72:t=fill"
+                f",drawtext=textfile='{escaped}':fontcolor=white:fontsize=28:x=24:y=main_h-60"
+            )
+        chain += f"[{out_label}]"
+        chains.append(chain)
+        out_labels.append(f"[{out_label}]")
+    chains.append("".join(out_labels) + f"concat=n={len(visual_assets)}:v=1:a=0[v]")
+    return ";".join(chains)
+
+
+def render_from_staged_manifest(
+    manifest_path: Path,
+    *,
+    output_path: Path | None = None,
+    overwrite: bool = False,
+) -> dict[str, Any]:
+    """Staged render path. Reads only from staged_asset_manifest.json.
+
+    Never searches assets/, clips/, screen_captures/, or narration/ directories.
+    Never calls resolve_asset or asset_candidates.
+    """
+    manifest_path = manifest_path.resolve()
+    staging_root = manifest_path.parent
+
+    manifest = load_staged_manifest(manifest_path)
+    resolved_assets = resolve_staged_paths(manifest, staging_root)
+
+    render_id = manifest["render_id"]
+    episode_id = manifest["episode_id"]
+
+    visual_assets = [a for a in resolved_assets if a["asset_type"] in ("screenshot", "video")]
+    narration_assets = [
+        a for a in resolved_assets
+        if a["asset_type"] == "audio" and a.get("role") == "narration"
+    ]
+
+    if not visual_assets:
+        raise RenderError("no screenshot or video assets in staged manifest")
+
+    if not shutil.which("ffmpeg"):
+        raise RenderError("ffmpeg not found on PATH")
+    if not shutil.which("ffprobe"):
+        raise RenderError("ffprobe not found on PATH")
+
+    if output_path is None:
+        renders_dir = staging_root.parent.parent / "renders"
+        renders_dir.mkdir(parents=True, exist_ok=True)
+        output_path = renders_dir / f"{render_id}.mp4"
+
+    if output_path.exists() and not overwrite:
+        raise RenderError(f"render already exists; pass --overwrite: {output_path}")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    total_video_duration = sum(_segment_duration_staged(a) for a in visual_assets)
+
+    with tempfile.TemporaryDirectory(prefix="asymmetric_staged_render_") as tmp:
+        label_dir = Path(tmp)
+        cmd = ["ffmpeg", "-y" if overwrite else "-n"]
+
+        for asset in visual_assets:
+            resolved = asset["_resolved_path"]
+            if asset["asset_type"] == "screenshot":
+                cmd.extend(["-loop", "1", "-t", f"{DEFAULT_SCREENSHOT_HOLD:.3f}", "-i", str(resolved)])
+            else:
+                in_s = float(asset.get("in_seconds", 0))
+                out_s = float(asset.get("out_seconds", asset.get("duration_seconds", 0)))
+                cmd.extend(["-ss", f"{in_s:.3f}", "-to", f"{out_s:.3f}", "-i", str(resolved)])
+
+        audio_idx = len(visual_assets)
+        if narration_assets:
+            cmd.extend(["-i", str(narration_assets[0]["_resolved_path"])])
+        else:
+            cmd.extend([
+                "-f", "lavfi",
+                "-i", f"sine=frequency=440:sample_rate=48000:duration={total_video_duration:.3f}",
+            ])
+
+        cmd.extend([
+            "-filter_complex", build_staged_filter_complex(visual_assets, label_dir),
+            "-map", "[v]",
+            "-map", f"{audio_idx}:a",
+            "-r", "30",
+            "-c:v", "libx264",
+            "-preset", "veryfast",
+            "-crf", "28",
+            "-c:a", "aac",
+            "-b:a", "128k",
+            "-movflags", "+faststart",
+            "-shortest",
+            str(output_path),
+        ])
+
+        logs_dir = staging_root / "logs"
+        logs_dir.mkdir(exist_ok=True)
+        run_cmd(cmd, log_path=logs_dir / "ffmpeg_staged_render.log")
+
+    duration = ffprobe_duration(output_path)
+    return {
+        "ok": True,
+        "render_id": render_id,
+        "episode_id": episode_id,
+        "render": str(output_path),
+        "duration_seconds": duration,
+        "asset_count": len(visual_assets),
+    }
+
+
+# ── legacy render path ────────────────────────────────────────────────────────
 
 def render_episode(
     *,
@@ -307,10 +484,31 @@ def render_episode(
     }
 
 
+# ── CLI ───────────────────────────────────────────────────────────────────────
+
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Render an Asymmetric source/proof FFmpeg smoke MP4")
+    parser = argparse.ArgumentParser(
+        description="Render an Asymmetric FFmpeg MP4. Use --staging-manifest or --legacy-no-staging."
+    )
+    # Staged render mode
+    parser.add_argument(
+        "--staging-manifest",
+        type=Path,
+        help="Path to staged_asset_manifest.json (staged render mode)",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="Output MP4 path (staged mode; defaults to renders/<render_id>.mp4)",
+    )
+    # Legacy render mode
+    parser.add_argument(
+        "--legacy-no-staging",
+        action="store_true",
+        help="Use legacy render path (requires --run-base-dir and --episode-id)",
+    )
     parser.add_argument("--run-base-dir", type=Path, default=DEFAULT_RUN_BASE_DIR)
-    parser.add_argument("--episode-id", required=True)
+    parser.add_argument("--episode-id")
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--output-name")
     return parser
@@ -318,6 +516,35 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     args = build_parser().parse_args()
+
+    if args.staging_manifest:
+        try:
+            result = render_from_staged_manifest(
+                args.staging_manifest,
+                output_path=args.output,
+                overwrite=args.overwrite,
+            )
+            print_json(result)
+            return 0
+        except RenderError as exc:
+            print_json({"ok": False, "error": str(exc)})
+            return 1
+
+    if not args.legacy_no_staging:
+        print_json({
+            "ok": False,
+            "error": (
+                "No render mode specified. "
+                "Use --staging-manifest for staged render, "
+                "or --legacy-no-staging for legacy render."
+            ),
+        })
+        return 1
+
+    if not args.episode_id:
+        print_json({"ok": False, "error": "--episode-id is required for legacy render"})
+        return 1
+
     try:
         result = render_episode(
             run_dir=args.run_base_dir / args.episode_id,
