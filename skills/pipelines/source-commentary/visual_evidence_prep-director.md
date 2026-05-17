@@ -15,7 +15,7 @@
 ## Allowed Actions
 - Read the three upstream manifests and any explicitly listed screenshot paths
 - Assemble one asset entry per approved clip and per listed screenshot
-- Map `original_audio_use` → `audio_role`: `muted`→`muted`, `ducked`→`ambient`, `quote_audio`→`quoted_audio`
+- Map `original_audio_use` → `audio_role`: `muted`→`muted`, `ducked`→`ambient`, `quote_audio`→`quoted_audio`; silent motion-card video assets (no audio track) use `audio_role: "none"`
 - Set `preparation_status: "prepared"` on every asset
 - Write `operator_approved_for_staging: false` — operator flips this manually before staging
 - Set screenshot `prepared_path` to a cropped/framed file (square or landscape aspect, ideally 16:9); `input_path` stays pointing to the original

@@ -223,6 +223,17 @@ def test_prepared_manifest_invalid_media_type_fails():
         _validate_prepared(_prepared_manifest(asset))
 
 
+def test_video_asset_audio_role_none_passes():
+    asset = _video_asset(audio_role="none")
+    _validate_prepared(_prepared_manifest(asset))  # must not raise
+
+
+def test_video_asset_empty_audio_role_fails():
+    asset = _video_asset(audio_role="")
+    with pytest.raises(ValidationError):
+        _validate_prepared(_prepared_manifest(asset))
+
+
 # ── staged manifest tests ─────────────────────────────────────────────────────
 
 def test_valid_staged_manifest_passes():
