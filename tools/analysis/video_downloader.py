@@ -276,7 +276,9 @@ class VideoDownloader(BaseTool):
             ydl.download([url])
 
         # Find the downloaded video file
-        video_path = self._find_downloaded(output_dir, "reference_video", ["mp4", "mkv", "webm"])
+        video_path = self._find_downloaded(
+            output_dir, "reference_video", ["mp4", "mkv", "webm", "ogv", "avi", "mov", "m4v"]
+        )
 
         # Extract audio separately for transcription
         audio_path = None
