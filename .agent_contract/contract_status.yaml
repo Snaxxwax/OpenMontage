@@ -1,6 +1,6 @@
 blocking_conflicts: false
 bootstrap_ok: true
-compiled_at: '2026-05-17T00:06:39.595848+00:00'
+compiled_at: '2026-05-17T00:21:23.009520+00:00'
 missing_sources: []
 sources:
   .agent/allowed_paths.yaml:
@@ -127,6 +127,8 @@ sources:
     sha256: 397da324032d37de555ef5a61bebf29817c7217c16680b13e6a8e8d5f7d11dbe
   schemas/artifacts/video_analysis_brief.schema.json:
     sha256: 75515b0560d3af2a46aaa7d6309de5be5467e0077f698f8c14466845d376a7ef
+  schemas/artifacts/visual_motion_plan.schema.json:
+    sha256: 0be66c64c597132c9d2d00bc25eacb7843bcf3c151d598788c2c40d1f3fe8c5e
   schemas/artifacts/visual_rhythm_plan.schema.json:
     sha256: 81d90b19a81416015029638ce4caa743a87c2ba1e0a49fd159ffcbe130c40d9f
   schemas/artifacts/youtube_source_manifest.schema.json:
