@@ -5,6 +5,7 @@ Decompose the narrative into discrete, falsifiable "Claims" that require evidenc
 
 ## 2. Inputs
 - `research_brief`
+- `performance_brief`
 
 ## 3. Outputs
 - `narration_claim_map` (canonical artifact)

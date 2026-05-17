@@ -1,6 +1,6 @@
 blocking_conflicts: false
 bootstrap_ok: true
-compiled_at: '2026-05-16T08:43:13.571399+00:00'
+compiled_at: '2026-05-17T00:06:39.595848+00:00'
 missing_sources: []
 sources:
   .agent/allowed_paths.yaml:
@@ -38,7 +38,7 @@ sources:
   pipeline_defs/screen-demo.yaml:
     sha256: f8769caa2e732fc3e4dbab0cab659a272c500ef83e8e6ee7b5dd161a1b2358bb
   pipeline_defs/source-commentary.yaml:
-    sha256: feb1007661139e05f56229ae9f7b0bcd80f3dece359cc220d9eefda082bb78bd
+    sha256: 7ceeeb02c54b28d63c463c25a46d01576f22a84edc5ee6293887476dc8641af7
   pipeline_defs/talking-head.yaml:
     sha256: 85ff02def977c8b11332a48170eec4f1e7ce74081d9f973bb11ef3100dbcc74c
   schemas/artifacts/action_timeline.schema.json:
@@ -75,6 +75,8 @@ sources:
     sha256: 691f14b89c5abbf857e37daff3eeb7a014815c59cef781645db2a2b4668e986a
   schemas/artifacts/narration_claim_map.schema.json:
     sha256: 83c3b256360b7c27af800398f0b7b64b79a077982930e58cc5b0b71619c33c07
+  schemas/artifacts/performance_brief.schema.json:
+    sha256: 78b0e15c0d787a377d15c3dc50b4ef77bd74b2965e91656cd7a6581e2eab383a
   schemas/artifacts/pose_library.schema.json:
     sha256: fa096746da1a68db942ba4bad7002392f4ec886c0dd4b71bd9fcfe6d251bf8f5
   schemas/artifacts/prepared_media_manifest.schema.json:

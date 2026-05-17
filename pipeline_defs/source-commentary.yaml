@@ -18,6 +18,7 @@ orchestration:
 
 required_skills:
   - pipelines/source-commentary/research-director
+  - pipelines/source-commentary/performance_brief-director
   - pipelines/source-commentary/claim_map-director
   - pipelines/source-commentary/source_discovery-director
   - pipelines/source-commentary/transcript_index-director
@@ -55,10 +56,29 @@ stages:
     success_criteria:
       - Schema-valid research_brief artifact
 
+  - name: performance_brief
+    skill: pipelines/source-commentary/performance_brief-director
+    required_artifacts_in:
+      - research_brief
+    produces:
+      - performance_brief
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - viewer_promise is a commitment, not a description
+      - opening_claim is a concrete already-happened fact, not a question
+      - first_15_seconds_plan has at least 3 distinct beats
+      - retention_risks are honest, not boilerplate
+      - visual_pacing_notes address movement and static-slide risk
+    success_criteria:
+      - artifacts/performance_brief.json validates against performance_brief.schema.json
+
   - name: claim_map
     skill: pipelines/source-commentary/claim_map-director
     required_artifacts_in:
       - research_brief
+      - performance_brief
     produces:
       - narration_claim_map
     tools_available: []
