@@ -1,6 +1,6 @@
 blocking_conflicts: false
 bootstrap_ok: true
-compiled_at: '2026-05-17T00:21:23.009520+00:00'
+compiled_at: '2026-05-17T08:29:45.516951+00:00'
 missing_sources: []
 sources:
   .agent/allowed_paths.yaml:
@@ -73,6 +73,8 @@ sources:
     sha256: df28e260cb4f3be97a53941171fbe8aff803f57a8f820e3ab7d2d3bf2a09899f
   schemas/artifacts/final_review.schema.json:
     sha256: 691f14b89c5abbf857e37daff3eeb7a014815c59cef781645db2a2b4668e986a
+  schemas/artifacts/leverage_brief.schema.json:
+    sha256: a961dc759bf28fe4e16f1b1ffb94e652b8de26f80e8205e0e183771682c3afc0
   schemas/artifacts/narration_claim_map.schema.json:
     sha256: 83c3b256360b7c27af800398f0b7b64b79a077982930e58cc5b0b71619c33c07
   schemas/artifacts/performance_brief.schema.json:

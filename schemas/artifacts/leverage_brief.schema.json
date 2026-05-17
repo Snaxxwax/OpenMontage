@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "leverage_brief.schema.json",
+  "title": "LeverageBrief",
+  "description": "Pre-research intellectual contract for an Asymmetric episode. Locks the hidden mechanism, control surface, cost transfer chain, beneficiaries, accountability gap, and advertiser safety posture before scripting begins.",
+  "type": "object",
+  "required": [
+    "version",
+    "episode_id",
+    "public_story",
+    "hidden_mechanism",
+    "control_surface",
+    "dependency",
+    "cost_transfer",
+    "beneficiaries",
+    "accountability_gap",
+    "viewer_takeaway",
+    "leverage_takeaway",
+    "advertiser_safety_posture"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Schema version. Must be '1.0'."
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique slug identifying this episode, e.g. 'ai-datacenter-cost-transfer-p001'."
+    },
+    "public_story": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The consensus narrative most people believe. State it fairly and without mockery."
+    },
+    "hidden_mechanism": {
+      "type": "string",
+      "minLength": 1,
+      "description": "How the system actually works beneath the public story. Must be provable with primary sources."
+    },
+    "control_surface": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The specific mechanism, clause, rule, rate schedule, or policy that concentrates control. Must be nameable and documentable."
+    },
+    "dependency": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Who depends on the control surface and has no structural alternative. Explain why exit is not available."
+    },
+    "cost_transfer": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered list of cost transfer steps. Each step names who absorbs what cost through what mechanism.",
+      "items": {
+        "type": "object",
+        "required": ["from_entity", "to_entity", "mechanism", "estimated_magnitude"],
+        "additionalProperties": false,
+        "properties": {
+          "from_entity": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Entity that avoids the cost."
+          },
+          "to_entity": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Entity that absorbs the cost."
+          },
+          "mechanism": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The structural mechanism by which the cost is transferred (e.g. 'rate case inclusion', 'tax incentive', 'subsidy agreement')."
+          },
+          "estimated_magnitude": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Estimated magnitude of the cost transfer. Use 'unknown' if not yet established; do not leave blank."
+          }
+        }
+      }
+    },
+    "beneficiaries": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Entities that capture value from the mechanism. Each entry names the beneficiary and the capture mechanism.",
+      "items": {
+        "type": "object",
+        "required": ["entity", "capture_mechanism"],
+        "additionalProperties": false,
+        "properties": {
+          "entity": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Name of the beneficiary entity."
+          },
+          "capture_mechanism": {
+            "type": "string",
+            "minLength": 1,
+            "description": "How this entity captures value (e.g. 'subsidized construction cost', 'monopoly toll', 'asset ownership with socialized risk')."
+          }
+        }
+      }
+    },
+    "accountability_gap": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Why the mechanism escapes consequence. Name the structural gap: regulatory capture, jurisdictional void, enforcement lapse, sunsetted disclosure requirement, etc."
+    },
+    "viewer_takeaway": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The single reusable mental model the viewer carries out. One sentence."
+    },
+    "leverage_takeaway": {
+      "type": "object",
+      "required": [
+        "what_to_watch_for",
+        "questions_to_ask",
+        "documents_to_find",
+        "safe_action_language"
+      ],
+      "additionalProperties": false,
+      "description": "The structured operator-level takeaway. Gives the viewer a framework to apply in adjacent situations.",
+      "properties": {
+        "what_to_watch_for": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Signals in adjacent systems that indicate the same mechanism is operating.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "questions_to_ask": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Specific questions an operator should ask when they see these signals.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "documents_to_find": {
+          "type": "array",
+          "description": "Specific document types that expose the mechanism (rate filings, subsidy agreements, platform policies, etc.). May be empty if no specific document type applies.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "safe_action_language": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Language describing what viewers can do with this knowledge. Must be informational, lawful, non-harassing, and non-partisan."
+        }
+      }
+    },
+    "advertiser_safety_posture": {
+      "type": "object",
+      "required": [
+        "risk_level",
+        "language_approved",
+        "language_forbidden",
+        "claim_source_required"
+      ],
+      "additionalProperties": false,
+      "description": "Declares the advertiser safety posture for this episode. Governs language discipline throughout production.",
+      "properties": {
+        "risk_level": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "low = pure structural analysis; medium = named entities with documented behavior; high = named individuals or implied misconduct."
+        },
+        "language_approved": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Approved terms for this episode's language posture. Must include at least one term from the advertiser safety approved list.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "language_forbidden": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Forbidden terms specific to this episode, in addition to the channel-wide forbidden list.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "claim_source_required": {
+          "type": "boolean",
+          "const": true,
+          "description": "Every factual claim must map to a primary source before scripting. Always true."
+        }
+      }
+    }
+  }
+}

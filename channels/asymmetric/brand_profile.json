@@ -1,0 +1,142 @@
+{
+  "brand_name": "Asymmetric",
+  "tagline": "Where the leverage is.",
+  "positioning": "Cinematic business documentaries about hidden leverage points in systems, business and government.",
+  "visual_reference": "MagnatesMedia-style cinematic business documentary, adapted into Asymmetric's leverage framework.",
+  "tone": [
+    "calm",
+    "forensic",
+    "premium",
+    "business-literate",
+    "restrained tension",
+    "source-led",
+    "advertiser-safe"
+  ],
+  "recurring_segments": [
+    "THE LEVERAGE MAP",
+    "THE CONTROL SURFACE",
+    "WHO PAYS",
+    "WHO BENEFITS",
+    "ACCOUNTABILITY GAP",
+    "THE LEVERAGE TAKEAWAY"
+  ],
+  "visual_palette": {
+    "near_black": "#050608",
+    "deep_slate": "#11151C",
+    "graphite": "#2A3142",
+    "bone": "#F3F5F7",
+    "steel_mist": "#7B8798",
+    "amber": "#FFB020",
+    "steel_cyan": "#4FA3B8",
+    "acid_lime": "#B7F05B"
+  },
+  "signal_color_meanings": {
+    "amber": "leverage / control / chokepoint / approval surface",
+    "steel_cyan": "information / system / receipt / flow",
+    "acid_lime": "anomaly / pressure / escalation / cost extraction"
+  },
+  "typography": {
+    "primary": "Inter",
+    "display": "Space Grotesk",
+    "data": "IBM Plex Mono"
+  },
+  "advertiser_safety": {
+    "criticize": "mechanisms, incentives, control surfaces and cost transfers",
+    "avoid": [
+      "rage bait",
+      "unsupported criminal claims",
+      "conspiracy framing",
+      "dehumanizing language",
+      "shock thumbnails",
+      "partisan framing"
+    ],
+    "language_approved": [
+      "cost transfer",
+      "incentive structure",
+      "ratepayer exposure",
+      "public-cost exposure",
+      "control surface",
+      "dependency",
+      "market power",
+      "accountability gap",
+      "regulatory gap",
+      "chokepoint",
+      "extraction layer",
+      "externalized cost",
+      "incentive misalignment"
+    ],
+    "language_forbidden": [
+      "robbery",
+      "scam",
+      "criminals",
+      "parasites",
+      "traitors",
+      "corrupt elites",
+      "sold us out"
+    ]
+  },
+  "episode_template": {
+    "description": "Ten-part leverage story structure. Required for all Asymmetric episodes.",
+    "steps": [
+      {
+        "step": 1,
+        "name": "Consequence",
+        "description": "Open with a concrete verifiable outcome that proves the leverage exists. Already happened. Specific. Dramatic."
+      },
+      {
+        "step": 2,
+        "name": "First Receipt",
+        "description": "First primary-source evidence on screen. A document, filing, contract clause, or court record. Legible. Specific."
+      },
+      {
+        "step": 3,
+        "name": "Public Story",
+        "description": "The consensus narrative most people believe. State it fairly. No mockery."
+      },
+      {
+        "step": 4,
+        "name": "Hidden Mechanism",
+        "description": "How the system actually works beneath the public story. Provable. Diagram language. Every claim connects to a receipt."
+      },
+      {
+        "step": 5,
+        "name": "Control Surface",
+        "description": "Name and show the specific mechanism that concentrates control. Must appear as a visual close-up. Amber overlay."
+      },
+      {
+        "step": 6,
+        "name": "Dependency",
+        "description": "Show who depends on the control surface with no structural alternative."
+      },
+      {
+        "step": 7,
+        "name": "Cost Transfer",
+        "description": "Show who absorbs the cost the controlling entity avoids. Name the transfer. Use receipts."
+      },
+      {
+        "step": 8,
+        "name": "Beneficiary",
+        "description": "Name who captures the value the cost transfer creates. Specific entity, specific mechanism, documented magnitude where possible."
+      },
+      {
+        "step": 9,
+        "name": "Accountability Gap",
+        "description": "Explain why the mechanism escapes consequence. Structural, not personal."
+      },
+      {
+        "step": 10,
+        "name": "Leverage Takeaway",
+        "description": "Reusable operator-level mental model. What to watch for, what to ask, what to find. Informational and lawful."
+      }
+    ]
+  },
+  "openmontage_production_method": {
+    "outer_pipeline": "hybrid",
+    "evidence_discipline": "source-commentary contracts (evidence_candidate_manifest, clip_use_receipt, approved_clip_manifest)",
+    "composition_remotion": "Cinematic receipt cards, leverage maps, cost-transfer scenes, stat cards, source-proof scenes",
+    "composition_hyperframes": "Kinetic segment title cards and high-end typography inserts",
+    "composition_ffmpeg": "Assembly, finishing, loudness normalization (-14 LUFS integrated), QC — unless a stronger Remotion path is proven",
+    "reference_analysis": "Run VideoAnalyzer on 1-2 reference videos before scripting. Populate visual_rhythm_plan.json from reference metrics.",
+    "creative_pass": "Operator-only. No agent or tool may set creative_pass."
+  }
+}

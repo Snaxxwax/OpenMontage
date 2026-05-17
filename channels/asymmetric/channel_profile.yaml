@@ -1,7 +1,7 @@
 channel_id: asymmetric
 version: "1.0"
 last_updated: "2026-05-06"
-pipeline: source-commentary
+pipeline: hybrid
 doctrine: docs/asymmetric/production_doctrine.md
 
 brand_promise: >
@@ -72,6 +72,7 @@ visual_rules:
       graphite: "#2A3142"
       bone: "#F3F5F7"
       muted_steel: "#8A95A6"
+      acid_lime: "#B7F05B"
     signal:
       institutional_amber: "#F5A400"  # control, leverage, chokepoint
       muted_steel_cyan: "#3F8FA3"    # structure, flow, map logic
