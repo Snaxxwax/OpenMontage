@@ -250,53 +250,44 @@ class HyperFramesCompose(BaseTool):
     def _resolve_npm_package(cls) -> dict[str, str]:
         """Verify the `hyperframes` npm package actually resolves.
 
-        `_runtime_check` previously only verified that node/ffmpeg/npx existed
-        on PATH, which meant `runtime_available: True` on any machine with
-        Node + FFmpeg — even offline, even if npm was down, even if the
-        package was unpublished. This method performs a cheap
-        `npm view hyperframes version` (5s timeout) and caches the answer
-        for the rest of the process.
+        Uses `npx hyperframes --version` (15s timeout) rather than
+        `npm view` so the check works offline and with npx-cached installs.
+        Caches the result for the rest of the process.
 
         Returns {"version": "X.Y.Z"} on success, {"error": "<short>"} on any
-        failure (404, timeout, network error, npm missing). Never raises.
+        failure. Never raises.
         """
         if cls._npm_resolve_cache is not None:
             return cls._npm_resolve_cache
 
-        npm = shutil.which("npm")
-        if not npm:
-            cls._npm_resolve_cache = {"error": "npm not on PATH"}
+        npx = shutil.which("npx")
+        if not npx:
+            cls._npm_resolve_cache = {"error": "npx not on PATH"}
             return cls._npm_resolve_cache
 
         try:
             proc = subprocess.run(
-                [npm, "view", cls._NPM_PACKAGE, "version"],
+                [npx, cls._NPM_PACKAGE, "--version"],
                 capture_output=True,
                 text=True,
-                timeout=5,
+                timeout=15,
             )
         except subprocess.TimeoutExpired:
-            cls._npm_resolve_cache = {"error": "timeout (5s) — offline or slow registry"}
+            cls._npm_resolve_cache = {"error": "timeout (15s) — npx could not resolve package"}
             return cls._npm_resolve_cache
         except (OSError, subprocess.SubprocessError) as e:
-            cls._npm_resolve_cache = {"error": f"npm view failed: {type(e).__name__}"}
+            cls._npm_resolve_cache = {"error": f"npx invocation failed: {type(e).__name__}"}
             return cls._npm_resolve_cache
 
         if proc.returncode != 0:
             stderr = (proc.stderr or "").strip()
-            # Most common failure is 404 (package unpublished or name wrong).
-            if "404" in stderr or "E404" in stderr:
-                cls._npm_resolve_cache = {
-                    "error": f"npm package `{cls._NPM_PACKAGE}` not found (404)"
-                }
-            else:
-                tail = stderr.splitlines()[-1][:200] if stderr else f"exit {proc.returncode}"
-                cls._npm_resolve_cache = {"error": f"npm view failed: {tail}"}
+            tail = stderr.splitlines()[-1][:200] if stderr else f"exit {proc.returncode}"
+            cls._npm_resolve_cache = {"error": f"npx {cls._NPM_PACKAGE} --version failed: {tail}"}
             return cls._npm_resolve_cache
 
         version = (proc.stdout or "").strip()
         if not version:
-            cls._npm_resolve_cache = {"error": "npm view returned empty version"}
+            cls._npm_resolve_cache = {"error": "npx --version returned empty output"}
         else:
             cls._npm_resolve_cache = {"version": version}
         return cls._npm_resolve_cache
