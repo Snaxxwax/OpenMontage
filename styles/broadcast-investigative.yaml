@@ -1,20 +1,17 @@
 identity:
   name: "Broadcast Investigative"
-  category: broadcast
+  category: cinematic
   mood: urgent, authoritative, investigative
   pace: fast
   best_for: "Data journalism explainers, investigative documentary, channel Asymmetric"
 
 visual_language:
   color_palette:
+    primary: ["#c0392b", "#cc2200"]
+    accent: ["#ffcc00", "#f5f0e8"]
     background: "#0d1117"
-    accent_red: "#c0392b"
-    data_amber: "#ffcc00"
-    text_primary: "#ffffff"
-    text_secondary: "rgba(255,255,255,0.65)"
-    document_paper: "#f5f0e8"
-    document_annotation: "#cc2200"
-    chapter_bumper_bg: "#1a0505"
+    text: "#ffffff"
+    muted: "rgba(255,255,255,0.65)"
   composition: edge-heavy, data-forward, lower-third attribution
   texture: subtle grain overlay on chapter bumpers
 
@@ -23,53 +20,81 @@ typography:
     font: "Barlow Condensed"
     weight: 800
     tracking: "-0.01em"
-    source: "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&display=swap"
   body:
     font: "Inter"
     weight: 400
-  data_labels:
+  code:
     font: "JetBrains Mono"
     weight: 400
-  lower_thirds:
-    font: "Inter"
-    weight: 500
+  stat_card:
+    font: "Barlow Condensed"
+    weight: 900
+    size_multiplier: 4.0
+  scale_system: "major_third"
+  weight_matrix:
+    title: 900
+    heading: 800
+    body: 400
+    caption: 500
 
-scene_pacing:
-  max_static_hold_seconds: 8
-  cut_cadence_range: [6, 10]
-  chapter_bumper_duration: 5
-
-scene_types:
-  chapter_bumper:
-    bg: "#1a0505"
-    accent_bar: "#c0392b"
-    text_color: "#ffffff"
-    chapter_label_color: "#c0392b"
-  broadcast_anchor_card:
-    bg: "#0d1117"
-    headline_color: "#ffffff"
-    stat_color: "#ffcc00"
-    source_color: "rgba(255,255,255,0.5)"
-    accent_bar: "#c0392b"
-  kinetic_text:
-    bg: "#0d1117"
-    text_color: "#ffffff"
-    emphasis_color: "#ffcc00"
-  data_visualization:
-    bg: "#0d1117"
-    bar_color: "#c0392b"
-    comparison_color: "#ffcc00"
-    label_color: "rgba(255,255,255,0.7)"
-    axis_color: "rgba(255,255,255,0.2)"
-  document_reveal:
-    paper_color: "#f5f0e8"
-    text_color: "#1a1a1a"
-    annotation_color: "#cc2200"
-    redaction_color: "#1a1a1a"
+motion:
+  transitions: [cut, fade, flash-through-white]
+  animation_style: "sharp, punchy, no bounce — data lands with weight"
+  pacing_rules:
+    min_scene_hold_seconds: 5.0
+    max_scene_hold_seconds: 8.0
+    text_card_hold_seconds: 5.0
+    stat_card_hold_seconds: 7.0
+    transition_duration_seconds: 0.25
+  entrance: "cut or fast fade-up (0.3s)"
+  exit: "cut or fast fade-out (0.25s)"
 
 audio:
-  narration_lufs: -14
-  music_under_speech_db: -18
-  music_gap_db: -10
-  subtitles: true
-  subtitle_style: caption-editorial-emphasis
+  voice_style: "e-girl — high energy, slightly breathless, contrast with serious data amplifies impact"
+  music_mood: "sparse industrial ambient, low drone, no melody — tension without distraction"
+  music_volume: 0.15
+  sfx_style: "none — music and voice only"
+  ducking_threshold_db: -18
+
+asset_generation:
+  image_prompt_prefix: "broadcast investigative documentary style, dark background #0d1117, red accent, data journalism, "
+  image_negative_prompt: "bright, colorful, playful, cartoonish, stock photo, cheerful"
+  diagram_style: "amber lines on dark background, monospace labels, technical authority"
+  consistency_anchors:
+    - "Dark near-black background (#0d1117) throughout all scenes"
+    - "Red (#c0392b) for chapter bumpers, alert states, and emphasis"
+    - "Amber (#ffcc00) for data values, stats, and chart bars"
+    - "White text primary, rgba(255,255,255,0.65) for secondary labels"
+    - "Document reveals use aged paper (#f5f0e8) with red annotations"
+
+overlays:
+  stat_card:
+    bg: "#0d1117"
+    border: "#c0392b"
+    text: "#ffcc00"
+    shadow: "0 4px 24px rgba(0,0,0,0.6)"
+  key_term:
+    bg: "rgba(192,57,43,0.15)"
+    text: "#ffffff"
+    radius: 3
+  code_block:
+    bg: "#0a0a0a"
+    text: "rgba(255,255,255,0.85)"
+    highlight: "#ffcc00"
+
+quality_rules:
+  - "Minimum contrast ratio 4.5:1 for all text against dark backgrounds"
+  - "Red (#c0392b) reserved for chapter bumpers, accent bars, and alert states"
+  - "Amber (#ffcc00) reserved for data values, statistics, and chart reveals"
+  - "No more than 3 colors on screen at once (excluding background)"
+  - "Document reveals must be legible at 720p"
+  - "Data visualizations must include source attribution in lower-third strip"
+  - "Subtitles required on all narration"
+  - "Scene hold maximum 8 seconds — cut cadence 6–10s"
+
+chart_palette:
+  - "#c0392b"
+  - "#ffcc00"
+  - "#ffffff"
+  - "#cc2200"
+  - "#888888"
