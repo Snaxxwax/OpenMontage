@@ -1,0 +1,84 @@
+name: broadcast-explainer
+version: "1.0"
+description: >
+  Broadcast-investigative animated explainer. Dark studio aesthetic, data journalism tone.
+  HyperFrames render runtime (locked). Narration via local Fish Speech S2-Pro.
+  Output: 1920×1080 MP4, 30fps.
+category: generated
+stability: production
+
+render_runtime: hyperframes
+
+default_checkpoint_policy: guided
+
+extensions:
+  custom_scripts: true
+  custom_playbooks: false
+  custom_skills: true
+  custom_tools: false
+
+required_skills:
+  - pipelines/broadcast-explainer/script-director
+  - pipelines/broadcast-explainer/scene-plan-director
+  - pipelines/broadcast-explainer/assets-director
+  - pipelines/broadcast-explainer/edit-director
+  - pipelines/broadcast-explainer/compose-director
+
+orchestration:
+  mode: sequential
+  budget_default_usd: 0.00
+
+compatible_playbooks:
+  locked:
+    - broadcast-investigative
+
+stages:
+  - name: script
+    skill: pipelines/broadcast-explainer/script-director
+    produces:
+      - script
+    checkpoint_required: true
+    human_approval_default: true
+
+  - name: scene_plan
+    skill: pipelines/broadcast-explainer/scene-plan-director
+    required_artifacts_in:
+      - script
+    produces:
+      - scene_plan
+    checkpoint_required: true
+    human_approval_default: true
+
+  - name: assets
+    skill: pipelines/broadcast-explainer/assets-director
+    required_artifacts_in:
+      - scene_plan
+      - script
+    produces:
+      - asset_manifest
+    tools_available:
+      - fish_speech_tts
+    checkpoint_required: false
+    human_approval_default: false
+
+  - name: edit
+    skill: pipelines/broadcast-explainer/edit-director
+    required_artifacts_in:
+      - scene_plan
+      - asset_manifest
+    produces:
+      - edit_decisions
+    checkpoint_required: false
+    human_approval_default: false
+
+  - name: compose
+    skill: pipelines/broadcast-explainer/compose-director
+    required_artifacts_in:
+      - edit_decisions
+      - asset_manifest
+    produces:
+      - render_report
+    tools_available:
+      - hyperframes_compose
+    checkpoint_required: true
+    human_approval_default: false
