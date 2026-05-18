@@ -117,12 +117,72 @@ projects/grid-squeeze/
 
 ## 7. Audio Plan
 
-- **Narrator:** ElevenLabs — single voice, male, investigative/authoritative tone. No character voices.
-- **Music:** Suno — two cues:
-  - `music_tension`: sparse industrial ambient, builds through Chs 1–3
-  - `music_land`: unresolved/uneasy, Ch 4 through end
-- **Subtitles:** HyperFrames caption block, white condensed sans on dark strip, burned into render.
-- **Mix:** narration at 0dB, music ducked to –18dB under speech.
+### TTS — Fish Speech S2-Pro (local, port 8080)
+
+- **Voice character:** e-girl — high-pitched, energetic, slightly anime-streamer quality. Contrast with the serious investigative content is intentional (makes the data land harder).
+- **Reference audio:** `references/egirl_v1/` — **must be created before generation.** Record or source ~15–30s of clean e-girl voice speech, place as `sample.wav` + `sample.lab` (transcript). Without this, S2-Pro uses its default voice timbre.
+- **reference_id:** `egirl_v1` — pass on every request or voice drifts between segments.
+- **Tag syntax:** S2-Pro uses `[natural language description]` brackets, NOT S1 parenthesis tags. Tags may appear anywhere in the text.
+
+**API parameters:**
+```python
+ServeTTSRequest(
+    text="...",           # with inline [tags]
+    reference_id="egirl_v1",
+    format="wav",
+    streaming=False,
+    normalize=True,
+    temperature=0.8,
+    top_p=0.8,
+    repetition_penalty=1.1,
+    use_memory_cache="on",
+)
+```
+
+**GPU management:** Kill ComfyUI (`kill $(pgrep -f "main.py.*18188")`) before generating. Fish Speech S2-Pro requires ~30s startup; health-check at `http://127.0.0.1:8080/v1/health` before sending requests.
+
+**Tag vocabulary for this episode:**
+
+| Tag | Use case |
+|-----|----------|
+| `[e-girl voice]` | Default reset — apply at segment start |
+| `[excited]` | Hook line, big stat reveals |
+| `[curious]` | Rhetorical questions ("But why?") |
+| `[whispering]` | Mechanism reveals, the "hidden" beats |
+| `[enthusiastic]` | Chapter opening lines |
+| `[concerned]` | Rate hike / who pays sections |
+| `[pause]` | Before key numbers and after hooks |
+| `[short pause]` | Clause transitions |
+| `[emphasis]` | Key numbers: "847 megawatts", "47 cities" |
+
+**Sample tagged script (hook):**
+```
+[e-girl voice][excited] Your electricity bill went up.
+[pause] Here's the building responsible.
+[short pause][curious] One building.
+[emphasis] Eight hundred and forty-seven megawatts.
+[whispering] And most people in that city have no idea it exists.
+```
+
+**Post-processing (required):**
+```bash
+ffmpeg -y -i narration_raw.wav \
+  -af loudnorm=I=-14:TP=-1.0:LRA=11 \
+  narration.wav
+```
+Target: –14 LUFS (YouTube/Instagram standard). Fish Speech outputs –15 to –24 LUFS raw.
+
+### Music — Suno
+
+Two cues:
+- `music_tension`: sparse industrial ambient, builds through Chs 1–3
+- `music_land`: unresolved/uneasy, Ch 4 through landing
+
+### Mix
+
+- Narration: 0dB reference
+- Music: ducked to –18dB under speech, –10dB in music-only gaps
+- Subtitles: HyperFrames caption block, white condensed sans on dark strip, burned into render
 
 ---
 
