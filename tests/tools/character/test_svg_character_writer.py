@@ -188,3 +188,54 @@ class TestSvgCharacterWriter:
         assert result.success
         assert Path(result.data["svg_path"]).exists()
         assert "test_char" in result.data["svg_path"]
+
+
+# --- CharacterRigRenderer upgrade tests ---
+
+from tools.character.character_animation import CharacterRigRenderer
+
+MINIMAL_TIMELINE = {
+    "version": "1.0",
+    "scenes": [{"id": "s1", "start_seconds": 0, "end_seconds": 3,
+                "actions": [{"character_id": "test_char", "pose": "idle"}]}],
+}
+
+class TestCharacterRigRendererRealSvg:
+    def test_preview_html_contains_real_svg_when_svg_content_provided(self, tmp_path):
+        tool = CharacterRigRenderer()
+        result = tool.execute({
+            "action_timeline": MINIMAL_TIMELINE,
+            "svg_content": MINIMAL_SVG,
+            "output_path": str(tmp_path / "preview.html"),
+        })
+        assert result.success
+        html = (tmp_path / "preview.html").read_text()
+        # Real SVG contains the character's actual IDs, not placeholder ellipses
+        assert 'id="body"' in html
+        assert 'id="head"' in html
+        # No placeholder geometry
+        assert "rgba(0,0,0,.18)" not in html
+
+    def test_falls_back_to_placeholder_when_no_svg_provided(self, tmp_path):
+        tool = CharacterRigRenderer()
+        result = tool.execute({
+            "action_timeline": MINIMAL_TIMELINE,
+            "output_path": str(tmp_path / "preview.html"),
+        })
+        assert result.success
+        html = (tmp_path / "preview.html").read_text()
+        # Placeholder geometry still present
+        assert "rgba(0,0,0,.18)" in html
+
+    def test_accepts_svg_path_input(self, tmp_path):
+        svg_file = tmp_path / "char.svg"
+        svg_file.write_text(MINIMAL_SVG, encoding="utf-8")
+        tool = CharacterRigRenderer()
+        result = tool.execute({
+            "action_timeline": MINIMAL_TIMELINE,
+            "svg_path": str(svg_file),
+            "output_path": str(tmp_path / "preview.html"),
+        })
+        assert result.success
+        html = (tmp_path / "preview.html").read_text()
+        assert 'id="body"' in html

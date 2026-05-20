@@ -9,6 +9,7 @@ preview/review outputs.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import time
@@ -65,6 +66,15 @@ def _normalize_style(style: Any) -> dict[str, Any]:
         if style.get(key):
             normalized[key] = str(style[key])
     return normalized
+
+
+def _unwrap_svg(svg_content: str) -> tuple[str, str]:
+    """Strip outer <svg> wrapper, returning (inner_markup, viewbox_value)."""
+    vb = re.search(r'viewBox=["\']([^"\']+)["\']', svg_content)
+    viewbox = vb.group(1) if vb else "0 0 512 512"
+    inner = re.sub(r"<svg[^>]*>", "", svg_content, count=1, flags=re.DOTALL)
+    inner = re.sub(r"</svg>\s*$", "", inner.strip(), flags=re.DOTALL)
+    return inner.strip(), viewbox
 
 
 def _render_preview_mp4(preview_path: Path, video_path: Path, duration_seconds: float, fps: int) -> None:
@@ -496,6 +506,8 @@ class CharacterRigRenderer(BaseTool):
             "render_video": {"type": "boolean", "default": False},
             "duration_seconds": {"type": "number", "minimum": 0.1, "default": 3},
             "fps": {"type": "integer", "minimum": 1, "default": 12},
+            "svg_content": {"type": "string", "description": "Real SVG markup from SvgCharacterWriter. Overrides placeholder generation."},
+            "svg_path":    {"type": "string", "description": "Path to character.svg written by SvgCharacterWriter."},
         },
     }
     output_schema = {
@@ -532,16 +544,39 @@ class CharacterRigRenderer(BaseTool):
             rig_characters = [{"character_id": cid} for cid in sorted(seen_ids)] or [
                 {"character_id": "main_character"}
             ]
-        count = len(rig_characters)
-        spacing = 620 / max(count, 1)
-        character_svgs = []
-        for index, character in enumerate(rig_characters):
-            cid = _slug(character.get("character_id", f"character-{index + 1}"))
-            x = 110 + spacing * index if count > 1 else 320
-            scale = 0.82 if count > 1 else 1
-            body_fill, head_fill = _character_color(index)
-            character_svgs.append(
-                f"""
+
+        # Real SVG support: use agent-generated character instead of placeholder blobs
+        real_svg_content: str | None = None
+        if inputs.get("svg_content"):
+            real_svg_content = inputs["svg_content"]
+        elif inputs.get("svg_path"):
+            svg_p = Path(inputs["svg_path"])
+            if svg_p.exists():
+                real_svg_content = svg_p.read_text(encoding="utf-8")
+
+        if real_svg_content:
+            inner_svg, viewbox = _unwrap_svg(real_svg_content)
+            cid = _slug(
+                rig_characters[0].get("character_id", "character-0")
+                if rig_characters else "character-0"
+            )
+            viewbox_attr = viewbox
+            character_svgs = [
+                f'<g class="character" id="character_{cid}" data-character="{cid}">'
+                f"{inner_svg}</g>"
+            ]
+        else:
+            count = len(rig_characters)
+            spacing = 620 / max(count, 1)
+            viewbox_attr = "0 0 640 640"
+            character_svgs = []
+            for index, character in enumerate(rig_characters):
+                cid = _slug(character.get("character_id", f"character-{index + 1}"))
+                x = 110 + spacing * index if count > 1 else 320
+                scale = 0.82 if count > 1 else 1
+                body_fill, head_fill = _character_color(index)
+                character_svgs.append(
+                    f"""
       <g class=\"character\" id=\"character_{cid}\" data-character=\"{cid}\" transform=\"translate({x - 320:.1f} 0) scale({scale})\">
         <ellipse class=\"shadow\" cx=\"320\" cy=\"560\" rx=\"120\" ry=\"22\" fill=\"rgba(0,0,0,.18)\" />
         <ellipse class=\"body outline\" cx=\"320\" cy=\"400\" rx=\"80\" ry=\"120\" fill=\"{body_fill}\" />
@@ -554,7 +589,7 @@ class CharacterRigRenderer(BaseTool):
         <path class=\"arm arm-left outline\" d=\"M255 360 C210 380 190 420 180 455\" fill=\"none\" />
         <path class=\"arm arm-right outline\" d=\"M385 360 C440 330 465 290 475 240\" fill=\"none\" />
       </g>"""
-            )
+                )
         html = f"""<!doctype html>
 <html lang=\"en\">
 <head>
@@ -572,7 +607,7 @@ class CharacterRigRenderer(BaseTool):
 </head>
 <body>
   <div id=\"stage\">
-    <svg viewBox=\"0 0 640 640\" role=\"img\" aria-label=\"Character preview\">
+    <svg viewBox=\"{viewbox_attr}\" role=\"img\" aria-label=\"Character preview\">
 {''.join(character_svgs)}
     </svg>
   </div>
@@ -651,7 +686,7 @@ class CharacterRigRenderer(BaseTool):
       [data-composition-id=\"character-scene\"] svg {{ width: 920px; position: absolute; left: 180px; top: 42px; overflow: visible; }}
       [data-composition-id=\"character-scene\"] .outline {{ stroke: #202632; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }}
     </style>
-    <svg viewBox=\"0 0 640 640\" role=\"img\" aria-label=\"Character animation scene\">
+    <svg viewBox=\"{viewbox_attr}\" role=\"img\" aria-label=\"Character animation scene\">
 {''.join(character_svgs)}
     </svg>
     <script src=\"https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js\"></script>
