@@ -76,6 +76,7 @@ assert ALL_MANIFESTS, "No pipeline manifests found"
 # an explicit reason. Everything else is required to follow the contract.
 _EXCLUDED_PIPELINES = {
     "framework-smoke": "minimal 2-stage smoke test, no compose stage",
+    "broadcast-explainer": "production-only pipeline, starts at script stage (no proposal/idea); runtime is locked to hyperframes by design — compose-director carries the constraint explicitly",
 }
 
 

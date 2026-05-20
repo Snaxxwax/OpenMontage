@@ -2,6 +2,13 @@
 
 Render the HyperFrames composition to final.mp4.
 
+## Runtime Constraint
+
+This pipeline is locked to `render_runtime: hyperframes`. The `edit_decisions`
+artifact must carry `render_runtime: "hyperframes"`. Do not route to Remotion or
+FFmpeg — if HyperFrames is unavailable, escalate the blocker to the user before
+proceeding.
+
 ## Render Command
 ```bash
 cd projects/grid-squeeze/hyperframes && \

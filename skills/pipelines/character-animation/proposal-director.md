@@ -24,16 +24,19 @@ Each option must include:
 
 Read `skills/meta/animation-runtime-selector.md` before recommending a runtime.
 
-When both Remotion and HyperFrames are available:
+Per AGENT_GUIDE.md HARD RULE: **present both runtimes** to the user when both
+Remotion and hyperframes are available. Do not silently default to either.
 
 - Remotion: best when the final composition needs deterministic React-rendered
   video, captions, audio, scene JSON, and final MP4 governance.
-- HyperFrames: best when the character scene is HTML/SVG/GSAP-heavy and benefits
-  from web-native authoring, lint, validate, and registry blocks.
+- HyperFrames (hyperframes): best when the character scene is HTML/SVG/GSAP-heavy
+  and benefits from web-native authoring, lint, validate, and registry blocks.
 - FFmpeg: post-processing only. Do not pick FFmpeg as the primary runtime for
   character acting.
 
-Wait for user approval before locking `render_runtime`.
+Present the tradeoffs above, recommend one based on the brief, then wait for user
+approval before locking `render_runtime`. Record a `render_runtime_selection` entry
+in `decision_log` listing both runtimes considered.
 
 ## Sample-First Rule
 
