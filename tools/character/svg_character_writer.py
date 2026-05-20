@@ -81,8 +81,8 @@ def _build_preview_html(
     pose_library: dict,
 ) -> str:
     name = asset_spec.get("name", "Character")
-    rig_json = json.dumps(rig_manifest)
-    pose_json = json.dumps(pose_library)
+    rig_json = json.dumps(rig_manifest).replace("</", "<\\/")
+    pose_json = json.dumps(pose_library).replace("</", "<\\/")
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -214,6 +214,11 @@ class SvgCharacterWriter(BaseTool):
         pose_library_in: dict = inputs["pose_library"]
         asset_spec: dict = inputs["asset_spec"]
         character_id = asset_spec["id"]
+        if inputs.get("output_dir") is None and not re.fullmatch(r'[a-zA-Z0-9_\-]+', character_id):
+            return ToolResult(
+                success=False,
+                error=f"character_id '{character_id}' contains invalid characters. Use only letters, digits, underscores, and hyphens.",
+            )
         output_dir = Path(
             inputs.get("output_dir") or f"projects/character-assets/{character_id}"
         )
@@ -231,6 +236,15 @@ class SvgCharacterWriter(BaseTool):
                     f"IDs found in SVG: {sorted(svg_ids)}"
                 ),
             )
+
+        # Validate rig part structure before conversion
+        for part in rig_manifest.get("parts", []):
+            pivot = part.get("pivot")
+            if not isinstance(pivot, dict) or "x" not in pivot or "y" not in pivot:
+                return ToolResult(
+                    success=False,
+                    error=f"Rig part '{part.get('id', '?')}' is missing a valid pivot {{x, y}}.",
+                )
 
         # Write raw files
         (output_dir / "character.svg").write_text(svg_content, encoding="utf-8")
