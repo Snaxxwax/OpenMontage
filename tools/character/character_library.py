@@ -116,14 +116,28 @@ class CharacterLibrary(BaseTool):
                 success=False,
                 error=f"Character '{character_id}' not found in library at {root}",
             )
+        required_files = ["asset_spec.json", "character.svg", "rig_manifest.json", "pose_library.json"]
+        missing_files = [f for f in required_files if not (char_dir / f).exists()]
+        if missing_files:
+            return ToolResult(
+                success=False,
+                error=f"Character '{character_id}' library entry is incomplete — missing: {missing_files}",
+            )
+        try:
+            asset_spec = json.loads((char_dir / "asset_spec.json").read_text())
+            svg_content = (char_dir / "character.svg").read_text(encoding="utf-8")
+            rig_manifest = json.loads((char_dir / "rig_manifest.json").read_text())
+            pose_library_data = json.loads((char_dir / "pose_library.json").read_text())
+        except (json.JSONDecodeError, OSError) as exc:
+            return ToolResult(success=False, error=f"Failed to read character '{character_id}': {exc}")
         return ToolResult(
             success=True,
             data={
                 "character_id": character_id,
-                "asset_spec":   json.loads((char_dir / "asset_spec.json").read_text()),
-                "svg_content":  (char_dir / "character.svg").read_text(encoding="utf-8"),
-                "rig_manifest": json.loads((char_dir / "rig_manifest.json").read_text()),
-                "pose_library": json.loads((char_dir / "pose_library.json").read_text()),
+                "asset_spec":   asset_spec,
+                "svg_content":  svg_content,
+                "rig_manifest": rig_manifest,
+                "pose_library": pose_library_data,
                 "preview_path": str(char_dir / "preview.html"),
             },
             duration_seconds=round(time.time() - start, 3),
@@ -151,9 +165,11 @@ class CharacterLibrary(BaseTool):
             json.dumps(inputs["pose_library"], indent=2), encoding="utf-8")
 
         if inputs.get("source_dir"):
-            preview_src = Path(inputs["source_dir"]) / "preview.html"
-            if preview_src.exists():
-                shutil.copy(preview_src, char_dir / "preview.html")
+            source_dir = Path(inputs["source_dir"]).resolve()
+            if source_dir.is_dir():
+                preview_src = source_dir / "preview.html"
+                if preview_src.exists():
+                    shutil.copy(preview_src, char_dir / "preview.html")
 
         return ToolResult(
             success=True,
