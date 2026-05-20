@@ -382,6 +382,23 @@ class TestPipelineManifests:
         )
         assert any(s["name"] == "sample" for s in active_sub_stages)
 
+    def test_svg_character_manifest_loads(self):
+        manifest = load_pipeline("svg-character")
+        assert manifest["name"] == "svg-character"
+        stages = get_stage_order(manifest)
+        assert "character_generation" in stages
+        assert "character_design" not in stages
+        assert "rig_plan" not in stages
+
+    def test_svg_character_listed(self):
+        assert "svg-character" in list_pipelines()
+
+    def test_svg_character_generation_stage_tools(self):
+        manifest = load_pipeline("svg-character")
+        stage = next(s for s in manifest["stages"] if s["name"] == "character_generation")
+        assert "svg_character_writer" in stage.get("tools_available", [])
+        assert "character_library" in stage.get("tools_available", [])
+
 
 # ---- BaseTool ----
 

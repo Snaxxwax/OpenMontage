@@ -1,0 +1,212 @@
+name: svg-character
+version: "0.1"
+description: >
+  SVG character video pipeline. The agent generates styled, rigged SVG characters
+  directly from text prompts guided by svg-character-animation and character-rigging
+  Layer 3 skills. Characters are animated to script-driven poses and audio using
+  HyperFrames or Remotion, then rendered to MP4. Supports a persistent character
+  library for cross-project visual consistency.
+category: animation
+stability: beta
+default_checkpoint_policy: guided
+
+reference_input:
+  supported: true
+  analysis_depth: standard
+  analysis_tools:
+    - video_analyzer
+    - transcript_fetcher
+    - scene_detect
+    - frame_sampler
+
+orchestration:
+  mode: executive-producer
+  skill: pipelines/character-animation/executive-producer
+  budget_default_usd: 2.00
+  max_revisions_per_stage: 3
+  max_send_backs: 3
+  max_wall_time_minutes: 20
+
+compatible_playbooks:
+  recommended:
+    - flat-motion-graphics
+  also_works:
+    - clean-professional
+    - minimalist-diagram
+  custom_allowed: true
+
+stages:
+  - name: research
+    skill: pipelines/svg-character/research-director
+    produces:
+      - research_brief
+    tools_available: []
+    checkpoint_required: false
+    human_approval_default: false
+    review_focus:
+      - Reference style and character-animation technique are researched when a reference exists
+      - At least 3 comparable character-animation examples are summarized
+    success_criteria:
+      - Schema-valid research_brief
+
+  - name: proposal
+    skill: pipelines/svg-character/proposal-director
+    required_artifacts_in:
+      - research_brief
+    produces:
+      - proposal_packet
+      - decision_log
+    tools_available:
+      - character_library
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Character library was checked before proposing new generation
+      - Concepts are differentiated and not a carbon copy of any reference
+      - Render runtime selection presents HyperFrames and Remotion when both available
+    success_criteria:
+      - Schema-valid proposal_packet
+      - User approval recorded before character generation begins
+
+  - name: script
+    skill: pipelines/svg-character/script-director
+    required_artifacts_in:
+      - proposal_packet
+    produces:
+      - script
+    tools_available:
+      - transcriber
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Script is written as action beats, not only narration
+      - Every emotional turn can be expressed with poses
+    success_criteria:
+      - Schema-valid script
+
+  - name: character_generation
+    skill: pipelines/svg-character/character-generation-director
+    required_artifacts_in:
+      - script
+      - proposal_packet
+    produces:
+      - character_design
+      - rig_plan
+      - pose_library
+    tools_available:
+      - svg_character_writer
+      - character_library
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - SVG part IDs match rig manifest exactly — SvgCharacterWriter must report success
+      - Required poses include idle, blink, talk_open, talk_closed, and at least one expression
+      - Character style matches the approved concept
+      - Character offered for library save after approval
+    success_criteria:
+      - Schema-valid character_design
+      - Schema-valid rig_plan
+      - Schema-valid pose_library
+      - character.svg written to projects/<name>/assets/characters/
+      - SvgCharacterWriter reports success with no validation errors
+
+  - name: scene_plan
+    skill: pipelines/svg-character/scene-director
+    required_artifacts_in:
+      - script
+      - character_design
+      - rig_plan
+      - pose_library
+    produces:
+      - scene_plan
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Scenes use character_scene or animation types with timed actions
+      - Each scene maps actions to poses from the pose library
+    success_criteria:
+      - Schema-valid scene_plan
+
+  - name: assets
+    skill: pipelines/svg-character/asset-director
+    required_artifacts_in:
+      - character_design
+      - rig_plan
+      - pose_library
+      - scene_plan
+    produces:
+      - asset_manifest
+    tools_available:
+      - image_selector
+      - tts_selector
+      - music_gen
+      - character_rig_renderer
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Character assets come from character_generation — do not regenerate them
+      - TTS and music are generated or sourced as planned
+      - svg_path from character_generation is passed to character_rig_renderer
+    success_criteria:
+      - Schema-valid asset_manifest
+
+  - name: edit
+    skill: pipelines/svg-character/edit-director
+    required_artifacts_in:
+      - scene_plan
+      - asset_manifest
+      - pose_library
+    produces:
+      - edit_decisions
+      - action_timeline
+    tools_available:
+      - action_timeline_compiler
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Action timeline preserves acting beats and emotional readability
+      - render_runtime carried from proposal unchanged
+    success_criteria:
+      - Schema-valid edit_decisions
+      - Schema-valid action_timeline
+
+  - name: compose
+    skill: pipelines/svg-character/compose-director
+    required_artifacts_in:
+      - edit_decisions
+      - action_timeline
+      - asset_manifest
+    produces:
+      - render_report
+      - final_review
+      - character_qa_report
+    tools_available:
+      - character_rig_renderer
+      - character_animation_reviewer
+      - video_compose
+      - audio_mixer
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Runtime chosen in proposal is the runtime actually used
+      - Final MP4 passes ffprobe and character QA
+    success_criteria:
+      - Schema-valid render_report
+      - Output exists and passes technical validation
+
+  - name: publish
+    skill: pipelines/svg-character/publish-director
+    required_artifacts_in:
+      - render_report
+      - final_review
+      - character_qa_report
+    produces:
+      - publish_log
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Metadata describes the character-animation style honestly
+    success_criteria:
+      - Schema-valid publish_log
