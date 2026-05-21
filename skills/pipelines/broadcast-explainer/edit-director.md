@@ -1,3 +1,8 @@
+> **DEPRECATED** — Content moved to `render-director.md`.
+> This file is kept for reference only. Do not use for new productions.
+
+---
+
 # Broadcast Explainer — Edit Director
 
 Produce edit_decisions.json mapping scene timing to audio assets.

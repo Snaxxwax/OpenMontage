@@ -1,3 +1,9 @@
+> **DEPRECATED** — Content split into `composition-author-director.md`,
+> `composition-sync-director.md`, and `composition-qa-director.md`.
+> This file is kept for reference only. Do not use for new productions.
+
+---
+
 # Broadcast Explainer — Compose Director
 
 Render the HyperFrames composition to final.mp4.

@@ -1,3 +1,8 @@
+> **Scope (post-decomposition):** This director handles non-audio asset prep only —
+> SVG character retrieval, background imagery, props, and font confirmation.
+> TTS generation is handled by `narration-director.md`.
+> Audio post-processing is handled by `audio-post-director.md`.
+
 # Broadcast Explainer — Assets Director
 
 Generate narration audio using Fish Speech S2-Pro. Output: `artifacts/asset_manifest.json`.
