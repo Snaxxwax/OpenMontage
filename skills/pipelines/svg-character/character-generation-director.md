@@ -1,240 +1,185 @@
-# Character Generation Director
+# Character Generation Director — svg-character
 
-You are running the `character_generation` stage of the `svg-character` pipeline.
-This stage replaces the two-stage `character_design → rig_plan` sequence with a
-single coherent pass: you generate the SVG, rig manifest, and pose library yourself,
-then validate and persist them with `SvgCharacterWriter`.
+You are the character-generation agent. Your job is to generate a complete SVG
+character with hierarchical joint rig, validate it, write it to disk, preview it,
+and ask the user what to do next.
 
-## Step 0 — Read Layer 3 skills first
+## Step 0: Read the Layer 3 skills
 
-Before generating anything, read these two skills:
+Before generating anything, read:
+- `.agents/skills/svg-character-animation/` — animation patterns, GSAP integration
+- `.agents/skills/character-rigging/` — rig conventions, pivot rules
 
-1. `.agents/skills/hyperframes/SKILL.md` — for HyperFrames SVG animation conventions
-2. The `svg-character-animation` and `character-rigging` skills referenced in
-   `SvgCharacterWriter.agent_skills`
+## Step 1: Check the character library
 
-These contain the SVG structure requirements, part naming conventions, and pivot
-point guidance you need. Do not skip this step.
+```python
+# Via CharacterSpecGenerator with action="library_check"
+# or directly via CharacterLibrary
+from tools.character.character_library import CharacterLibrary
+lib = CharacterLibrary()
+matches = lib.list()
+# Present to user: {id, name, style, description, preview_path}
+```
 
-## Step 1 — Check the character library
+If matches exist, ask the user: "Reuse an existing character, modify one, or generate new?"
 
-Call `CharacterLibrary` with `action=list`.
+## Step 2: Generate the SVG
 
-If any character matches the brief (similar style, role, or description), present
-the user with three options:
+Use the **hierarchical local joint group model**. This is the only permitted rig model.
+Flat global-pivot rigs are not acceptable.
 
-> "I found a saved character — **[Name]** — that matches this brief.
-> A) Reuse it as-is  B) Load it as a starting reference  C) Generate a new character"
+### Hierarchical model rules
 
-- **A (reuse):** load the saved character bundle, skip to Step 5.
-- **B (reference):** load the SVG and note the style, then proceed with generation
-  using the existing character as a visual reference.
-- **C (new):** proceed directly.
+- Joint groups (`<g id="...-joint">`) rotate around their local `(0,0)`.
+  The joint's `transform="translate(x,y)"` positions it relative to its parent.
+- Art groups (`<g id="...-art">`) are direct children of their joint group.
+  They contain the visual geometry (shapes, paths). No geometry goes directly inside a joint group.
+- Each limb segment is a separate joint group nested inside its parent's joint group.
 
-## Step 2 — Generate the SVG character
+### Required nesting hierarchy
 
-Using the approved concept from `proposal_packet` and the character role from
-`script`, generate a complete SVG character inline.
+```
+<g id="body">                          ← root-level, no rotation
+  <g id="body-art">...</g>
 
-### Required SVG structure
+<g id="head">                          ← root-level
+  <g id="head-art">...</g>
+  <g id="eyes-open-joint">
+    <g id="eyes-open-art">...</g>
+  </g>
+  <g id="eyes-closed-joint" style="display:none">
+    <g id="eyes-closed-art">...</g>
+  </g>
+  <g id="mouth-neutral-joint">
+    <g id="mouth-neutral-art">...</g>
+  </g>
+  <g id="mouth-open-joint" style="display:none">
+    <g id="mouth-open-art">...</g>
+  </g>
 
-The SVG **must** use `viewBox="0 0 512 512"` and include a `<style>` block with
-idle CSS animations. Every anatomical group **must** have an `id` attribute that
-exactly matches a part in the rig manifest you will generate in Step 3.
+<g id="upper-arm-l-joint" transform="translate(SHOULDER_X, SHOULDER_Y)">
+  <g id="upper-arm-l-art">...</g>
+  <g id="forearm-l-joint" transform="translate(0, UPPER_ARM_LENGTH)">
+    <g id="forearm-l-art">...</g>
+    <g id="hand-l-joint" transform="translate(0, FOREARM_LENGTH)">
+      <g id="hand-l-art">...</g>
+    </g>
+  </g>
+</g>
 
-**Mandatory `<g>` IDs (always present):**
-- `body` — torso, shoulders, background attire. `transform-origin: bottom center`
-- `head` — skull, hair, face shape. `transform-origin: bottom center`
-- `eyes-open` — primary visible eyes
-- `eyes-closed` — hidden by default (`style="display:none"`)
-- `mouth-neutral` — resting mouth
-- `mouth-open` — talking mouth, hidden by default (`style="display:none"`)
+<g id="upper-arm-r-joint" transform="translate(SHOULDER_X, SHOULDER_Y)">
+  ... (mirror of left arm)
+</g>
 
-**Additional IDs as needed by the character type** (include in rig manifest):
-- `arm-left`, `arm-right` — for humanoid characters
-- `leg-left`, `leg-right` — if legs are visible and animated
-- `tail`, `ears`, `hat`, `prop` — for non-humanoid features
+<g id="upper-leg-l-joint" transform="translate(HIP_X, HIP_Y)">
+  <g id="upper-leg-l-art">...</g>
+  <g id="lower-leg-l-joint" transform="translate(0, UPPER_LEG_LENGTH)">
+    <g id="lower-leg-l-art">...</g>
+    <g id="foot-l-joint" transform="translate(0, LOWER_LEG_LENGTH)">
+      <g id="foot-l-art">...</g>
+    </g>
+  </g>
+</g>
 
-**CSS animations to include:**
-- Idle sway on `#body` and `#head`: subtle rotation ±2–4°, 3–5s `ease-in-out infinite`
-- Blink on `#eyes-open`/`#eyes-closed`: `@keyframes blink` that toggles visibility
-  every 3–5s for ~0.15s
-- All animations use `transform-origin: bottom center` on body/head groups
+<g id="upper-leg-r-joint" ...>...</g>
+```
 
-**Style guidance** (from the approved concept):
-- Flat Vector: bold solid fills, geometric shapes, clean paths
-- Hand-Drawn: organic paths, irregular strokes, slightly imperfect geometry
-- Cyberpunk: neon fills, glow effects via `<filter>`, high-contrast outlines
+### Why local joints
 
-**Do not use:**
-- `Math.random()` or dynamic JS in the SVG
-- External image references
-- Fonts that require loading
+When you animate `upper-arm-l-joint` with `rotation: 30`, the forearm and hand
+rotate with it automatically because they're children. The forearm can then be
+independently rotated on top. This is how real skeletal animation works. Without
+nesting, every limb segment needs a manually-computed global rotation.
 
-## Step 3 — Generate the rig manifest
+## Step 3: Generate the rig manifest
 
-Generate a VectorForge-style rig manifest. Every `id` in `parts` **must** exactly
-match a `<g id="...">` in the SVG you generated in Step 2.
+Every part gets:
+- `id` — matches the `<g id>` in SVG exactly
+- `parentId` — the `id` of the parent `<g>` in SVG (null for root-level)
+- `partType` — `"joint"` or `"art"`
+- `pivot` — `{x: 0, y: 0}` for all joint groups (they rotate at their own origin)
 
 ```json
 {
   "version": "1.0",
-  "assetId": "<character_id>",
+  "assetId": "my-character",
   "parts": [
-    { "id": "body",        "parent": null,   "pivot": {"x": 256, "y": 420}, "depth": 0 },
-    { "id": "head",        "parent": "body", "pivot": {"x": 256, "y": 200}, "depth": 1 },
-    { "id": "eyes-open",   "parent": "head", "pivot": {"x": 256, "y": 185}, "depth": 2 },
-    { "id": "eyes-closed", "parent": "head", "pivot": {"x": 256, "y": 185}, "depth": 2 },
-    { "id": "mouth-neutral","parent":"head", "pivot": {"x": 256, "y": 240}, "depth": 2 },
-    { "id": "mouth-open",  "parent": "head", "pivot": {"x": 256, "y": 248}, "depth": 2 }
+    {"id": "upper-arm-l-joint", "parentId": null,                "partType": "joint", "pivot": {"x": 0, "y": 0}},
+    {"id": "upper-arm-l-art",   "parentId": "upper-arm-l-joint", "partType": "art",   "pivot": {"x": 0, "y": 0}},
+    {"id": "forearm-l-joint",   "parentId": "upper-arm-l-joint", "partType": "joint", "pivot": {"x": 0, "y": 0}},
+    {"id": "forearm-l-art",     "parentId": "forearm-l-joint",   "partType": "art",   "pivot": {"x": 0, "y": 0}},
+    {"id": "hand-l-joint",      "parentId": "forearm-l-joint",   "partType": "joint", "pivot": {"x": 0, "y": 0}}
   ]
 }
 ```
 
-**Pivot point rules:**
-- Pivot is the center of rotation in SVG viewbox coordinates (0–512 range)
-- Body pivot: center-bottom of the torso (where it meets the ground)
-- Head pivot: chin/neck junction
-- Eyes/mouth: their own center
-- Arms: shoulder joint
-- Legs: hip joint
+## Step 4: Generate the pose library
 
-## Step 4 — Generate the pose library
-
-Generate a VectorForge-style pose library. Required poses:
-
-| id | name | What it expresses |
-|----|------|-------------------|
-| `idle` | Idle | Neutral standing, slight weight |
-| `blink` | Blink | Eyes closed (handled by CSS, transforms empty) |
-| `talk_open` | Talk (Open) | Mouth open, slight head tilt |
-| `talk_closed` | Talk (Closed) | Mouth neutral, slight head forward |
-| `surprised` | Surprised | Head back, eyes wide (scaleY > 1 on eyes-open) |
-| `point_left` | Point Left | Arm extended left (if arm parts exist) |
-| `point_right` | Point Right | Arm extended right (if arm parts exist) |
-
-Each pose's `transforms` maps `part_id → {rotation?, x?, y?, scaleX?, scaleY?}`.
-Only include parts that actually change. Idle transforms should all be 0/1 (rest pose).
-
-## Step 5 — Construct the asset_spec
+Poses target **joint IDs** (not art IDs) with rotation values:
 
 ```json
 {
-  "id": "<slug derived from character name>",
-  "name": "<character display name>",
-  "description": "<one sentence describing the character>",
-  "style": "<visual style from proposal>",
-  "colors": {
-    "body": "#hex",
-    "skin": "#hex",
-    "<other key colors>": "#hex"
-  }
+  "assetId": "my-character",
+  "poses": [
+    {
+      "id": "idle",
+      "name": "Idle",
+      "transforms": {
+        "head": {"rotation": 0},
+        "upper-arm-l-joint": {"rotation": -10},
+        "upper-arm-r-joint": {"rotation": 10}
+      }
+    },
+    {
+      "id": "point_right",
+      "name": "Point Right",
+      "transforms": {
+        "upper-arm-r-joint": {"rotation": -60},
+        "forearm-r-joint":   {"rotation": -20}
+      }
+    }
+  ]
 }
 ```
 
-## Step 6 — Call SvgCharacterWriter
+Required poses: `idle`, `blink`, `talk_open`, `talk_closed`, `point_left`,
+`point_right`, `walk_contact`, `walk_passing`, `surprised`.
+
+## Step 5: Call SvgCharacterWriter
 
 ```python
-result = svg_character_writer.execute({
-    "svg_content":  "<the SVG you generated>",
-    "rig_manifest": { ... },
-    "pose_library": { ... },
-    "asset_spec":   { ... },
-    "output_dir": "projects/<project_name>/assets/characters/<character_id>/",
-})
-```
+from tools.character.svg_character_writer import SvgCharacterWriter
 
-If `result.success` is False, read `result.error`. It will list specific `<g>` IDs
-that are missing from the SVG. Fix the SVG (add the missing groups) and retry.
-Maximum 3 attempts before escalating to the user.
-
-If `result.success` is True:
-- `result.data["rig_plan"]` is the schema-valid OpenMontage `rig_plan` artifact
-- `result.data["pose_library"]` is the schema-valid OpenMontage `pose_library` artifact
-- `result.data["svg_path"]` is the path to `character.svg`
-- `result.data["preview_path"]` is the path to `preview.html`
-
-## Step 7 — Preview prompt
-
-Ask the user:
-
-> "Character generated. Want to preview it before continuing? (yes / no)"
-
-**If yes:**
-1. Try to open `result.data["preview_path"]` using Playwright or Chrome DevTools MCP.
-   Navigate to the file URL, wait 2s for GSAP to initialize, take a screenshot.
-   Describe what you see: character name, colors, visible pose buttons.
-2. If no MCP browser is available, output:
-   `Open in your browser: file://<preview_path>`
-3. Ask: "Does this character look right? (approve / regenerate / adjust description)"
-   - **approve** → proceed to Step 8
-   - **regenerate** → repeat from Step 2 with the same prompt (counts as one revision)
-   - **adjust** → user provides updated description, repeat from Step 2
-
-**If no:** proceed directly to Step 8.
-
-## Step 8 — Save to library prompt
-
-Ask the user:
-
-> "Save this character to your library for reuse in future videos? (yes / no)"
-
-**If yes:**
-```python
-character_library.execute({
-    "action": "save",
-    "asset_spec":   asset_spec,
-    "svg_content":  svg_content,
+result = SvgCharacterWriter().execute({
+    "svg_content": svg_string,
     "rig_manifest": rig_manifest,
     "pose_library": pose_library,
-    "source_dir":   result.data["output_dir"],
+    "asset_spec": asset_spec,
+    "output_dir": "projects/<project>/assets/characters/<character-id>/",
 })
 ```
 
-**If no:** continue.
+If validation fails, fix the specific error reported. The most common errors:
+- `SVG is missing <g> elements` → add missing `<g id>` to SVG
+- `SVG nesting mismatch` → nest the SVG `<g>` inside its parent joint group
+- `missing a valid pivot` → add `"pivot": {"x": 0, "y": 0}` to the part
 
-## Step 9 — Write stage artifacts
+## Step 6: Preview + single combined question
 
-Write three JSON artifacts to `projects/<project_name>/artifacts/`:
+After SvgCharacterWriter succeeds:
 
-**`character_design.json`** — construct from asset_spec + script/proposal context:
-```json
-{
-  "version": "1.0",
-  "style": {
-    "visual_style": "<from proposal>",
-    "palette": ["<hex colors from asset_spec.colors>"],
-    "line_style": "outline"
-  },
-  "characters": [{
-    "id": "<asset_spec.id>",
-    "display_name": "<asset_spec.name>",
-    "role": "main",
-    "body_type": "<humanoid / animal / robot / abstract>",
-    "style": "<asset_spec.style>",
-    "required_emotions": ["neutral", "happy", "surprised", "focused"],
-    "required_actions": ["idle", "talk", "point", "react"]
-  }]
-}
-```
+1. Open `preview.html` with Playwright or Chrome DevTools MCP. Take a screenshot.
+   Describe: poses visible, proportions, any rendering artifacts.
+   Fallback if no browser MCP: output `Preview: file:///path/to/preview.html`
 
-**`rig_plan.json`** — write `result.data["rig_plan"]` directly.
+2. Ask **one combined question**:
 
-**`pose_library.json`** — write `result.data["pose_library"]` directly.
+   > "Approve, adjust, regenerate, or save to library?"
 
-Validate each against its schema before checkpointing:
-```python
-validate_artifact(character_design, "character_design")
-validate_artifact(rig_plan, "rig_plan")
-validate_artifact(pose_library, "pose_library")
-```
+   - **Approve** → continue to next stage (character not saved to library)
+   - **Adjust** → user provides updated description; re-run generation (counts against `max_revisions_per_stage: 3`)
+   - **Regenerate** → re-run with same prompt (counts against limit)
+   - **Save to library** → `CharacterLibrary.save()`, then continue
 
-## Step 10 — Checkpoint
-
-Stage complete. Present to user:
-- Character name, style, and saved path
-- Pose library summary (list of pose IDs)
-- Whether character was saved to library
-- Preview path (if generated)
-
-Wait for human approval before advancing to `scene_plan`.
+   Never ask "do you want to preview?" first — preview is automatic.
+   Never split this into two separate questions.
