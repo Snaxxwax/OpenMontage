@@ -21,8 +21,12 @@ required_skills:
   - pipelines/broadcast-explainer/script-director
   - pipelines/broadcast-explainer/scene-plan-director
   - pipelines/broadcast-explainer/assets-director
-  - pipelines/broadcast-explainer/edit-director
-  - pipelines/broadcast-explainer/compose-director
+  - pipelines/broadcast-explainer/narration-director
+  - pipelines/broadcast-explainer/audio-post-director
+  - pipelines/broadcast-explainer/composition-author-director
+  - pipelines/broadcast-explainer/composition-sync-director
+  - pipelines/broadcast-explainer/composition-qa-director
+  - pipelines/broadcast-explainer/render-director
 
 orchestration:
   mode: sequential
@@ -56,26 +60,61 @@ stages:
       - script
     produces:
       - asset_manifest
-    tools_available:
-      - fish_speech_tts
     checkpoint_required: false
     human_approval_default: false
 
-  - name: edit
-    skill: pipelines/broadcast-explainer/edit-director
+  - name: narration
+    skill: pipelines/broadcast-explainer/narration-director
+    required_artifacts_in:
+      - script
+    produces: []
+    notes: "Writes assets/audio/{section_id}_raw.wav per section"
+    checkpoint_required: false
+    human_approval_default: false
+
+  - name: audio_post
+    skill: pipelines/broadcast-explainer/audio-post-director
+    required_artifacts_in:
+      - script
+    produces: []
+    notes: "Writes normalized WAVs, narration_full.wav, artifacts/audio_timing.json"
+    checkpoint_required: false
+    human_approval_default: false
+
+  - name: composition_author
+    skill: pipelines/broadcast-explainer/composition-author-director
     required_artifacts_in:
       - scene_plan
-      - asset_manifest
-    produces:
-      - edit_decisions
+      - script
+    produces: []
+    notes: "Writes index.draft.html with TIMINGS placeholders"
+    tools_available:
+      - hyperframes_compose
     checkpoint_required: false
     human_approval_default: false
 
-  - name: compose
-    skill: pipelines/broadcast-explainer/compose-director
+  - name: composition_sync
+    skill: pipelines/broadcast-explainer/composition-sync-director
     required_artifacts_in:
-      - edit_decisions
-      - asset_manifest
+      - scene_plan
+    produces: []
+    notes: "Reads index.draft.html + audio_timing.json, writes index.synced.html"
+    checkpoint_required: false
+    human_approval_default: false
+
+  - name: composition_qa
+    skill: pipelines/broadcast-explainer/composition-qa-director
+    required_artifacts_in:
+      - scene_plan
+    produces: []
+    notes: "Runs lint/validate/animation-map on index.synced.html, writes qa_report.json"
+    checkpoint_required: true
+    human_approval_default: true
+
+  - name: render
+    skill: pipelines/broadcast-explainer/render-director
+    required_artifacts_in:
+      - scene_plan
     produces:
       - render_report
     tools_available:
