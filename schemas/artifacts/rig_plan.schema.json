@@ -26,7 +26,16 @@
                 "kind": { "type": "string" },
                 "layer": { "type": "integer" },
                 "asset_path": { "type": "string" },
-                "parent": { "type": "string" }
+                "parent": { "type": "string" },
+                "parentId": {
+                  "description": "ID of the parent <g> joint group in SVG. Null means root-level.",
+                  "oneOf": [{ "type": "string" }, { "type": "null" }]
+                },
+                "partType": {
+                  "description": "joint = rotation group at local (0,0); art = visual geometry child of a joint",
+                  "type": "string",
+                  "enum": ["joint", "art"]
+                }
               },
               "additionalProperties": false
             }

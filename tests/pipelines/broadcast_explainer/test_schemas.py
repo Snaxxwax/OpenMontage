@@ -115,3 +115,48 @@ def test_qa_report_invalid_severity():
     }
     with pytest.raises(jsonschema.ValidationError):
         jsonschema.validate(bad, schema)
+
+
+# ── rig_plan parentId + partType ──────────────────────────────────────────────
+
+VALID_RIG_PLAN_HIERARCHICAL = {
+    "version": "1.0",
+    "characters": [
+        {
+            "character_id": "test_char",
+            "rig_type": "svg_rig",
+            "parts": [
+                {"id": "upper-arm-l-joint", "kind": "joint", "layer": 0,
+                 "parentId": None, "partType": "joint"},
+                {"id": "upper-arm-l-art",   "kind": "art",   "layer": 1,
+                 "parentId": "upper-arm-l-joint", "partType": "art"},
+                {"id": "forearm-l-joint",   "kind": "joint", "layer": 0,
+                 "parentId": "upper-arm-l-joint", "partType": "joint"},
+            ],
+            "joints": {
+                "upper-arm-l-joint": {"pivot": [0, 0]},
+                "forearm-l-joint":   {"pivot": [0, 0]},
+            },
+            "layers": ["upper-arm-l-joint", "upper-arm-l-art", "forearm-l-joint"],
+            "required_poses": ["idle"],
+        }
+    ]
+}
+
+
+def test_rig_plan_hierarchical_valid():
+    schema = load_schema("rig_plan")
+    jsonschema.validate(VALID_RIG_PLAN_HIERARCHICAL, schema)
+
+
+def test_rig_plan_invalid_part_type():
+    schema = load_schema("rig_plan")
+    bad = {
+        **VALID_RIG_PLAN_HIERARCHICAL,
+        "characters": [{
+            **VALID_RIG_PLAN_HIERARCHICAL["characters"][0],
+            "parts": [{"id": "x", "kind": "joint", "layer": 0, "partType": "blob"}],
+        }],
+    }
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(bad, schema)
