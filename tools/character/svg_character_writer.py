@@ -24,6 +24,34 @@ def _extract_group_ids(svg_content: str) -> set[str]:
     return set(re.findall(r'<g[^>]+\bid="([^"]+)"', svg_content))
 
 
+def _extract_parent_map(svg_content: str) -> dict[str, str | None]:
+    """Map each <g id="..."> to its nearest ancestor <g id="..."> (or None)."""
+    import xml.etree.ElementTree as ET
+    # Strip namespace prefixes so tag matching works on bare tag names
+    cleaned = re.sub(r'\sxmlns(?::\w+)?="[^"]+"', '', svg_content)
+    try:
+        root = ET.fromstring(cleaned)
+    except ET.ParseError as exc:
+        raise ValueError(f"SVG XML parse error: {exc}") from exc
+
+    result: dict[str, str | None] = {}
+
+    def walk(element: ET.Element, nearest_g_id: str | None) -> None:
+        tag = element.tag.split("}")[-1] if "}" in element.tag else element.tag
+        gid = element.get("id") if tag == "g" else None
+        if gid is not None:
+            result[gid] = nearest_g_id
+            for child in element:
+                walk(child, gid)
+        else:
+            for child in element:
+                walk(child, nearest_g_id)
+
+    for child in root:
+        walk(child, None)
+    return result
+
+
 def _to_rig_plan(asset_spec: dict, rig_manifest: dict, pose_library: dict) -> dict:
     """Convert VectorForge rig_manifest → OpenMontage rig_plan artifact."""
     character_id = asset_spec["id"]
@@ -236,6 +264,25 @@ class SvgCharacterWriter(BaseTool):
                     f"IDs found in SVG: {sorted(svg_ids)}"
                 ),
             )
+
+        # Validate: SVG nesting matches manifest parentId fields
+        parent_map = _extract_parent_map(svg_content)
+        for part in rig_manifest.get("parts", []):
+            part_id = part["id"]
+            declared_parent = part.get("parentId")  # None means root-level
+            if declared_parent is None and "parentId" not in part:
+                continue  # Part uses old 'parent' field — skip nesting check
+            actual_parent = parent_map.get(part_id)  # None means root-level in SVG
+            if declared_parent != actual_parent:
+                return ToolResult(
+                    success=False,
+                    error=(
+                        f"SVG nesting mismatch for '{part_id}': "
+                        f"manifest parentId='{declared_parent}' but SVG parent is '{actual_parent}'. "
+                        f"Check that the <g id=\"{part_id}\"> element is nested inside "
+                        f"<g id=\"{declared_parent}\"> in the SVG."
+                    ),
+                )
 
         # Validate rig part structure before conversion
         for part in rig_manifest.get("parts", []):

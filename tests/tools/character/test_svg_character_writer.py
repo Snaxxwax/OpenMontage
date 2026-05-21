@@ -239,3 +239,122 @@ class TestCharacterRigRendererRealSvg:
         assert result.success
         html = (tmp_path / "preview.html").read_text()
         assert 'id="body"' in html
+
+
+# ── Hierarchical SVG fixture ──────────────────────────────────────────────────
+
+HIERARCHICAL_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <g id="body"><rect x="156" y="280" width="200" height="200" fill="#4a9eff"/></g>
+  <g id="head">
+    <g id="head-art"><circle cx="256" cy="200" r="90" fill="#ffcc88"/></g>
+    <g id="eyes-open-joint">
+      <g id="eyes-open-art">
+        <circle cx="225" cy="185" r="12" fill="#333"/>
+        <circle cx="287" cy="185" r="12" fill="#333"/>
+      </g>
+    </g>
+    <g id="mouth-neutral-joint">
+      <g id="mouth-neutral-art">
+        <path d="M225 240 Q256 265 287 240" fill="none" stroke="#333" stroke-width="4"/>
+      </g>
+    </g>
+  </g>
+  <g id="upper-arm-l-joint" transform="translate(156,300)">
+    <g id="upper-arm-l-art"><rect x="-15" y="0" width="30" height="80" fill="#4a9eff"/></g>
+    <g id="forearm-l-joint" transform="translate(0,80)">
+      <g id="forearm-l-art"><rect x="-12" y="0" width="24" height="70" fill="#4a9eff"/></g>
+    </g>
+  </g>
+</svg>"""
+
+HIERARCHICAL_RIG = {
+    "version": "1.0",
+    "assetId": "test_hierarchical",
+    "parts": [
+        {"id": "body",              "parentId": None,               "pivot": {"x": 256, "y": 400}},
+        {"id": "head",              "parentId": None,               "pivot": {"x": 256, "y": 200}},
+        {"id": "head-art",          "parentId": "head",             "pivot": {"x": 0, "y": 0}},
+        {"id": "eyes-open-joint",   "parentId": "head",             "pivot": {"x": 0, "y": 0}},
+        {"id": "eyes-open-art",     "parentId": "eyes-open-joint",  "pivot": {"x": 0, "y": 0}},
+        {"id": "mouth-neutral-joint","parentId": "head",            "pivot": {"x": 0, "y": 0}},
+        {"id": "mouth-neutral-art", "parentId": "mouth-neutral-joint","pivot": {"x": 0, "y": 0}},
+        {"id": "upper-arm-l-joint", "parentId": None,               "pivot": {"x": 0, "y": 0}},
+        {"id": "upper-arm-l-art",   "parentId": "upper-arm-l-joint","pivot": {"x": 0, "y": 0}},
+        {"id": "forearm-l-joint",   "parentId": "upper-arm-l-joint","pivot": {"x": 0, "y": 0}},
+        {"id": "forearm-l-art",     "parentId": "forearm-l-joint",  "pivot": {"x": 0, "y": 0}},
+    ],
+}
+
+HIERARCHICAL_POSES = {
+    "assetId": "test_hierarchical",
+    "poses": [
+        {"id": "idle", "name": "Idle", "transforms": {"head": {"rotation": 0}}},
+        {"id": "talk_open", "name": "Talk Open",
+         "transforms": {"mouth-neutral-joint": {"scaleY": 0}, "eyes-open-joint": {"scaleY": 1}}},
+    ],
+}
+
+HIERARCHICAL_ASSET_SPEC = {
+    "id": "test_hierarchical",
+    "name": "Hierarchical Test Character",
+    "style": "test",
+    "description": "Test character with hierarchical rig",
+    "viewBox": "0 0 512 512",
+}
+
+
+def test_hierarchical_rig_valid(tmp_path):
+    """Valid hierarchical SVG with matching parentId passes."""
+    writer = SvgCharacterWriter()
+    result = writer.execute({
+        "svg_content": HIERARCHICAL_SVG,
+        "rig_manifest": HIERARCHICAL_RIG,
+        "pose_library": HIERARCHICAL_POSES,
+        "asset_spec": HIERARCHICAL_ASSET_SPEC,
+        "output_dir": str(tmp_path),
+    })
+    assert result.success, result.error
+
+
+def test_nesting_mismatch_fails(tmp_path):
+    """parentId in manifest that doesn't match SVG nesting fails validation."""
+    bad_rig = {
+        **HIERARCHICAL_RIG,
+        "parts": [
+            *HIERARCHICAL_RIG["parts"][:2],
+            # forearm-l-joint claims parent is body, but SVG has it inside upper-arm-l-joint
+            {"id": "forearm-l-joint", "parentId": "body", "pivot": {"x": 0, "y": 0}},
+        ],
+    }
+    writer = SvgCharacterWriter()
+    result = writer.execute({
+        "svg_content": HIERARCHICAL_SVG,
+        "rig_manifest": bad_rig,
+        "pose_library": HIERARCHICAL_POSES,
+        "asset_spec": HIERARCHICAL_ASSET_SPEC,
+        "output_dir": str(tmp_path),
+    })
+    assert not result.success
+    assert "forearm-l-joint" in result.error
+    assert "nesting" in result.error.lower() or "parent" in result.error.lower()
+
+
+def test_parentid_none_at_svg_root_passes(tmp_path):
+    """Part with parentId=None that is a top-level SVG group passes."""
+    writer = SvgCharacterWriter()
+    rig = {
+        "version": "1.0",
+        "assetId": "test_hierarchical",
+        "parts": [
+            {"id": "body", "parentId": None, "pivot": {"x": 256, "y": 400}},
+            {"id": "head", "parentId": None, "pivot": {"x": 256, "y": 200}},
+        ],
+    }
+    result = writer.execute({
+        "svg_content": HIERARCHICAL_SVG,
+        "rig_manifest": rig,
+        "pose_library": HIERARCHICAL_POSES,
+        "asset_spec": HIERARCHICAL_ASSET_SPEC,
+        "output_dir": str(tmp_path),
+    })
+    assert result.success, result.error
