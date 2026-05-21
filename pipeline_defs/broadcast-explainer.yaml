@@ -108,6 +108,7 @@ stages:
     skill: pipelines/broadcast-explainer/composition-qa-director
     required_artifacts_in:
       - scene_plan
+      - audio_timing
     produces: []
     notes: "Runs lint/validate/animation-map on index.synced.html, writes qa_report.json"
     checkpoint_required: true

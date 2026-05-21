@@ -37,7 +37,11 @@ def _extract_parent_map(svg_content: str) -> dict[str, str | None]:
     result: dict[str, str | None] = {}
 
     def walk(element: ET.Element, nearest_g_id: str | None) -> None:
-        tag = element.tag.split("}")[-1] if "}" in element.tag else element.tag
+        tag = element.tag
+        if "}" in tag:
+            tag = tag.split("}")[-1]
+        elif ":" in tag:
+            tag = tag.split(":")[-1]
         gid = element.get("id") if tag == "g" else None
         if gid is not None:
             result[gid] = nearest_g_id
@@ -274,22 +278,13 @@ class SvgCharacterWriter(BaseTool):
                 continue  # Part uses old 'parent' field — skip nesting check
             actual_parent = parent_map.get(part_id)  # None means root-level in SVG
             if declared_parent != actual_parent:
-                if declared_parent is None:
-                    fix_hint = (
-                        f"Move <g id=\"{part_id}\"> to the top level of the SVG "
-                        f"(not nested inside any <g>)."
-                    )
-                else:
-                    fix_hint = (
-                        f"Check that the <g id=\"{part_id}\"> element is nested inside "
-                        f"<g id=\"{declared_parent}\"> in the SVG."
-                    )
                 return ToolResult(
                     success=False,
                     error=(
                         f"SVG nesting mismatch for '{part_id}': "
                         f"manifest parentId='{declared_parent}' but SVG parent is '{actual_parent}'. "
-                        f"{fix_hint}"
+                        f"Check that the <g id=\"{part_id}\"> element is nested inside "
+                        f"<g id=\"{declared_parent}\"> in the SVG."
                     ),
                 )
 

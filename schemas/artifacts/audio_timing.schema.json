@@ -8,6 +8,10 @@
   "properties": {
     "version": { "type": "string", "const": "1.0" },
     "total_duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+    "notes": {
+      "description": "Optional deviation notes (e.g., loudnorm target lowered to -16 LUFS).",
+      "type": "string"
+    },
     "sections": {
       "type": "array",
       "minItems": 1,

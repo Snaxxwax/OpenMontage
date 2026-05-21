@@ -23,36 +23,27 @@ Read the full file as text.
 
 ### 3. Replace the TIMINGS object
 
-Find the `const TIMINGS = {` block. Replace every `null` value with the
-corresponding number from `audio_timing.json`:
+Find the `const TIMINGS = {` block. Use regex replacement to handle any whitespace
+the composition-author may have used:
 
 ```python
 import re
 
 def replace_timings(html, by_id, total):
     for section_id, t in by_id.items():
-        html = html.replace(
-            f'  {section_id}:      {{ start: null, end: null, duration: null }}',
-            f'  {section_id}: {{ start: {t["start"]}, end: {t["end"]}, duration: {t["duration"]} }}'
+        html = re.sub(
+            rf'({re.escape(section_id)}\s*:\s*)\{{[^}}]+\}}',
+            (f'\\g<1>{{ start: {t["start"]}, end: {t["end"]},'
+             f' duration: {t["duration"]} }}'),
+            html,
         )
-    html = html.replace('  total: null', f'  total: {total}')
+    html = re.sub(r'\btotal\s*:\s*null\b', f'total: {total}', html)
     return html
 ```
 
-Note: match the exact whitespace from `index.draft.html`. If the exact-string
-replacement doesn't find a match (whitespace differs), use regex instead:
-
-```python
-import re
-
-def replace_timings_regex(html, by_id, total):
-    for section_id, t in by_id.items():
-        pattern = rf'{re.escape(section_id)}:\s*\{{\s*start:\s*null,\s*end:\s*null,\s*duration:\s*null\s*\}}'
-        replacement = f'{section_id}: {{ start: {t["start"]}, end: {t["end"]}, duration: {t["duration"]} }}'
-        html = re.sub(pattern, replacement, html)
-    html = re.sub(r'total:\s*null', f'total: {total}', html)
-    return html
-```
+Use regex, not `str.replace` — exact whitespace matching is fragile and will
+silently fail to replace entries when the composition-author uses different
+indentation.
 
 ### 4. Replace data-duration placeholder
 

@@ -5,41 +5,77 @@
 
 # Broadcast Explainer — Assets Director
 
-Generate narration audio using Fish Speech S2-Pro. Output: `artifacts/asset_manifest.json`.
+Prepare non-audio assets and write `artifacts/asset_manifest.json`.
 
-## TTS Generation
-Server: http://127.0.0.1:8080 — health check before requests
-Reference ID: `egirl_v1` — pass on every request
+## Inputs
 
-```python
-import httpx, pathlib
+- `artifacts/scene_plan.json` — scene structure, character actions, required visuals
+- `artifacts/script.json` — section text (for context only; do not generate audio here)
 
-def generate_segment(text: str, output_path: str):
-    resp = httpx.post("http://127.0.0.1:8080/v1/tts", json={
-        "text": text,
-        "reference_id": "egirl_v1",
-        "format": "wav",
-        "streaming": False,
-        "normalize": True,
-        "temperature": 0.8,
-        "top_p": 0.8,
-        "repetition_penalty": 1.1,
-        "use_memory_cache": "on",
-    }, timeout=300)
-    pathlib.Path(output_path).write_bytes(resp.content)
+## Steps
+
+### 1. Character SVG
+
+Check `assets/characters/` for the character SVG used in this production. If it
+exists (from a prior `character_generation` stage or the character library), record
+its path. Do not regenerate it here.
+
+If no character SVG is present, check `character_library/` for a matching character
+and copy it to `assets/characters/<character-id>/`.
+
+### 2. Background imagery
+
+For each scene in `scene_plan.json` that requires a background:
+- Check `assets/images/` for existing assets
+- Generate or retrieve backgrounds using `image_selector` if not present
+- Record provider, model, and prompt in the manifest
+
+### 3. Props and overlays
+
+For stat cards, text overlays, and graphical elements described in `scene_plan.json`:
+- Note what HyperFrames will render natively (stat cards, text) vs what needs image assets
+- Generate image assets for non-native visual elements only
+
+### 4. Font confirmation
+
+If `DESIGN.md` specifies custom fonts, confirm they are loaded via CDN or present
+in `assets/fonts/`. List in the manifest.
+
+### 5. Write `artifacts/asset_manifest.json`
+
+```json
+{
+  "version": "1.0",
+  "characters": [
+    {
+      "id": "axiom",
+      "svg_path": "assets/characters/axiom/character.svg",
+      "rig_manifest_path": "assets/characters/axiom/rig_manifest.json",
+      "pose_library_path": "assets/characters/axiom/pose_library.json"
+    }
+  ],
+  "backgrounds": [
+    {
+      "scene_id": "s01_hook",
+      "path": "assets/images/s01_background.png",
+      "provider": "flux",
+      "prompt": "..."
+    }
+  ],
+  "props": [],
+  "fonts": [],
+  "notes": ""
+}
 ```
 
-## Post-Processing (required)
-```bash
-ffmpeg -y -i narration_raw.wav \
-  -af loudnorm=I=-14:TP=-1.0:LRA=11 \
-  narration.wav
-```
-Target: –14 LUFS
+## Pass Condition
 
-## GPU Management
-GPU limit: 24GB VRAM. Kill ComfyUI before loading Fish Speech:
-```bash
-kill $(pgrep -f "main.py.*18188")
-```
-Fish Speech S2-Pro startup: ~30s. Check health before sending.
+- `artifacts/asset_manifest.json` written
+- All referenced asset paths exist on disk
+- Character SVG accounted for (path recorded)
+
+## Report Format
+
+- pass/fail
+- Files written or confirmed existing
+- Any assets that could not be sourced (flag for human review)
