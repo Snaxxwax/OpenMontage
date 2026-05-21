@@ -97,6 +97,55 @@ are replaced by a single `character_generation` stage.
 `proposal` stage checks `CharacterLibrary.list()` and surfaces matches before any generation.
 `assets` stage handles backgrounds and props only; character assets come from `character_generation`.
 
+### Rig model: hierarchical local joint groups
+
+The default rig uses hierarchical nested `<g>` elements. **Flat global-pivot rigs are not the default** — they break when limb segments must rotate independently (forearm rotates relative to upper arm, not the character root).
+
+**Structure per limb:**
+```svg
+<g id="upper-arm-l-joint">          <!-- rotates at local 0,0 = shoulder pivot -->
+  <g id="upper-arm-l-art">          <!-- art sits at offset from joint origin -->
+    <rect .../>                      <!-- upper arm geometry -->
+  </g>
+  <g id="forearm-l-joint" transform="translate(0, 120)">  <!-- elbow offset from shoulder -->
+    <g id="forearm-l-art">
+      <rect .../>                    <!-- forearm geometry -->
+    </g>
+    <g id="hand-l-joint" transform="translate(0, 90)">    <!-- wrist offset from elbow -->
+      <g id="hand-l-art">
+        <path .../>                  <!-- hand geometry -->
+      </g>
+    </g>
+  </g>
+</g>
+```
+
+**Rules:**
+- Joint groups rotate around their local `(0,0)` — the transform origin of the group itself
+- Art groups are direct children of their joint group; they position art relative to the joint pivot
+- Nesting hierarchy (must match manifest `parentId` fields):
+  - `forearm-[l/r]-joint` is a child of `upper-arm-[l/r]-joint`
+  - `hand-[l/r]-joint` is a child of `forearm-[l/r]-joint`
+  - `lower-leg-[l/r]-joint` is a child of `upper-leg-[l/r]-joint`
+  - `foot-[l/r]-joint` is a child of `lower-leg-[l/r]-joint`
+- Poses target joint IDs with `rotation` values; the GSAP animator applies `rotation` at the joint group level so child joints inherit the transform
+
+**Rig manifest `parts` schema addition:**
+```json
+{
+  "id": "forearm-l-joint",
+  "type": "joint",
+  "parentId": "upper-arm-l-joint",
+  "pivot": { "x": 0, "y": 0 },
+  "defaultRotation": 0
+}
+```
+
+`SvgCharacterWriter` validation must confirm that:
+1. Every `part.id` in `rig_manifest.parts` exists as a `<g id="...">` in the SVG
+2. Every `part.parentId` (if set) matches the actual SVG parent `<g id="...">` of that element
+3. No part with `type: "joint"` has geometry directly as a child — geometry must be inside an art group child
+
 ### New director skill: `character-generation-director`
 
 File: `skills/pipelines/svg-character/character-generation-director.md`
@@ -105,40 +154,35 @@ Teaches the agent to:
 
 1. Read `svg-character-animation` and `character-rigging` Layer 3 skills before generating anything.
 2. Check the character library for existing matches and present the user with reuse/modify/new options.
-3. Generate the SVG with semantic `<g>` IDs that exactly match the rig manifest part names.
-   Required IDs: `body`, `head`, `eyes-open`, `eyes-closed`, `mouth-neutral`, `mouth-open`, plus
-   limb/appendage groups appropriate to the character type.
-4. Generate a rig manifest referencing the same IDs with pivot points in SVG viewbox coordinates.
+3. Generate the SVG using the hierarchical local joint group rig model described above.
+   Required joint IDs: `body`, `head`, `eyes-open`, `eyes-closed`, `mouth-neutral`, `mouth-open`,
+   plus limb joint hierarchy (`upper-arm-[l/r]-joint`, `forearm-[l/r]-joint`, `hand-[l/r]-joint`,
+   `upper-leg-[l/r]-joint`, `lower-leg-[l/r]-joint`, `foot-[l/r]-joint`) appropriate to character type.
+4. Generate a rig manifest with `parentId` fields reflecting SVG nesting, and pivot `(0,0)` for all joint groups.
 5. Generate a pose library with at minimum: `idle`, `blink`, `talk_open`, `talk_closed`,
-   `point_left`, `point_right`, `walk_contact`, `walk_passing`, `surprised`.
-6. Call `SvgCharacterWriter` to validate consistency and write files.
+   `point_left`, `point_right`, `walk_contact`, `walk_passing`, `surprised`. Poses target joint IDs with rotation values.
+6. Call `SvgCharacterWriter` to validate SVG nesting matches manifest parentage, then write files.
 7. Run the preview + save flow (see below).
 
 ## Character Preview Flow
 
-After `SvgCharacterWriter` succeeds, the agent always asks:
+After `SvgCharacterWriter` succeeds, the agent **automatically** generates the preview without asking first:
 
-> *"Character generated. Want to preview it before continuing?"*
+1. Try Playwright or Chrome DevTools MCP — open `preview.html`, wait for GSAP init, take screenshot.
+   Agent describes what it sees (pose cycling, proportions, any rendering issues).
+2. Fallback if no MCP browser available — agent outputs the file path:
+   `Preview: file:///path/to/preview.html`
 
-**If yes:**
-1. Try Playwright or Chrome DevTools MCP first — open `preview.html`, wait for GSAP init,
-   take screenshot to confirm character rendered. If successful, agent describes what it sees.
-2. Fallback if no MCP browser available — agent outputs:
-   `Open in your browser: file:///path/to/preview.html`
+After showing the preview (either path), the agent asks **one combined question**:
 
-After viewing (either path), the agent asks:
-> *"Does this character look right? Approve, regenerate, or adjust the description."*
+> *"Approve, adjust, regenerate, or save to library?"*
 
-- **Approve** → continue to save prompt
-- **Regenerate** → re-run generation with same or updated prompt (counts against `max_revisions_per_stage: 3`)
-- **Adjust** → user updates description, re-run generation
+- **Approve** → continue to next stage; character is not saved to library
+- **Adjust** → user provides updated description; re-run generation (counts against `max_revisions_per_stage: 3`)
+- **Regenerate** → re-run with same prompt and different seed (counts against limit)
+- **Save to library** → `CharacterLibrary.save()`, then continue to next stage
 
-**If no:** pipeline continues immediately to save prompt.
-
-**Save prompt:**
-> *"Save this character to your library for reuse in future videos? (yes/no)"*
-
-Yes → `CharacterLibrary.save()`. No → continue without saving.
+The four options are always presented together. No intermediate "do you want to preview?" prompt.
 
 ## Data Flow
 

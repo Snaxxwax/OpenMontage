@@ -93,23 +93,31 @@ The director skill covers: Fish Speech tag reference and when-to-use rules (no `
 |---|---|
 | **Director skill** | `skills/pipelines/broadcast-explainer/composition-author-director.md` |
 | **Input** | `artifacts/scene_plan.json`, `DESIGN.md`, `assets/` (SVG characters) |
-| **Output** | `index.html` with timing placeholders |
+| **Output** | `index.draft.html` with timing placeholders |
 | **Tools** | Read, Write, Edit, Bash (hyperframes lint) |
-| **Pass condition** | `hyperframes lint` exits 0 (warnings ok); all `@timing:` placeholders present; `window.__timelines` registered |
+| **Pass condition** | `hyperframes lint` exits 0 (warnings ok); all `TIMINGS.*` placeholders present; `window.__timelines` registered |
 | **Failure recovery** | Re-dispatch with lint errors appended to prompt; patch only flagged issues |
 
-**Timing placeholder pattern.** The composer writes a `TIMINGS` object at the top of the script block populated by composition-sync:
+**Timing placeholder pattern.** The composer writes a `TIMINGS` object at the top of the script block, using per-section objects with `start`, `end`, and `duration` fields. Composition-sync populates these from `audio_timing.json`:
 
 ```js
 // Populated by composition-sync from audio_timing.json
 const TIMINGS = {
-  s01_end: null, s02_end: null, s03_end: null,
-  s04_end: null, s05_end: null, total: null
+  s01_hook:      { start: null, end: null, duration: null },
+  s02_scale:     { start: null, end: null, duration: null },
+  s03_secrecy:   { start: null, end: null, duration: null },
+  s04_community: { start: null, end: null, duration: null },
+  s05_political: { start: null, end: null, duration: null },
+  s06_punchline: { start: null, end: null, duration: null },
+  total: null
 };
 
 // Usage throughout timeline:
-tl.to("#scene1", { opacity: 0, duration: 0.5 }, TIMINGS.s01_end - 0.5);
+tl.to("#scene1", { opacity: 0, duration: 0.5 }, TIMINGS.s01_hook.end - 0.5);
+mouthFlap(TIMINGS.s02_scale.start + 0.3, TIMINGS.s02_scale.end - 0.5);
 ```
+
+Section IDs in `TIMINGS` match `script.json` section IDs exactly.
 
 Director skill covers: AXIOM SVG pivot constants, `mouthFlap()` sub-timeline pattern with finite repeat calculation, DESIGN.md gate, layout-before-animation rule, scene transition rules (entrance-only, no exits except final scene).
 
@@ -118,30 +126,44 @@ Director skill covers: AXIOM SVG pivot constants, `mouthFlap()` sub-timeline pat
 | | |
 |---|---|
 | **Director skill** | `skills/pipelines/broadcast-explainer/composition-sync-director.md` |
-| **Input** | `index.html` (placeholder timings), `artifacts/audio_timing.json` |
-| **Output** | `index.html` (real timings), updated `data-duration` |
-| **Tools** | Read, Edit, Bash (hyperframes lint) |
-| **Pass condition** | `TIMINGS` object fully populated; `data-duration` matches `audio_timing.json` total; no `@timing:` tokens remain in file |
-| **Failure recovery** | If placeholder not found in `audio_timing.json`: coordinator reconciles section ID drift between `script.json` and `audio_timing.json`, re-dispatches with corrected mapping |
+| **Input** | `index.draft.html` (placeholder timings), `artifacts/audio_timing.json` |
+| **Output** | `index.synced.html` (real timings), updated `data-duration` |
+| **Tools** | Read, Write, Bash (hyperframes lint) |
+| **Pass condition** | All `TIMINGS.*` fields populated; `data-duration` matches `audio_timing.json` total; no `null` values remain in TIMINGS object |
+| **Failure recovery** | If a section ID in `TIMINGS` has no match in `audio_timing.json`: coordinator reconciles section ID drift between `script.json` and `audio_timing.json`, re-dispatches with corrected mapping |
 
-This stage is purely mechanical — no creative decisions. The agent reads `audio_timing.json`, fills `TIMINGS`, updates `data-duration`. 
+This stage is purely mechanical — no creative decisions. The agent reads `index.draft.html`, populates all `TIMINGS.*` fields from `audio_timing.json`, updates `data-duration`, and writes to `index.synced.html`. The draft file is never modified in place.
 
 ### Stage 5 — `composition-qa`
 
 | | |
 |---|---|
 | **Director skill** | `skills/pipelines/broadcast-explainer/composition-qa-director.md` |
-| **Input** | `index.html` (synced) |
+| **Input** | `index.synced.html` |
 | **Output** | `artifacts/qa_report.json` |
 | **Tools** | Bash (hyperframes lint/validate, animation map), Read, Write |
-| **Pass condition** | lint clean + no WCAG errors + animation map has no `invisible` or `offscreen` flags on speech-active elements |
+| **Pass condition** | No render-breaking or viewer-facing defects (see blocking vs warning below) |
 | **Human approval** | Required after pass — coordinator presents QA summary before render |
 | **Failure recovery** | Failure type determines target agent (see QA failure routing below) |
 
 QA runs in sequence:
-1. `npx hyperframes lint` — errors block; file-size warning allowed
-2. `npx hyperframes validate` — WCAG contrast check; failures require fix
-3. Animation map — checks dead zones >2s, offscreen elements, collision flags
+1. `npx hyperframes lint` — structural errors block; file-size warning is informational only
+2. `npx hyperframes validate` — WCAG contrast check; **only blocks if text is illegible at normal viewing size**; decorative elements and intentional low-contrast treatments are warnings
+3. Animation map — `invisible` or `offscreen` on speech-active elements blocks; dead zones >2s on speech sections block; **intentional holds (pauses, dramatic beats) are warnings, not errors**
+
+**Blocking vs warning classification:**
+
+| Issue | Classification |
+|---|---|
+| `window.__timelines` not registered | Block |
+| `data-duration` mismatch | Block |
+| Speech-active element `invisible` or `offscreen` | Block |
+| Dead zone >2s during active narration | Block |
+| Text contrast < 3:1 on primary content | Block |
+| Decorative element contrast failure | Warning |
+| Text contrast 3:1–4.5:1 on large display text | Warning |
+| Dead zone during intentional pause/hold | Warning |
+| File-size lint warning | Warning |
 
 `qa_report.json` schema:
 ```json
@@ -172,7 +194,7 @@ The QA agent writes the exact issue type and affected element into `qa_report.js
 | | |
 |---|---|
 | **Director skill** | `skills/pipelines/broadcast-explainer/render-director.md` |
-| **Input** | `index.html` (QA-passed), `assets/audio/narration_full.wav` |
+| **Input** | `index.synced.html` (QA-passed), `assets/audio/narration_full.wav` |
 | **Output** | `renders/final.mp4`, `artifacts/render_report.json` |
 | **Tools** | Bash (hyperframes render, ffprobe, cp), Read |
 | **Pass condition** | MP4 exists; duration within 0.5s of `audio_timing.json` total; file size > 1MB |
