@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/artifacts/audio_timing",
+  "title": "Audio Timing",
+  "description": "Section-level timing data produced by audio-post, consumed by composition-sync.",
+  "type": "object",
+  "required": ["version", "total_duration_seconds", "sections"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "total_duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "start", "end", "duration"],
+        "properties": {
+          "id":       { "type": "string" },
+          "start":    { "type": "number", "minimum": 0 },
+          "end":      { "type": "number", "minimum": 0 },
+          "duration": { "type": "number", "exclusiveMinimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
