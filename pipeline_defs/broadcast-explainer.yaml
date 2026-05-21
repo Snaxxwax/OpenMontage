@@ -76,7 +76,8 @@ stages:
     skill: pipelines/broadcast-explainer/audio-post-director
     required_artifacts_in:
       - script
-    produces: []
+    produces:
+      - audio_timing
     notes: "Writes normalized WAVs, narration_full.wav, artifacts/audio_timing.json"
     checkpoint_required: false
     human_approval_default: false
@@ -97,6 +98,7 @@ stages:
     skill: pipelines/broadcast-explainer/composition-sync-director
     required_artifacts_in:
       - scene_plan
+      - audio_timing
     produces: []
     notes: "Reads index.draft.html + audio_timing.json, writes index.synced.html"
     checkpoint_required: false

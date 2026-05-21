@@ -39,8 +39,20 @@ def replace_timings(html, by_id, total):
     return html
 ```
 
-Note: match the exact whitespace from `index.draft.html`. If the whitespace
-differs, use a regex: `r'\b(s\d+_\w+):\s*\{[^}]+\}'`.
+Note: match the exact whitespace from `index.draft.html`. If the exact-string
+replacement doesn't find a match (whitespace differs), use regex instead:
+
+```python
+import re
+
+def replace_timings_regex(html, by_id, total):
+    for section_id, t in by_id.items():
+        pattern = rf'{re.escape(section_id)}:\s*\{{\s*start:\s*null,\s*end:\s*null,\s*duration:\s*null\s*\}}'
+        replacement = f'{section_id}: {{ start: {t["start"]}, end: {t["end"]}, duration: {t["duration"]} }}'
+        html = re.sub(pattern, replacement, html)
+    html = re.sub(r'total:\s*null', f'total: {total}', html)
+    return html
+```
 
 ### 4. Replace data-duration placeholder
 

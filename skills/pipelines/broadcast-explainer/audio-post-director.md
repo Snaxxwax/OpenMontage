@@ -74,6 +74,15 @@ Section IDs must match `script.json` `sections[].id` exactly.
 - `assets/audio/narration_full.wav` exists
 - `artifacts/audio_timing.json` exists and validates against `schemas/artifacts/audio_timing.schema.json`
 - `narration_full.wav` duration within 0.1s of `audio_timing.json` `total_duration_seconds`
+- For each section: `end >= start` and `abs(duration - (end - start)) < 0.01`
+
+Verify section consistency before writing:
+```python
+for s in sections:
+    assert s["end"] >= s["start"], f"{s['id']}: end ({s['end']}) < start ({s['start']})"
+    assert abs(s["duration"] - (s["end"] - s["start"])) < 0.01, \
+        f"{s['id']}: duration {s['duration']} != end-start {s['end']-s['start']:.3f}"
+```
 
 ## Report Format
 
