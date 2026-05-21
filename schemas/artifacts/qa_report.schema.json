@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/artifacts/qa_report",
+  "title": "Composition QA Report",
+  "description": "Output of composition-qa stage. passed=false blocks render.",
+  "type": "object",
+  "required": ["version", "passed", "lint", "validate", "animation_map", "issues"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "passed": { "type": "boolean" },
+    "lint": {
+      "type": "object",
+      "required": ["errors", "warnings"],
+      "properties": {
+        "errors":   { "type": "integer", "minimum": 0 },
+        "warnings": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "validate": {
+      "type": "object",
+      "required": ["contrast_failures"],
+      "properties": {
+        "contrast_failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["selector", "ratio", "required"],
+            "properties": {
+              "selector": { "type": "string" },
+              "ratio":    { "type": "number" },
+              "required": { "type": "number" },
+              "timestamp_seconds": { "type": "number" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "animation_map": {
+      "type": "object",
+      "required": ["flags", "dead_zones"],
+      "properties": {
+        "flags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "dead_zones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["start", "end", "duration_seconds"],
+            "properties": {
+              "start":            { "type": "number" },
+              "end":              { "type": "number" },
+              "duration_seconds": { "type": "number" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "type", "element", "description"],
+        "properties": {
+          "severity":    { "type": "string", "enum": ["block", "warn"] },
+          "type":        { "type": "string" },
+          "element":     { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}
