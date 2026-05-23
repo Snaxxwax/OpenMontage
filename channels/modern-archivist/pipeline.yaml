@@ -49,6 +49,15 @@ orchestration:
   max_send_backs: 2
   max_wall_time_minutes: 60
 
+subagent_policy:
+  enabled: true
+  decision_owner: executive_producer
+  nested_subagents_allowed: false
+  max_parallel: 3
+  completion_contract_required: true
+  main_session_verifies_outputs: true
+  blocker_handling: surface_to_operator
+
 extensions:
   custom_scripts: true
   custom_playbooks: true
@@ -64,6 +73,11 @@ required_skills:
   - channels/modern-archivist/skills/media-director.md
   - channels/modern-archivist/skills/asset-generation-director.md
   - channels/modern-archivist/skills/render-director.md
+  - channels/modern-archivist/skills/review/evidence-auditor.md
+  - channels/modern-archivist/skills/review/failure-thesis-critic.md
+  - channels/modern-archivist/skills/review/voice-consistency-critic.md
+  - channels/modern-archivist/skills/review/visual-identity-reviewer.md
+  - channels/modern-archivist/skills/review/render-qc-reviewer.md
   - meta/reviewer
   - meta/checkpoint-protocol
 
@@ -94,6 +108,21 @@ stages:
       - Sources include URLs and retrieval dates
       - Claims are grouped by evidence strength and narrative relevance
       - Open questions and risky claims are explicitly marked
+    subagents:
+      - name: evidence_auditor
+        skill: channels/modern-archivist/skills/review/evidence-auditor.md
+        mode: blocking
+        trigger: after_stage_output
+        required_artifacts_in:
+          - research_packet
+        produces:
+          - artifacts/reviews/evidence_audit.md
+        completion_contract: agent_gate_report
+        review_focus:
+          - Every high-strength claim traces to a named source with URL or document reference
+          - Interpretation is labeled separately from what the record proves
+          - Corporate/product timeline anchors are dated and source-backed
+          - Risky or unsourced claims are blocked, downgraded, or cut
 
   - name: script
     skill: channels/modern-archivist/skills/script-director.md
@@ -114,6 +143,39 @@ stages:
       - Narration duration is within target range
       - Every scene has a visual slot, state tag, and evidence linkage where factual
       - User approval or approved-with-changes is recorded before audio
+    subagents:
+      - name: failure_thesis_critic
+        skill: channels/modern-archivist/skills/review/failure-thesis-critic.md
+        mode: blocking
+        trigger: before_human_approval
+        required_artifacts_in:
+          - research_packet
+          - episode
+        produces:
+          - artifacts/reviews/failure_thesis_review.md
+        completion_contract: agent_gate_report
+        human_approval_default: true
+        review_focus:
+          - Episode frames a specific failure mechanism rather than a generic explainer topic
+          - Hook promises a corporate autopsy with stakes, culprit, mechanism, and cost
+          - Payoff delivers a reusable failure pattern instead of a summary
+          - Narrative avoids outrage, hype, and unsupported blame
+      - name: voice_consistency_critic
+        skill: channels/modern-archivist/skills/review/voice-consistency-critic.md
+        mode: blocking
+        trigger: before_human_approval
+        required_artifacts_in:
+          - research_packet
+          - episode
+        produces:
+          - artifacts/reviews/voice_consistency_review.md
+        completion_contract: agent_gate_report
+        human_approval_default: true
+        review_focus:
+          - Narration preserves dry Modern Archivist skepticism
+          - Sentences are speakable with local Fish Speech delivery
+          - Filler transitions, hype, AI-sludge, and generic business language are removed
+          - Evidence citations remain audible and non-intrusive
 
   - name: audio
     skill: channels/modern-archivist/skills/audio-director.md
@@ -181,6 +243,23 @@ stages:
       - Schema-valid media_manifest artifact exists at artifacts/media_manifest.json
       - Every visual asset has provenance, path, or planned local generation source
       - Render inputs are local files or inline deterministic data
+    subagents:
+      - name: visual_identity_reviewer
+        skill: channels/modern-archivist/skills/review/visual-identity-reviewer.md
+        mode: advisory
+        trigger: after_stage_output
+        required_artifacts_in:
+          - episode
+          - research_packet
+          - media_manifest
+        produces:
+          - artifacts/reviews/visual_identity_review.md
+        completion_contract: agent_gate_report
+        review_focus:
+          - Visual plan preserves Modern Archivist puppet identity and flat 2.5D limits
+          - Asset requests support evidence-led corporate autopsy frames, not decoration
+          - Color, typography, source labels, and proof cards stay consistent across scenes
+          - Generated assets remain optional and review-gated before promotion
 
   - name: asset_generation
     skill: channels/modern-archivist/skills/asset-generation-director.md
@@ -244,3 +323,22 @@ stages:
       - Final video file exists
       - audio_probe validates the rendered video
       - render_report records input artifacts, runtime, output path, duration, and verification notes
+    subagents:
+      - name: render_qc_reviewer
+        skill: channels/modern-archivist/skills/review/render-qc-reviewer.md
+        mode: blocking
+        trigger: after_stage_output
+        required_artifacts_in:
+          - episode
+          - media_manifest
+          - asset_manifest
+          - audio_analysis
+          - render_report
+        produces:
+          - artifacts/reviews/render_qc_review.md
+        completion_contract: agent_gate_report
+        review_focus:
+          - Render output exists and matches render_report path, duration, and runtime
+          - Audio continuity, loudness, and sync are verified with objective probes
+          - Frame samples show no blank screens, broken puppet states, or source-label collisions
+          - Render stays on approved Remotion or explicitly approved HyperFrames path

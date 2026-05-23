@@ -96,6 +96,26 @@
             "type": "array",
             "items": { "type": "string" }
           },
+          "subagents": {
+            "type": "array",
+            "description": "Optional specialist review lanes invoked by the Executive Producer around this stage. Subagents advise or block; they do not own orchestration decisions.",
+            "items": {
+              "type": "object",
+              "required": ["name", "skill", "mode", "trigger", "completion_contract", "review_focus"],
+              "properties": {
+                "name": { "type": "string" },
+                "skill": { "type": "string", "description": "Package-local or repo-local skill path for this specialist lane" },
+                "mode": { "type": "string", "enum": ["blocking", "advisory"] },
+                "trigger": { "type": "string", "description": "When the Executive Producer invokes the lane, e.g. after_stage_output or before_human_approval" },
+                "required_artifacts_in": { "type": "array", "items": { "type": "string" } },
+                "produces": { "type": "array", "items": { "type": "string" } },
+                "completion_contract": { "type": "string", "enum": ["agent_gate_report"] },
+                "review_focus": { "type": "array", "items": { "type": "string" } },
+                "human_approval_default": { "type": "boolean", "default": false }
+              },
+              "additionalProperties": false
+            }
+          },
           "sub_stages": {
             "type": "array",
             "description": "Optional sub-stages within a stage (e.g., sample preview for reference-driven productions)",
@@ -142,6 +162,28 @@
         "max_revisions_per_stage": { "type": "integer" },
         "max_send_backs": { "type": "integer" },
         "max_wall_time_minutes": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "subagent_policy": {
+      "type": "object",
+      "description": "Global policy for explicit specialist review lanes. The Executive Producer remains the decision owner.",
+      "required": [
+        "enabled",
+        "decision_owner",
+        "nested_subagents_allowed",
+        "completion_contract_required",
+        "main_session_verifies_outputs",
+        "blocker_handling"
+      ],
+      "properties": {
+        "enabled": { "type": "boolean", "default": false },
+        "decision_owner": { "type": "string", "enum": ["executive_producer"] },
+        "nested_subagents_allowed": { "type": "boolean", "default": false },
+        "max_parallel": { "type": "integer", "minimum": 1 },
+        "completion_contract_required": { "type": "boolean", "default": true },
+        "main_session_verifies_outputs": { "type": "boolean", "default": true },
+        "blocker_handling": { "type": "string", "enum": ["surface_to_operator"] }
       },
       "additionalProperties": false
     },

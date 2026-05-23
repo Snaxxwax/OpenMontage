@@ -80,6 +80,47 @@ def test_modern_archivist_pipeline_is_full_manifest() -> None:
         assert stage["success_criteria"], f"stage {stage['name']} must declare success criteria"
 
 
+def test_pipeline_schema_supports_explicit_subagent_review_lanes() -> None:
+    schema = json.loads(PIPELINE_SCHEMA.read_text(encoding="utf-8"))
+    minimal_manifest = {
+        "name": "review-lane-fixture",
+        "version": "1.0",
+        "subagent_policy": {
+            "enabled": True,
+            "decision_owner": "executive_producer",
+            "nested_subagents_allowed": False,
+            "max_parallel": 3,
+            "completion_contract_required": True,
+            "main_session_verifies_outputs": True,
+            "blocker_handling": "surface_to_operator",
+        },
+        "stages": [
+            {
+                "name": "research",
+                "skill": "channels/example/skills/research-director.md",
+                "produces": ["research_packet"],
+                "tools_available": [],
+                "checkpoint_required": True,
+                "human_approval_default": False,
+                "review_focus": ["evidence quality"],
+                "success_criteria": ["research packet exists"],
+                "subagents": [
+                    {
+                        "name": "evidence_auditor",
+                        "skill": "channels/example/skills/review/evidence-auditor.md",
+                        "mode": "blocking",
+                        "trigger": "after_stage_output",
+                        "completion_contract": "agent_gate_report",
+                        "review_focus": ["claim traceability"],
+                    }
+                ],
+            }
+        ],
+    }
+
+    Draft202012Validator(schema).validate(minimal_manifest)
+
+
 def test_modern_archivist_required_skills_exist() -> None:
     manifest = load_yaml(MODERN_ARCHIVIST_PIPELINE)
     for skill_ref in manifest["required_skills"]:

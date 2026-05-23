@@ -83,6 +83,37 @@ def test_load_pipeline_can_load_channel_pipeline_explicitly_without_core_mix_in(
     assert manifest["metadata"]["canonical_renderer"] == "remotion"
 
 
+def test_modern_archivist_declares_package_local_subagent_quality_gates() -> None:
+    manifest = load_pipeline("modern-archivist", source="channel")
+    subagent_policy = manifest["subagent_policy"]
+
+    assert subagent_policy["enabled"] is True
+    assert subagent_policy["decision_owner"] == "executive_producer"
+    assert subagent_policy["nested_subagents_allowed"] is False
+    assert subagent_policy["completion_contract_required"] is True
+    assert subagent_policy["main_session_verifies_outputs"] is True
+    assert subagent_policy["blocker_handling"] == "surface_to_operator"
+
+    lanes_by_stage = {
+        stage["name"]: {lane["name"]: lane for lane in stage.get("subagents", [])}
+        for stage in manifest["stages"]
+    }
+
+    assert lanes_by_stage["research"]["evidence_auditor"]["mode"] == "blocking"
+    assert lanes_by_stage["script"]["failure_thesis_critic"]["mode"] == "blocking"
+    assert lanes_by_stage["script"]["voice_consistency_critic"]["mode"] == "blocking"
+    assert lanes_by_stage["media_manifest"]["visual_identity_reviewer"]["mode"] == "advisory"
+    assert lanes_by_stage["render"]["render_qc_reviewer"]["mode"] == "blocking"
+
+    for stage_lanes in lanes_by_stage.values():
+        for lane in stage_lanes.values():
+            skill_path = ROOT / lane["skill"]
+            assert skill_path.exists(), f"subagent skill missing: {lane['skill']}"
+            assert skill_path.is_relative_to(CHANNEL_DIR)
+            assert lane["completion_contract"] == "agent_gate_report"
+            assert lane["review_focus"]
+
+
 def test_modern_archivist_manifest_tool_names_are_registry_discoverable() -> None:
     from tools.tool_registry import registry
 
