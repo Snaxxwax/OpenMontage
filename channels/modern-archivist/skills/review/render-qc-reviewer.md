@@ -64,3 +64,12 @@ OPERATOR ACTION REQUIRED:
 ```
 
 The Executive Producer must verify this review independently before presenting the video as ready.
+
+## Retention and motion-density render checks
+
+- No static visual holds longer than doctrine allows unless explicitly justified by the motion plan.
+- Character returns are visible, purposeful, and not used as a permanent mascot fallback.
+- Critical-error red moments are short, legible, and connected to a real interruption.
+- Evidence labels/source IDs remain readable in frame samples.
+- Illustrative scenes do not impersonate evidence.
+- Audio-reactive/character effects do not obscure comprehension.

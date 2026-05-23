@@ -1,0 +1,5 @@
+import React from "react";
+import { interpolate, useCurrentFrame } from "remotion";
+import type { MediaItem } from "../../types";
+import { labelStyle, valueText } from "./mediaStyles";
+export const DataSequence: React.FC<{ media: Extract<MediaItem, { kind: "data_sequence" }> }> = ({ media }) => { const frame=useCurrentFrame(); const data=(media.data?.length?media.data:[{label:"Q1",value:90},{label:"Q2",value:62},{label:"Q3",value:24},{label:"Q4",value:8}]).slice(0,8); return <div style={{height:"100%"}}><div style={labelStyle}>DATA SEQUENCE</div><div style={{color:"var(--text)",fontSize:64,fontWeight:900}}>{media.title}</div><svg viewBox="0 0 1400 620" style={{width:"100%",height:"78%"}}>{data.map((d,i)=>{const v=Number((d as Record<string,unknown>).value ?? 50); const h=interpolate(frame,[i*8,i*8+22],[0,v*4.8],{extrapolateLeft:"clamp",extrapolateRight:"clamp"}); const x=130+i*150; return <g key={i}><rect x={x} y={540-h} width="96" height={h} fill={i===data.length-1?"#FF3333":"var(--accent)"}/><text x={x+48} y="590" textAnchor="middle" fill="var(--text)" fontSize="28">{valueText((d as Record<string,unknown>).label, String(i+1))}</text></g>})}</svg></div> };

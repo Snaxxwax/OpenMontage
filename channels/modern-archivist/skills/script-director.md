@@ -41,3 +41,7 @@ Every beat must map to one of the channel render modes:
 - Every scene has a visual slot and state tag.
 - Factual lines link back to research claim/source IDs.
 - Human approval is obtained before audio generation.
+
+## Retention-first episode contract
+
+The canonical `episode.json` artifact is structured timeline/sections only; do not treat generic screenplay prose as the canonical render contract. Every new-format block should include `narrative_phase`, `retention_device`, `visual_mode`, `layout`, `color_state`, `character`, `narration`/`text`, `evidence_refs`, `media_overlay`, and `estimated_duration_seconds`. Default evidence-heavy body sections to full-screen editorial visuals, not a persistent host HUD. Red state is scarce: 3-12 seconds for critical-error interruptions unless a human explicitly approves a longer treatment. Every factual line must link to research claim/source IDs. Static source views must be transformed with motion plans: crop, reveal, highlight, quote extraction, graph link, or compression montage.

@@ -1,77 +1,18 @@
 import type { ModernArchivistEpisode } from "./types";
 
 export const modernArchivistFixture: ModernArchivistEpisode = {
-  episode_id: "modern-archivist-demo",
-  title: "The Web Page That Refused To Die",
-  duration_seconds: 60,
-  puppet: {
-    version: "1.0",
-    character_id: "modern_archivist",
-    display_name: "The Archivist",
-    temporary: true,
-    layers: {
-      body: "modern-archivist/archivist-body.png",
-      mug: "modern-archivist/archivist-mug.png",
-    },
-    anchors: {
-      mouth: { x: 0.51, y: 0.62 },
-      glasses: { x: 0.5, y: 0.43 },
-      arm_pivot: { x: 0.62, y: 0.74 },
-    },
-  },
+  episode_id: "modern-archivist-retention-demo",
+  title: "The Backup That Never Existed",
+  duration_seconds: 42,
+  puppet: { version: "1.0", character_id: "modern_archivist", display_name: "The Archivist", temporary: true, layers: { body: "modern-archivist/archivist-body.png", mug: "modern-archivist/archivist-mug.png" }, anchors: { mouth: { x: 0.51, y: 0.62 }, glasses: { x: 0.5, y: 0.43 }, arm_pivot: { x: 0.62, y: 0.74 } } },
   sections: [
-    {
-      id: "s01_hook",
-      start: 0,
-      end: 10,
-      text: "This abandoned-looking web page is still holding up half the internet.",
-      tags: [
-        { at: 0, type: "layout", value: "STATE_MONOLOGUE" },
-        { at: 6, type: "sip" },
-      ],
-    },
-    {
-      id: "s02_evidence",
-      start: 10,
-      end: 32,
-      text: "To understand why, we need to inspect the source.",
-      tags: [
-        { at: 10, type: "layout", value: "STATE_DEEP_DIVE" },
-        {
-          at: 11,
-          type: "media",
-          value: {
-            id: "html-spec",
-            kind: "code",
-            language: "html",
-            title: "Archived Markup",
-            content: "<table>\n  <tr><td>Still here.</td></tr>\n</table>",
-          },
-        },
-      ],
-    },
-    {
-      id: "s03_interrupt",
-      start: 32,
-      end: 45,
-      text: "And this is where the archive starts screaming.",
-      tags: [{ at: 32, type: "layout", value: "STATE_CRITICAL_ERROR" }],
-    },
-    {
-      id: "s04_close",
-      start: 45,
-      end: 60,
-      text: "The modern web is not as modern as it thinks.",
-      tags: [{ at: 45, type: "layout", value: "STATE_MONOLOGUE" }],
-    },
+    { id: "s01_hook", start: 0, end: 6, text: "The company said every customer file was backed up. The logs said otherwise.", tags: [{ at: 0, type: "layout", value: "STATE_MONOLOGUE" }], narrative_phase: "hook", retention_device: "cold_open_shock", visual_mode: "monologue", layout: "anchor_center", color_state: "teal", character: { visible: true, action: "glasses_flash", expression: "skeptical" }, evidence_refs: ["claim_001", "source_001"], evidence_role: "derived_analysis", estimated_duration_seconds: 6 },
+    { id: "s02_case_file", start: 6, end: 13, text: "First, the pitch deck promised redundant backups. Then the incident report quietly removed the word redundant.", tags: [], narrative_phase: "context", retention_device: "contradiction_reveal", visual_mode: "case_file", layout: "evidence_board", color_state: "teal", character: { visible: false, action: "hidden", expression: "none" }, evidence_refs: ["source_001", "source_002"], evidence_role: "primary_evidence", estimated_duration_seconds: 7, media_overlay: { id: "case-001", kind: "case_file_sequence", title: "The backup claim", evidence_role: "primary_evidence", evidence_refs: ["source_001", "source_002"], stamp: "CONTRADICTION", beats: [{ label: "CLAIM", claim: "Redundant daily backups" }, { label: "RECEIPT", claim: "Only one storage region configured" }, { label: "CONTRADICTION", claim: "Incident report deletes redundancy language" }], motion_plan: [{ at_seconds: 0, action: "show_claim_card" }, { at_seconds: 2, action: "reveal_contradiction" }] } },
+    { id: "s03_failure_graph", start: 13, end: 20, text: "The failure path was not one bug. It was sales pressure, missing monitoring, and a restore process nobody tested.", tags: [], narrative_phase: "deep_dive", retention_device: "mechanism_explanation", visual_mode: "failure_graph", layout: "data_chart", color_state: "teal", character: { visible: false, action: "hidden", expression: "none" }, evidence_refs: ["claim_003"], evidence_role: "derived_analysis", estimated_duration_seconds: 7, media_overlay: { id: "graph-001", kind: "failure_graph", title: "How the backup failed", evidence_role: "derived_analysis", evidence_refs: ["claim_003"], nodes: [{ label: "Sales claim" }, { label: "One region" }, { label: "No restore drill" }, { label: "Customer loss" }], links: [{ from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 3 }] } },
+    { id: "s04_code", start: 20, end: 27, text: "The config was not ambiguous. Backup replication was disabled in the one file that mattered.", tags: [], narrative_phase: "deep_dive", retention_device: "evidence_receipt", visual_mode: "code_walkthrough", layout: "code_walkthrough", color_state: "teal", character: { visible: false, action: "hidden", expression: "none" }, evidence_refs: ["repo_001"], evidence_role: "primary_evidence", estimated_duration_seconds: 7, media_overlay: { id: "code-001", kind: "code_walkthrough", title: "Backup config", filename: "backup.yaml", language: "yaml", content: "backup:\n  enabled: true\n  replication: false\n  restore_test: never", evidence_role: "primary_evidence", evidence_refs: ["repo_001"], highlights: [{ line: 3, label: "the quiet part" }] } },
+    { id: "s05_interrupt", start: 27, end: 34, text: "That is not a backup strategy. That is a screenshot of a parachute.", tags: [{ at: 28, type: "sip" }], narrative_phase: "pattern_interrupt", retention_device: "comic_release", visual_mode: "critical_error", layout: "anchor_center", color_state: "red", character: { visible: true, action: "sip_coffee", expression: "deadpan" }, evidence_refs: ["repo_001"], evidence_role: "derived_analysis", estimated_duration_seconds: 7, media_overlay: { id: "type-001", kind: "kinetic_typography", text: "SCREENSHOT OF A PARACHUTE", variant: "glitch_slam", evidence_role: "derived_analysis", evidence_refs: ["repo_001"] } },
+    { id: "s06_metaphor", start: 34, end: 39, text: "When the outage arrived, the safety net was just theatre.", tags: [], narrative_phase: "why_it_matters", retention_device: "stakes_escalation", visual_mode: "cinematic_metaphor", layout: "media_full", color_state: "teal", character: { visible: false, action: "hidden", expression: "none" }, evidence_refs: [], evidence_role: "illustrative_only", estimated_duration_seconds: 5, media_overlay: { id: "metaphor-001", kind: "cinematic_metaphor", title: "The server room goes dark", evidence_role: "illustrative_only", description: "Illustrative blackout visual", mood: "blackout", label: "ILLUSTRATIVE", motion_plan: [] } },
+    { id: "s07_outro", start: 39, end: 42, text: "The ledger entry is simple: a promise is not infrastructure.", tags: [], narrative_phase: "outro", retention_device: "payoff", visual_mode: "outro", layout: "anchor_center", color_state: "teal", character: { visible: true, action: "deadpan_stare", expression: "deadpan" }, evidence_refs: ["claim_004"], evidence_role: "derived_analysis", estimated_duration_seconds: 3 },
   ],
-  amplitude: Array.from({ length: 121 }, (_, index) => {
-    const time = index * 0.5;
-    const speakingWindows =
-      (time > 0.5 && time < 9.2) ||
-      (time > 10.5 && time < 30.5) ||
-      (time > 32.2 && time < 43.5) ||
-      (time > 45.2 && time < 58.5);
-    return { time, volume: speakingWindows ? 0.18 + 0.07 * Math.sin(time * 7) : 0.01 };
-  }),
+  amplitude: Array.from({ length: 85 }, (_, index) => { const time = index * 0.5; const speakingWindows = (time > 0.5 && time < 5.6) || (time > 6.2 && time < 33.5) || (time > 34.2 && time < 41.5); return { time, volume: speakingWindows ? 0.18 + 0.07 * Math.sin(time * 7) : 0.01 }; }),
 };

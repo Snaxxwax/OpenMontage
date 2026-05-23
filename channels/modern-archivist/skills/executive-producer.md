@@ -88,3 +88,7 @@ Do not skip a stage unless its director and manifest success criteria explicitly
 ## Review posture
 
 Require stronger evidence for stronger claims. Prefer "what the records show" over speculation. If a point cannot be sourced, label it as interpretation or cut it.
+
+## Retention doctrine operating rule
+
+Before script, media, and render stages, read `channels/modern-archivist/design/retention-doctrine.md`. Enforce cinematic case-building, not static receipts. Keep evidence-linked artifacts as the backbone while optimizing the visual surface for retention. Treat illustrative material as separate from evidence and require local deterministic render inputs.

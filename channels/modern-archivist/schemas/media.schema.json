@@ -4,46 +4,646 @@
   "oneOf": [
     {
       "type": "object",
-      "required": ["id", "kind", "content"],
+      "required": [
+        "id",
+        "kind",
+        "content"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "kind": { "const": "code" },
-        "title": { "type": "string" },
-        "language": { "type": "string" },
-        "content": { "type": "string" }
-      }
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "code"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     },
     {
       "type": "object",
-      "required": ["id", "kind", "body"],
+      "required": [
+        "id",
+        "kind",
+        "body"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "kind": { "const": "article" },
-        "title": { "type": "string" },
-        "source": { "type": "string" },
-        "body": { "type": "string" },
-        "highlightTerms": { "type": "array", "items": { "type": "string" } }
-      }
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "article"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "highlightTerms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
     },
     {
       "type": "object",
-      "required": ["id", "kind", "quote"],
+      "required": [
+        "id",
+        "kind",
+        "quote"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "kind": { "const": "quote" },
-        "quote": { "type": "string" },
-        "attribution": { "type": "string" }
-      }
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "quote"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "quote": {
+          "type": "string"
+        },
+        "attribution": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
     },
     {
       "type": "object",
-      "required": ["id", "kind", "src"],
+      "required": [
+        "id",
+        "kind",
+        "src"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "kind": { "const": "image" },
-        "src": { "type": "string" },
-        "caption": { "type": "string" }
-      }
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "image"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "src": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "case_file_sequence"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "beats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "stamp": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "cinematic_metaphor"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "const": "illustrative_only"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "mood": {
+          "type": "string"
+        },
+        "asset_src": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "failure_graph"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "kinetic_typography"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "variant": {
+          "type": "string"
+        },
+        "attribution": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "data_sequence"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "chart_type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "content"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "code_walkthrough"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "highlights": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "source_montage"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
     }
   ]
 }

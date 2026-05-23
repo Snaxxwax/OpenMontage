@@ -33,3 +33,7 @@ Favor receipts: documents, timelines, charts, product screenshots, archived page
 - Every scene visual slot has local media, inline deterministic data, or an explicit missing-asset requirement.
 - All source media includes URL/publisher/license/retrieved-at when applicable.
 - The asset_generation director can decide whether saved assets satisfy the missing requirements.
+
+## Cinematic case-building media contract
+
+Use `case_file_sequence` as the default for proof-heavy beats. Use `cinematic_metaphor` only when `evidence_role = illustrative_only`, and label it as illustrative in the manifest/render props. Source materials must be localized before render; Remotion must not fetch live network material. Motion plan is required for any source receipt longer than 6 seconds. Separate factual media from illustrative and brand-world media. The media manifest should satisfy `channels/modern-archivist/schemas/media.schema.json` and include provenance, license, retrieved-at, and evidence refs where applicable.

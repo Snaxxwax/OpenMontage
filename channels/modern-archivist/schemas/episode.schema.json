@@ -2,36 +2,178 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Modern Archivist Episode",
   "type": "object",
-  "required": ["episode_id", "title", "duration_seconds", "sections"],
+  "required": [
+    "episode_id",
+    "title",
+    "duration_seconds",
+    "sections"
+  ],
   "properties": {
-    "episode_id": { "type": "string" },
-    "title": { "type": "string" },
-    "duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
-    "audio_src": { "type": "string" },
+    "episode_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "audio_src": {
+      "type": "string"
+    },
     "sections": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "start", "end", "text", "tags"],
+        "required": [
+          "id",
+          "start",
+          "end",
+          "text",
+          "tags"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "start": { "type": "number" },
-          "end": { "type": "number" },
-          "text": { "type": "string" },
-          "tags": { "type": "array" }
-        }
+          "id": {
+            "type": "string"
+          },
+          "start": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string"
+          },
+          "narration": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array"
+          },
+          "narrative_phase": {
+            "enum": [
+              "hook",
+              "context",
+              "deep_dive",
+              "pattern_interrupt",
+              "why_it_matters",
+              "outro"
+            ]
+          },
+          "retention_device": {
+            "enum": [
+              "cold_open_shock",
+              "mystery_gap",
+              "contradiction_reveal",
+              "compression_montage",
+              "pattern_interrupt",
+              "comic_release",
+              "stakes_escalation",
+              "visual_reset",
+              "act_break",
+              "payoff",
+              "evidence_receipt",
+              "mechanism_explanation"
+            ]
+          },
+          "visual_mode": {
+            "enum": [
+              "monologue",
+              "case_file",
+              "cinematic_metaphor",
+              "failure_graph",
+              "code_walkthrough",
+              "data_sequence",
+              "critical_error",
+              "outro"
+            ]
+          },
+          "layout": {
+            "enum": [
+              "anchor_center",
+              "media_full",
+              "split_screen_left",
+              "split_screen_right",
+              "evidence_board",
+              "quote_card",
+              "timeline",
+              "code_walkthrough",
+              "data_chart"
+            ]
+          },
+          "color_state": {
+            "enum": [
+              "teal",
+              "red"
+            ]
+          },
+          "character": {
+            "type": "object",
+            "properties": {
+              "visible": {
+                "type": "boolean"
+              },
+              "action": {
+                "type": "string"
+              },
+              "expression": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_role": {
+            "enum": [
+              "primary_evidence",
+              "secondary_evidence",
+              "derived_analysis",
+              "illustrative_only",
+              "brand_interstitial"
+            ]
+          },
+          "media_overlay": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "estimated_duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "additionalProperties": true
       }
     },
     "amplitude": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["time", "volume"],
+        "required": [
+          "time",
+          "volume"
+        ],
         "properties": {
-          "time": { "type": "number" },
-          "volume": { "type": "number" }
-        }
+          "time": {
+            "type": "number"
+          },
+          "volume": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
       }
+    },
+    "puppet": {
+      "type": "object",
+      "additionalProperties": true
     }
-  }
+  },
+  "additionalProperties": true
 }

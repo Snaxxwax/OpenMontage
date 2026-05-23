@@ -60,3 +60,13 @@ BLOCKERS:
 OPERATOR ACTION REQUIRED:
   <none, review advisory warnings, or approve a material style change>
 ```
+
+## Retention visual identity checks
+
+- Does the sequence feel like cinematic case-building, not a research deck?
+- Are receipts transformed into editorial story objects with readable labels, reveals, and source context?
+- Are illustrative metaphors clearly separate from evidence?
+- Is character absence/presence intentional rather than a permanent mascot layout?
+- Does red state remain scarce and tied to true contradiction/stakes moments?
+- Does the visual plan avoid long static source screens?
+- Does the style stay Modern Archivist — teal archive, crimson error, dry forensic UI — rather than generic finance/crime documentary?

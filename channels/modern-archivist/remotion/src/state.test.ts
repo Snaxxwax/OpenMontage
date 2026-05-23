@@ -1,21 +1,30 @@
 import {
+  getActiveCharacterCue,
+  getActiveColorState,
   getActiveLayout,
   getActiveMedia,
+  getActiveMediaSequence,
+  getActiveRetentionDevice,
+  getActiveSection,
+  getActiveVisualMode,
   isSipActive,
   isSpeaking,
+  layoutForColorState,
 } from "./state";
-import type { AudioAmplitudeSample, ScriptTag } from "./types";
+import type { AudioAmplitudeSample, EpisodeSection, ScriptTag } from "./types";
 
 const tags: ScriptTag[] = [
   { at: 0, type: "layout", value: "STATE_MONOLOGUE" },
   { at: 4, type: "sip" },
-  {
-    at: 8,
-    type: "media",
-    value: { id: "code-1", kind: "code", language: "html", content: "<main />" },
-  },
+  { at: 8, type: "media", value: { id: "code-1", kind: "code", language: "html", content: "<main />" } },
   { at: 10, type: "layout", value: "STATE_DEEP_DIVE" },
   { at: 20, type: "layout", value: "STATE_CRITICAL_ERROR" },
+];
+
+const sections: EpisodeSection[] = [
+  { id: "s1", start: 0, end: 8, text: "Hook", tags: [tags[0]], visual_mode: "monologue", retention_device: "cold_open_shock", color_state: "teal", character: { visible: true, action: "glasses_flash", expression: "skeptical" } },
+  { id: "s2", start: 8, end: 20, text: "Case", tags: [tags[2], tags[3]], visual_mode: "case_file", retention_device: "evidence_receipt", color_state: "teal", character: { visible: false, action: "hidden", expression: "none" }, media_overlay: { id: "case-1", kind: "case_file_sequence", title: "Case file", evidence_refs: ["source_1"] } },
+  { id: "s3", start: 20, end: 28, text: "Interrupt", tags: [tags[4]], visual_mode: "critical_error", retention_device: "pattern_interrupt", color_state: "red", character: { visible: true, action: "sip_coffee", expression: "deadpan" } },
 ];
 
 const amplitude: AudioAmplitudeSample[] = [
@@ -38,3 +47,11 @@ assertEqual(isSipActive(tags, 7), false, "sip inactive outside window");
 assertEqual(isSpeaking(amplitude, 1.05), true, "speaking above volume threshold");
 assertEqual(isSpeaking(amplitude, 2.0), false, "not speaking below volume threshold");
 assertEqual(getActiveMedia(tags, 9)?.id, "code-1", "media active after media tag");
+assertEqual(getActiveSection(sections, 9)?.id, "s2", "active section by time");
+assertEqual(getActiveVisualMode(sections, 9), "case_file", "visual mode from section");
+assertEqual(getActiveCharacterCue(sections, 9).visible, false, "hidden character cue from section");
+assertEqual(getActiveCharacterCue(sections, 21).action, "sip_coffee", "character action from section");
+assertEqual(getActiveRetentionDevice(sections, 2), "cold_open_shock", "retention device from section");
+assertEqual(getActiveColorState(sections, 21), "red", "red critical state");
+assertEqual(getActiveMediaSequence(sections, tags, 9)?.kind, "case_file_sequence", "media overlay preferred");
+assertEqual(layoutForColorState("red", "critical_error"), "STATE_CRITICAL_ERROR", "layout from red state");
