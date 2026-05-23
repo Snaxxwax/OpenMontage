@@ -61,6 +61,7 @@ export interface CollageBurstProps {
   curtainStartSeconds: number;
   curtainEndSeconds: number;
   clips: CollageClip[];
+  [key: string]: unknown;
 }
 
 // ----------------------------------------------------------------------------

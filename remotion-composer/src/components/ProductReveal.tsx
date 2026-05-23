@@ -16,6 +16,7 @@ export interface ProductRevealProps {
   tagline: string;
   closer: string;
   accentColor?: string;
+  [key: string]: unknown;
 }
 
 export const ProductReveal: React.FC<ProductRevealProps> = ({

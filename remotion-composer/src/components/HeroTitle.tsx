@@ -9,6 +9,7 @@ import {
 interface HeroTitleProps {
   title: string;
   subtitle?: string;
+  [key: string]: unknown;
 }
 
 export const HeroTitle: React.FC<HeroTitleProps> = ({ title, subtitle }) => {

@@ -1,0 +1,28 @@
+$schema: ../../schemas/channels/channel_package.schema.json
+name: modern-archivist
+package_type: openmontage-channel
+version: "0.1.0"
+description: >
+  Channel package for The Modern Archivist / Failure Ledger: evidence-led
+  corporate and product failure documentaries rendered through deterministic
+  Remotion/React animation with local narration and saved assets first.
+openmontage_compatibility:
+  min_version: "0.1.0"
+  requires:
+    - pipeline_loader.channel_package_support
+    - remotion
+    - fish_speech
+canonical_pipeline: pipeline.yaml
+canonical_renderer: remotion
+entrypoints:
+  pipeline: pipeline.yaml
+  remotion_composition: ModernArchivist
+  channel_doc: CHANNEL.md
+  design_doc: DESIGN.md
+paths:
+  skills: skills/
+  schemas: schemas/
+  templates: templates/
+  assets: assets/
+  remotion_src: remotion/src/
+  remotion_public: remotion/public/

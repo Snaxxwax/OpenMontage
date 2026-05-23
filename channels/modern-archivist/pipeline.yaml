@@ -1,0 +1,231 @@
+name: modern-archivist
+version: "1.0"
+description: >
+  Channel-specific OpenMontage pipeline for The Modern Archivist / Failure Ledger:
+  evidence-led corporate and product failure documentaries rendered with deterministic
+  React/Remotion animation, local narration, saved assets first, and optional ComfyUI
+  only as a reviewed source-asset provider.
+category: custom
+stability: beta
+default_checkpoint_policy: guided
+
+reference_input:
+  supported: false
+
+metadata:
+  channel_package: true
+  channel_category: documentary-animation
+  lifecycle_stage: alpha
+  canonical_renderer: remotion
+  composition: ModernArchivist
+  artifact_paths:
+    research_packet: artifacts/research_packet.json
+    episode: artifacts/episode.json
+    narration_audio: assets/audio/narration.wav
+    audio_analysis: artifacts/audio_analysis.json
+    media_manifest: artifacts/media_manifest.json
+    asset_manifest: artifacts/asset_manifest.json
+    render_report: artifacts/render_report.json
+  schemas:
+    episode: channels/modern-archivist/schemas/episode.schema.json
+    media_manifest: channels/modern-archivist/schemas/media.schema.json
+  constraints:
+    no_webgl: true
+    no_canvas_skeletal_rigging: true
+    no_image_to_video_character: true
+    deterministic_render_inputs_only: true
+    no_network_fetches_during_remotion_render: true
+  asset_policy:
+    saved_assets_policy: channels/modern-archivist/assets/comfyui_workflows/asset_requirements.yaml
+    saved_assets_check: scripts/comfyui/asset_generation_needed.py
+    comfyui_lifecycle_tool: scripts/comfyui/ensure_comfyui_docker.py
+    deprecated_orchestration_shim: scripts/comfyui/run_asset_generation.py
+
+orchestration:
+  mode: executive-producer
+  skill: channels/modern-archivist/skills/executive-producer.md
+  budget_default_usd: 0.00
+  max_revisions_per_stage: 3
+  max_send_backs: 2
+  max_wall_time_minutes: 60
+
+extensions:
+  custom_scripts: true
+  custom_playbooks: true
+  custom_skills: true
+  custom_tools: false
+
+required_skills:
+  - channels/modern-archivist/skills/executive-producer.md
+  - channels/modern-archivist/skills/research-director.md
+  - channels/modern-archivist/skills/script-director.md
+  - channels/modern-archivist/skills/audio-director.md
+  - channels/modern-archivist/skills/audio-analysis-director.md
+  - channels/modern-archivist/skills/media-director.md
+  - channels/modern-archivist/skills/asset-generation-director.md
+  - channels/modern-archivist/skills/render-director.md
+  - meta/reviewer
+  - meta/checkpoint-protocol
+
+compatible_playbooks:
+  recommended:
+    - broadcast-investigative
+    - flat-motion-graphics
+  also_works:
+    - clean-professional
+    - minimalist-diagram
+  custom_allowed: true
+
+stages:
+  - name: research
+    skill: channels/modern-archivist/skills/research-director.md
+    produces:
+      - research_packet
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Claims are evidence-ranked and separated from interpretation
+      - Corporate/product timeline contains dated primary-source anchors
+      - Failure thesis is specific, falsifiable, and not generic outrage
+      - URLs, publishers, retrieval dates, and notes are present for sources
+    success_criteria:
+      - Schema-valid or contract-valid research_packet artifact exists at artifacts/research_packet.json
+      - Sources include URLs and retrieval dates
+      - Claims are grouped by evidence strength and narrative relevance
+      - Open questions and risky claims are explicitly marked
+
+  - name: script
+    skill: channels/modern-archivist/skills/script-director.md
+    required_artifacts_in:
+      - research_packet
+    produces:
+      - episode
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Hook promises a corporate autopsy, not a generic explainer
+      - Narration fits the target duration and Modern Archivist voice
+      - Scene beats map to visual slots and deterministic render states
+      - Claims in narration trace back to research_packet evidence IDs
+    success_criteria:
+      - Schema-valid episode artifact exists at artifacts/episode.json
+      - Narration duration is within target range
+      - Every scene has a visual slot, state tag, and evidence linkage where factual
+      - User approval or approved-with-changes is recorded before audio
+
+  - name: audio
+    skill: channels/modern-archivist/skills/audio-director.md
+    required_artifacts_in:
+      - episode
+    produces:
+      - narration_audio
+    required_tools:
+      - fish_speech
+    tools_available:
+      - fish_speech
+      - ffmpeg
+      - ffprobe
+    checkpoint_required: false
+    human_approval_default: false
+    review_focus:
+      - Voice and pacing match the approved script
+      - Generated files are local and deterministic inputs for later stages
+      - GPU service decisions are not hidden in Python orchestration
+    success_criteria:
+      - assets/audio/narration.wav exists
+      - ffprobe validates the narration audio
+      - Duration matches script timing within tolerance
+
+  - name: audio_analysis
+    skill: channels/modern-archivist/skills/audio-analysis-director.md
+    required_artifacts_in:
+      - narration_audio
+    produces:
+      - audio_analysis
+    tools_available:
+      - ffprobe
+    checkpoint_required: false
+    human_approval_default: false
+    review_focus:
+      - Word timings are normalized for Remotion props
+      - Amplitude samples are precomputed; render does no live analysis
+      - Analysis references the exact narration file produced by audio
+    success_criteria:
+      - artifacts/audio_analysis.json exists
+      - Word timings and amplitude samples are normalized
+      - No render-time audio analysis is required
+
+  - name: media_manifest
+    skill: channels/modern-archivist/skills/media-director.md
+    required_artifacts_in:
+      - episode
+      - research_packet
+    produces:
+      - media_manifest
+    tools_available: []
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Every visual asset requirement has provenance or an explicit creation plan
+      - No network fetches are required during Remotion render
+      - Visual choices support the Failure Ledger / corporate autopsy framing
+    success_criteria:
+      - Schema-valid media_manifest artifact exists at artifacts/media_manifest.json
+      - Every visual asset has provenance, path, or planned local generation source
+      - Render inputs are local files or inline deterministic data
+
+  - name: asset_generation
+    skill: channels/modern-archivist/skills/asset-generation-director.md
+    required_artifacts_in:
+      - episode
+      - media_manifest
+    produces:
+      - asset_manifest
+    optional_tools:
+      - comfyui
+    tools_available:
+      - asset_generation_needed
+      - comfyui_lifecycle
+      - comfyui
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Saved-assets check runs before any ComfyUI lifecycle command
+      - ComfyUI is skipped if saved assets satisfy the requested profile
+      - Provider/model/workflow choice is proposed by the stage director, not Python
+      - Generated assets are not auto-promoted without review and approval
+      - run_asset_generation.py is not used as pipeline orchestration
+    success_criteria:
+      - artifacts/asset_manifest.json exists
+      - Saved-assets check result is recorded in asset_manifest
+      - ComfyUI was skipped when saved assets were sufficient
+      - Any generated candidate includes workflow/model/seed/provenance metadata
+      - Selected/generated assets are reviewed before promotion
+
+  - name: render
+    skill: channels/modern-archivist/skills/render-director.md
+    required_artifacts_in:
+      - episode
+      - media_manifest
+      - asset_manifest
+      - audio_analysis
+    produces:
+      - render_report
+    required_tools:
+      - remotion
+    tools_available:
+      - remotion
+      - ffmpeg
+      - ffprobe
+    checkpoint_required: true
+    human_approval_default: false
+    review_focus:
+      - Render uses deterministic local props only
+      - Remotion remains the canonical runtime unless user approves a material change
+      - Output file, duration, audio sync, and keyframes are verified
+    success_criteria:
+      - Final video file exists
+      - ffprobe validates the rendered video
+      - render_report records input artifacts, runtime, output path, duration, and verification notes

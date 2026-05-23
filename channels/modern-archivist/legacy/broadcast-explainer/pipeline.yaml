@@ -5,7 +5,15 @@ description: >
   HyperFrames render runtime (locked). Narration via local Fish Speech S2-Pro.
   Output: 1920×1080 MP4, 30fps.
 category: generated
-stability: production
+stability: archived
+metadata:
+  archived_from: pipeline_defs/broadcast-explainer.yaml
+  legacy_status: channel-reference-only
+  canonical_successor: channels/modern-archivist/pipeline.yaml
+  archived_reason: >
+    This prototype contains channel-specific voice, AXIOM character, HyperFrames,
+    and investigative-broadcast assumptions that should not live in generic
+    OpenMontage pipeline_defs/ or skills/pipelines/.
 
 render_runtime: hyperframes
 

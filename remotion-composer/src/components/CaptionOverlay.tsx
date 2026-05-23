@@ -23,6 +23,7 @@ interface CaptionOverlayProps {
   highlightColor?: string;
   backgroundColor?: string;
   fontFamily?: string;
+  [key: string]: unknown;
 }
 
 interface CaptionPage {

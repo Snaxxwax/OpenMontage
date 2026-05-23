@@ -3,7 +3,7 @@ identity:
   category: cinematic
   mood: urgent, authoritative, investigative
   pace: fast
-  best_for: "Data journalism explainers, investigative documentary, channel Asymmetric"
+  best_for: "Data journalism explainers, investigative documentary, policy analysis, corporate case studies"
 
 visual_language:
   color_palette:
@@ -50,7 +50,7 @@ motion:
   exit: "cut or fast fade-out (0.25s)"
 
 audio:
-  voice_style: "e-girl — high energy, slightly breathless, contrast with serious data amplifies impact"
+  voice_style: "clear investigative narrator — controlled energy, precise delivery, serious without sounding flat"
   music_mood: "sparse industrial ambient, low drone, no melody — tension without distraction"
   music_volume: 0.15
   sfx_style: "none — music and voice only"

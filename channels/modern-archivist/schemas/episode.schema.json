@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Modern Archivist Episode",
+  "type": "object",
+  "required": ["episode_id", "title", "duration_seconds", "sections"],
+  "properties": {
+    "episode_id": { "type": "string" },
+    "title": { "type": "string" },
+    "duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+    "audio_src": { "type": "string" },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "start", "end", "text", "tags"],
+        "properties": {
+          "id": { "type": "string" },
+          "start": { "type": "number" },
+          "end": { "type": "number" },
+          "text": { "type": "string" },
+          "tags": { "type": "array" }
+        }
+      }
+    },
+    "amplitude": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["time", "volume"],
+        "properties": {
+          "time": { "type": "number" },
+          "volume": { "type": "number" }
+        }
+      }
+    }
+  }
+}

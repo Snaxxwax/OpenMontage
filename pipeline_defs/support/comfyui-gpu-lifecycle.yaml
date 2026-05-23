@@ -1,0 +1,87 @@
+# GPU lifecycle policy for pipeline-managed Dockerized ComfyUI.
+#
+# Safety contract:
+# - Reuse an already-running healthy ComfyUI container when possible.
+# - If ComfyUI is not running, inspect GPU consumers before launch.
+# - Never kill unknown GPU processes.
+# - Stop/unload only allowlisted non-essential services.
+# - Preserve desktop/display processes and user-protected services.
+
+comfyui:
+  host: 127.0.0.1
+  port: 8188
+  base_url: http://127.0.0.1:8188
+  container_name: openmontage-comfyui
+  compose_file: docker-compose.comfyui.yml
+  service: comfyui
+  # Override with COMFYUI_IMAGE if the local machine uses a different image.
+  image: ${COMFYUI_IMAGE:-ghcr.io/ai-dock/comfyui:latest-cuda}
+  health_endpoint: /system_stats
+  queue_endpoint: /queue
+  free_endpoint: /free
+  required_gpu_name_contains: RTX 3090
+  min_free_vram_mb_before_launch: 12000
+  startup_timeout_seconds: 180
+  poll_interval_seconds: 2
+  workspace: /home/pop/ComfyUI
+  volumes:
+    models: /home/pop/ComfyUI/models
+    input: /home/pop/ComfyUI/input
+    output: /home/pop/ComfyUI/output
+    custom_nodes: /home/pop/ComfyUI/custom_nodes
+    openmontage_outputs: /home/pop/repos/openmontage-asymmetric/channels/modern-archivist/assets/source/comfyui_generated
+
+# Processes/container workloads that should never be stopped by the pipeline.
+gpu_never_kill:
+  - Xorg
+  - Xwayland
+  - wayland
+  - gnome-shell
+  - kwin
+  - plasmashell
+  - sunshine
+  - gamescope
+  - Hyprland
+  - sway
+  - compton
+  - picom
+
+# The helper may stop/unload only these known workloads.
+# preserve_by_default means the helper reports the process and aborts unless
+# called with --allow-preserved-stop or the specific action is non-destructive.
+gpu_unload_allowlist:
+  - name: existing-comfyui
+    match: ComfyUI
+    action: docker_stop
+    preserve_by_default: false
+    notes: Stop stale/non-target ComfyUI containers before launching the managed one.
+
+  - name: vllm
+    match: vllm
+    action: docker_stop
+    preserve_by_default: false
+    notes: Local LLM serving can be stopped before image generation if configured as Docker.
+
+  - name: ollama
+    match: ollama
+    action: docker_stop
+    preserve_by_default: false
+    notes: Ollama often holds VRAM; stop only if container-owned.
+
+  - name: fish-speech
+    match: tools/api_server.py
+    action: report_only
+    preserve_by_default: true
+    notes: Needed for narration; do not stop automatically unless the operator explicitly changes this policy. Fish Speech S2 Pro often appears as tools/api_server.py with s2-pro checkpoints.
+
+  - name: fish-speech-checkpoint
+    match: s2-pro
+    action: report_only
+    preserve_by_default: true
+    notes: Secondary match for Fish Speech S2 Pro checkpoint paths.
+
+  - name: python-training-job
+    match: python
+    action: report_only
+    preserve_by_default: true
+    notes: Generic Python GPU jobs are too ambiguous to stop automatically.

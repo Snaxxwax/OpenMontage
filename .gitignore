@@ -20,6 +20,12 @@ htmlcov/
 output/
 pipeline/
 tests/qa/output/
+channels/*/renders/
+channels/*/assets/audio/
+channels/*/remotion/public/audio/
+channels/*/episodes/*.episode.json
+channels/*/assets/source/**/__pycache__/
+channels/*/assets/source/production_trace_trial/
 
 # Project workspaces (generated assets, renders — all regenerable)
 projects/
@@ -46,6 +52,10 @@ character_library/*
 
 # Stray media downloads (test/scratch clips left in repo root)
 pexels_video_*.mp4
+SVGMontage.zip
+axiom-*.png
+qa_t*.png
+qa_t*.jpeg
 
 # Scratch/debug scripts
 scratch/
@@ -53,9 +63,12 @@ scratch/
 # Internal docs (strategy, handoffs, playbooks — not shipped)
 internal/
 
-# Local agent config (user-specific)
+# Local agent config/cache (user-specific)
 .claude/memory/
 .claude/settings.local.json
+.hermes/
+.playwright-mcp/
+.superpowers/
 
 # Agent skills lock (local install tracking)
 skills-lock.json
@@ -79,6 +92,11 @@ remotion-composer/out/
 remotion-composer/public/*
 # But keep demo props (shipped with the project for zero-key demos)
 !remotion-composer/public/demo-props/
+# Keep Modern Archivist MVP puppet assets; these are channel source assets, not render outputs.
+!remotion-composer/public/modern-archivist/
+!remotion-composer/public/modern-archivist/archivist-body.png
+!remotion-composer/public/modern-archivist/archivist-mug.png
+remotion-composer/public/modern-archivist/audio/
 # Ignore test/scratch compositions in demo-props (keep only curated demos)
 remotion-composer/public/demo-props/test-*
 remotion-composer/public/demo-props/talking-head-*

@@ -63,11 +63,11 @@ cp "$RENDER_PATH" ~/syncthing/final.mp4
       "format": "mp4",
       "codec": "h264",
       "audio_codec": "aac",
-      "resolution": "1920x1080",
+      "resolution": "1080x1920",
       "fps": 30,
       "duration_seconds": 54.94,
       "file_size_bytes": 5373346,
-      "platform_target": "broadcast_explainer"
+      "platform_target": "youtube_shorts"
     }
   ],
   "render_time_seconds": 3254

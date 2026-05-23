@@ -23,10 +23,11 @@ Agent reads pipeline manifest (YAML) → reads stage director skill (MD)
 - **Agent guide & contract:** `AGENT_GUIDE.md` (tool inventory, pipeline selection, stage agents, protocols)
 - **Skill index:** `skills/INDEX.md`
 - **Tool registry:** `tools/tool_registry.py`
-- **Pipeline manifests:** `pipeline_defs/`
+- **Core pipeline manifests:** `pipeline_defs/`
+- **Channel packages:** `channels/<name>/` with `package.yaml`, `pipeline.yaml`, channel skills, schemas, and design docs
 - **Artifact schemas:** `schemas/artifacts/`
 - **Style playbooks:** `styles/*.yaml` (schema: `schemas/styles/playbook.schema.json`)
-- **Stage director skills:** `skills/pipelines/<pipeline>/<stage>-director.md`
+- **Core stage director skills:** `skills/pipelines/<pipeline>/<stage>-director.md`
 - **Meta skills:** `skills/meta/*.md` (reviewer, checkpoint-protocol, skill-creator)
 - **Architecture deep-dive:** `docs/ARCHITECTURE.md`
 
@@ -97,13 +98,30 @@ Each tool's `agent_skills[]` field bridges Layer 1 → Layer 3. See `skills/INDE
 | `localization-dub` | `pipeline_defs/localization-dub.yaml` | Localization and dubbing |
 | `framework-smoke` | `pipeline_defs/framework-smoke.yaml` | Test harness |
 
+## Channel packages
+
+Specialized vertical channels live outside the generic pipeline table under `channels/<channel-name>/`.
+A channel package owns its channel identity, package metadata, channel-specific pipeline manifest,
+director skills, schemas, design docs, templates, and render component contracts. OpenMontage core
+provides shared tools, provider plumbing, checkpoints, schemas, and renderer infrastructure.
+
+A channel package must declare `channels/<channel-name>/package.yaml` and a canonical
+`pipeline.yaml`. Do not add channel-specific logic to `pipeline_defs/` or `skills/pipelines/`
+unless it is intentionally genericized for all OpenMontage users.
+
 ## When Building New Pipelines
+
+For generic framework pipelines:
 
 1. Create a YAML manifest in `pipeline_defs/` (validated by `pipeline_manifest.schema.json`)
 2. Create stage director skills in `skills/pipelines/<pipeline-name>/` (7 skills: idea through publish)
 3. Reference meta skills (reviewer, checkpoint-protocol) in the manifest
 4. Add compatible playbooks to the manifest
 5. Add contract tests in `tests/contracts/`
+
+For channel-specific pipelines, use a channel package under `channels/<channel-name>/` instead of
+mixing specialized channel logic into `pipeline_defs/`. The package should include `package.yaml`,
+`pipeline.yaml`, channel skills, schemas, design docs, templates, and boundary tests.
 
 ## When Building New Tools
 

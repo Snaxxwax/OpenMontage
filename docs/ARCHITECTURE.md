@@ -89,6 +89,8 @@ There is **no Python orchestrator**. The LLM agent:
 
 Python provides **tools and persistence only**. All intelligence lives in skill instructions (Markdown) and pipeline manifests (YAML).
 
+Development guardrail: new functionality must not introduce Python orchestration. If behavior determines stage order, creative intent, provider/model/workflow choice, checkpoint policy, human approval, fallback behavior, review outcome, or asset promotion, encode it in a pipeline manifest and director skill. Python may only implement explicit-input tools, validators, schema checks, persistence, lifecycle utilities, or narrow provider submission helpers. See `docs/DEVELOPMENT_GUARDRAILS.md`.
+
 ### 2. No LLM API Key in Runtime
 
 OpenMontage does not call LLM APIs at runtime. The coding assistant running in the user's IDE _is_ the LLM. Tools that need generation (images, video, TTS) call domain-specific APIs directly (ElevenLabs, fal.ai, HeyGen, etc.), not general-purpose LLM endpoints.

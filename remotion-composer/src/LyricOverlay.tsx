@@ -34,6 +34,7 @@ export interface LyricOverlayProps {
   videoSrc: string;
   lyrics: Lyric[];
   bottomY?: number; // 0..1, vertical center of subtitle band
+  [key: string]: unknown;
 }
 
 const LyricLine: React.FC<{ lyric: Lyric; bottomY: number }> = ({ lyric, bottomY }) => {

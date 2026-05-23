@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "openmontage/channels/channel_package",
+  "title": "OpenMontage Channel Package",
+  "description": "Metadata for a channel-specific OpenMontage package loaded outside the generic pipeline_defs/ directory.",
+  "type": "object",
+  "required": [
+    "name",
+    "package_type",
+    "version",
+    "canonical_pipeline",
+    "canonical_renderer",
+    "entrypoints",
+    "paths"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "name": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "package_type": { "const": "openmontage-channel" },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "openmontage_compatibility": {
+      "type": "object",
+      "properties": {
+        "min_version": { "type": "string" },
+        "requires": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "canonical_pipeline": { "type": "string" },
+    "canonical_renderer": { "type": "string", "enum": ["remotion", "hyperframes", "ffmpeg"] },
+    "entrypoints": {
+      "type": "object",
+      "required": ["pipeline", "remotion_composition", "channel_doc", "design_doc"],
+      "properties": {
+        "pipeline": { "type": "string" },
+        "remotion_composition": { "type": "string" },
+        "channel_doc": { "type": "string" },
+        "design_doc": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "paths": {
+      "type": "object",
+      "required": ["skills", "schemas", "templates", "assets", "remotion_src", "remotion_public"],
+      "properties": {
+        "skills": { "type": "string" },
+        "schemas": { "type": "string" },
+        "templates": { "type": "string" },
+        "assets": { "type": "string" },
+        "remotion_src": { "type": "string" },
+        "remotion_public": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

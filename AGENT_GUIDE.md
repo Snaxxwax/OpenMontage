@@ -67,6 +67,37 @@ When the user asks to make, create, produce, or generate any video content — a
 
 The intelligence is in the skills, not in improvised code. An agent that reads the director skills and Layer 3 knowledge will produce significantly better output than one that calls tools directly with generic prompts.
 
+## Development Guardrails — Prevent Python Orchestration Drift
+
+Before adding or changing pipeline/channel functionality, read `docs/DEVELOPMENT_GUARDRAILS.md`.
+
+New development must preserve this split:
+
+```text
+YAML manifests + Markdown director skills:
+  stage order, required artifacts, provider/tool choices, checkpoint policy,
+  human approval policy, creative/review decisions, fallback behavior.
+
+Python:
+  BaseTool providers, deterministic validators, schema checks, persistence,
+  narrow lifecycle utilities, narrow provider submission helpers.
+```
+
+If a new Python script decides creative intent, provider/model/workflow selection, GPU service flow, asset promotion, checkpoint policy, or review outcome, it is architecture drift. Move that logic into the pipeline manifest/director skill and reduce Python to an explicit-input JSON/tool utility.
+
+For Modern Archivist specifically, `scripts/comfyui/run_asset_generation.py` is a deprecated compatibility shim, not a pipeline. The authoritative flow is `channels/modern-archivist/pipeline.yaml` plus `channels/modern-archivist/skills/asset-generation-director.md`.
+
+## Channel Package Boundary
+
+Generic OpenMontage pipelines live in `pipeline_defs/` with director skills under `skills/pipelines/`.
+Specialized vertical channels live under `channels/<channel-name>/` and must declare a `package.yaml`
+plus a canonical `pipeline.yaml`. Channel packages own channel identity, channel schemas, channel
+skills, design docs, templates, and channel-specific render contracts. OpenMontage core provides the
+shared engine: tools, provider plumbing, checkpoint utilities, schemas, and renderer infrastructure.
+
+Do not move channel-specific assumptions into `pipeline_defs/` or `skills/pipelines/` unless they are
+intentionally genericized for all OpenMontage users.
+
 ## What OpenMontage Is
 
 OpenMontage is an instruction-driven video production system. The AI agent IS the intelligence — it reads instructions (pipeline manifests + stage director skills + meta skills) and drives the pipeline using tools.

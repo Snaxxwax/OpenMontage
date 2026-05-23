@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Modern Archivist Media Item",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["id", "kind", "content"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "code" },
+        "title": { "type": "string" },
+        "language": { "type": "string" },
+        "content": { "type": "string" }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["id", "kind", "body"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "article" },
+        "title": { "type": "string" },
+        "source": { "type": "string" },
+        "body": { "type": "string" },
+        "highlightTerms": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["id", "kind", "quote"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "quote" },
+        "quote": { "type": "string" },
+        "attribution": { "type": "string" }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["id", "kind", "src"],
+      "properties": {
+        "id": { "type": "string" },
+        "kind": { "const": "image" },
+        "src": { "type": "string" },
+        "caption": { "type": "string" }
+      }
+    }
+  ]
+}

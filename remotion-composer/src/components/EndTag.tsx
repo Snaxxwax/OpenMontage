@@ -19,6 +19,7 @@ export interface EndTagProps {
   // AbsoluteFill drops its background fill — caller is responsible for
   // rendering with an alpha-capable codec (VP9/WebM or ProRes 4444).
   overlay?: boolean;
+  [key: string]: unknown;
 }
 
 const PALETTES = {

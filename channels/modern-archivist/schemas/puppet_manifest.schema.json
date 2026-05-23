@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Modern Archivist Puppet Manifest",
+  "type": "object",
+  "required": ["version", "character_id", "layers", "anchors"],
+  "properties": {
+    "version": { "type": "string" },
+    "character_id": { "type": "string" },
+    "display_name": { "type": "string" },
+    "temporary": { "type": "boolean" },
+    "notes": { "type": "string" },
+    "layers": {
+      "type": "object",
+      "required": ["body"],
+      "properties": {
+        "body": { "type": "string" },
+        "mug": { "type": "string" },
+        "mouth_idle": { "type": "string" },
+        "mouth_talk": { "type": "string" },
+        "glasses_frame": { "type": "string" },
+        "action_arm": { "type": "string" }
+      }
+    },
+    "anchors": { "type": "object" }
+  }
+}
