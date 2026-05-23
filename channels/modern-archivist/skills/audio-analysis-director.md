@@ -31,6 +31,6 @@ Create `artifacts/audio_analysis.json` so Remotion receives normalized, determin
 ## Success criteria
 
 - `artifacts/audio_analysis.json` exists.
-- Duration matches ffprobe.
+- Duration matches `audio_probe` or equivalent media-probe output.
 - Amplitude samples and word timing formats are stable.
 - The render stage can consume the artifact without analyzing audio again.

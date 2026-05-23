@@ -4,7 +4,7 @@ Use this director for the `render` stage.
 
 ## Mission
 
-Render the approved Modern Archivist episode through deterministic Remotion and create `artifacts/render_report.json`.
+Render the approved Modern Archivist episode through registry-discoverable composition tools and create `artifacts/render_report.json`.
 
 ## Inputs
 
@@ -15,7 +15,7 @@ Render the approved Modern Archivist episode through deterministic Remotion and 
 
 ## Runtime contract
 
-Canonical runtime is Remotion / React. Do not switch to HyperFrames, FFmpeg-only, image-to-video, WebGL, or canvas skeletal rigging unless the user explicitly approves a material runtime change.
+Use `video_compose` as the manifest-level render tool. Canonical runtime is Remotion / React, but `hyperframes_compose` must be considered and presented when HyperFrames is available. Do not switch between Remotion, HyperFrames, FFmpeg-only, image-to-video, WebGL, or canvas skeletal rigging unless the user explicitly approves a material runtime change.
 
 ## Pre-render checks
 
@@ -33,14 +33,14 @@ Canonical runtime is Remotion / React. Do not switch to HyperFrames, FFmpeg-only
 - runtime and composition name
 - output video path
 - duration, resolution, codec, and audio stream details
-- ffprobe result
+- `audio_probe` / media-probe result
 - keyframe/self-review notes
 - warnings or approved deviations
 
 ## Success criteria
 
 - Final video file exists.
-- ffprobe validates video and audio streams.
+- `audio_probe` or an equivalent media probe validates video and audio streams.
 - Duration matches the script/audio plan.
 - Report records inputs and verification notes.
 - No hidden network, provider, or runtime substitution occurred.

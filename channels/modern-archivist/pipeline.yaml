@@ -122,11 +122,16 @@ stages:
     produces:
       - narration_audio
     required_tools:
-      - fish_speech
+      - tts_selector
     tools_available:
-      - fish_speech
-      - ffmpeg
-      - ffprobe
+      - tts_selector
+      - fish_speech_tts
+      - piper_tts
+      - openai_tts
+      - google_tts
+      - elevenlabs_tts
+      - audio_mixer
+      - audio_probe
     checkpoint_required: false
     human_approval_default: false
     review_focus:
@@ -135,7 +140,7 @@ stages:
       - GPU service decisions are not hidden in Python orchestration
     success_criteria:
       - assets/audio/narration.wav exists
-      - ffprobe validates the narration audio
+      - audio_probe validates the narration audio
       - Duration matches script timing within tolerance
 
   - name: audio_analysis
@@ -145,7 +150,8 @@ stages:
     produces:
       - audio_analysis
     tools_available:
-      - ffprobe
+      - audio_probe
+      - audio_energy
     checkpoint_required: false
     human_approval_default: false
     review_focus:
@@ -184,11 +190,15 @@ stages:
     produces:
       - asset_manifest
     optional_tools:
-      - comfyui
+      - image_selector
+      - local_diffusion
     tools_available:
-      - asset_generation_needed
-      - comfyui_lifecycle
-      - comfyui
+      - image_selector
+      - image_gen
+      - local_diffusion
+      - openai_image
+      - google_imagen
+      - grok_image
     checkpoint_required: true
     human_approval_default: true
     review_focus:
@@ -214,18 +224,23 @@ stages:
     produces:
       - render_report
     required_tools:
-      - remotion
+      - video_compose
+    optional_tools:
+      - hyperframes_compose
     tools_available:
-      - remotion
-      - ffmpeg
-      - ffprobe
+      - video_compose
+      - hyperframes_compose
+      - remotion_caption_burn
+      - video_stitch
+      - audio_probe
     checkpoint_required: true
     human_approval_default: false
     review_focus:
       - Render uses deterministic local props only
       - Remotion remains the canonical runtime unless user approves a material change
+      - HyperFrames is included in the runtime shortlist when available and must not be silently substituted
       - Output file, duration, audio sync, and keyframes are verified
     success_criteria:
       - Final video file exists
-      - ffprobe validates the rendered video
+      - audio_probe validates the rendered video
       - render_report records input artifacts, runtime, output path, duration, and verification notes

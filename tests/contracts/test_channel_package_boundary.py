@@ -83,6 +83,37 @@ def test_load_pipeline_can_load_channel_pipeline_explicitly_without_core_mix_in(
     assert manifest["metadata"]["canonical_renderer"] == "remotion"
 
 
+def test_modern_archivist_manifest_tool_names_are_registry_discoverable() -> None:
+    from tools.tool_registry import registry
+
+    registry.discover()
+    manifest = load_pipeline("modern-archivist", source="channel")
+    registry_tool_names = set(registry._tools)
+    stage_tool_names: set[str] = set()
+
+    for stage in manifest["stages"]:
+        for key in ["required_tools", "optional_tools", "tools_available"]:
+            stage_tool_names.update(stage.get(key, []))
+
+    legacy_semantic_labels = {
+        "asset_generation_needed",
+        "comfyui",
+        "comfyui_lifecycle",
+        "ffmpeg",
+        "ffprobe",
+        "fish_speech",
+        "remotion",
+    }
+
+    assert stage_tool_names
+    assert "tts_selector" in stage_tool_names
+    assert "fish_speech_tts" in stage_tool_names
+    assert "video_compose" in stage_tool_names
+    assert "hyperframes_compose" in stage_tool_names
+    assert stage_tool_names.isdisjoint(legacy_semantic_labels)
+    assert stage_tool_names <= registry_tool_names
+
+
 def test_channel_specific_terms_are_not_added_to_generic_pipeline_table() -> None:
     project_context = (ROOT / "PROJECT_CONTEXT.md").read_text(encoding="utf-8")
     available_table = project_context.split("## When Building New Pipelines", 1)[0]

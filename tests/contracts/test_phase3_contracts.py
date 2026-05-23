@@ -29,6 +29,7 @@ from tools.tool_registry import ToolRegistry
 from tools.audio.elevenlabs_tts import ElevenLabsTTS
 from tools.audio.openai_tts import OpenAITTS
 from tools.audio.piper_tts import PiperTTS
+from tools.audio.fish_speech_tts import FishSpeechTTS
 from tools.audio.tts_selector import TTSSelector
 
 
@@ -74,6 +75,30 @@ class TestPiperTTS:
         assert "offline_generation" in tool.capabilities
 
 
+class TestFishSpeechTTS:
+    def test_identity(self):
+        tool = FishSpeechTTS()
+        info = tool.get_info()
+        assert info["name"] == "fish_speech_tts"
+        assert info["tier"] == "voice"
+        assert info["capability"] == "tts"
+        assert info["provider"] == "fish_speech"
+        assert info["runtime"] == "local_gpu"
+
+    def test_cost_is_free(self):
+        tool = FishSpeechTTS()
+        assert tool.estimate_cost({"text": "anything"}) == 0.0
+
+    def test_payload_defaults_match_modern_archivist_voice(self):
+        tool = FishSpeechTTS()
+        payload = tool.build_payload({"text": "hello [sip] world"})
+        assert payload["text"] == "hello [short pause] world"
+        assert payload["reference_id"] == "asymmetric_narrator_v1"
+        assert payload["format"] == "wav"
+        assert payload["streaming"] is False
+        assert payload["normalize"] is True
+
+
 class TestMusicGen:
     def test_identity(self):
         tool = MusicGen()
@@ -105,10 +130,11 @@ class TestNewToolsRegistry:
         reg.register(ElevenLabsTTS())
         reg.register(OpenAITTS())
         reg.register(PiperTTS())
+        reg.register(FishSpeechTTS())
         voice_tools = reg.get_by_tier(ToolTier.VOICE)
-        assert len(voice_tools) == 3
+        assert len(voice_tools) == 4
         names = {t.name for t in voice_tools}
-        assert names == {"elevenlabs_tts", "openai_tts", "piper_tts"}
+        assert names == {"elevenlabs_tts", "openai_tts", "piper_tts", "fish_speech_tts"}
 
 
 class TestCapabilityMetadata:
@@ -126,9 +152,11 @@ class TestCapabilityMetadata:
         reg.register(ElevenLabsTTS())
         reg.register(OpenAITTS())
         reg.register(PiperTTS())
+        reg.register(FishSpeechTTS())
         reg.register(TTSSelector())
         assert {tool.name for tool in reg.get_by_capability("tts")} == {
             "elevenlabs_tts",
+            "fish_speech_tts",
             "openai_tts",
             "piper_tts",
             "tts_selector",
@@ -140,10 +168,11 @@ class TestCapabilityMetadata:
         reg.register(ElevenLabsTTS())
         reg.register(OpenAITTS())
         reg.register(PiperTTS())
+        reg.register(FishSpeechTTS())
         catalog = reg.capability_catalog()
         assert "tts" in catalog
         providers = {item["provider"] for item in catalog["tts"] if item["provider"] != "selector"}
-        assert providers == {"doubao", "elevenlabs", "google_tts", "openai", "piper"}
+        assert providers == {"doubao", "elevenlabs", "fish_speech", "google_tts", "openai", "piper"}
 
 
 # ---- Animated Explainer Pipeline ----
