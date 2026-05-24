@@ -1,5 +1,4 @@
 import React from "react";
-import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import type { LayoutState } from "../types";
 
 const archiveText = `GET /wiki/HTML/2.0 HTTP/1.1
@@ -18,29 +17,33 @@ CACHE HIT: public-records/municipal-broadband/minutes.txt
 ARCHIVE WARNING: dependency chain contains unmaintained social memory
 `;
 
-export const ScrollingCodeBackdrop: React.FC<{ layout: LayoutState }> = ({ layout }) => {
-  const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
-  const y = interpolate(frame, [0, Math.max(durationInFrames, 1)], [0, -900], { extrapolateRight: "extend" });
+const repeatedArchiveText = Array.from({ length: 3 }, () => archiveText).join("\n");
 
+export const ScrollingCodeBackdrop: React.FC<{ layout: LayoutState }> = React.memo(({ layout }) => {
   return (
-    <pre
-      style={{
-        position: "absolute",
-        inset: 0,
-        margin: 0,
-        padding: "80px 90px",
-        transform: `translateY(${y}px)`,
-        color: layout === "STATE_CRITICAL_ERROR" ? "rgba(255, 210, 210, 0.18)" : "rgba(214, 255, 247, 0.16)",
-        fontSize: 34,
-        lineHeight: 1.32,
-        fontFamily: "JetBrains Mono, Fira Code, monospace",
-        whiteSpace: "pre-wrap",
-        zIndex: 0,
-        userSelect: "none",
-      }}
-    >
-      <code>{Array.from({ length: 8 }, () => archiveText).join("\n")}</code>
-    </pre>
+    <>
+      <style>{`@keyframes modernArchivistBackdropScroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(0, -420px, 0); } }`}</style>
+      <pre
+        style={{
+          position: "absolute",
+          inset: 0,
+          margin: 0,
+          padding: "80px 90px",
+          animation: "modernArchivistBackdropScroll 36s linear infinite",
+          willChange: "transform",
+          color: layout === "STATE_CRITICAL_ERROR" ? "rgba(255, 210, 210, 0.16)" : "rgba(214, 255, 247, 0.13)",
+          fontSize: 32,
+          lineHeight: 1.28,
+          fontFamily: "JetBrains Mono, Fira Code, monospace",
+          whiteSpace: "pre-wrap",
+          zIndex: 0,
+          userSelect: "none",
+        }}
+      >
+        <code>{repeatedArchiveText}</code>
+      </pre>
+    </>
   );
-};
+});
+
+ScrollingCodeBackdrop.displayName = "ScrollingCodeBackdrop";

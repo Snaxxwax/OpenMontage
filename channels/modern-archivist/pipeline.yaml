@@ -1,6 +1,6 @@
 name: modern-archivist
 version: '1.0'
-description: 'Channel-specific OpenMontage pipeline for The Modern Archivist / Failure Ledger: evidence-led corporate and
+description: 'Channel-specific OpenMontage pipeline for The Modern Archivist / Failure Ledger: thesis-driven corporate and
   product failure documentaries rendered with deterministic React/Remotion animation, local narration, saved assets first,
   and optional ComfyUI only as a reviewed source-asset provider.
 
@@ -259,7 +259,7 @@ stages:
     completion_contract: agent_gate_report
     review_focus:
     - Visual plan preserves Modern Archivist puppet identity and flat 2.5D limits
-    - Asset requests support evidence-led corporate autopsy frames, not decoration
+    - Asset requests support thesis-driven corporate autopsy frames, not decoration
     - Color, typography, source labels, and proof cards stay consistent across scenes
     - Generated assets remain optional and review-gated before promotion
 - name: asset_generation

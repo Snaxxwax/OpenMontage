@@ -1,7 +1,7 @@
 # Modern Archivist Retention Doctrine
 
 ## Channel target
-The Modern Archivist / Failure Ledger is a forensic business-crime documentary channel led by a sardonic digital archivist. The target output is not a research deck with narration; it is cinematic case-building that turns corporate and product failures into evidence-led autopsies.
+The Modern Archivist / Failure Ledger is a forensic business-crime documentary channel led by a sardonic digital archivist. The target output is not a research deck with narration; it is cinematic case-building that turns corporate and product failures into thesis-driven autopsies. The failure thesis leads; evidence defends it.
 
 ## Influence blend
 - Coffeezilla: confrontation, evidence, contradictions, named stakes, and the moment where the record catches up to the claim.

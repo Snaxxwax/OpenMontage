@@ -91,12 +91,14 @@ node_modules/
 # Remotion build output and copied project assets (regenerable at render time)
 remotion-composer/out/
 remotion-composer/public/*
+remotion-composer/public/.openmontage/
 # But keep demo props (shipped with the project for zero-key demos)
 !remotion-composer/public/demo-props/
 # Keep Modern Archivist MVP puppet assets; these are channel source assets, not render outputs.
 !remotion-composer/public/modern-archivist/
 !remotion-composer/public/modern-archivist/archivist-body.png
 !remotion-composer/public/modern-archivist/archivist-mug.png
+remotion-composer/public/modern-archivist/*.wav
 remotion-composer/public/modern-archivist/audio/
 # Ignore test/scratch compositions in demo-props (keep only curated demos)
 remotion-composer/public/demo-props/test-*

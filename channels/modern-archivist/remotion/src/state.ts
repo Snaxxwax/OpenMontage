@@ -34,9 +34,17 @@ export function isSpeaking(
     return false;
   }
 
-  const nearest = amplitude.reduce((best, sample) =>
-    Math.abs(sample.time - time) < Math.abs(best.time - time) ? sample : best,
-  );
+  let lo = 0;
+  let hi = amplitude.length - 1;
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (amplitude[mid].time < time) lo = mid + 1;
+    else hi = mid;
+  }
+
+  const next = amplitude[lo];
+  const prev = amplitude[Math.max(0, lo - 1)];
+  const nearest = Math.abs(prev.time - time) <= Math.abs(next.time - time) ? prev : next;
 
   return nearest.volume > threshold;
 }

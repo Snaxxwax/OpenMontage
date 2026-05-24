@@ -34,6 +34,16 @@ def test_modern_archivist_declares_channel_package_metadata() -> None:
     assert package["entrypoints"]["remotion_composition"] == "ModernArchivist"
 
 
+def test_modern_archivist_official_video_compose_contract() -> None:
+    from tools.video.video_compose import VideoCompose
+
+    package = load_channel_package("modern-archivist")
+
+    assert package["canonical_renderer"] == "remotion"
+    assert package["entrypoints"]["remotion_composition"] == "ModernArchivist"
+    assert VideoCompose._get_composition_id("modern-archivist") == "ModernArchivist"
+
+
 def test_modern_archivist_package_paths_resolve_inside_declared_boundary() -> None:
     package = load_channel_package("modern-archivist")
 

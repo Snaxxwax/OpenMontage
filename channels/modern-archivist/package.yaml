@@ -3,7 +3,7 @@ name: modern-archivist
 package_type: openmontage-channel
 version: "0.1.0"
 description: >
-  Channel package for The Modern Archivist / Failure Ledger: evidence-led
+  Channel package for The Modern Archivist / Failure Ledger: thesis-driven
   corporate and product failure documentaries rendered through deterministic
   Remotion/React animation with local narration and saved assets first.
 openmontage_compatibility:

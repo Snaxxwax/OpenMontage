@@ -8,7 +8,7 @@ Run The Modern Archivist / Failure Ledger channel as an OpenMontage pipeline, no
 
 ## Channel promise
 
-Produce evidence-led corporate/product failure documentaries with the existing Modern Archivist identity: dry, archival, skeptical, and specific. Prefer corporate autopsy structure over generic tech-explainer structure.
+Produce thesis-driven corporate/product failure documentaries with the existing Modern Archivist identity: dry, archival, skeptical, and specific. The failure thesis leads; evidence defends it — not the other way around. Prefer corporate autopsy structure over generic tech-explainer structure.
 
 ## Operating rules
 

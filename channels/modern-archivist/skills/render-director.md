@@ -17,6 +17,8 @@ Render the approved Modern Archivist episode through registry-discoverable compo
 
 Use `video_compose` as the manifest-level render tool. Canonical runtime is Remotion / React, but `hyperframes_compose` must be considered and presented when HyperFrames is available. Do not switch between Remotion, HyperFrames, FFmpeg-only, image-to-video, WebGL, or canvas skeletal rigging unless the user explicitly approves a material runtime change.
 
+Development previews may pass explicit `video_compose` render options such as bounded `concurrency` or `muted=true` for faster iteration. Final deliverables must render with audio unless the approved episode is intentionally silent; never make muted output the default.
+
 ## Pre-render checks
 
 1. Verify all required artifacts exist.
@@ -24,6 +26,7 @@ Use `video_compose` as the manifest-level render tool. Canonical runtime is Remo
 3. Verify narration audio exists and matches `audio_analysis` duration.
 4. Verify no render prop requires network fetches.
 5. Verify Modern Archivist constraints from `DESIGN.md` and `CHANNEL.md` are preserved.
+6. Verify `audio_src` resolves to the current project narration file (`assets/audio/narration.wav` or `audio_analysis.audio_path`), not a stale `remotion-composer/public/modern-archivist/*.wav` fixture.
 
 ## Output contract
 

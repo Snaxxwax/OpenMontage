@@ -131,6 +131,12 @@ export interface AudioAmplitudeSample {
   volume: number;
 }
 
+export interface WordTimestamp {
+  word: string;
+  start: number;
+  end: number;
+}
+
 export interface PuppetManifest {
   version: string;
   character_id: string;
@@ -154,5 +160,10 @@ export interface ModernArchivistEpisode extends Record<string, unknown> {
   audio_src?: string;
   sections: EpisodeSection[];
   amplitude?: AudioAmplitudeSample[];
+  word_timings?: WordTimestamp[];
   puppet?: PuppetManifest;
+  debug_disable_backdrop?: boolean;
+  debug_disable_puppet?: boolean;
+  debug_disable_media?: boolean;
+  debug_disable_audio?: boolean;
 }

@@ -22,8 +22,11 @@ the agent to re-ask the user rather than substituting a different engine.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import re
+import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -649,6 +652,7 @@ class VideoCompose(BaseTool):
         "screen-demo": "Explainer",
         "presenter": "TalkingHead",
         "animation-first": "Explainer",
+        "modern-archivist": "ModernArchivist",
     }
 
     @classmethod
@@ -666,6 +670,266 @@ class VideoCompose(BaseTool):
                 f"Set renderer_family at proposal stage."
             )
         return comp
+
+    @staticmethod
+    def _prepare_remotion_props(
+        composition_data: dict[str, Any],
+        inputs: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Prepare Remotion props without mutating source composition data."""
+        props = json.loads(json.dumps(composition_data))
+        if props.get("renderer_family") == "modern-archivist":
+            narration = VideoCompose._modern_archivist_current_audio_path(inputs)
+            if narration and Path(narration).exists():
+                output_path = Path(inputs.get("output_path", "renders/remotion_output.mp4"))
+                project_id = VideoCompose._project_id_for_static_audio(
+                    inputs,
+                    props,
+                    output_path,
+                )
+                props["audio_src"] = VideoCompose._materialize_remotion_static_audio(
+                    narration,
+                    project_id,
+                    inputs,
+                )
+                props["audio_source_path"] = str(Path(narration).resolve())
+        return props
+
+    @staticmethod
+    def _project_id_for_static_audio(
+        inputs: dict[str, Any],
+        edit_decisions: dict[str, Any],
+        output_path: Path,
+    ) -> str:
+        """Return a filesystem-safe project id for generated Remotion static assets.
+
+        This is deterministic materialization, not orchestration: callers have
+        already selected the project/audio. We only choose a stable cache path so
+        Remotion can consume current project audio through staticFile().
+        """
+        raw = (
+            edit_decisions.get("episode_id")
+            or inputs.get("project_id")
+            or output_path.parent.parent.name
+            or "modern-archivist-render"
+        )
+        safe = re.sub(r"[^a-zA-Z0-9_.-]+", "-", str(raw)).strip("-_")
+        return safe or "modern-archivist-render"
+
+    @staticmethod
+    def _materialize_remotion_static_audio(
+        audio_path: str,
+        project_id: str,
+        inputs: dict[str, Any] | None = None,
+    ) -> str:
+        """Copy current project narration into a deterministic public cache.
+
+        Remotion 4 does not reliably render <Audio> from absolute file:// URLs.
+        Returning a relative path under remotion-composer/public lets the channel
+        component use staticFile(relative_path) while preserving the canonical
+        source under projects/<id>/assets/audio/narration.wav.
+        """
+        source = VideoCompose._validated_modern_archivist_audio_path(audio_path, inputs)
+        try:
+            digest = VideoCompose._audio_content_digest(source)
+        except OSError as exc:
+            raise ValueError(f"Could not read Modern Archivist current project audio: {source}: {exc}") from exc
+
+        public_root = Path(__file__).resolve().parents[2] / "remotion-composer" / "public"
+        safe_stem = re.sub(r"[^a-zA-Z0-9_.-]+", "-", source.stem).strip("-_") or "narration"
+        rel = Path(".openmontage") / project_id / f"{safe_stem}-{digest[:12]}{source.suffix.lower()}"
+        dest = public_root / rel
+        tmp_dest = dest.with_name(f".{dest.name}.{time.time_ns()}.tmp")
+        try:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            if not dest.exists():
+                shutil.copy2(source, tmp_dest)
+                tmp_dest.replace(dest)
+        except OSError as exc:
+            try:
+                if tmp_dest.exists():
+                    tmp_dest.unlink()
+            except OSError:
+                pass
+            raise ValueError(
+                f"Could not materialize Modern Archivist current project audio for Remotion: {source}: {exc}"
+            ) from exc
+        return rel.as_posix()
+
+    @staticmethod
+    def _validated_modern_archivist_audio_path(
+        audio_path: str,
+        inputs: dict[str, Any] | None = None,
+    ) -> Path:
+        """Resolve and narrowly validate current Modern Archivist narration audio."""
+        source = Path(audio_path).resolve()
+        if not source.exists():
+            raise FileNotFoundError(f"Current project audio does not exist: {source}")
+        if not source.is_file():
+            raise ValueError(f"Current project audio is not a file: {source}")
+
+        repo_root = Path(__file__).resolve().parents[2]
+        public_root = (repo_root / "remotion-composer" / "public").resolve()
+        try:
+            source.relative_to(public_root)
+        except ValueError:
+            pass
+        else:
+            raise ValueError(
+                "Modern Archivist current project audio must not come from remotion-composer/public"
+            )
+
+        parts = source.parts
+        audio_dir_index = next(
+            (
+                idx
+                for idx in range(len(parts) - 2)
+                if parts[idx] == "assets" and parts[idx + 1] == "audio"
+            ),
+            None,
+        )
+        if audio_dir_index is None:
+            raise ValueError(
+                "Modern Archivist current project audio must live under the project assets/audio directory"
+            )
+
+        try:
+            looks_like_audio = VideoCompose._looks_like_audio_file(source)
+        except OSError as exc:
+            raise ValueError(f"Modern Archivist current project audio is not readable: {source}: {exc}") from exc
+
+        if not looks_like_audio:
+            raise ValueError(
+                f"Modern Archivist current project audio is not a supported audio file: {source}"
+            )
+        return source
+
+    @staticmethod
+    def _audio_content_digest(path: Path) -> str:
+        digest = hashlib.sha256()
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+        return digest.hexdigest()
+
+    @staticmethod
+    def _looks_like_audio_file(path: Path) -> bool:
+        suffix = path.suffix.lower()
+        if suffix not in {".wav", ".mp3", ".m4a", ".mp4", ".aac", ".flac", ".ogg"}:
+            return False
+        with path.open("rb") as handle:
+            header = handle.read(64)
+        if suffix == ".wav":
+            return len(header) >= 12 and header[:4] in {b"RIFF", b"RF64"} and header[8:12] == b"WAVE"
+        if suffix == ".mp3":
+            return header.startswith(b"ID3") or (len(header) >= 2 and header[0] == 0xFF and header[1] in {0xE2, 0xE3, 0xF2, 0xF3, 0xFA, 0xFB})
+        if suffix in {".m4a", ".mp4"}:
+            return b"ftyp" in header[:16]
+        if suffix == ".aac":
+            return len(header) >= 2 and header[0] == 0xFF and header[1] in {0xF1, 0xF9}
+        if suffix == ".flac":
+            return header.startswith(b"fLaC")
+        if suffix == ".ogg":
+            return header.startswith(b"OggS")
+        return False
+
+    @staticmethod
+    def _modern_archivist_current_audio_path(inputs: dict[str, Any]) -> str | None:
+        return (
+            inputs.get("narration_audio_path")
+            or inputs.get("audio_path")
+            or ((inputs.get("audio_analysis") or {}).get("audio_path"))
+        )
+
+    @classmethod
+    def _validate_modern_archivist_audio_props(
+        cls,
+        edit_decisions: dict[str, Any],
+        inputs: dict[str, Any],
+    ) -> ToolResult | None:
+        if edit_decisions.get("renderer_family") != "modern-archivist":
+            return None
+
+        current_audio = cls._modern_archivist_current_audio_path(inputs)
+        if current_audio:
+            try:
+                cls._validated_modern_archivist_audio_path(current_audio, inputs)
+            except (FileNotFoundError, ValueError) as exc:
+                return ToolResult(
+                    success=False,
+                    error=(
+                        "Modern Archivist render blocked: current project audio path "
+                        f"is invalid: {exc}"
+                    ),
+                )
+
+        audio_src = edit_decisions.get("audio_src")
+        if cls._is_modern_archivist_stale_public_audio(audio_src) and not current_audio:
+            return ToolResult(
+                success=False,
+                error=(
+                    "Modern Archivist render blocked: stale public audio path detected. "
+                    "Pass narration_audio_path or audio_analysis.audio_path from the project workspace."
+                ),
+            )
+        return None
+
+    @staticmethod
+    def _is_modern_archivist_stale_public_audio(audio_src: Any) -> bool:
+        if not isinstance(audio_src, str):
+            return False
+        clean = audio_src.replace("file://", "").replace("\\", "/")
+        lower = clean.lower()
+        if not lower.endswith(".wav"):
+            return False
+        return (
+            lower.startswith("modern-archivist/")
+            or lower.startswith("remotion-composer/public/modern-archivist/")
+            or "/remotion-composer/public/modern-archivist/" in lower
+        )
+
+    @staticmethod
+    def _build_remotion_command(
+        *,
+        composer_dir: Path,
+        composition_id: str,
+        output_path: Path,
+        props_path: Path,
+        inputs: dict[str, Any],
+    ) -> list[str]:
+        """Build the Remotion CLI command from explicit, bounded inputs only.
+
+        This intentionally does not expose arbitrary extra CLI args. Development
+        iteration may request a bounded concurrency value or muted audio, but
+        final-render defaults stay unchanged unless the caller opts in.
+        """
+        cmd = [
+            "npx", "remotion", "render",
+            str(composer_dir / "src" / "index.tsx"),
+            composition_id,
+            str(output_path),
+            "--props", str(props_path),
+        ]
+
+        options = inputs.get("options", {}) or {}
+        try:
+            concurrency = int(options.get("concurrency", 0) or 0)
+        except (TypeError, ValueError):
+            concurrency = 0
+        if concurrency > 0:
+            cmd.extend(["--concurrency", str(min(concurrency, 8))])
+
+        if options.get("muted") is True:
+            cmd.append("--muted")
+
+        try:
+            port = int(options.get("port", 0) or 0)
+        except (TypeError, ValueError):
+            port = 0
+        if 1024 <= port <= 65535:
+            cmd.extend(["--port", str(port)])
+
+        return cmd
 
     @staticmethod
     def _build_theme_from_playbook(
@@ -943,6 +1207,13 @@ class VideoCompose(BaseTool):
         output_path = Path(inputs.get("output_path", "renders/output.mp4"))
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
+        modern_archivist_audio_block = self._validate_modern_archivist_audio_props(
+            edit_decisions,
+            inputs,
+        )
+        if modern_archivist_audio_block is not None:
+            return modern_archivist_audio_block
+
         # Build asset lookup: id -> asset info
         asset_lookup = {a["id"]: a for a in asset_manifest.get("assets", [])}
 
@@ -1018,10 +1289,13 @@ class VideoCompose(BaseTool):
 
         # --- Explicit Remotion path (render_runtime == 'remotion') ---
         if self._needs_remotion(resolved_cuts):
-            remotion_inputs: dict[str, Any] = {
-                "edit_decisions": dict(edit_decisions, cuts=resolved_cuts),
-                "output_path": str(output_path),
-            }
+            remotion_inputs: dict[str, Any] = dict(inputs)
+            remotion_inputs.update(
+                {
+                    "edit_decisions": dict(edit_decisions, cuts=resolved_cuts),
+                    "output_path": str(output_path),
+                }
+            )
             if profile:
                 remotion_inputs["profile"] = profile
             render_result = self._remotion_render(remotion_inputs)
@@ -1298,13 +1572,20 @@ class VideoCompose(BaseTool):
                 error="edit_decisions or composition_data required for remotion_render",
             )
 
+        modern_archivist_audio_block = self._validate_modern_archivist_audio_props(
+            composition_data,
+            inputs,
+        )
+        if modern_archivist_audio_block is not None:
+            return modern_archivist_audio_block
+
         output_path = Path(inputs.get("output_path", "renders/remotion_output.mp4"))
         output_path.parent.mkdir(parents=True, exist_ok=True)
         # Absolutise so the CLI can resolve the output regardless of cwd.
         output_path = output_path.resolve()
 
-        # Deep-copy props so we don't mutate the original
-        props = json.loads(json.dumps(composition_data))
+        # Prepare props for Remotion without mutating the original composition data.
+        props = self._prepare_remotion_props(composition_data, inputs)
 
         # Convert absolute file paths to file:// URIs for Remotion's
         # Img and OffthreadVideo components
@@ -1347,13 +1628,13 @@ class VideoCompose(BaseTool):
         renderer_family = (composition_data or {}).get("renderer_family", "explainer-data")
         composition_id = self._get_composition_id(renderer_family)
 
-        cmd = [
-            "npx", "remotion", "render",
-            str(composer_dir / "src" / "index.tsx"),
-            composition_id,
-            str(output_path),
-            "--props", str(props_path),
-        ]
+        cmd = self._build_remotion_command(
+            composer_dir=composer_dir,
+            composition_id=composition_id,
+            output_path=output_path,
+            props_path=props_path,
+            inputs=inputs,
+        )
 
         # Apply media profile dimensions
         profile_name = inputs.get("profile")

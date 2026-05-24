@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AbsoluteFill, Audio, CalculateMetadataFunction, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { ArchivistPuppet } from "./components/ArchivistPuppet";
 import { ChannelFrame } from "./components/ChannelFrame";
@@ -12,7 +12,7 @@ export const calculateModernArchivistMetadata: CalculateMetadataFunction<ModernA
 
 export const ModernArchivistComposition: React.FC<ModernArchivistEpisode> = (episode) => {
   const frame = useCurrentFrame(); const { fps } = useVideoConfig(); const time = frame / fps;
-  const tags = flattenTags(episode.sections);
+  const tags = useMemo(() => flattenTags(episode.sections), [episode.sections]);
   const visualMode = getActiveVisualMode(episode.sections, time);
   const colorState = getActiveColorState(episode.sections, time);
   const layout = layoutForColorState(colorState, visualMode);
@@ -20,11 +20,14 @@ export const ModernArchivistComposition: React.FC<ModernArchivistEpisode> = (epi
   const characterCue = getActiveCharacterCue(episode.sections, time);
   const speaking = isSpeaking(episode.amplitude, time);
   const sipping = isSipActive(tags, time);
+  const audioSrc = episode.audio_src && !episode.debug_disable_audio
+    ? (episode.audio_src.startsWith("/") ? resolveAsset(episode.audio_src) : staticFile(episode.audio_src))
+    : null;
   return <AbsoluteFill style={{ ...stateCssVars[layout], backgroundColor: "var(--bg-color)", color: "var(--text)", overflow: "hidden", fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif", transition: "background-color 180ms linear, color 180ms linear" }}>
-    {episode.audio_src ? <Audio src={episode.audio_src.startsWith("/") ? resolveAsset(episode.audio_src) : staticFile(episode.audio_src)} /> : null}
-    <ScrollingCodeBackdrop layout={layout} />
-    <MediaContainer layout={layout} media={media} visualMode={visualMode} />
-    <ArchivistPuppet layout={layout} speaking={speaking} sipping={sipping} puppet={episode.puppet} cue={characterCue} colorState={colorState} />
+    {audioSrc ? <Audio src={audioSrc} /> : null}
+    {!episode.debug_disable_backdrop ? <ScrollingCodeBackdrop layout={layout} /> : null}
+    {!episode.debug_disable_media ? <MediaContainer layout={layout} media={media} visualMode={visualMode} /> : null}
+    {!episode.debug_disable_puppet ? <ArchivistPuppet layout={layout} speaking={speaking} sipping={sipping} puppet={episode.puppet} cue={characterCue} colorState={colorState} wordTimestamps={episode.word_timings} /> : null}
     <ChannelFrame title={episode.title} />
   </AbsoluteFill>;
 };

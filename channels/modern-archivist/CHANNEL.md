@@ -1,6 +1,6 @@
 # The Modern Archivist / Failure Ledger
 
-Autonomous YouTube channel package for DOM-rendered, evidence-led corporate and product failure autopsies.
+Autonomous YouTube channel package for DOM-rendered, thesis-driven corporate and product failure autopsies.
 
 This channel is intentionally separate from the generic OpenMontage pipeline set. OpenMontage provides shared tools, rendering infrastructure, checkpoints, and provider plumbing; this directory owns the channel identity, puppet contract, episode schemas, retention doctrine, and Remotion-first rendering rules.
 

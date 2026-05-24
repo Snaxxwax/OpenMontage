@@ -1,6 +1,6 @@
 import React from "react";
 import { Img, useCurrentFrame, useVideoConfig } from "remotion";
-import type { CharacterCue, ColorState, LayoutState, PuppetManifest } from "../types";
+import type { CharacterCue, ColorState, LayoutState, PuppetManifest, WordTimestamp } from "../types";
 import { puppetTransform, resolveAsset } from "../styles";
 
 // ─── Mouth asset map ──────────────────────────────────────────────────────────
@@ -17,8 +17,6 @@ const MOUTH_SRC = {
 
 type MouthShape = keyof typeof MOUTH_SRC;
 
-export type WordTimestamp = { word: string; start: number; end: number };
-
 // Phoneme cycle while speaking (~8 switches per second)
 const SPEAK_CYCLE: MouthShape[] = ["openA", "openE", "openO", "slightOpen", "openA", "openO"];
 
@@ -33,7 +31,15 @@ function resolvedSpeaking(
 ): boolean {
   if (!wordTimestamps || wordTimestamps.length === 0) return coarse;
   const t = frame / fps;
-  return wordTimestamps.some(w => t >= w.start - WORD_SLOP_SEC && t <= w.end + WORD_SLOP_SEC);
+  let lo = 0;
+  let hi = wordTimestamps.length - 1;
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (wordTimestamps[mid].end + WORD_SLOP_SEC < t) lo = mid + 1;
+    else hi = mid;
+  }
+  const current = wordTimestamps[lo];
+  return Boolean(current && t >= current.start - WORD_SLOP_SEC && t <= current.end + WORD_SLOP_SEC);
 }
 
 function selectMouth(speaking: boolean, expression: string, frame: number, fps: number): MouthShape {
@@ -88,10 +94,12 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
+  const activePuppet = puppet ?? fallbackPuppet;
+
   if (cue.visible === false) return null;
 
-  const mouthAnchor   = puppet.anchors.mouth     ?? { x: 0.51, y: 0.62 };
-  const glassesAnchor = puppet.anchors.glasses   ?? { x: 0.50, y: 0.43 };
+  const mouthAnchor   = activePuppet.anchors.mouth     ?? { x: 0.51, y: 0.62 };
+  const glassesAnchor = activePuppet.anchors.glasses   ?? { x: 0.50, y: 0.43 };
 
   const red       = colorState === "red" || layout === "STATE_CRITICAL_ERROR";
   const actionSip = sipping || cue.action === "sip_coffee";
@@ -133,7 +141,7 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
     >
       {/* Layer 1 — Body portrait */}
       <Img
-        src={resolveAsset(puppet.layers.body)}
+        src={resolveAsset(activePuppet.layers.body)}
         style={{
           position: "absolute",
           inset: 0,
@@ -214,9 +222,9 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
           zIndex: 4,
         }}
       >
-        {puppet.layers.mug ? (
+        {activePuppet.layers.mug ? (
           <Img
-            src={resolveAsset(puppet.layers.mug)}
+            src={resolveAsset(activePuppet.layers.mug)}
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         ) : (
