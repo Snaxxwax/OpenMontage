@@ -107,6 +107,7 @@ stages:
           - character_rig_renderer
           - character_animation_reviewer
           - video_compose
+          - hyperframes_compose
         review_focus:
           - Sample proves character style, rig integrity, pose readability, and motion timing
 
@@ -266,6 +267,7 @@ stages:
       - character_rig_renderer
       - character_animation_reviewer
       - video_compose
+      - hyperframes_compose
       - audio_mixer
     checkpoint_required: true
     human_approval_default: false

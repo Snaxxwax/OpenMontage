@@ -19,6 +19,7 @@ htmlcov/
 # Pipeline outputs (regenerable — never commit large media)
 output/
 pipeline/
+renders/
 tests/qa/output/
 channels/*/renders/
 channels/*/assets/audio/
