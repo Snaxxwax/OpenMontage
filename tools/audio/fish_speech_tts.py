@@ -35,10 +35,21 @@ class FishSpeechTTS(BaseTool):
 
     dependencies = []  # checked dynamically via HTTP health endpoint
     install_instructions = (
-        "Start Fish Speech S2-Pro locally and expose the HTTP API. Default expected endpoints:\n"
-        "  http://127.0.0.1:8080/v1/health\n"
-        "  http://127.0.0.1:8080/v1/tts\n"
-        "Modern Archivist commonly uses reference_id=asymmetric_narrator_v1."
+        "Fish Speech server is not running. Start it with:\n\n"
+        "  # Stop ComfyUI first if running (one GPU tool at a time):\n"
+        "  kill $(pgrep -f 'main.py.*18188') 2>/dev/null\n\n"
+        "  cd /home/pop/local-ai/fish-speech && \\\n"
+        "  nohup .venv/bin/python tools/api_server.py \\\n"
+        "    --listen 0.0.0.0:8080 \\\n"
+        "    --llama-checkpoint-path checkpoints/s2-pro \\\n"
+        "    --decoder-checkpoint-path checkpoints/s2-pro/codec.pth \\\n"
+        "    --decoder-config-name modded_dac_vq \\\n"
+        "    > /tmp/fish_speech_server.log 2>&1 &\n"
+        "  echo $! > /tmp/fish_speech.pid\n\n"
+        "Wait ~30-35 seconds for model load, then verify:\n"
+        "  curl http://127.0.0.1:8080/v1/health\n\n"
+        "To stop: kill $(cat /tmp/fish_speech.pid) 2>/dev/null\n"
+        "Logs:    tail -f /tmp/fish_speech_server.log\n"
     )
     fallback = "piper_tts"
     fallback_tools = ["piper_tts", "openai_tts", "elevenlabs_tts"]
@@ -146,8 +157,15 @@ class FishSpeechTTS(BaseTool):
         output_path = Path(inputs.get("output_path", f"fish_speech_tts.{fmt}"))
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
+        import ormsgpack
+
         payload = self.build_payload(inputs)
-        response = requests.post(f"{server_url}/v1/tts", json=payload, timeout=300)
+        response = requests.post(
+            f"{server_url}/v1/tts",
+            data=ormsgpack.packb(payload),
+            headers={"Content-Type": "application/msgpack"},
+            timeout=300,
+        )
         if response.status_code != 200:
             return ToolResult(
                 success=False,
@@ -183,7 +201,7 @@ class FishSpeechTTS(BaseTool):
         )
 
     def build_payload(self, inputs: dict[str, Any]) -> dict[str, Any]:
-        """Build the Fish Speech /v1/tts JSON payload from tool inputs."""
+        """Build the Fish Speech /v1/tts msgpack payload from tool inputs."""
         return {
             "text": self._spoken_text(inputs["text"]),
             "reference_id": inputs.get("reference_id", self.DEFAULT_REFERENCE_ID),
