@@ -1,16 +1,26 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "character_id": "modern_archivist",
   "display_name": "The Archivist",
-  "temporary": true,
-  "notes": "MVP uses a single transparent portrait plus synthetic SVG mouth/glasses overlays. Final puppet needs transparent lens cutouts, separated mouth layers, and separated arm/mug layers.",
+  "temporary": false,
+  "notes": "Layered puppet: body portrait + SVG glasses + phoneme mouth PNGs + mug arm.",
   "layers": {
     "body": "modern-archivist/archivist-body.png",
-    "mug": "modern-archivist/archivist-mug.png"
+    "mug":  "modern-archivist/archivist-mug.png",
+    "mouth": {
+      "closed":     "modern-archivist/mouth-closed.png",
+      "slightOpen": "modern-archivist/mouth-slight-open.png",
+      "openA":      "modern-archivist/mouth-open-a.png",
+      "openE":      "modern-archivist/mouth-open-e.png",
+      "openO":      "modern-archivist/mouth-open-o.png",
+      "smirk":      "modern-archivist/mouth-smirk.png",
+      "frown":      "modern-archivist/mouth-frown.png"
+    },
+    "glasses": "svg"
   },
   "anchors": {
-    "mouth": { "x": 0.51, "y": 0.62 },
-    "glasses": { "x": 0.5, "y": 0.43 },
+    "mouth":     { "x": 0.51, "y": 0.62 },
+    "glasses":   { "x": 0.50, "y": 0.43 },
     "arm_pivot": { "x": 0.62, "y": 0.74 }
   }
 }
