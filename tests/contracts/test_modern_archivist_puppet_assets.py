@@ -17,6 +17,8 @@ REMOTION_TYPES_PATH = ROOT / "channels" / "modern-archivist" / "remotion" / "src
 ASSET_INVENTORY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "asset-inventory.md"
 CHARACTER_README_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "README.md"
 SVG_LAYER_PREVIEW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "preview.html"
+RIG_SPEC_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "rig_spec.json"
+ACTION_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "action_library.json"
 SVG_LAYER_MUG_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "mug_code.png"
 SVG_LAYER_HAND_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "hand_mug.png"
 SVG_LAYER_SHADOW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "shadow.png"
@@ -245,24 +247,68 @@ def test_phase3_semantic_hand_mug_shadow_layers_are_promoted() -> None:
     assert layers["hand_mug"]["z"] > layers["mug"]["z"], "hand/grip must overlay mug, not sit behind it"
 
 
-def test_svg_layer_preview_includes_explicit_mug_hand_and_shadow_layers() -> None:
+def test_preview_is_manifest_driven() -> None:
+    """Preview must load layers from the manifest, not hard-code them."""
     preview = SVG_LAYER_PREVIEW_PATH.read_text()
-    assert SVG_LAYER_MUG_PATH.exists(), "svg layer preview must include a standalone visible mug asset"
-    assert SVG_LAYER_HAND_PATH.exists(), "svg layer preview must include a standalone hand/grip asset"
-    assert SVG_LAYER_SHADOW_PATH.exists(), "svg layer preview must include a hard-alpha contact shadow asset"
-    assert SVG_LAYER_REFERENCE_PATH.exists(), "svg layer preview must include a local copy of the true mug-pose reference for browser QC"
-    assert 'src="mug_code.png"' in preview, "preview must render the mug separately from the arm/hand layer"
-    assert 'scale(0.82)' in preview, "preview mug should be scaled down to line up with the hand grip"
-    assert 'src="hand_mug.png"' in preview, "preview must render hand/grip separately from the sleeve and mug"
-    assert 'src="shadow.png"' in preview, "preview must render the Phase 3 contact shadow layer"
-    assert 'scale(0.96)' in preview, "preview glasses should be scaled down slightly for face fit"
-    assert 'scale(0.94)' in preview, "preview mouth should be scaled down slightly for face fit"
-    assert "z-index:25; transform: scale(0.94)" in preview, "preview mouth must sit below mug/hand so it does not draw through the cup"
-    assert "z-index:28; transform: scale(0.96)" in preview, "preview glasses must sit below action layers for reference-pose occlusion"
-    assert "Reference vs live composite" in preview, "preview must not show stale static comparison as the primary QC reference"
-    assert "reference_mug_pose.png" in preview, "preview must compare against the true mug-pose reference"
-    assert "mug_code" in preview, "preview layer strip must expose the mug layer for visual QA"
-    assert "hand_mug" in preview, "preview layer strip must expose the hand/grip layer for visual QA"
+    assert "fetch(" in preview, "preview must use fetch() to load manifest data"
+    assert "modern_archivist_puppet_manifest.json" in preview, "preview must reference the v2 manifest JSON"
+    assert "reference_mug_pose.png" in preview, "preview must still reference the mug-pose reference image"
+    # Must NOT have hard-coded layer img paths
+    for forbidden in ['src="mug_code.png"', 'src="torso_hoodie.svg"', 'src="head_neutral.svg"',
+                      'scale(0.82)', 'scale(0.94)', 'scale(0.96)']:
+        assert forbidden not in preview, f"preview must not contain hard-coded: {forbidden}"
+
+
+def test_preview_layer_strip_references_manifest_data() -> None:
+    """Preview layer strip must be dynamically built from manifest, not duplicated."""
+    preview = SVG_LAYER_PREVIEW_PATH.read_text()
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    # The preview generates layers dynamically; verify it doesn't hard-code layer IDs
+    # by checking that manifest layer IDs are NOT sprinkled as literal src= attributes
+    for layer in manifest["layers"]:
+        layer_id = layer["id"]
+        # The layer ID must not appear as a hard-coded img src (it can appear in JS data or comments)
+        assert f'src="{layer_id}.png"' not in preview, (
+            f"layer {layer_id} must not be hard-coded as src=; must come from manifest JSON"
+        )
+        assert f'src="{layer_id}.svg"' not in preview, (
+            f"layer {layer_id} must not be hard-coded as src=; must come from manifest JSON"
+        )
+
+
+def test_rig_spec_exists_and_is_valid() -> None:
+    assert RIG_SPEC_PATH.exists(), "rig_spec.json must exist"
+    spec = json.loads(RIG_SPEC_PATH.read_text())
+    assert spec["version"].startswith("3."), "rig_spec must be version 3.x"
+    assert spec["canvas"] == {"width": 1254, "height": 1254}
+    assert "parts" in spec, "rig_spec must have a parts dict"
+    assert "states" in spec, "rig_spec must have a states dict"
+    for state_key in ["expression", "eyes", "mouth", "action"]:
+        assert state_key in spec["states"], f"rig_spec states must include {state_key}"
+
+
+def test_rig_spec_arm_hierarchy() -> None:
+    spec = json.loads(RIG_SPEC_PATH.read_text())
+    parts = spec["parts"]
+    assert "upper_arm_r" in parts, "rig_spec must define upper_arm_r"
+    assert "forearm_r" in parts, "rig_spec must define forearm_r"
+    assert "hand_r" in parts, "rig_spec must define hand_r"
+    assert "mug" in parts, "rig_spec must define mug part"
+    assert parts["forearm_r"]["parent"] == "upper_arm_r"
+    assert parts["hand_r"]["parent"] == "forearm_r"
+    assert parts["mug"]["parent"] == "hand_r"
+
+
+def test_action_library_exists_and_valid() -> None:
+    assert ACTION_LIBRARY_PATH.exists(), "action_library.json must exist"
+    lib = json.loads(ACTION_LIBRARY_PATH.read_text())
+    assert "actions" in lib
+    assert "idle" in lib["actions"], "action_library must have idle action"
+    assert "mug_sip" in lib["actions"], "action_library must have mug_sip action"
+    sip = lib["actions"]["mug_sip"]
+    assert sip["duration_frames"] == 42
+    assert len(sip["keyframes"]) >= 3, "mug_sip must have at least 3 keyframes"
+    assert "occlusion" in sip, "mug_sip must define occlusion rules"
 
 
 def test_phase3_arm_and_hand_no_longer_have_white_outline() -> None:
