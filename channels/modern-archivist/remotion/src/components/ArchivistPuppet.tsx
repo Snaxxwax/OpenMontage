@@ -30,6 +30,9 @@ interface ArchivistPuppetProps {
   cue?: CharacterCue;
   colorState?: ColorState;
   wordTimestamps?: WordTimestamp[];
+  debugPuppetStatic?: boolean;
+  debugDisablePuppetMouth?: boolean;
+  debugDisablePuppetFilters?: boolean;
 }
 
 export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
@@ -40,6 +43,9 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
   cue = { visible: true, action: "idle", expression: "neutral" },
   colorState,
   wordTimestamps,
+  debugPuppetStatic,
+  debugDisablePuppetMouth,
+  debugDisablePuppetFilters,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -75,8 +81,11 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
         manifest={activePuppet}
         expression={expressionState}
         mouthShape={mouthShape}
-        expressionName={expression}
+        isSpeaking={isSpeaking}
         sipping={sipping}
+        debugPuppetStatic={debugPuppetStatic}
+        debugDisablePuppetMouth={debugDisablePuppetMouth}
+        debugDisablePuppetFilters={debugDisablePuppetFilters}
       />
     </div>
   );

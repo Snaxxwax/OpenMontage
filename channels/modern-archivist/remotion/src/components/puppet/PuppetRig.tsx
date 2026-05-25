@@ -16,24 +16,33 @@ interface PuppetRigProps {
   manifest: PuppetManifest;
   expression: ExpressionState;
   mouthShape: MouthShape;
-  expressionName: string;
+  isSpeaking: boolean;
   sipping: boolean;
+  debugPuppetStatic?: boolean;
+  debugDisablePuppetMouth?: boolean;
+  debugDisablePuppetFilters?: boolean;
 }
 
 export const PuppetRig: React.FC<PuppetRigProps> = ({
   manifest,
   expression,
-  mouthShape,
+  mouthShape: mouthShapeProp,
+  isSpeaking: isSpeakingProp,
   sipping,
+  debugPuppetStatic,
+  debugDisablePuppetMouth,
+  debugDisablePuppetFilters,
 }) => {
-  const { red, actionSip, flash } = expression;
+  const mouthShape: MouthShape = (debugPuppetStatic || debugDisablePuppetMouth) ? "closed" : mouthShapeProp;
+  const isSpeaking = (debugPuppetStatic || debugDisablePuppetMouth) ? false : isSpeakingProp;
+
+  const { red, flash } = expression;
+  const actionSip = debugPuppetStatic ? false : expression.actionSip;
 
   const mouthAnchor   = manifest.anchors.mouth   ?? DEFAULT_MOUTH_ANCHOR;
   const glassesAnchor = manifest.anchors.glasses  ?? DEFAULT_GLASSES_ANCHOR;
 
   const mouthSrc = MOUTH_SRC[mouthShape];
-
-  const isSpeaking = mouthShape !== "closed" && mouthShape !== "smirk" && mouthShape !== "frown";
 
   const visorFill = flash
     ? "rgba(255,255,255,0.34)"
@@ -57,7 +66,9 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
           height: "15%",
           zIndex: 2,
           overflow: "visible",
-          filter: flash
+          filter: debugDisablePuppetFilters
+            ? undefined
+            : flash
             ? `drop-shadow(0 0 18px ${red ? "#FF3333" : "#00FFFF"})`
             : undefined,
         }}

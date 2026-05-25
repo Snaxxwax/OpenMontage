@@ -27,7 +27,7 @@ export const ModernArchivistComposition: React.FC<ModernArchivistEpisode> = (epi
     {audioSrc ? <Audio src={audioSrc} /> : null}
     {!episode.debug_disable_backdrop ? <ScrollingCodeBackdrop layout={layout} /> : null}
     {!episode.debug_disable_media ? <MediaContainer layout={layout} media={media} visualMode={visualMode} /> : null}
-    {!episode.debug_disable_puppet ? <ArchivistPuppet layout={layout} speaking={speaking} sipping={sipping} puppet={episode.puppet} cue={characterCue} colorState={colorState} wordTimestamps={episode.word_timings} /> : null}
+    {!episode.debug_disable_puppet ? <ArchivistPuppet layout={layout} speaking={speaking} sipping={sipping} puppet={episode.puppet} cue={characterCue} colorState={colorState} wordTimestamps={episode.word_timings} debugPuppetStatic={episode.debug_puppet_static} debugDisablePuppetMouth={episode.debug_disable_puppet_mouth} debugDisablePuppetFilters={episode.debug_disable_puppet_filters} /> : null}
     <ChannelFrame title={episode.title} />
   </AbsoluteFill>;
 };
