@@ -214,6 +214,19 @@ export interface LegacyPuppetManifest {
 
 export type AnyPuppetManifest = PuppetManifest | LegacyPuppetManifest;
 
+export interface PuppetTimelineTrack {
+  type: "action" | "expression" | "eyes" | "mouth";
+  from: number;  // seconds
+  to: number;    // seconds
+  value: string;
+}
+
+export interface PuppetActionTimeline {
+  character_id: string;
+  fps: number;
+  tracks: PuppetTimelineTrack[];
+}
+
 export interface ModernArchivistEpisode extends Record<string, unknown> {
   episode_id: string;
   title: string;
