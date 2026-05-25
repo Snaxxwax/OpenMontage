@@ -19,6 +19,7 @@ CHARACTER_README_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "cha
 SVG_LAYER_PREVIEW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "preview.html"
 RIG_SPEC_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "rig_spec.json"
 ACTION_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "action_library.json"
+VISEME_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "viseme_library.json"
 SVG_LAYER_MUG_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "mug_code.png"
 SVG_LAYER_HAND_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "hand_mug.png"
 SVG_LAYER_SHADOW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "shadow.png"
@@ -309,6 +310,23 @@ def test_action_library_exists_and_valid() -> None:
     assert sip["duration_frames"] == 42
     assert len(sip["keyframes"]) >= 3, "mug_sip must have at least 3 keyframes"
     assert "occlusion" in sip, "mug_sip must define occlusion rules"
+
+
+def test_viseme_library_exists_and_valid() -> None:
+    assert VISEME_LIBRARY_PATH.exists(), "viseme_library.json must exist"
+    lib = json.loads(VISEME_LIBRARY_PATH.read_text())
+    assert lib["version"].startswith("1.")
+    assert lib["character_id"] == "modern_archivist"
+    assert "mapping" in lib
+    # Every mapped mouth must exist in the manifest
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    production_mouths = {l["id"] for l in manifest["layers"] if l["group"] == "mouths"}
+    for phoneme, mouth_id in lib["mapping"].items():
+        assert mouth_id in production_mouths, f"viseme {phoneme} maps to unknown mouth: {mouth_id}"
+    # Must cover silence
+    assert "SIL" in lib["mapping"]
+    # Must have at least 30 phoneme entries
+    assert len(lib["mapping"]) >= 30, "viseme_library must cover at least 30 phonemes"
 
 
 def test_phase3_arm_and_hand_no_longer_have_white_outline() -> None:
