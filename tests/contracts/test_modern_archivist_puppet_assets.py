@@ -67,3 +67,50 @@ def test_v2_manifest_validates_against_schema() -> None:
     manifest = json.loads(MANIFEST_V2_PATH.read_text())
     schema = json.loads(SCHEMA_V2_PATH.read_text())
     jsonschema.validate(manifest, schema)
+
+
+REMOTION_PUBLIC = ROOT / "remotion-composer" / "public"
+
+
+def _resolve_layer_path(src: str) -> Path:
+    """Resolve a manifest src path to an absolute filesystem path."""
+    return REMOTION_PUBLIC / src
+
+
+def test_production_layers_are_rgba() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    for layer in manifest["layers"]:
+        if layer.get("status") != "production":
+            continue
+        path = _resolve_layer_path(layer["src"])
+        assert path.exists(), f"production layer missing: {layer['id']} -> {path}"
+        img = Image.open(path)
+        assert img.mode == "RGBA", f"layer {layer['id']} is not RGBA (got {img.mode})"
+
+
+def test_production_layers_have_valid_alpha_bbox() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    for layer in manifest["layers"]:
+        if layer.get("status") != "production":
+            continue
+        path = _resolve_layer_path(layer["src"])
+        img = Image.open(path).convert("RGBA")
+        alpha = img.getchannel("A")
+        bbox = alpha.getbbox()
+        assert bbox is not None, f"layer {layer['id']} has fully transparent alpha"
+        assert bbox != (0, 0, img.width, img.height), f"layer {layer['id']} alpha fills entire canvas (no transparency)"
+
+
+def test_production_layers_have_sufficient_transparency() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    for layer in manifest["layers"]:
+        if layer.get("status") != "production":
+            continue
+        path = _resolve_layer_path(layer["src"])
+        img = Image.open(path).convert("RGBA")
+        alpha = img.getchannel("A")
+        hist = alpha.histogram()
+        transparent_ratio = sum(hist[:10]) / (img.width * img.height)
+        assert transparent_ratio > 0.20, (
+            f"layer {layer['id']} has insufficient transparency: {transparent_ratio:.2f}"
+        )
