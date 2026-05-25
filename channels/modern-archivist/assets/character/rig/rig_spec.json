@@ -1,0 +1,178 @@
+{
+  "version": "3.0",
+  "character_id": "modern_archivist",
+  "runtime": "remotion_svg",
+  "canvas": { "width": 1254, "height": 1254 },
+  "parts": {
+    "shadow": {
+      "layer": "shadow",
+      "parent": null,
+      "pivot": [627, 627],
+      "z": 0
+    },
+    "torso": {
+      "layer": "body",
+      "parent": null,
+      "pivot": [627, 940],
+      "z": 1
+    },
+    "hair_back": {
+      "layer": "hair_back",
+      "parent": "torso",
+      "pivot": [627, 627],
+      "z": 2
+    },
+    "head": {
+      "layer": "head",
+      "parent": "torso",
+      "pivot": [627, 903],
+      "z": 3
+    },
+    "hair_front": {
+      "layer": "hair_front",
+      "parent": "torso",
+      "pivot": [627, 627],
+      "z": 4
+    },
+    "eye_open_l": {
+      "layer": "eye_open_l",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 5
+    },
+    "eye_open_r": {
+      "layer": "eye_open_r",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 5
+    },
+    "eye_closed_l": {
+      "layer": "eye_closed_l",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 5
+    },
+    "eye_closed_r": {
+      "layer": "eye_closed_r",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 5
+    },
+    "brow_neutral_l": {
+      "layer": "brow_neutral_l",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 6
+    },
+    "brow_neutral_r": {
+      "layer": "brow_neutral_r",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 6
+    },
+    "brow_skeptical_l": {
+      "layer": "brow_skeptical_l",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 6
+    },
+    "brow_skeptical_r": {
+      "layer": "brow_skeptical_r",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 6
+    },
+    "mouth_closed": {
+      "layer": "mouth_closed",
+      "parent": "head",
+      "pivot": [640, 777],
+      "z": 7
+    },
+    "mouth_slight_open": {
+      "layer": "mouth_slight_open",
+      "parent": "head",
+      "pivot": [640, 777],
+      "z": 7
+    },
+    "mouth_open_a": {
+      "layer": "mouth_open_a",
+      "parent": "head",
+      "pivot": [640, 777],
+      "z": 7
+    },
+    "mouth_open_e": {
+      "layer": "mouth_open_e",
+      "parent": "head",
+      "pivot": [640, 777],
+      "z": 7
+    },
+    "mouth_open_o": {
+      "layer": "mouth_open_o",
+      "parent": "head",
+      "pivot": [640, 777],
+      "z": 7
+    },
+    "mouth_smirk": {
+      "layer": "mouth_smirk",
+      "parent": "head",
+      "pivot": [640, 777],
+      "z": 7
+    },
+    "mouth_frown": {
+      "layer": "mouth_frown",
+      "parent": "head",
+      "pivot": [640, 777],
+      "z": 7
+    },
+    "glasses_frame": {
+      "layer": "glasses_frame",
+      "parent": "head",
+      "pivot": [627, 539],
+      "z": 8
+    },
+    "lens_highlight": {
+      "layer": "lens_highlight",
+      "parent": "head",
+      "pivot": [627, 627],
+      "z": 9
+    },
+    "upper_arm_r": {
+      "layer": "arm_right_idle",
+      "parent": "torso",
+      "pivot": [777, 928],
+      "z": 10
+    },
+    "forearm_r": {
+      "layer": "arm_right_idle",
+      "parent": "upper_arm_r",
+      "pivot": [777, 1050],
+      "z": 10,
+      "_note": "artwork not yet split; shares layer with upper_arm_r"
+    },
+    "mug": {
+      "layer": "mug",
+      "parent": "hand_r",
+      "pivot": [627, 627],
+      "z": 11
+    },
+    "hand_r": {
+      "layer": "hand_mug",
+      "parent": "forearm_r",
+      "pivot": [777, 928],
+      "z": 12
+    },
+    "steam_01": {
+      "layer": "steam_01",
+      "parent": null,
+      "pivot": [627, 627],
+      "z": 13
+    }
+  },
+  "states": {
+    "expression": ["neutral", "skeptical", "deadpan", "alarm"],
+    "eyes": ["open", "blink", "half_lid", "side_eye"],
+    "mouth": ["closed", "aa", "ee", "oh", "fv", "rest"],
+    "action": ["idle", "mug_sip", "point", "type", "receipt_hold"]
+  },
+  "action_library": "rig/action_library.json"
+}
