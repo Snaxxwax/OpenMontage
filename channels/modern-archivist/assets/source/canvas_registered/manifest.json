@@ -44,17 +44,6 @@
     "fg_pixels": 156201
   },
   {
-    "layer": "glasses_round_black",
-    "z": 45,
-    "bbox": [
-      269,
-      456,
-      1011,
-      678
-    ],
-    "fg_pixels": 25751
-  },
-  {
     "layer": "mouth_neutral",
     "z": 50,
     "bbox": [

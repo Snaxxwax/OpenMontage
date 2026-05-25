@@ -40,8 +40,10 @@ LAYERS = [
     # canvas-registered (the mug is centered in the 1254×1254 frame, not at its
     # actual position in the assembled character).
     ("arm_mug_grip",          "modern_archivist_arm_mug_grip.png",       30),
-    # Glasses and mouth sit on the face above the arm
-    ("glasses_round_black",   "modern_archivist_glasses_round_black.png",45),
+    # Glasses are rendered as SVG by PuppetRig (color-state-aware teal/red) —
+    # glasses_round_black is extracted as a standalone layer for reference but
+    # NOT composited into the body image to avoid doubling with the SVG overlay.
+    # ("glasses_round_black",   "modern_archivist_glasses_round_black.png",45),
     ("mouth_neutral",         "modern_archivist_mouth_neutral.png",       50),
     ("mouth_talk_a",          "modern_archivist_mouth_talk_a.png",       50),
     ("mouth_talk_b",          "modern_archivist_mouth_talk_b.png",       50),
