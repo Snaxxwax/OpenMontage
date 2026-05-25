@@ -70,9 +70,9 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
     ? spring({ frame: frame - (sippingStartFrame ?? frame), fps, config: { damping: 12, stiffness: 180, mass: 0.8 } })
     : spring({ frame: (sippingStartFrame ?? 0) + 15 - frame, fps, config: { damping: 14, stiffness: 120, mass: 0.6 } });
 
-  const mugRotate     = interpolate(sipProgress, [0, 1], [8, -28]);
-  const mugTranslateX = interpolate(sipProgress, [0, 1], [0, -44]);
-  const mugTranslateY = interpolate(sipProgress, [0, 1], [0, -58]);
+  const armRotate      = interpolate(sipProgress, [0, 1], [0, -18]);
+  const mugTranslateX  = interpolate(sipProgress, [0, 1], [0, -4]);
+  const mugTranslateY  = interpolate(sipProgress, [0, 1], [0, -4]);
 
   // Fix B: Mouth opacity — 3-frame interpolate replaces CSS transition
   const mouthOpacity = interpolate(
@@ -87,8 +87,11 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
 
   const mouthAnchor = legacyAnchor(manifest, "mouth", `mouth_${mouthShape === "closed" ? "closed" : mouthShape}`, DEFAULT_MOUTH_ANCHOR);
   const glassesAnchor = legacyAnchor(manifest, "glasses", "glasses_frame", DEFAULT_GLASSES_ANCHOR);
-  const bodySrc = legacyOrV2Src(manifest, "body", "body");
-  const mugSrc = legacyOrV2Src(manifest, "mug", "mug");
+  const bodySrc    = legacyOrV2Src(manifest, "body", "body");
+  const mugSrc     = legacyOrV2Src(manifest, "mug", "mug");
+  const shadowSrc  = findLayer(manifest, "shadow")?.src;
+  const armSrc     = findLayer(manifest, "arm_right_idle")?.src;
+  const handMugSrc = findLayer(manifest, "hand_mug")?.src;
 
   const mouthSrc = MOUTH_SRC[mouthShape];
 
@@ -100,6 +103,9 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
 
   return (
     <>
+      {/* Layer 0 — Shadow (behind body) */}
+      {shadowSrc && <PuppetLayer src={resolveAsset(shadowSrc)} zIndex={0} />}
+
       {/* Layer 1 — Body portrait */}
       {bodySrc ? <PuppetLayer src={resolveAsset(bodySrc)} zIndex={1} /> : null}
 
@@ -158,28 +164,56 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
         }}
       />
 
-      {/* Layer 4 — Mug with sip pivot animation */}
-      <div
-        style={{
-          position: "absolute",
-          right: 92,
-          bottom: 92,
-          width: 180,
-          height: 180,
-          transformOrigin: "80% 85%",
-          transform: `rotate(${mugRotate}deg) translate(${mugTranslateX}px, ${mugTranslateY}px)`,
-          zIndex: 4,
-        }}
-      >
-        {mugSrc ? (
-          <Img
-            src={resolveAsset(mugSrc)}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          />
-        ) : (
-          <div style={{ width: 120, height: 96, borderRadius: 18, border: "8px solid var(--accent)" }} />
-        )}
-      </div>
+      {/* Layer 10 — Arm (sip animated at shoulder pivot) */}
+      {armSrc && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            transformOrigin: "62% 74%",
+            transform: `rotate(${armRotate}deg)`,
+            zIndex: 10,
+          }}
+        >
+          <PuppetLayer src={resolveAsset(armSrc)} />
+        </div>
+      )}
+
+      {/* Layer 11 — Mug — canvas-registered, sip animated */}
+      {mugSrc && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            transformOrigin: "62% 74%",
+            transform: `rotate(${armRotate}deg) translate(${mugTranslateX}px, ${mugTranslateY}px)`,
+            zIndex: 11,
+          }}
+        >
+          <PuppetLayer src={resolveAsset(mugSrc)} />
+        </div>
+      )}
+
+      {/* Layer 12 — Hand over mug (sip animated at shoulder pivot) */}
+      {handMugSrc && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            transformOrigin: "62% 74%",
+            transform: `rotate(${armRotate}deg)`,
+            zIndex: 12,
+          }}
+        >
+          <PuppetLayer src={resolveAsset(handMugSrc)} />
+        </div>
+      )}
     </>
   );
 };
