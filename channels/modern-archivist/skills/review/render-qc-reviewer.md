@@ -75,3 +75,21 @@ The Executive Producer must verify this review independently before presenting t
 - Audio-reactive/character effects do not obscure comprehension.
 - Frame samples must not reveal a document-only or chart-only channel drift from the approved `content_collection` packet.
 - Source-footage/artifact-first opportunities should materialize on screen as source_montage, recreated UI, case-file, or public artifact scenes rather than boring visual risk hidden under narration.
+
+## Puppet Render QC Checks
+
+After rendering, run the following checks:
+
+### Alpha and compositing
+
+1. **No near-white rectangular region.** Sample 5 frames from `MONOLOGUE`-layout segments. If any frame has a rectangular region of pixels with RGB > (240, 240, 240) and alpha = 255 covering > 10% of the frame area, raise a critical alpha defect.
+
+2. **Puppet region is non-background.** In frames where `characterCue.visible=true`, the puppet region (left half or right half of frame depending on layout) must have pixels that differ from the background plate. Fully transparent or fully matching puppet is a defect.
+
+3. **No head-only crop regression.** If the puppet bounding box height is less than 55% of the frame height when the puppet is visible, flag as a partial-puppet regression.
+
+### Render report
+
+4. **Include benchmark variant if performance warning.** If render wall-clock time exceeds `duration × 120` seconds (2 minutes of render per second of output), the render report must include results from at least the `puppet-static` and `source-plate-only` variants to identify the bottleneck.
+
+5. **Output duration matches expected.** Use `ffprobe` to confirm output duration is within ±0.5s of the expected episode `duration_seconds`.

@@ -74,3 +74,19 @@ OPERATOR ACTION REQUIRED:
 ## Corporate True Crime drift checks
 
 Review `content_collection`, episode, and media_manifest together. Flag document-only or chart-only visual plans, high boring visual risk hidden behind attractive copy, and any retreat from source-footage/artifact-first case-building. Source footage, archived web, recreated UI, source_montage, and case-board scenes should carry the episode whenever available. Generic stock, naked filing screenshots, and puppet-over-text filler are advisory warnings at minimum and channel-breaking if they dominate the proof path.
+
+## Puppet Visual Identity Checks
+
+During visual identity review, raise a **critical** finding for any of the following:
+
+1. **White or opaque background box around puppet.** The puppet must composite transparently over the background. A rectangular white/light box is an alpha defect — the PNG lacks hard alpha. Check `archivist-body.png` and any new layers.
+
+2. **Partial or head-only puppet.** If the puppet anchor is visible and the character is not full-body (torso + head visible), that is a head-only regression. This violates `rig_contract: full_body_layered`.
+
+3. **Mouth/glasses/mug misaligned from face.** The mouth phoneme PNG must align to the face via the manifest `anchors.mouth` position. The glasses SVG must align to `anchors.glasses`. The mug must align near `anchors.arm_pivot`.
+
+Raise a **suggestion** for:
+
+4. **Excessive mouth jitter.** If the mouth snaps between open/closed on every frame without following word timing, the `WORD_SLOP_SEC` boundary may be too tight or word timings may be missing.
+
+5. **Puppet expression not matching scene tone.** A `skeptical` expression on an `alarm` cue, or a `neutral` expression on a `case_closed` cue, should be flagged as a mismatch.
