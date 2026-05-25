@@ -16,9 +16,9 @@ const fallbackPuppet: PuppetManifest = {
     mug:  "modern-archivist/archivist-mug.png",
   },
   anchors: {
-    mouth:     { x: 0.51, y: 0.62 },
-    glasses:   { x: 0.50, y: 0.43 },
-    arm_pivot: { x: 0.62, y: 0.74 },
+    mouth:     { x: 0.407, y: 0.538 },
+    glasses:   { x: 0.51,  y: 0.452 },
+    arm_pivot: { x: 0.62,  y: 0.74 },
   },
 };
 

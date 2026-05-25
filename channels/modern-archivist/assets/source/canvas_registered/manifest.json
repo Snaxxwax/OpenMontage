@@ -1,0 +1,90 @@
+[
+  {
+    "layer": "torso_hoodie",
+    "z": 10,
+    "bbox": [
+      259,
+      645,
+      1180,
+      1253
+    ],
+    "fg_pixels": 375981
+  },
+  {
+    "layer": "head_neutral",
+    "z": 20,
+    "bbox": [
+      212,
+      60,
+      1146,
+      1090
+    ],
+    "fg_pixels": 554508
+  },
+  {
+    "layer": "head_eyes_closed",
+    "z": 20,
+    "bbox": [
+      221,
+      116,
+      1132,
+      1041
+    ],
+    "fg_pixels": 515575
+  },
+  {
+    "layer": "arm_mug_grip",
+    "z": 30,
+    "bbox": [
+      84,
+      501,
+      445,
+      1220
+    ],
+    "fg_pixels": 156201
+  },
+  {
+    "layer": "glasses_round_black",
+    "z": 45,
+    "bbox": [
+      269,
+      456,
+      1011,
+      678
+    ],
+    "fg_pixels": 25751
+  },
+  {
+    "layer": "mouth_neutral",
+    "z": 50,
+    "bbox": [
+      466,
+      638,
+      556,
+      713
+    ],
+    "fg_pixels": 3806
+  },
+  {
+    "layer": "mouth_talk_a",
+    "z": 50,
+    "bbox": [
+      436,
+      633,
+      553,
+      704
+    ],
+    "fg_pixels": 4291
+  },
+  {
+    "layer": "mouth_talk_b",
+    "z": 50,
+    "bbox": [
+      480,
+      615,
+      553,
+      695
+    ],
+    "fg_pixels": 3570
+  }
+]
