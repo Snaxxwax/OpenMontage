@@ -20,6 +20,7 @@ SVG_LAYER_PREVIEW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "sv
 SVG_LAYER_MUG_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "mug_code.png"
 SVG_LAYER_HAND_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "hand_mug.png"
 SVG_LAYER_SHADOW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "shadow.png"
+SVG_LAYER_REFERENCE_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "reference_mug_pose.png"
 
 
 def _alpha_stats(path: Path) -> tuple[float, tuple[int, int, int, int] | None]:
@@ -249,12 +250,17 @@ def test_svg_layer_preview_includes_explicit_mug_hand_and_shadow_layers() -> Non
     assert SVG_LAYER_MUG_PATH.exists(), "svg layer preview must include a standalone visible mug asset"
     assert SVG_LAYER_HAND_PATH.exists(), "svg layer preview must include a standalone hand/grip asset"
     assert SVG_LAYER_SHADOW_PATH.exists(), "svg layer preview must include a hard-alpha contact shadow asset"
+    assert SVG_LAYER_REFERENCE_PATH.exists(), "svg layer preview must include a local copy of the true mug-pose reference for browser QC"
     assert 'src="mug_code.png"' in preview, "preview must render the mug separately from the arm/hand layer"
     assert 'scale(0.82)' in preview, "preview mug should be scaled down to line up with the hand grip"
     assert 'src="hand_mug.png"' in preview, "preview must render hand/grip separately from the sleeve and mug"
     assert 'src="shadow.png"' in preview, "preview must render the Phase 3 contact shadow layer"
     assert 'scale(0.96)' in preview, "preview glasses should be scaled down slightly for face fit"
     assert 'scale(0.94)' in preview, "preview mouth should be scaled down slightly for face fit"
+    assert "z-index:25; transform: scale(0.94)" in preview, "preview mouth must sit below mug/hand so it does not draw through the cup"
+    assert "z-index:28; transform: scale(0.96)" in preview, "preview glasses must sit below action layers for reference-pose occlusion"
+    assert "Reference vs live composite" in preview, "preview must not show stale static comparison as the primary QC reference"
+    assert "reference_mug_pose.png" in preview, "preview must compare against the true mug-pose reference"
     assert "mug_code" in preview, "preview layer strip must expose the mug layer for visual QA"
     assert "hand_mug" in preview, "preview layer strip must expose the hand/grip layer for visual QA"
 
