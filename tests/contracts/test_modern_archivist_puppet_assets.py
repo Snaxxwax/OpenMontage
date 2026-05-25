@@ -20,6 +20,7 @@ SVG_LAYER_PREVIEW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "sv
 RIG_SPEC_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "rig_spec.json"
 ACTION_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "action_library.json"
 VISEME_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "viseme_library.json"
+EXPRESSION_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "expression_library.json"
 SVG_LAYER_MUG_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "mug_code.png"
 SVG_LAYER_HAND_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "hand_mug.png"
 SVG_LAYER_SHADOW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "shadow.png"
@@ -348,3 +349,19 @@ def test_phase3_arm_and_hand_no_longer_have_white_outline() -> None:
                     near_white += 1
         assert foreground > 0
         assert near_white == 0, f"{layer_id} still has near-white outline pixels"
+
+
+def test_expression_library_exists_and_valid() -> None:
+    assert EXPRESSION_LIBRARY_PATH.exists(), "expression_library.json must exist"
+    lib = json.loads(EXPRESSION_LIBRARY_PATH.read_text())
+    assert lib["version"].startswith("1.")
+    assert lib["character_id"] == "modern_archivist"
+    assert "expressions" in lib
+    spec = json.loads(RIG_SPEC_PATH.read_text())
+    for expr_name in spec["states"]["expression"]:
+        assert expr_name in lib["expressions"], f"expression_library missing: {expr_name}"
+    # Each expression must have eyes, brows, mouth_default
+    for name, expr in lib["expressions"].items():
+        assert "eyes" in expr, f"expression {name} missing eyes"
+        assert "brows" in expr, f"expression {name} missing brows"
+        assert "mouth_default" in expr, f"expression {name} missing mouth_default"
