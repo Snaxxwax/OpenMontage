@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern Archivist — Mug Sip Contact Sheet</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #111;
+      font-family: 'Courier New', monospace;
+      color: #aaa;
+      padding: 24px;
+    }
+    h2 {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      color: #aaa;
+    }
+    .intro-text {
+      font-size: 9px;
+      color: #444;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      max-width: 900px;
+    }
+    .poses {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .pose-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .pose-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #555;
+    }
+    .pose-frame {
+      font-size: 7px;
+      color: #333;
+    }
+    .stage {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      background: #2F4F4F;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+    }
+    .layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .layer img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    /* Transform origins for arm/mug/hand at shoulder pivot: 62% x, 74% y */
+    .arm-layer {
+      transform-origin: 62% 74%;
+    }
+    .hand-layer {
+      transform-origin: 62% 74%;
+    }
+    .mug-layer {
+      transform-origin: 62% 74%;
+    }
+    /* QA Section */
+    section {
+      margin-top: 40px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h3 {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #555;
+      margin-bottom: 12px;
+    }
+    section > p {
+      font-size: 9px;
+      color: #444;
+      margin-bottom: 12px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      font-size: 9px;
+      line-height: 2.2;
+      color: #555;
+    }
+    li {
+      margin-bottom: 4px;
+    }
+    .limitation {
+      font-size: 8px;
+      color: #333;
+      margin-top: 12px;
+      padding: 8px;
+      background: #1a1a1a;
+      border-left: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Modern Archivist — Mug Sip Action · Contact Sheet</h2>
+<div class="intro-text">
+  Driven by rig/action_library.json · upper_arm_r pivot [777,928] / forearm_r [777,1050] / hand_r [777,928] / mug [627,627] on 1254×1254 canvas.<br>
+  These are the <em>current single-layer approximations</em> — proper joint-split artwork will replace arm_right_idle in Phase 2.
+</div>
+
+<div class="poses">
+  <!-- Pose 1: Idle (frame 0) -->
+  <div class="pose-panel">
+    <div class="pose-label">Pose 1 · Idle</div>
+    <div class="pose-frame">frame 0</div>
+    <div class="stage">
+      <div class="layer" style="z-index: 5;">
+        <img src="shadow.png" alt="shadow" />
+      </div>
+      <div class="layer" style="z-index: 10;">
+        <img src="torso_hoodie.svg" alt="torso" />
+      </div>
+      <div class="layer" style="z-index: 20;">
+        <img src="head_neutral.svg" alt="head" />
+      </div>
+      <div class="layer" style="z-index: 25; opacity: 1;">
+        <img src="mouth_neutral.svg" alt="mouth" />
+      </div>
+      <div class="layer" style="z-index: 28;">
+        <img src="glasses_canvas_reg.png" alt="glasses" />
+      </div>
+      <div class="layer arm-layer" style="z-index: 30; transform: none;">
+        <img src="arm_right_idle.png" alt="arm" />
+      </div>
+      <div class="layer mug-layer" style="z-index: 35; transform: none;">
+        <img src="mug_code.png" alt="mug" />
+      </div>
+      <div class="layer hand-layer" style="z-index: 40; transform: none;">
+        <img src="hand_mug.png" alt="hand" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Pose 2: Approach (frame 9, halfway to peak) -->
+  <div class="pose-panel">
+    <div class="pose-label">Pose 2 · Approach</div>
+    <div class="pose-frame">frame 9</div>
+    <div class="stage">
+      <div class="layer" style="z-index: 5;">
+        <img src="shadow.png" alt="shadow" />
+      </div>
+      <div class="layer" style="z-index: 10;">
+        <img src="torso_hoodie.svg" alt="torso" />
+      </div>
+      <div class="layer" style="z-index: 20;">
+        <img src="head_neutral.svg" alt="head" />
+      </div>
+      <div class="layer" style="z-index: 25; opacity: 1;">
+        <img src="mouth_neutral.svg" alt="mouth" />
+      </div>
+      <div class="layer" style="z-index: 28;">
+        <img src="glasses_canvas_reg.png" alt="glasses" />
+      </div>
+      <div class="layer arm-layer" style="z-index: 30; transform: rotate(-9deg);">
+        <img src="arm_right_idle.png" alt="arm" />
+      </div>
+      <div class="layer mug-layer" style="z-index: 35; transform: rotate(-4deg) translate(-2px,-2px);">
+        <img src="mug_code.png" alt="mug" />
+      </div>
+      <div class="layer hand-layer" style="z-index: 40; transform: rotate(-9deg);">
+        <img src="hand_mug.png" alt="hand" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Pose 3: Contact (frame 18) -->
+  <div class="pose-panel">
+    <div class="pose-label">Pose 3 · Contact</div>
+    <div class="pose-frame">frame 18</div>
+    <div class="stage">
+      <div class="layer" style="z-index: 5;">
+        <img src="shadow.png" alt="shadow" />
+      </div>
+      <div class="layer" style="z-index: 10;">
+        <img src="torso_hoodie.svg" alt="torso" />
+      </div>
+      <div class="layer" style="z-index: 20;">
+        <img src="head_neutral.svg" alt="head" />
+      </div>
+      <div class="layer" style="z-index: 25; opacity: 0;">
+        <img src="mouth_neutral.svg" alt="mouth" />
+      </div>
+      <div class="layer" style="z-index: 28;">
+        <img src="glasses_canvas_reg.png" alt="glasses" />
+      </div>
+      <div class="layer arm-layer" style="z-index: 30; transform: rotate(-18deg);">
+        <img src="arm_right_idle.png" alt="arm" />
+      </div>
+      <div class="layer mug-layer" style="z-index: 35; transform: rotate(-8deg) translate(-4px,-4px);">
+        <img src="mug_code.png" alt="mug" />
+      </div>
+      <div class="layer hand-layer" style="z-index: 40; transform: rotate(-18deg);">
+        <img src="hand_mug.png" alt="hand" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Pose 4: Sip/Hold (frame 30) -->
+  <div class="pose-panel">
+    <div class="pose-label">Pose 4 · Sip</div>
+    <div class="pose-frame">frame 30</div>
+    <div class="stage">
+      <div class="layer" style="z-index: 5;">
+        <img src="shadow.png" alt="shadow" />
+      </div>
+      <div class="layer" style="z-index: 10;">
+        <img src="torso_hoodie.svg" alt="torso" />
+      </div>
+      <div class="layer" style="z-index: 20;">
+        <img src="head_neutral.svg" alt="head" />
+      </div>
+      <div class="layer" style="z-index: 25; opacity: 0;">
+        <img src="mouth_neutral.svg" alt="mouth" />
+      </div>
+      <div class="layer" style="z-index: 28;">
+        <img src="glasses_canvas_reg.png" alt="glasses" />
+      </div>
+      <div class="layer arm-layer" style="z-index: 30; transform: rotate(-18deg);">
+        <img src="arm_right_idle.png" alt="arm" />
+      </div>
+      <div class="layer mug-layer" style="z-index: 35; transform: rotate(-8deg) translate(-4px,-4px);">
+        <img src="mug_code.png" alt="mug" />
+      </div>
+      <div class="layer hand-layer" style="z-index: 40; transform: rotate(-18deg);">
+        <img src="hand_mug.png" alt="hand" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Pose 5: Return (frame 42) -->
+  <div class="pose-panel">
+    <div class="pose-label">Pose 5 · Return</div>
+    <div class="pose-frame">frame 42</div>
+    <div class="stage">
+      <div class="layer" style="z-index: 5;">
+        <img src="shadow.png" alt="shadow" />
+      </div>
+      <div class="layer" style="z-index: 10;">
+        <img src="torso_hoodie.svg" alt="torso" />
+      </div>
+      <div class="layer" style="z-index: 20;">
+        <img src="head_neutral.svg" alt="head" />
+      </div>
+      <div class="layer" style="z-index: 25; opacity: 1;">
+        <img src="mouth_neutral.svg" alt="mouth" />
+      </div>
+      <div class="layer" style="z-index: 28;">
+        <img src="glasses_canvas_reg.png" alt="glasses" />
+      </div>
+      <div class="layer arm-layer" style="z-index: 30; transform: none;">
+        <img src="arm_right_idle.png" alt="arm" />
+      </div>
+      <div class="layer mug-layer" style="z-index: 35; transform: none;">
+        <img src="mug_code.png" alt="mug" />
+      </div>
+      <div class="layer hand-layer" style="z-index: 40; transform: none;">
+        <img src="hand_mug.png" alt="hand" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QA CHECKLIST SECTION -->
+<section>
+  <h3>Visual QA Checklist</h3>
+  <p>Check each item against the poses above before promoting arm artwork.</p>
+  <ul>
+    <li>☐ Hand overlays mug handle at contact/sip frames (poses 3 & 4) — hand z-index above mug</li>
+    <li>☐ Mouth NOT visible through mug at contact/sip (poses 3 & 4) — mouth opacity:0</li>
+    <li>☐ Glasses remain visible above mug in all frames — glasses z:28, mug z:35 means mug covers glasses (expected)</li>
+    <li>☐ Shadow stays at bottom (z:5) in all frames — no movement</li>
+    <li>☐ Full body (torso_hoodie) visible in all frames — no transform applied</li>
+    <li>☐ No white boxes or missing layers (check browser console for 404s)</li>
+    <li>☐ Arm rotation feels plausible — not mechanically rigid</li>
+    <li>☐ Return pose (frame 42) matches idle pose (frame 0) exactly</li>
+  </ul>
+  <div class="limitation">
+    <strong>Known limitation:</strong> arm_right_idle is a single-piece sleeve layer; the rotation simulates the joint but the artwork doesn't flex.
+    Replace with split upper_arm_r + forearm_r artwork to resolve.
+  </div>
+</section>
+
+</body>
+</html>
