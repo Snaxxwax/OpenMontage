@@ -4,7 +4,7 @@ import { ArchivistPuppet } from "./components/ArchivistPuppet";
 import { ChannelFrame } from "./components/ChannelFrame";
 import { MediaContainer } from "./components/MediaContainer";
 import { ScrollingCodeBackdrop } from "./components/ScrollingCodeBackdrop";
-import { flattenTags, getActiveCharacterCue, getActiveColorState, getActiveMediaSequence, getActiveVisualMode, isSipActive, isSpeaking, layoutForColorState } from "./state";
+import { flattenTags, getActiveCharacterCue, getActiveColorState, getActiveMediaSequence, getActiveSection, getActiveVisualMode, isSipActive, isSpeaking, layoutForColorState } from "./state";
 import { resolveAsset, stateCssVars } from "./styles";
 import type { ModernArchivistEpisode } from "./types";
 
@@ -20,6 +20,10 @@ export const ModernArchivistComposition: React.FC<ModernArchivistEpisode> = (epi
   const characterCue = getActiveCharacterCue(episode.sections, time);
   const speaking = isSpeaking(episode.amplitude, time);
   const sipping = isSipActive(tags, time);
+  const currentSection = getActiveSection(episode.sections, time);
+  const layoutChangedAtFrame = currentSection ? Math.round(currentSection.start * fps) : 0;
+  const activeSipTag = tags.find((tag) => tag.type === "sip" && time >= tag.at && time <= tag.at + 1.1);
+  const sippingStartFrame = activeSipTag ? Math.round(activeSipTag.at * fps) : undefined;
   const audioSrc = episode.audio_src && !episode.debug_disable_audio
     ? (episode.audio_src.startsWith("/") ? resolveAsset(episode.audio_src) : staticFile(episode.audio_src))
     : null;
@@ -27,7 +31,7 @@ export const ModernArchivistComposition: React.FC<ModernArchivistEpisode> = (epi
     {audioSrc ? <Audio src={audioSrc} /> : null}
     {!episode.debug_disable_backdrop ? <ScrollingCodeBackdrop layout={layout} /> : null}
     {!episode.debug_disable_media ? <MediaContainer layout={layout} media={media} visualMode={visualMode} /> : null}
-    {!episode.debug_disable_puppet ? <ArchivistPuppet layout={layout} speaking={speaking} sipping={sipping} puppet={episode.puppet} cue={characterCue} colorState={colorState} wordTimestamps={episode.word_timings} debugPuppetStatic={episode.debug_puppet_static} debugDisablePuppetMouth={episode.debug_disable_puppet_mouth} debugDisablePuppetFilters={episode.debug_disable_puppet_filters} /> : null}
+    {!episode.debug_disable_puppet ? <ArchivistPuppet layout={layout} speaking={speaking} sipping={sipping} puppet={episode.puppet} cue={characterCue} colorState={colorState} wordTimestamps={episode.word_timings} layoutChangedAtFrame={layoutChangedAtFrame} sippingStartFrame={sippingStartFrame} debugPuppetStatic={episode.debug_puppet_static} debugDisablePuppetMouth={episode.debug_disable_puppet_mouth} debugDisablePuppetFilters={episode.debug_disable_puppet_filters} /> : null}
     <ChannelFrame title={episode.title} />
   </AbsoluteFill>;
 };

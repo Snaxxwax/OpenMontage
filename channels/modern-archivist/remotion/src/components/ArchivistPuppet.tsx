@@ -1,5 +1,5 @@
 import React from "react";
-import { useCurrentFrame, useVideoConfig } from "remotion";
+import { spring, useCurrentFrame, useVideoConfig } from "remotion";
 import type { CharacterCue, ColorState, LayoutState, PuppetManifest, WordTimestamp } from "../types";
 import { puppetTransform } from "../styles";
 import { resolvedSpeaking, selectMouth } from "./puppet/mouth";
@@ -30,6 +30,8 @@ interface ArchivistPuppetProps {
   cue?: CharacterCue;
   colorState?: ColorState;
   wordTimestamps?: WordTimestamp[];
+  layoutChangedAtFrame?: number;
+  sippingStartFrame?: number;
   debugPuppetStatic?: boolean;
   debugDisablePuppetMouth?: boolean;
   debugDisablePuppetFilters?: boolean;
@@ -43,12 +45,21 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
   cue = { visible: true, action: "idle", expression: "neutral" },
   colorState,
   wordTimestamps,
+  layoutChangedAtFrame,
+  sippingStartFrame,
   debugPuppetStatic,
   debugDisablePuppetMouth,
   debugDisablePuppetFilters,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  // Fix C: Layout fade-in — Remotion spring replaces CSS opacity transition
+  const puppetOpacity = spring({
+    frame: frame - (layoutChangedAtFrame ?? 0),
+    fps,
+    config: { damping: 20, stiffness: 200 },
+  });
 
   const activePuppet = puppet ?? fallbackPuppet;
 
@@ -70,7 +81,7 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
         background: "transparent",
         transform: puppetTransform[layout],
         transformOrigin: "center center",
-        transition: "transform 600ms cubic-bezier(0.22, 1, 0.36, 1), opacity 260ms ease",
+        opacity: puppetOpacity,
         zIndex: 10,
         filter: expressionState.red
           ? "drop-shadow(0 0 32px rgba(255,0,0,0.75))"
@@ -83,6 +94,7 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
         mouthShape={mouthShape}
         isSpeaking={isSpeaking}
         sipping={sipping}
+        sippingStartFrame={sippingStartFrame}
         debugPuppetStatic={debugPuppetStatic}
         debugDisablePuppetMouth={debugDisablePuppetMouth}
         debugDisablePuppetFilters={debugDisablePuppetFilters}

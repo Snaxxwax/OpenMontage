@@ -1,5 +1,5 @@
 import React from "react";
-import { Img } from "remotion";
+import { Img, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import type { PuppetManifest } from "../../types";
 import type { MouthShape } from "./mouth";
 import type { ExpressionState } from "./expression";
@@ -18,6 +18,7 @@ interface PuppetRigProps {
   mouthShape: MouthShape;
   isSpeaking: boolean;
   sipping: boolean;
+  sippingStartFrame?: number;
   debugPuppetStatic?: boolean;
   debugDisablePuppetMouth?: boolean;
   debugDisablePuppetFilters?: boolean;
@@ -29,15 +30,39 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
   mouthShape: mouthShapeProp,
   isSpeaking: isSpeakingProp,
   sipping,
+  sippingStartFrame,
   debugPuppetStatic,
   debugDisablePuppetMouth,
   debugDisablePuppetFilters,
 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
   const mouthShape: MouthShape = (debugPuppetStatic || debugDisablePuppetMouth) ? "closed" : mouthShapeProp;
   const isSpeaking = (debugPuppetStatic || debugDisablePuppetMouth) ? false : isSpeakingProp;
 
   const { red, flash } = expression;
   const actionSip = debugPuppetStatic ? false : expression.actionSip;
+
+  // Fix A: Mug sip animation — Remotion spring replaces CSS transition
+  const sipProgress = actionSip
+    ? spring({ frame: frame - (sippingStartFrame ?? frame), fps, config: { damping: 12, stiffness: 180, mass: 0.8 } })
+    : spring({ frame: (sippingStartFrame ?? 0) + 15 - frame, fps, config: { damping: 14, stiffness: 120, mass: 0.6 } });
+
+  const mugRotate     = interpolate(sipProgress, [0, 1], [8, -28]);
+  const mugTranslateX = interpolate(sipProgress, [0, 1], [0, -44]);
+  const mugTranslateY = interpolate(sipProgress, [0, 1], [0, -58]);
+
+  // Fix B: Mouth opacity — 3-frame interpolate replaces CSS transition
+  const mouthOpacity = interpolate(
+    frame,
+    [
+      (sippingStartFrame ?? frame) - 1,
+      (sippingStartFrame ?? frame) + 3,
+    ],
+    actionSip ? [1, 0] : [0, 1],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+  );
 
   const mouthAnchor   = manifest.anchors.mouth   ?? DEFAULT_MOUTH_ANCHOR;
   const glassesAnchor = manifest.anchors.glasses  ?? DEFAULT_GLASSES_ANCHOR;
@@ -103,8 +128,7 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
           transform: "translate(-50%, -50%)",
           objectFit: "contain",
           zIndex: 3,
-          opacity: actionSip ? 0 : 1,
-          transition: "opacity 100ms ease",
+          opacity: mouthOpacity,
           // Blend the cream-toned mouth assets into the dark portrait
           mixBlendMode: "screen",
           filter: red ? "hue-rotate(330deg) saturate(1.4)" : undefined,
@@ -120,10 +144,7 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
           width: 180,
           height: 180,
           transformOrigin: "80% 85%",
-          transform: actionSip
-            ? "rotate(-28deg) translate(-44px, -58px)"
-            : "rotate(8deg)",
-          transition: "transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+          transform: `rotate(${mugRotate}deg) translate(${mugTranslateX}px, ${mugTranslateY}px)`,
           zIndex: 4,
         }}
       >
