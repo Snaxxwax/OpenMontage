@@ -74,7 +74,7 @@ export function getActiveCharacterCue(sections: EpisodeSection[], time: number):
     return { ...DEFAULT_CHARACTER_CUE, ...section.character };
   }
   const visualMode = getActiveVisualMode(sections, time);
-  if (["case_file", "failure_graph", "code_walkthrough", "data_sequence", "cinematic_metaphor"].includes(visualMode)) {
+  if (["case_file", "source_montage", "recreated_ui", "failure_graph", "code_walkthrough", "data_sequence", "cinematic_metaphor"].includes(visualMode)) {
     return { visible: false, action: "hidden", expression: "none" };
   }
   return DEFAULT_CHARACTER_CUE;
@@ -94,6 +94,10 @@ export function getActiveMediaSequence(sections: EpisodeSection[], tags: ScriptT
   const section = getActiveSection(sections, time);
   if (section?.media_overlay && "kind" in section.media_overlay) {
     return section.media_overlay as MediaItem;
+  }
+  if (section?.media_overlay && "type" in section.media_overlay) {
+    const { type, ...rest } = section.media_overlay as Record<string, unknown>;
+    return { ...rest, kind: type } as MediaItem;
   }
   return getActiveMedia(tags, time);
 }

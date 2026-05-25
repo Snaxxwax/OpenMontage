@@ -24,6 +24,8 @@ def test_channel_docs_and_directors_reference_retention_contract() -> None:
     visual = (CHANNEL_DIR / "skills" / "review" / "visual-identity-reviewer.md").read_text(encoding="utf-8")
     render = (CHANNEL_DIR / "skills" / "review" / "render-qc-reviewer.md").read_text(encoding="utf-8")
     assert "retention-doctrine.md" in channel
+    assert "design/channel-source-of-truth.md" in channel
+    assert "Corporate True Crime" in channel
     assert "No WebGL" in channel and "Live research/data must be fetched before rendering" in channel
     for term in ["Case-file UI", "Cinematic metaphor", "Motion density", "crimson"]:
         assert term in design
@@ -45,10 +47,11 @@ def test_modern_archivist_episode_schema_accepts_retention_timeline_block() -> N
         "duration_seconds": 30,
         "sections": [{
             "id": "b001", "start": 0, "end": 8, "text": "The receipt was worse than the pitch.", "tags": [],
-            "narrative_phase": "hook", "retention_device": "cold_open_shock", "visual_mode": "case_file",
+            "narrative_phase": "hook", "retention_device": "cold_open_shock", "visual_mode": "source_montage",
             "layout": "media_full", "color_state": "teal",
             "character": {"visible": False, "action": "hidden", "expression": "none"},
             "evidence_role": "primary_evidence", "evidence_refs": ["claim_001", "source_001"],
+            "content_opportunity_refs": ["opp_001"],
             "media_overlay": {"type": "case_file_sequence", "beats": []}, "estimated_duration_seconds": 8,
         }],
     }
@@ -66,6 +69,31 @@ def test_modern_archivist_media_schema_accepts_retention_media_items() -> None:
     validator.validate({
         "id": "metaphor-001", "kind": "cinematic_metaphor", "title": "Server room goes dark",
         "evidence_role": "illustrative_only", "description": "Illustrative data-center darkness shot", "motion_plan": [],
+    })
+    validator.validate({
+        "id": "source-001",
+        "kind": "source_montage",
+        "title": "Demo footage contradiction",
+        "evidence_role": "primary_evidence",
+        "evidence_refs": ["source_001"],
+        "content_opportunity_refs": ["opp_001"],
+        "runtime_affinity": "hyperframes",
+        "rights_status": "needs_review",
+        "local_assets": [{"path": "assets/source/demo-frame-001.png", "type": "image"}],
+        "motion_plan": [{"at_seconds": 0, "action": "push_into_frame"}],
+    })
+    validator.validate({
+        "id": "ui-001",
+        "kind": "recreated_ui",
+        "title": "Archived claim recreation",
+        "evidence_role": "primary_evidence",
+        "evidence_refs": ["source_002"],
+        "content_opportunity_refs": ["opp_002"],
+        "runtime_affinity": "either",
+        "rights_status": "recreate_only",
+        "local_assets": [],
+        "segment_render": {"runtime": "hyperframes", "workspace_path": "assets/hyperframes/opp_002", "output_path": "assets/video/segments/opp_002.mp4", "status": "planned"},
+        "motion_plan": [{"at_seconds": 0, "action": "highlight_claim"}],
     })
 
 

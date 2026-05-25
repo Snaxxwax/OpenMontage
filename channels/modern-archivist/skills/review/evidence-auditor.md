@@ -21,6 +21,8 @@ Return `GATE RESULT: FAIL` if any of these are true:
 - The timeline lacks dated anchors for the major corporate/product decisions.
 - The failure thesis depends on speculation, outrage, or implied motive that the record does not support.
 - A risky claim is included without being marked as risky, open, downgraded, or cut.
+- `content_collection` relies on document-only or chart-only support for the central visual promise while claiming low boring visual risk.
+- A source-footage/artifact-first opportunity overstates an allegation, inference, or illustrative-only scene as a finding or primary record.
 
 ## Review procedure
 

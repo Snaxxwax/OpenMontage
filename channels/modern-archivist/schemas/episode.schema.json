@@ -87,7 +87,9 @@
               "code_walkthrough",
               "data_sequence",
               "critical_error",
-              "outro"
+              "outro",
+              "source_montage",
+              "recreated_ui"
             ]
           },
           "layout": {
@@ -146,6 +148,12 @@
           "estimated_duration_seconds": {
             "type": "number",
             "exclusiveMinimum": 0
+          },
+          "content_opportunity_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "additionalProperties": true

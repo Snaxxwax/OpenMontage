@@ -54,4 +54,14 @@ assertEqual(getActiveCharacterCue(sections, 21).action, "sip_coffee", "character
 assertEqual(getActiveRetentionDevice(sections, 2), "cold_open_shock", "retention device from section");
 assertEqual(getActiveColorState(sections, 21), "red", "red critical state");
 assertEqual(getActiveMediaSequence(sections, tags, 9)?.kind, "case_file_sequence", "media overlay preferred");
+const typeOnlyOverlaySections: EpisodeSection[] = [{
+  id: "s-type",
+  start: 0,
+  end: 5,
+  text: "Type-only overlay",
+  tags: [],
+  visual_mode: "source_montage",
+  media_overlay: { type: "source_montage", title: "Source packet", sources: [] },
+}];
+assertEqual(getActiveMediaSequence(typeOnlyOverlaySections, [], 1)?.kind, "source_montage", "type-only media overlay normalized to kind");
 assertEqual(layoutForColorState("red", "critical_error"), "STATE_CRITICAL_ERROR", "layout from red state");

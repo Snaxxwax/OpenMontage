@@ -53,6 +53,100 @@
         },
         "content": {
           "type": "string"
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -114,6 +208,100 @@
           "items": {
             "type": "string"
           }
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -169,6 +357,100 @@
         },
         "attribution": {
           "type": "string"
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -224,6 +506,100 @@
         },
         "caption": {
           "type": "string"
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -283,6 +659,100 @@
         },
         "stamp": {
           "type": "string"
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -335,6 +805,100 @@
         },
         "label": {
           "type": "string"
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -397,6 +961,100 @@
           "items": {
             "type": "object",
             "additionalProperties": true
+          }
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
           }
         }
       },
@@ -461,6 +1119,100 @@
         },
         "attribution": {
           "type": "string"
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -520,6 +1272,100 @@
         },
         "chart_type": {
           "type": "string"
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -585,6 +1431,100 @@
             "type": "object",
             "additionalProperties": true
           }
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
         }
       },
       "additionalProperties": true
@@ -640,6 +1580,256 @@
           "items": {
             "type": "object",
             "additionalProperties": true
+          }
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "recreated_ui"
+        },
+        "title": {
+          "type": "string"
+        },
+        "evidence_role": {
+          "enum": [
+            "primary_evidence",
+            "secondary_evidence",
+            "derived_analysis",
+            "illustrative_only",
+            "brand_interstitial"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "motion_plan": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "claim_highlight": {
+          "type": "string"
+        },
+        "before_after": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "content_opportunity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runtime_affinity": {
+          "type": "string",
+          "enum": [
+            "remotion",
+            "hyperframes",
+            "either"
+          ]
+        },
+        "rights_status": {
+          "type": "string",
+          "enum": [
+            "usable",
+            "needs_review",
+            "recreate_only",
+            "unusable",
+            "unknown"
+          ]
+        },
+        "local_assets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image",
+                  "video",
+                  "audio",
+                  "json",
+                  "html",
+                  "svg",
+                  "other"
+                ]
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "license_note": {
+                "type": "string"
+              },
+              "retrieval_date": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "segment_render": {
+          "type": "object",
+          "required": [
+            "runtime",
+            "workspace_path",
+            "output_path",
+            "status"
+          ],
+          "additionalProperties": true,
+          "properties": {
+            "runtime": {
+              "type": "string",
+              "enum": [
+                "hyperframes"
+              ]
+            },
+            "workspace_path": {
+              "type": "string"
+            },
+            "output_path": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "planned",
+                "rendered",
+                "skipped",
+                "blocked"
+              ]
+            }
           }
         }
       },

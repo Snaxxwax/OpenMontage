@@ -8,6 +8,10 @@ This channel is intentionally separate from the generic OpenMontage pipeline set
 
 The Modern Archivist investigates corporate promises, product failures, abandoned systems, public records, source code, and online artifacts to show how a failure actually happened. The format is a Failure Ledger: a premium, evidence-linked autopsy that names the claim, follows the receipts, exposes the mechanism, and lands the lesson without turning into generic outrage.
 
+## Canonical development brief
+
+The continuing source of truth for channel strategy and development is `design/channel-source-of-truth.md`. It defines the Corporate True Crime positioning, source-footage/artifact-first visual policy, topic selection rules, runtime split, and anti-patterns. If older exploratory notes conflict with that document, `design/channel-source-of-truth.md` wins unless the user explicitly supersedes it.
+
 ## Retention format
 
 The channel follows `design/retention-doctrine.md`: Coffeezilla credibility, MagnatesMedia pacing, and Modern Archivist identity. Receipts remain the backbone, but the visual surface should be cinematic case-building: case-file boards, contradiction reveals, failure graphs, kinetic text, code walkthroughs, source montages, and scarce critical-error interrupts. The Archivist is an anchor and punctuation device, not a permanent mascot.

@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Modern Archivist Content Collection",
+  "description": "Visual feasibility and source/artifact opportunity packet produced after research and before scriptwriting.",
+  "type": "object",
+  "required": [
+    "episode_id",
+    "visual_thesis",
+    "topic_gate",
+    "opportunities",
+    "coverage_report"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "visual_thesis": {
+      "type": "string",
+      "minLength": 1
+    },
+    "topic_gate": {
+      "type": "object",
+      "required": [
+        "stakes",
+        "failure_mechanism",
+        "visual_artifacts",
+        "public_evidence",
+        "human_consequence",
+        "decision",
+        "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "stakes": { "type": "boolean" },
+        "failure_mechanism": { "type": "boolean" },
+        "visual_artifacts": { "type": "boolean" },
+        "public_evidence": { "type": "boolean" },
+        "human_consequence": { "type": "boolean" },
+        "decision": {
+          "type": "string",
+          "enum": ["greenlight", "revise", "park", "reject"]
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "opportunities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "evidence_refs",
+          "rights_status",
+          "evidence_role",
+          "runtime_affinity",
+          "visual_mode",
+          "motion_plan",
+          "script_use"
+        ],
+        "additionalProperties": true,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]*$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "source_footage",
+              "public_video",
+              "archived_web",
+              "recreated_ui",
+              "social_post",
+              "legal_evidence",
+              "sec_evidence",
+              "github_artifact",
+              "status_page",
+              "cinematic_metaphor",
+              "puppet_interaction"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string"
+          },
+          "source_url": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_label": {
+            "type": "string"
+          },
+          "local_path": {
+            "type": "string"
+          },
+          "capture_plan": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "rights_status": {
+            "type": "string",
+            "enum": ["usable", "needs_review", "recreate_only", "unusable", "unknown"]
+          },
+          "evidence_role": {
+            "type": "string",
+            "enum": [
+              "primary_evidence",
+              "secondary_reporting",
+              "inference",
+              "allegation",
+              "admission",
+              "finding",
+              "settlement",
+              "conviction",
+              "dismissal",
+              "illustrative_only"
+            ]
+          },
+          "runtime_affinity": {
+            "type": "string",
+            "enum": ["remotion", "hyperframes", "either"]
+          },
+          "visual_mode": {
+            "type": "string",
+            "enum": [
+              "source_montage",
+              "case_file",
+              "case_file_sequence",
+              "data_sequence",
+              "failure_graph",
+              "code_walkthrough",
+              "cinematic_metaphor",
+              "critical_error",
+              "monologue",
+              "recreated_ui"
+            ]
+          },
+          "motion_plan": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["at_seconds", "action"],
+              "additionalProperties": true,
+              "properties": {
+                "at_seconds": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "action": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "script_use": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scores": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "evidence_force": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "narrative_relevance": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "visual_texture": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "source_authority": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "scene_value": { "type": "integer", "minimum": 1, "maximum": 5 }
+            }
+          },
+          "risk_notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "coverage_report": {
+      "type": "object",
+      "required": [
+        "source_footage_count",
+        "recreated_artifact_count",
+        "document_only_count",
+        "chart_only_count",
+        "visual_feasibility",
+        "boring_visual_risk"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "source_footage_count": { "type": "integer", "minimum": 0 },
+        "recreated_artifact_count": { "type": "integer", "minimum": 0 },
+        "document_only_count": { "type": "integer", "minimum": 0 },
+        "chart_only_count": { "type": "integer", "minimum": 0 },
+        "visual_feasibility": {
+          "type": "string",
+          "enum": ["strong", "moderate", "weak", "blocked"]
+        },
+        "boring_visual_risk": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

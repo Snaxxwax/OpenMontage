@@ -1,5 +1,5 @@
 export { ModernArchivistComposition, calculateModernArchivistMetadata } from "./ModernArchivistComposition";
-export { modernArchivistFixture } from "./fixtures";
+export { modernArchivistFixture, nikolaContentFixture } from "./fixtures";
 export type {
   AudioAmplitudeSample,
   LayoutState,

@@ -28,6 +28,8 @@ export type RetentionDevice =
 export type VisualMode =
   | "monologue"
   | "case_file"
+  | "source_montage"
+  | "recreated_ui"
   | "cinematic_metaphor"
   | "failure_graph"
   | "code_walkthrough"
@@ -68,6 +70,24 @@ export interface MotionPlanStep {
   label?: string;
 }
 
+export type RuntimeAffinity = "remotion" | "hyperframes" | "either";
+export type RightsStatus = "usable" | "needs_review" | "recreate_only" | "unusable" | "unknown";
+
+export interface LocalAssetRef {
+  path: string;
+  type: "image" | "video" | "audio" | "json" | "html" | "svg" | "other" | string;
+  source_url?: string;
+  license_note?: string;
+  retrieval_date?: string;
+}
+
+export interface SegmentRenderRef {
+  runtime: "hyperframes";
+  workspace_path: string;
+  output_path: string;
+  status: "planned" | "rendered" | "skipped" | "blocked";
+}
+
 export interface Provenance {
   source_id?: string;
   url?: string;
@@ -83,6 +103,11 @@ interface MediaBase {
   title?: string;
   evidence_role?: EvidenceRole;
   evidence_refs?: string[];
+  content_opportunity_refs?: string[];
+  runtime_affinity?: RuntimeAffinity;
+  rights_status?: RightsStatus;
+  local_assets?: LocalAssetRef[];
+  segment_render?: SegmentRenderRef;
   provenance?: Provenance;
   motion_plan?: MotionPlanStep[];
   description?: string;
@@ -99,7 +124,8 @@ export type MediaItem =
   | (MediaBase & { kind: "kinetic_typography"; text?: string; phrases?: string[]; variant?: "glitch_slam" | "highlight_sweep" | "word_reveal" | string; attribution?: string })
   | (MediaBase & { kind: "data_sequence"; title: string; chart_type?: "line" | "bar" | string; data?: Array<Record<string, unknown>> })
   | (MediaBase & { kind: "code_walkthrough"; language?: string; filename?: string; content: string; highlights?: Array<Record<string, unknown>> })
-  | (MediaBase & { kind: "source_montage"; title: string; sources?: Array<Record<string, unknown>> });
+  | (MediaBase & { kind: "source_montage"; title: string; sources?: Array<Record<string, unknown>> })
+  | (MediaBase & { kind: "recreated_ui"; title: string; url?: string; claim_highlight?: string; before_after?: Array<Record<string, unknown>> });
 
 export type ScriptTag =
   | { at: number; type: "layout"; value: LayoutState }
@@ -121,6 +147,7 @@ export interface EpisodeSection {
   color_state?: ColorState;
   character?: CharacterCue;
   evidence_refs?: string[];
+  content_opportunity_refs?: string[];
   evidence_role?: EvidenceRole;
   media_overlay?: MediaItem | Record<string, unknown>;
   estimated_duration_seconds?: number;

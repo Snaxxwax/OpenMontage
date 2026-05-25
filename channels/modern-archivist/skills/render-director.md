@@ -15,18 +15,21 @@ Render the approved Modern Archivist episode through registry-discoverable compo
 
 ## Runtime contract
 
-Use `video_compose` as the manifest-level render tool. Canonical runtime is Remotion / React, but `hyperframes_compose` must be considered and presented when HyperFrames is available. Do not switch between Remotion, HyperFrames, FFmpeg-only, image-to-video, WebGL, or canvas skeletal rigging unless the user explicitly approves a material runtime change.
+Use `video_compose` as the manifest-level render tool. Remotion / React is the canonical final assembler for Modern Archivist, not a rule that every pixel must originate in Remotion. Declared mixed-runtime production is allowed and encouraged when it improves quality: HyperFrames may render approved segment assets, FFmpeg may provide probe/transcode/mux utility work, and Remotion assembles the final episode. Do not switch the approved final assembler, add a new visual paradigm (image-to-video, WebGL, canvas skeletal rigging), or downgrade to FFmpeg-only unless the user explicitly approves a material runtime change.
+
+Remotion remains the canonical final renderer. Read `runtime_affinity` from `content_collection` and `media_manifest` as planning input and segment-routing guidance: Remotion handles final assembly, puppet timing, case-file scenes, receipts, source montage integration, and deterministic React/SVG/CSS scenes; HyperFrames may produce approved local segment assets for source-rich motion, website-to-video, recreated UI, or kinetic HTML/CSS sequences. Do not silently swap runtimes. Record a `render_runtime_selection` decision with options considered, rejected options, whether mixed-runtime segment rendering is part of the approved plan, and whether any HyperFrames segment was rendered as a local asset.
 
 Development previews may pass explicit `video_compose` render options such as bounded `concurrency` or `muted=true` for faster iteration. Final deliverables must render with audio unless the approved episode is intentionally silent; never make muted output the default.
 
 ## Pre-render checks
 
 1. Verify all required artifacts exist.
-2. Verify referenced local assets exist.
-3. Verify narration audio exists and matches `audio_analysis` duration.
-4. Verify no render prop requires network fetches.
-5. Verify Modern Archivist constraints from `DESIGN.md` and `CHANNEL.md` are preserved.
-6. Verify `audio_src` resolves to the current project narration file (`assets/audio/narration.wav` or `audio_analysis.audio_path`), not a stale `remotion-composer/public/modern-archivist/*.wav` fixture.
+2. Verify referenced local assets exist, including staged `content_collection` assets and HyperFrames segment outputs.
+3. Verify every `content_opportunity_ref` used by `episode` and `media_manifest` resolves to `artifacts/content_collection.json`.
+4. Verify narration audio exists and matches `audio_analysis` duration.
+5. Verify no render prop requires network fetches.
+6. Verify Modern Archivist constraints from `DESIGN.md` and `CHANNEL.md` are preserved.
+7. Verify `audio_src` resolves to the current project narration file (`assets/audio/narration.wav` or `audio_analysis.audio_path`), not a stale `remotion-composer/public/modern-archivist/*.wav` fixture.
 
 ## Output contract
 

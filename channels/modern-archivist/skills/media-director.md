@@ -10,6 +10,9 @@ Create `artifacts/media_manifest.json`: a local, provenance-rich plan for all vi
 
 - `artifacts/episode.json`
 - `artifacts/research_packet.json`
+- `artifacts/content_collection.json`
+
+Before finalizing `media_manifest`, run the deterministic content asset staging utility for any approved opportunities with `local_path`, and run content opportunity reference validation against the episode + media manifest draft. The utility may copy/hash declared local files and report unresolved refs; it must not choose opportunities, download sources, or decide runtime/provider fallback.
 
 ## Output contract
 
@@ -25,7 +28,19 @@ Produce a media manifest compatible with `channels/modern-archivist/schemas/medi
 
 ## Visual language
 
-Favor receipts: documents, timelines, charts, product screenshots, archived pages, quote cards, and failure-ledger UI elements. Preserve Modern Archivist palette and deterministic React components.
+Favor source_montage, recreated_ui, case-file/editorial sequences, public video, archived pages, product screenshots, source receipts, quote cards, and failure-ledger UI elements. Preserve Modern Archivist palette and deterministic React components. Documents and charts can appear as receipt beats, but they should not become the main visual surface.
+
+## content_collection mapping workflow
+
+1. Read `episode`, `research_packet`, and `content_collection` before authoring `media_manifest`.
+2. For each scene, map the visual slot to one or more content_collection opportunity IDs.
+3. Convert each approved visual opportunity into local render inputs: local files, inline deterministic JSON, or explicit creation/acquisition requirements. No render-time network fetches.
+4. Carry through `rights_status`, `runtime_affinity`, evidence role, source label, and provenance notes.
+5. Prefer `source_montage`, `recreated_ui`, `case_file_sequence`, and `failure_graph` over `data_sequence` when both can explain the beat.
+6. Preserve HyperFrames-affinity opportunities as planned local segment assets; do not choose or swap runtime here.
+7. Mark blocked or missing assets explicitly instead of silently replacing them with generic stock.
+
+The manifest must make opportunity IDs traceable from script beat to local render inputs.
 
 ## Success criteria
 

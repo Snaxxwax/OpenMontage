@@ -9,6 +9,7 @@ Convert `research_packet` into `artifacts/episode.json` that follows the channel
 ## Inputs
 
 - `artifacts/research_packet.json`
+- `artifacts/content_collection.json`
 
 ## Output contract
 
@@ -33,6 +34,19 @@ Every beat must map to one of the channel render modes:
 - `STATE_MONOLOGUE`: Archivist on camera; framing, thesis, transitions.
 - `STATE_DEEP_DIVE`: MediaContainer owns the frame; charts, documents, source receipts.
 - `STATE_CRITICAL_ERROR`: pattern interrupt; failure, contradiction, shutdown, or decisive quote.
+
+## Source-footage/artifact-first scripting
+
+The `content_collection` packet is authoritative for visual feasibility. Script visual-dependent scenes around concrete visual opportunity entries and cite their opportunity IDs in scene metadata, media overlays, or notes. The cold open should use the strongest source footage, archived artifact, public video, or recreated digital artifact contradiction available in `content_collection`.
+
+Do not write scenes around abstract ideas when the content_collection packet lacks visual material. If the packet marks `boring_visual_risk: high`, stop for operator review or narrow the angle before scripting. Document-only beats must be compressed into receipt moments or transformed into artifact scenes with crop, reveal, contradiction stamp, recreated UI, case-board motion, or quote punch. The script must remain source-footage/artifact-first rather than research-deck-first.
+
+Each visual opportunity referenced in the script should preserve:
+
+- opportunity IDs from `content_collection`;
+- evidence refs from the research packet;
+- intended visual mode and motion plan;
+- whether the moment is evidence, allegation, finding, inference, or illustrative only.
 
 ## Success criteria
 

@@ -73,3 +73,5 @@ The Executive Producer must verify this review independently before presenting t
 - Evidence labels/source IDs remain readable in frame samples.
 - Illustrative scenes do not impersonate evidence.
 - Audio-reactive/character effects do not obscure comprehension.
+- Frame samples must not reveal a document-only or chart-only channel drift from the approved `content_collection` packet.
+- Source-footage/artifact-first opportunities should materialize on screen as source_montage, recreated UI, case-file, or public artifact scenes rather than boring visual risk hidden under narration.

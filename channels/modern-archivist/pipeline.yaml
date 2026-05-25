@@ -24,9 +24,11 @@ metadata:
     media_manifest: artifacts/media_manifest.json
     asset_manifest: artifacts/asset_manifest.json
     render_report: artifacts/render_report.json
+    content_collection: artifacts/content_collection.json
   schemas:
     episode: channels/modern-archivist/schemas/episode.schema.json
     media_manifest: channels/modern-archivist/schemas/media.schema.json
+    content_collection: channels/modern-archivist/schemas/content_collection.schema.json
   constraints:
     no_webgl: true
     no_canvas_skeletal_rigging: true
@@ -61,6 +63,7 @@ extensions:
 required_skills:
 - channels/modern-archivist/skills/executive-producer.md
 - channels/modern-archivist/skills/research-director.md
+- channels/modern-archivist/skills/content-collection-director.md
 - channels/modern-archivist/skills/script-director.md
 - channels/modern-archivist/skills/audio-director.md
 - channels/modern-archivist/skills/audio-analysis-director.md
@@ -115,10 +118,30 @@ stages:
     - Interpretation is labeled separately from what the record proves
     - Corporate/product timeline anchors are dated and source-backed
     - Risky or unsourced claims are blocked, downgraded, or cut
+- name: content_collection
+  skill: channels/modern-archivist/skills/content-collection-director.md
+  required_artifacts_in:
+  - research_packet
+  produces:
+  - content_collection
+  tools_available: []
+  checkpoint_required: true
+  human_approval_default: false
+  review_focus:
+  - Source footage, public video, archived web, product UI, or recreated artifact opportunities are identified before scriptwriting
+  - Documents, filings and charts are treated as evidence moments, not the main visual surface
+  - Topic passes at least three of five greenlight criteria or is explicitly parked/rejected
+  - Every visual opportunity records provenance, rights_status, evidence_role, runtime_affinity, and intended script use
+  - HyperFrames candidates are flagged for source-rich motion sequences without replacing Remotion final assembly
+  success_criteria:
+  - Schema-valid content_collection artifact exists at artifacts/content_collection.json
+  - Coverage report classifies visual feasibility and boring_visual_risk
+  - Reject or park a topic if it only has filings and charts
 - name: script
   skill: channels/modern-archivist/skills/script-director.md
   required_artifacts_in:
   - research_packet
+  - content_collection
   produces:
   - episode
   tools_available: []
@@ -133,6 +156,8 @@ stages:
   - Hook, stakes, and character returns are explicit
   - Red critical-error beats are scarce and justified
   - Every factual beat has evidence refs
+  - Script scenes use content_collection opportunity IDs for visual-dependent beats
+  - Source-footage/artifact-first opportunities shape the cold open and act breaks
   success_criteria:
   - Schema-valid episode artifact exists at artifacts/episode.json
   - Narration duration is within target range
@@ -142,6 +167,8 @@ stages:
   - Hook, stakes, character returns, and visual modes are explicit
   - Red critical-error beats are scarce and justified
   - Every factual beat has evidence refs
+  - Visual-dependent scenes map to content_collection opportunity IDs
+  - Document-only beats are compressed into receipt moments or rewritten as artifact scenes
   subagents:
   - name: failure_thesis_critic
     skill: channels/modern-archivist/skills/review/failure-thesis-critic.md
