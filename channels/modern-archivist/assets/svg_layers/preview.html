@@ -42,11 +42,11 @@
   .puppet-wrap {
     position: absolute;
     left: 50%; top: 54%;
-    width: 380px; height: 380px; /* 760 * 0.5 scale for 640px frame */
+    width: 380px; height: 380px;
     transform: translate(-50%, -50%);
   }
 
-  /* Each SVG layer is absolutely positioned and fills the puppet-wrap */
+  /* Each layer fills the puppet-wrap */
   .puppet-wrap .layer {
     position: absolute;
     inset: 0;
@@ -57,7 +57,6 @@
     width: 100%; height: 100%;
     display: block;
   }
-
 
   /* Layer strip */
   .section-label {
@@ -73,8 +72,11 @@
     display: flex; align-items: center; justify-content: center; overflow: hidden;
   }
   .layer-thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .layer-thumb.placeholder { background: #1a1a1a; border-color: #333; }
+  .layer-thumb.placeholder::after { content: 'placeholder'; font-size: 7px; color: #444; letter-spacing: 1px; }
   .layer-name { font-size: 8px; color: #555; letter-spacing: 1px; text-align: center; max-width: 110px; }
   .layer-badge { font-size: 7px; padding: 2px 5px; border-radius: 2px; background: #003333; color: #00aaaa; border: 1px solid #005555; }
+  .layer-badge.ph { background: #1a1a1a; color: #444; border-color: #333; }
 
   /* Controls */
   .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
@@ -95,64 +97,36 @@
   .compare-puppet .layer { position: absolute; inset: 0; width: 100%; height: 100%; }
   .compare-puppet .layer img,
   .compare-puppet .layer svg { width: 100%; height: 100%; display: block; }
+
+  #load-error { color: #aa4444; font-size: 10px; text-align: center; display: none; }
 </style>
 </head>
 <body>
 
-<h2>The Modern Archivist — SVG Puppet (Recraft Vectorize from RGBA)</h2>
+<h2>The Modern Archivist — Manifest-Driven SVG Puppet Preview</h2>
 
-<!-- Channel frame -->
 <div class="frame" id="frame">
   <div class="chrome-top">The Modern Archivist</div>
   <div class="chrome-bottom">
     <span>The App That Made Sharing Impossible</span>
     <span class="accent" id="state-label">STATE_MONOLOGUE</span>
   </div>
-
-  <div class="puppet-wrap">
-    <!-- z=10: torso -->
-    <div class="layer" style="z-index:10">
-      <img src="torso_hoodie.svg" />
-    </div>
-    <!-- z=20: head (swaps for blink) -->
-    <div class="layer" style="z-index:20">
-      <img src="head_neutral.svg" id="head-layer" />
-    </div>
-    <!-- z=5: hard-alpha contact shadow from the Phase 3 minimum production batch -->
-    <div class="layer" style="z-index:5">
-      <img src="shadow.png" />
-    </div>
-    <!-- z=25: mouth phoneme; below the mug/hand so the face does not draw through the cup -->
-    <div class="layer" style="z-index:25; transform: scale(0.94); transform-origin:center center;">
-      <img src="mouth_neutral.svg" id="mouth-layer" />
-    </div>
-    <!-- z=28: glasses — below action layers so hand/mug occlusion matches the mug-pose reference -->
-    <div class="layer" style="z-index:28; transform: scale(0.96); transform-origin:center center;">
-      <img src="glasses_canvas_reg.png" id="glasses-layer" />
-    </div>
-    <!-- z=30: lower sleeve/forearm split from the old baked arm layer -->
-    <div class="layer" style="z-index:30; transform: translate(-7%, 20%) scale(0.92); transform-origin:center center;">
-      <img src="arm_right_idle.png" />
-    </div>
-    <!-- z=35: explicit mug layer, slightly smaller than the grip so the handle lines up inside the hand -->
-    <div class="layer" style="z-index:35; transform: translate(-7%, 20%) scale(0.82); transform-origin:center center;">
-      <img src="mug_code.png" id="mug-layer" />
-    </div>
-    <!-- z=40: semantic hand/grip split overlays the mug in the manifest-driven z-order -->
-    <div class="layer" style="z-index:40; transform: translate(-7%, 20%) scale(0.92); transform-origin:center center;">
-      <img src="hand_mug.png" />
-    </div>
-  </div>
+  <div class="puppet-wrap" id="main-puppet"></div>
 </div>
 
-<!-- Controls -->
+<div id="load-error">Failed to load manifest — check console</div>
+
 <div class="controls">
-  <button onclick="setHead('neutral')">eyes open</button>
-  <button onclick="setHead('closed')">eyes closed</button>
+  <button onclick="eyesOpen()">eyes open</button>
+  <button onclick="eyesClosed()">eyes closed</button>
   <span class="sep">|</span>
-  <button onclick="setMouth('mouth_neutral.svg')">neutral</button>
-  <button onclick="setMouth('mouth_talk_a.svg')">talk A</button>
-  <button onclick="setMouth('mouth_talk_b.svg')">talk B</button>
+  <button onclick="cycleMouth('mouth_closed')">neutral</button>
+  <button onclick="cycleMouth('mouth_open_a')">talk A</button>
+  <button onclick="cycleMouth('mouth_open_e')">talk E</button>
+  <button onclick="cycleMouth('mouth_open_o')">talk O</button>
+  <button onclick="cycleMouth('mouth_slight_open')">slight open</button>
+  <button onclick="cycleMouth('mouth_smirk')">smirk</button>
+  <button onclick="cycleMouth('mouth_frown')">frown</button>
   <span class="sep">|</span>
   <button onclick="autoTalk()">auto talk</button>
   <button onclick="stopTalk()">stop</button>
@@ -166,110 +140,193 @@
   </div>
   <div class="compare-panel">
     <div class="compare-title">live assembled layers</div>
-    <div class="compare-canvas">
-      <div class="compare-puppet">
-        <div class="layer" style="z-index:10"><img src="torso_hoodie.svg" /></div>
-        <div class="layer" style="z-index:20"><img src="head_neutral.svg" /></div>
-        <div class="layer" style="z-index:5"><img src="shadow.png" /></div>
-        <div class="layer" style="z-index:25; transform: scale(0.94); transform-origin:center center;"><img src="mouth_neutral.svg" /></div>
-        <div class="layer" style="z-index:28; transform: scale(0.96); transform-origin:center center;"><img src="glasses_canvas_reg.png" /></div>
-        <div class="layer" style="z-index:30; transform: translate(-7%, 20%) scale(0.92); transform-origin:center center;"><img src="arm_right_idle.png" /></div>
-        <div class="layer" style="z-index:35; transform: translate(-7%, 20%) scale(0.82); transform-origin:center center;"><img src="mug_code.png" /></div>
-        <div class="layer" style="z-index:40; transform: translate(-7%, 20%) scale(0.92); transform-origin:center center;"><img src="hand_mug.png" /></div>
-      </div>
-    </div>
+    <div class="compare-canvas"><div class="compare-puppet" id="compare-puppet"></div></div>
   </div>
 </div>
 
-<div class="section-label">Individual layers (SVG vectorize + RGBA PNG glasses)</div>
+<div class="section-label">Individual layers (manifest-driven)</div>
+<div class="layer-strip" id="layer-strip"></div>
 
-<div class="layer-strip">
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="torso_hoodie.svg" /></div>
-    <div class="layer-name">torso_hoodie</div>
-    <div class="layer-badge">z=10 · vectorize</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="head_neutral.svg" /></div>
-    <div class="layer-name">head_neutral</div>
-    <div class="layer-badge">z=20 · vectorize</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="head_eyes_closed.svg" /></div>
-    <div class="layer-name">head_eyes_closed</div>
-    <div class="layer-badge">z=20 · vectorize</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="shadow.png" /></div>
-    <div class="layer-name">shadow</div>
-    <div class="layer-badge">z=5 · hard alpha</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="arm_right_idle.png" /></div>
-    <div class="layer-name">arm_right_idle</div>
-    <div class="layer-badge">z=30 · split sleeve</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="mug_code.png" /></div>
-    <div class="layer-name">mug_code</div>
-    <div class="layer-badge">z=35 · RGBA PNG</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="hand_mug.png" /></div>
-    <div class="layer-name">hand_mug</div>
-    <div class="layer-badge">z=40 · split grip</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="glasses_canvas_reg.png" /></div>
-    <div class="layer-name">glasses_round_black</div>
-    <div class="layer-badge">z=45 · RGBA PNG</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="mouth_neutral.svg" /></div>
-    <div class="layer-name">mouth_neutral</div>
-    <div class="layer-badge">z=50 · vectorize</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="mouth_talk_a.svg" /></div>
-    <div class="layer-name">mouth_talk_a</div>
-    <div class="layer-badge">z=50 · vectorize</div>
-  </div>
-  <div class="layer-card">
-    <div class="layer-thumb"><img src="mouth_talk_b.svg" /></div>
-    <div class="layer-name">mouth_talk_b</div>
-    <div class="layer-badge">z=50 · vectorize</div>
-  </div>
-</div>
-
-<p class="note">
-  All layers vectorized from RGBA canvas-registered PNGs — transparent background, no compositing hacks.<br>
-  Phase 3 split now separates lower sleeve, hand/grip, mug, and contact shadow; hand/mug visual alignment still needs final production QC.<br>
-  All share viewBox="0 0 2048 2048" or the same registered 1254×1254 canvas.<br>
-  Glasses: vectorized from source art (glasses_round_black.png → glasses_round_black.svg).
-</p>
+<p class="note">Manifest-driven preview — all layers rendered from modern_archivist_puppet_manifest.json. Placeholder layers are skipped. Production layers are canvas-registered 1254x1254 RGBA.</p>
 
 <script>
-let talkTimer = null;
-const mouths = ['mouth_neutral.svg','mouth_talk_a.svg','mouth_talk_b.svg','mouth_talk_a.svg'];
-let mIdx = 0;
+const MANIFEST_URL = '../character/modern_archivist_puppet_manifest.json';
+const PUBLIC_PREFIX = '../../../../remotion-composer/public/';
 
-function setHead(s) {
-  document.getElementById('head-layer').src = s === 'closed' ? 'head_eyes_closed.svg' : 'head_neutral.svg';
+let manifestLayers = [];
+let talkTimer = null;
+let talkMouths = [];
+let talkIdx = 0;
+
+// Resolve a manifest src to an actual URL relative to this HTML file.
+function resolveSrc(src) {
+  return PUBLIC_PREFIX + src;
 }
-function setMouth(src) {
-  document.getElementById('mouth-layer').src = src;
+
+// Build a single layer div from a manifest layer entry.
+// Returns null for placeholder layers (caller decides what to do with null).
+function buildLayerDiv(layer, container) {
+  if (layer.status === 'placeholder') return null;
+
+  const div = document.createElement('div');
+  div.className = 'layer';
+  div.style.zIndex = layer.z;
+  div.dataset.layerId = layer.id;
+  div.dataset.group = layer.group;
+
+  const img = document.createElement('img');
+  img.src = resolveSrc(layer.src);
+  img.onerror = function() { this.style.display = 'none'; };
+
+  div.appendChild(img);
+  return div;
 }
+
+// Render all production layers (sorted by z ascending) into a container element.
+function renderLayers(container, layers) {
+  container.innerHTML = '';
+  const sorted = [...layers].sort((a, b) => a.z - b.z);
+  for (const layer of sorted) {
+    const div = buildLayerDiv(layer, container);
+    if (div) container.appendChild(div);
+  }
+}
+
+// Collect all layer divs inside a container by data-group.
+function getLayersByGroup(container, group) {
+  return Array.from(container.querySelectorAll(`[data-group="${group}"]`));
+}
+
+// Collect all layer divs inside a container by data-layer-id.
+function getLayerById(container, id) {
+  return container.querySelector(`[data-layer-id="${id}"]`);
+}
+
+// Apply visibility state to both puppet containers simultaneously.
+function applyToBoth(fn) {
+  fn(document.getElementById('main-puppet'));
+  fn(document.getElementById('compare-puppet'));
+}
+
+// --- Eye controls ---
+
+function eyesOpen() {
+  applyToBoth(container => {
+    // Hide all eye group layers (eye_closed_l is the only production one)
+    getLayersByGroup(container, 'eyes').forEach(el => el.style.display = 'none');
+  });
+}
+
+function eyesClosed() {
+  applyToBoth(container => {
+    // Show only eye_closed_l (the production layer); hide others
+    getLayersByGroup(container, 'eyes').forEach(el => {
+      el.style.display = (el.dataset.layerId === 'eye_closed_l') ? '' : 'none';
+    });
+  });
+}
+
+// --- Mouth controls ---
+
+function cycleMouth(targetId) {
+  applyToBoth(container => {
+    getLayersByGroup(container, 'mouths').forEach(el => {
+      el.style.display = (el.dataset.layerId === targetId) ? '' : 'none';
+    });
+  });
+}
+
 function autoTalk() {
   stopTalk();
+  if (talkMouths.length === 0) return;
   talkTimer = setInterval(() => {
-    mIdx = (mIdx + 1) % mouths.length;
-    setMouth(mouths[mIdx]);
+    talkIdx = (talkIdx + 1) % talkMouths.length;
+    cycleMouth(talkMouths[talkIdx]);
   }, 120);
 }
+
 function stopTalk() {
   if (talkTimer) { clearInterval(talkTimer); talkTimer = null; }
-  setMouth('mouth_neutral.svg');
+  cycleMouth('mouth_closed');
 }
+
+// --- Layer strip ---
+
+function buildLayerStrip(layers) {
+  const strip = document.getElementById('layer-strip');
+  strip.innerHTML = '';
+  const sorted = [...layers].sort((a, b) => a.z - b.z);
+  for (const layer of sorted) {
+    const card = document.createElement('div');
+    card.className = 'layer-card';
+
+    const thumb = document.createElement('div');
+    thumb.className = 'layer-thumb' + (layer.status === 'placeholder' ? ' placeholder' : '');
+
+    if (layer.status === 'production') {
+      const img = document.createElement('img');
+      img.src = resolveSrc(layer.src);
+      img.onerror = function() { this.style.display = 'none'; };
+      thumb.appendChild(img);
+    }
+
+    const name = document.createElement('div');
+    name.className = 'layer-name';
+    name.textContent = layer.id;
+
+    const badge = document.createElement('div');
+    badge.className = 'layer-badge' + (layer.status === 'placeholder' ? ' ph' : '');
+    badge.textContent = `z=${layer.z} · ${layer.status}`;
+
+    card.appendChild(thumb);
+    card.appendChild(name);
+    card.appendChild(badge);
+    strip.appendChild(card);
+  }
+}
+
+// --- Initial state after load ---
+
+function applyInitialState() {
+  // Eyes: open by default (hide eye_closed_l)
+  eyesOpen();
+
+  // Mouths: show mouth_closed, hide all others
+  cycleMouth('mouth_closed');
+}
+
+// --- Boot ---
+
+fetch(MANIFEST_URL)
+  .then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  })
+  .then(manifest => {
+    manifestLayers = manifest.layers;
+
+    // Collect mouth ids for auto-talk (production mouth layers only)
+    talkMouths = manifestLayers
+      .filter(l => l.group === 'mouths' && l.status === 'production')
+      .sort((a, b) => a.id.localeCompare(b.id))
+      .map(l => l.id);
+
+    // Render both puppet containers
+    renderLayers(document.getElementById('main-puppet'), manifestLayers);
+    renderLayers(document.getElementById('compare-puppet'), manifestLayers);
+
+    // Render layer strip
+    buildLayerStrip(manifestLayers);
+
+    // Set initial visibility state
+    applyInitialState();
+  })
+  .catch(err => {
+    console.error('Manifest load failed:', err);
+    const el = document.getElementById('load-error');
+    el.textContent = `Failed to load manifest: ${err.message}`;
+    el.style.display = '';
+  });
 </script>
 </body>
 </html>
