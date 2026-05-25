@@ -21,6 +21,8 @@ RIG_SPEC_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" 
 ACTION_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "action_library.json"
 VISEME_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "viseme_library.json"
 EXPRESSION_LIBRARY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "expression_library.json"
+TIMELINE_SCHEMA_PATH = ROOT / "channels" / "modern-archivist" / "schemas" / "puppet_action_timeline.schema.json"
+SAMPLE_TIMELINE_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "rig" / "sample_action_timeline.json"
 SVG_LAYER_MUG_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "mug_code.png"
 SVG_LAYER_HAND_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "hand_mug.png"
 SVG_LAYER_SHADOW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "shadow.png"
@@ -311,6 +313,28 @@ def test_action_library_exists_and_valid() -> None:
     assert sip["duration_frames"] == 42
     assert len(sip["keyframes"]) >= 3, "mug_sip must have at least 3 keyframes"
     assert "occlusion" in sip, "mug_sip must define occlusion rules"
+
+
+def test_action_timeline_schema_exists() -> None:
+    assert TIMELINE_SCHEMA_PATH.exists(), "puppet_action_timeline.schema.json must exist"
+    schema = json.loads(TIMELINE_SCHEMA_PATH.read_text())
+    assert "properties" in schema
+    assert "tracks" in schema["properties"]
+
+
+def test_sample_timeline_validates_against_schema() -> None:
+    jsonschema = pytest.importorskip("jsonschema")
+    schema = json.loads(TIMELINE_SCHEMA_PATH.read_text())
+    timeline = json.loads(SAMPLE_TIMELINE_PATH.read_text())
+    jsonschema.validate(timeline, schema)
+    # Check all track values are valid rig states
+    spec = json.loads(RIG_SPEC_PATH.read_text())
+    for track in timeline["tracks"]:
+        track_type = track["type"]
+        if track_type in spec["states"]:
+            assert track["value"] in spec["states"][track_type], (
+                f"timeline track {track_type}={track['value']} not in rig_spec states"
+            )
 
 
 def test_viseme_library_exists_and_valid() -> None:
