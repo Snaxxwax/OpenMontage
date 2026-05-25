@@ -164,39 +164,55 @@ export interface WordTimestamp {
   end: number;
 }
 
+export type PuppetCoordinateMode = "canvas_registered" | "anchored_overlay";
+export type PuppetLayerStatus = "production" | "placeholder";
+export interface PuppetPoint { x: number; y: number }
+
 export interface PuppetLayerEntry {
   id: string;
-  src?: string;
+  src: string;
   group: string;
   z: number;
-  anchor?: { x: number; y: number };
-  pivot?: { x: number; y: number };
-  bounds_required?: boolean;
-  status?: "production" | "placeholder";
+  status: PuppetLayerStatus;
+  coordinate_mode: PuppetCoordinateMode;
+  anchor: PuppetPoint;
+  pivot: PuppetPoint;
+  bounds_required: boolean;
+  expected_bbox?: [number, number, number, number];
+  visible_when?: Record<string, string | boolean | string[]>;
 }
 
 export interface PuppetManifest {
   version: string;
   character_id: string;
   display_name?: string;
+  rig_contract: "full_body_layered";
+  canvas: { width: number; height: number };
+  palette_policy: "hard_alpha_limited_palette";
+  coordinate_modes?: PuppetCoordinateMode[];
+  layer_groups: Record<string, string[]>;
+  layers: PuppetLayerEntry[];
+}
+
+export interface LegacyPuppetManifest {
+  version: string;
+  character_id: string;
+  display_name?: string;
   temporary?: boolean;
-  // v2.0 fields
-  rig_contract?: string;
-  canvas?: { width: number; height: number };
-  palette_policy?: string;
-  layer_groups?: Record<string, string[]>;
-  layers_v2?: PuppetLayerEntry[];
-  // v1.x legacy fields (kept for backwards compatibility)
   layers: {
     body: string;
     mug?: string;
+    mouth?: Record<string, string>;
+    glasses?: string;
   };
   anchors: {
-    mouth?: { x: number; y: number };
-    glasses?: { x: number; y: number };
-    arm_pivot?: { x: number; y: number };
+    mouth?: PuppetPoint;
+    glasses?: PuppetPoint;
+    arm_pivot?: PuppetPoint;
   };
 }
+
+export type AnyPuppetManifest = PuppetManifest | LegacyPuppetManifest;
 
 export interface ModernArchivistEpisode extends Record<string, unknown> {
   episode_id: string;
@@ -206,7 +222,7 @@ export interface ModernArchivistEpisode extends Record<string, unknown> {
   sections: EpisodeSection[];
   amplitude?: AudioAmplitudeSample[];
   word_timings?: WordTimestamp[];
-  puppet?: PuppetManifest;
+  puppet?: AnyPuppetManifest;
   debug_disable_backdrop?: boolean;
   debug_disable_puppet?: boolean;
   debug_disable_media?: boolean;

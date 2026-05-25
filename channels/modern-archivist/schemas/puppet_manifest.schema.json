@@ -2,21 +2,36 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Modern Archivist Puppet Manifest v2.0",
   "type": "object",
-  "required": ["version", "character_id", "rig_contract", "canvas", "palette_policy", "layer_groups", "layers"],
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "character_id",
+    "rig_contract",
+    "canvas",
+    "palette_policy",
+    "layer_groups",
+    "layers"
+  ],
   "properties": {
-    "version": { "type": "string" },
-    "character_id": { "type": "string" },
+    "version": { "type": "string", "pattern": "^2\\." },
+    "character_id": { "type": "string", "const": "modern_archivist" },
     "display_name": { "type": "string" },
     "rig_contract": { "type": "string", "const": "full_body_layered" },
     "canvas": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["width", "height"],
       "properties": {
-        "width": { "type": "integer" },
-        "height": { "type": "integer" }
+        "width": { "type": "integer", "const": 1254 },
+        "height": { "type": "integer", "const": 1254 }
       }
     },
-    "palette_policy": { "type": "string" },
+    "palette_policy": { "type": "string", "const": "hard_alpha_limited_palette" },
+    "coordinate_modes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/coordinate_mode" },
+      "uniqueItems": true
+    },
     "layer_groups": {
       "type": "object",
       "required": ["body", "head", "eyes", "brows", "mouths", "glasses", "arms", "props"],
@@ -27,24 +42,69 @@
     },
     "layers": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["id", "group", "z"],
-        "properties": {
-          "id": { "type": "string" },
-          "src": { "type": "string" },
-          "group": { "type": "string" },
-          "z": { "type": "integer" },
-          "anchor": {
-            "type": "object",
-            "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
-          },
-          "pivot": {
-            "type": "object",
-            "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
-          },
-          "bounds_required": { "type": "boolean" },
-          "status": { "type": "string", "enum": ["production", "placeholder"] }
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/layer" }
+    }
+  },
+  "$defs": {
+    "coordinate_mode": {
+      "type": "string",
+      "enum": ["canvas_registered", "anchored_overlay"]
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "bbox": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "integer", "minimum": 0 },
+        { "type": "integer", "minimum": 0 },
+        { "type": "integer", "minimum": 0 },
+        { "type": "integer", "minimum": 0 }
+      ],
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "src",
+        "group",
+        "z",
+        "status",
+        "coordinate_mode",
+        "anchor",
+        "pivot",
+        "bounds_required"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "src": { "type": "string", "minLength": 1 },
+        "group": { "type": "string" },
+        "z": { "type": "integer" },
+        "status": { "type": "string", "enum": ["production", "placeholder"] },
+        "coordinate_mode": { "$ref": "#/$defs/coordinate_mode" },
+        "anchor": { "$ref": "#/$defs/point" },
+        "pivot": { "$ref": "#/$defs/point" },
+        "bounds_required": { "type": "boolean" },
+        "expected_bbox": { "$ref": "#/$defs/bbox" },
+        "visible_when": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              { "type": "string" },
+              { "type": "boolean" },
+              { "type": "array", "items": { "type": "string" } }
+            ]
+          }
         }
       }
     }

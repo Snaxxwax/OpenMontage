@@ -11,7 +11,9 @@ CHANNEL_PUBLIC = ROOT / "channels" / "modern-archivist" / "remotion" / "public"
 COMPOSER_PUBLIC = ROOT / "remotion-composer" / "public" / "modern-archivist"
 
 MANIFEST_V2_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "modern_archivist_puppet_manifest.json"
+LEGACY_MANIFEST_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "puppet_manifest.json"
 SCHEMA_V2_PATH = ROOT / "channels" / "modern-archivist" / "schemas" / "puppet_manifest.schema.json"
+REMOTION_TYPES_PATH = ROOT / "channels" / "modern-archivist" / "remotion" / "src" / "types.ts"
 
 
 def _alpha_stats(path: Path) -> tuple[float, tuple[int, int, int, int] | None]:
@@ -56,10 +58,37 @@ def test_v2_manifest_layer_groups() -> None:
 
 def test_v2_manifest_layer_fields() -> None:
     manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    required = {
+        "id",
+        "src",
+        "group",
+        "z",
+        "status",
+        "coordinate_mode",
+        "anchor",
+        "pivot",
+        "bounds_required",
+    }
     for layer in manifest["layers"]:
-        assert "id" in layer
-        assert "group" in layer
-        assert "z" in layer
+        missing = required - layer.keys()
+        assert not missing, f"layer {layer.get('id', '<unknown>')} missing fields: {sorted(missing)}"
+        assert layer["coordinate_mode"] in {"canvas_registered", "anchored_overlay"}
+
+
+def test_legacy_manifest_is_not_the_production_v2_contract() -> None:
+    legacy = json.loads(LEGACY_MANIFEST_PATH.read_text())
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    assert manifest["version"].startswith("2."), "modern_archivist_puppet_manifest.json is the production v2 contract"
+    assert legacy["version"].startswith("1."), "puppet_manifest.json should remain explicitly legacy"
+    assert "rig_contract" not in legacy, "legacy puppet_manifest.json must not masquerade as the v2 rig contract"
+
+
+def test_remotion_types_match_v2_manifest_contract() -> None:
+    types = REMOTION_TYPES_PATH.read_text()
+    assert "layers_v2" not in types, "TypeScript contract must use v2 layers[], not layers_v2"
+    assert "export interface LegacyPuppetManifest" in types
+    assert "layers: PuppetLayerEntry[]" in types
+    assert "coordinate_mode: PuppetCoordinateMode" in types
 
 
 def test_v2_manifest_validates_against_schema() -> None:
@@ -86,6 +115,42 @@ def test_production_layers_are_rgba() -> None:
         assert path.exists(), f"production layer missing: {layer['id']} -> {path}"
         img = Image.open(path)
         assert img.mode == "RGBA", f"layer {layer['id']} is not RGBA (got {img.mode})"
+
+
+def test_canvas_registered_production_layers_match_declared_canvas() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    canvas_size = (manifest["canvas"]["width"], manifest["canvas"]["height"])
+    for layer in manifest["layers"]:
+        if layer.get("status") != "production" or layer.get("coordinate_mode") != "canvas_registered":
+            continue
+        path = _resolve_layer_path(layer["src"])
+        img = Image.open(path)
+        assert img.size == canvas_size, f"canvas layer {layer['id']} has size {img.size}, expected {canvas_size}"
+
+
+def test_anchored_overlay_production_layers_do_not_claim_canvas_registration() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    canvas_size = (manifest["canvas"]["width"], manifest["canvas"]["height"])
+    for layer in manifest["layers"]:
+        if layer.get("status") != "production" or layer.get("coordinate_mode") != "anchored_overlay":
+            continue
+        path = _resolve_layer_path(layer["src"])
+        img = Image.open(path)
+        assert img.width > 0 and img.height > 0
+        assert img.size != canvas_size, f"anchored overlay {layer['id']} is full-canvas; mark it canvas_registered instead"
+
+
+def test_body_layer_preserves_full_body_bounds() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    canvas_height = manifest["canvas"]["height"]
+    body = next(layer for layer in manifest["layers"] if layer["id"] == "body")
+    assert body["coordinate_mode"] == "canvas_registered"
+    path = _resolve_layer_path(body["src"])
+    img = Image.open(path).convert("RGBA")
+    bbox = img.getchannel("A").getbbox()
+    assert bbox is not None
+    body_height = bbox[3] - bbox[1]
+    assert body_height > 0.55 * canvas_height, f"body layer height {body_height}px is too short for full-body contract"
 
 
 def test_production_layers_have_valid_alpha_bbox() -> None:

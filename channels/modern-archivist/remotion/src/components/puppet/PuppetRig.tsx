@@ -1,6 +1,6 @@
 import React from "react";
 import { Img, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import type { PuppetManifest } from "../../types";
+import type { AnyPuppetManifest, LegacyPuppetManifest, PuppetLayerEntry } from "../../types";
 import type { MouthShape } from "./mouth";
 import type { ExpressionState } from "./expression";
 import { MOUTH_SRC } from "./mouth";
@@ -13,7 +13,7 @@ const MOUTH_W = 148;
 const MOUTH_H = 72;
 
 interface PuppetRigProps {
-  manifest: PuppetManifest;
+  manifest: AnyPuppetManifest;
   expression: ExpressionState;
   mouthShape: MouthShape;
   isSpeaking: boolean;
@@ -23,6 +23,27 @@ interface PuppetRigProps {
   debugDisablePuppetMouth?: boolean;
   debugDisablePuppetFilters?: boolean;
 }
+
+const isLegacyManifest = (manifest: AnyPuppetManifest): manifest is LegacyPuppetManifest =>
+  !Array.isArray(manifest.layers);
+
+const findLayer = (manifest: AnyPuppetManifest, id: string): PuppetLayerEntry | undefined =>
+  isLegacyManifest(manifest) ? undefined : manifest.layers.find((layer) => layer.id === id);
+
+const legacyOrV2Src = (manifest: AnyPuppetManifest, legacyKey: "body" | "mug", v2Id: string): string | undefined => {
+  if (isLegacyManifest(manifest)) return manifest.layers[legacyKey];
+  return findLayer(manifest, v2Id)?.src;
+};
+
+const legacyAnchor = (
+  manifest: AnyPuppetManifest,
+  legacyKey: "mouth" | "glasses",
+  v2Id: string,
+  fallback: { x: number; y: number },
+): { x: number; y: number } => {
+  if (isLegacyManifest(manifest)) return manifest.anchors[legacyKey] ?? fallback;
+  return findLayer(manifest, v2Id)?.anchor ?? fallback;
+};
 
 export const PuppetRig: React.FC<PuppetRigProps> = ({
   manifest,
@@ -64,8 +85,10 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
-  const mouthAnchor   = manifest.anchors.mouth   ?? DEFAULT_MOUTH_ANCHOR;
-  const glassesAnchor = manifest.anchors.glasses  ?? DEFAULT_GLASSES_ANCHOR;
+  const mouthAnchor = legacyAnchor(manifest, "mouth", `mouth_${mouthShape === "closed" ? "closed" : mouthShape}`, DEFAULT_MOUTH_ANCHOR);
+  const glassesAnchor = legacyAnchor(manifest, "glasses", "glasses_frame", DEFAULT_GLASSES_ANCHOR);
+  const bodySrc = legacyOrV2Src(manifest, "body", "body");
+  const mugSrc = legacyOrV2Src(manifest, "mug", "mug");
 
   const mouthSrc = MOUTH_SRC[mouthShape];
 
@@ -78,7 +101,7 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
   return (
     <>
       {/* Layer 1 — Body portrait */}
-      <PuppetLayer src={resolveAsset(manifest.layers.body)} zIndex={1} />
+      {bodySrc ? <PuppetLayer src={resolveAsset(bodySrc)} zIndex={1} /> : null}
 
       {/* Layer 2 — Glasses (SVG for flash/color animation) */}
       <svg
@@ -148,9 +171,9 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
           zIndex: 4,
         }}
       >
-        {manifest.layers.mug ? (
+        {mugSrc ? (
           <Img
-            src={resolveAsset(manifest.layers.mug)}
+            src={resolveAsset(mugSrc)}
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
         ) : (

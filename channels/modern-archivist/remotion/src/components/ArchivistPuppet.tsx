@@ -1,12 +1,12 @@
 import React from "react";
 import { spring, useCurrentFrame, useVideoConfig } from "remotion";
-import type { CharacterCue, ColorState, LayoutState, PuppetManifest, WordTimestamp } from "../types";
+import type { AnyPuppetManifest, CharacterCue, ColorState, LayoutState, LegacyPuppetManifest, WordTimestamp } from "../types";
 import { puppetTransform } from "../styles";
 import { resolvedSpeaking, selectMouth } from "./puppet/mouth";
 import { resolveExpression } from "./puppet/expression";
 import { PuppetRig } from "./puppet/PuppetRig";
 
-const fallbackPuppet: PuppetManifest = {
+const fallbackPuppet: LegacyPuppetManifest = {
   version: "1.0",
   character_id: "modern_archivist",
   display_name: "The Archivist",
@@ -26,7 +26,7 @@ interface ArchivistPuppetProps {
   layout: LayoutState;
   speaking: boolean;
   sipping: boolean;
-  puppet?: PuppetManifest;
+  puppet?: AnyPuppetManifest;
   cue?: CharacterCue;
   colorState?: ColorState;
   wordTimestamps?: WordTimestamp[];
