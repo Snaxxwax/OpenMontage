@@ -14,6 +14,8 @@ MANIFEST_V2_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "characte
 LEGACY_MANIFEST_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "puppet_manifest.json"
 SCHEMA_V2_PATH = ROOT / "channels" / "modern-archivist" / "schemas" / "puppet_manifest.schema.json"
 REMOTION_TYPES_PATH = ROOT / "channels" / "modern-archivist" / "remotion" / "src" / "types.ts"
+ASSET_INVENTORY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "asset-inventory.md"
+CHARACTER_README_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "README.md"
 
 
 def _alpha_stats(path: Path) -> tuple[float, tuple[int, int, int, int] | None]:
@@ -179,3 +181,44 @@ def test_production_layers_have_sufficient_transparency() -> None:
         assert transparent_ratio > 0.20, (
             f"layer {layer['id']} has insufficient transparency: {transparent_ratio:.2f}"
         )
+
+
+def test_asset_inventory_covers_every_manifest_layer() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    inventory = ASSET_INVENTORY_PATH.read_text()
+    for layer in manifest["layers"]:
+        assert f"| `{layer['id']}` |" in inventory, f"asset inventory missing row for {layer['id']}"
+
+
+def test_asset_inventory_records_provenance_and_next_actions() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    inventory = ASSET_INVENTORY_PATH.read_text()
+    for layer in manifest["layers"]:
+        row_prefix = f"| `{layer['id']}` |"
+        row = next((line for line in inventory.splitlines() if line.startswith(row_prefix)), "")
+        assert row, f"asset inventory missing row for {layer['id']}"
+        assert "TBD" not in row, f"asset inventory row for {layer['id']} must not leave provenance/action as TBD"
+        if layer["status"] == "production":
+            assert "production" in row
+            assert "source" not in row.lower() or "unknown" not in row.lower(), f"production row for {layer['id']} needs concrete provenance"
+        if layer["status"] == "placeholder":
+            assert "placeholder" in row
+            assert "generate" in row.lower() or "replace" in row.lower() or "promote" in row.lower(), (
+                f"placeholder row for {layer['id']} needs an explicit next action"
+            )
+
+
+def test_character_readme_documents_promotion_rubric() -> None:
+    readme = CHARACTER_README_PATH.read_text().lower()
+    required_phrases = [
+        "coordinate modes",
+        "canvas_registered",
+        "anchored_overlay",
+        "promotion process",
+        "preview-only",
+        "hard alpha",
+        "flat palette",
+        "no head-only",
+    ]
+    for phrase in required_phrases:
+        assert phrase in readme, f"character README missing rubric phrase: {phrase}"
