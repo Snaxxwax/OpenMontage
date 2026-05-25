@@ -1,26 +1,52 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Modern Archivist Puppet Manifest",
+  "title": "Modern Archivist Puppet Manifest v2.0",
   "type": "object",
-  "required": ["version", "character_id", "layers", "anchors"],
+  "required": ["version", "character_id", "rig_contract", "canvas", "palette_policy", "layer_groups", "layers"],
   "properties": {
     "version": { "type": "string" },
     "character_id": { "type": "string" },
     "display_name": { "type": "string" },
-    "temporary": { "type": "boolean" },
-    "notes": { "type": "string" },
-    "layers": {
+    "rig_contract": { "type": "string", "const": "full_body_layered" },
+    "canvas": {
       "type": "object",
-      "required": ["body"],
+      "required": ["width", "height"],
       "properties": {
-        "body": { "type": "string" },
-        "mug": { "type": "string" },
-        "mouth_idle": { "type": "string" },
-        "mouth_talk": { "type": "string" },
-        "glasses_frame": { "type": "string" },
-        "action_arm": { "type": "string" }
+        "width": { "type": "integer" },
+        "height": { "type": "integer" }
       }
     },
-    "anchors": { "type": "object" }
+    "palette_policy": { "type": "string" },
+    "layer_groups": {
+      "type": "object",
+      "required": ["body", "head", "eyes", "brows", "mouths", "glasses", "arms", "props"],
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "layers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "group", "z"],
+        "properties": {
+          "id": { "type": "string" },
+          "src": { "type": "string" },
+          "group": { "type": "string" },
+          "z": { "type": "integer" },
+          "anchor": {
+            "type": "object",
+            "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+          },
+          "pivot": {
+            "type": "object",
+            "properties": { "x": { "type": "number" }, "y": { "type": "number" } }
+          },
+          "bounds_required": { "type": "boolean" },
+          "status": { "type": "string", "enum": ["production", "placeholder"] }
+        }
+      }
+    }
   }
 }
