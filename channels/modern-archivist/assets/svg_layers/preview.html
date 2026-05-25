@@ -117,8 +117,8 @@
     <div class="layer" style="z-index:30; transform: translate(-7%, 20%) scale(0.92); transform-origin:center center;">
       <img src="arm_right_idle.png" />
     </div>
-    <!-- z=35: explicit mug layer; still needs final hand/mug visual QC -->
-    <div class="layer" style="z-index:35; transform: translate(-7%, 20%) scale(0.92); transform-origin:center center;">
+    <!-- z=35: explicit mug layer, slightly smaller than the grip so the handle lines up inside the hand -->
+    <div class="layer" style="z-index:35; transform: translate(-7%, 20%) scale(0.82); transform-origin:center center;">
       <img src="mug_code.png" id="mug-layer" />
     </div>
     <!-- z=40: semantic hand/grip split overlays the mug in the manifest-driven z-order -->

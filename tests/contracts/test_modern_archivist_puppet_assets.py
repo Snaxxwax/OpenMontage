@@ -250,6 +250,7 @@ def test_svg_layer_preview_includes_explicit_mug_hand_and_shadow_layers() -> Non
     assert SVG_LAYER_HAND_PATH.exists(), "svg layer preview must include a standalone hand/grip asset"
     assert SVG_LAYER_SHADOW_PATH.exists(), "svg layer preview must include a hard-alpha contact shadow asset"
     assert 'src="mug_code.png"' in preview, "preview must render the mug separately from the arm/hand layer"
+    assert 'scale(0.82)' in preview, "preview mug should be scaled down to line up with the hand grip"
     assert 'src="hand_mug.png"' in preview, "preview must render hand/grip separately from the sleeve and mug"
     assert 'src="shadow.png"' in preview, "preview must render the Phase 3 contact shadow layer"
     assert "mug_code" in preview, "preview layer strip must expose the mug layer for visual QA"
