@@ -431,13 +431,13 @@
       "id": "hand_mug",
       "src": "modern-archivist/layers/modern_archivist_hand_mug.png",
       "group": "arms",
-      "z": 11,
+      "z": 12,
       "pivot": {
         "x": 0.62,
         "y": 0.74
       },
-      "bounds_required": false,
-      "status": "placeholder",
+      "bounds_required": true,
+      "status": "production",
       "coordinate_mode": "canvas_registered",
       "anchor": {
         "x": 0.5,
@@ -448,7 +448,7 @@
       "id": "mug",
       "src": "modern-archivist/archivist-mug.png",
       "group": "props",
-      "z": 12,
+      "z": 11,
       "bounds_required": true,
       "status": "production",
       "coordinate_mode": "canvas_registered",
@@ -483,8 +483,8 @@
       "src": "modern-archivist/layers/modern_archivist_shadow.png",
       "group": "props",
       "z": 0,
-      "bounds_required": false,
-      "status": "placeholder",
+      "bounds_required": true,
+      "status": "production",
       "coordinate_mode": "canvas_registered",
       "anchor": {
         "x": 0.5,

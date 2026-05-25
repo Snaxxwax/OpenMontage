@@ -18,6 +18,8 @@ ASSET_INVENTORY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "char
 CHARACTER_README_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "README.md"
 SVG_LAYER_PREVIEW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "preview.html"
 SVG_LAYER_MUG_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "mug_code.png"
+SVG_LAYER_HAND_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "hand_mug.png"
+SVG_LAYER_SHADOW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "shadow.png"
 
 
 def _alpha_stats(path: Path) -> tuple[float, tuple[int, int, int, int] | None]:
@@ -226,8 +228,29 @@ def test_character_readme_documents_promotion_rubric() -> None:
         assert phrase in readme, f"character README missing rubric phrase: {phrase}"
 
 
-def test_svg_layer_preview_includes_explicit_mug_layer() -> None:
+def test_phase3_semantic_hand_mug_shadow_layers_are_promoted() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    layers = {layer["id"]: layer for layer in manifest["layers"]}
+
+    for layer_id in ["hand_mug", "shadow"]:
+        assert layers[layer_id]["status"] == "production", f"{layer_id} must be promoted in Phase 3"
+        assert layers[layer_id]["coordinate_mode"] == "canvas_registered"
+        path = _resolve_layer_path(layers[layer_id]["src"])
+        assert path.exists(), f"{layer_id} render asset missing: {path}"
+        img = Image.open(path).convert("RGBA")
+        assert img.size == (manifest["canvas"]["width"], manifest["canvas"]["height"])
+        assert img.getchannel("A").getbbox() is not None
+
+    assert layers["hand_mug"]["z"] > layers["mug"]["z"], "hand/grip must overlay mug, not sit behind it"
+
+
+def test_svg_layer_preview_includes_explicit_mug_hand_and_shadow_layers() -> None:
     preview = SVG_LAYER_PREVIEW_PATH.read_text()
     assert SVG_LAYER_MUG_PATH.exists(), "svg layer preview must include a standalone visible mug asset"
+    assert SVG_LAYER_HAND_PATH.exists(), "svg layer preview must include a standalone hand/grip asset"
+    assert SVG_LAYER_SHADOW_PATH.exists(), "svg layer preview must include a hard-alpha contact shadow asset"
     assert 'src="mug_code.png"' in preview, "preview must render the mug separately from the arm/hand layer"
+    assert 'src="hand_mug.png"' in preview, "preview must render hand/grip separately from the sleeve and mug"
+    assert 'src="shadow.png"' in preview, "preview must render the Phase 3 contact shadow layer"
     assert "mug_code" in preview, "preview layer strip must expose the mug layer for visual QA"
+    assert "hand_mug" in preview, "preview layer strip must expose the hand/grip layer for visual QA"
