@@ -195,7 +195,7 @@
       "group": "brows",
       "z": 6,
       "bounds_required": false,
-      "status": "placeholder",
+      "status": "production",
       "coordinate_mode": "canvas_registered",
       "anchor": {
         "x": 0.5,
@@ -212,7 +212,7 @@
       "group": "brows",
       "z": 6,
       "bounds_required": false,
-      "status": "placeholder",
+      "status": "production",
       "coordinate_mode": "canvas_registered",
       "anchor": {
         "x": 0.5,
