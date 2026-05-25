@@ -1,58 +1,10 @@
 import React from "react";
-import { Img, useCurrentFrame, useVideoConfig } from "remotion";
+import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { CharacterCue, ColorState, LayoutState, PuppetManifest, WordTimestamp } from "../types";
-import { puppetTransform, resolveAsset } from "../styles";
-
-// ─── Mouth asset map ──────────────────────────────────────────────────────────
-
-const MOUTH_SRC = {
-  closed:     "modern-archivist/mouth-closed.png",
-  slightOpen: "modern-archivist/mouth-slight-open.png",
-  openA:      "modern-archivist/mouth-open-a.png",
-  openE:      "modern-archivist/mouth-open-e.png",
-  openO:      "modern-archivist/mouth-open-o.png",
-  smirk:      "modern-archivist/mouth-smirk.png",
-  frown:      "modern-archivist/mouth-frown.png",
-} as const;
-
-type MouthShape = keyof typeof MOUTH_SRC;
-
-// Phoneme cycle while speaking (~8 switches per second)
-const SPEAK_CYCLE: MouthShape[] = ["openA", "openE", "openO", "slightOpen", "openA", "openO"];
-
-// Pad word boundaries slightly so the mouth doesn't snap shut between words
-const WORD_SLOP_SEC = 0.05;
-
-function resolvedSpeaking(
-  coarse: boolean,
-  frame: number,
-  fps: number,
-  wordTimestamps?: WordTimestamp[],
-): boolean {
-  if (!wordTimestamps || wordTimestamps.length === 0) return coarse;
-  const t = frame / fps;
-  let lo = 0;
-  let hi = wordTimestamps.length - 1;
-  while (lo < hi) {
-    const mid = Math.floor((lo + hi) / 2);
-    if (wordTimestamps[mid].end + WORD_SLOP_SEC < t) lo = mid + 1;
-    else hi = mid;
-  }
-  const current = wordTimestamps[lo];
-  return Boolean(current && t >= current.start - WORD_SLOP_SEC && t <= current.end + WORD_SLOP_SEC);
-}
-
-function selectMouth(speaking: boolean, expression: string, frame: number, fps: number): MouthShape {
-  if (speaking) {
-    return SPEAK_CYCLE[Math.floor((frame / fps) * 8) % SPEAK_CYCLE.length];
-  }
-  if (expression === "skeptical" || expression === "dry_disbelief" || expression === "dry_final") return "smirk";
-  if (expression === "flat_alarm" || expression === "controlled_alarm") return "slightOpen";
-  if (expression === "case_closed") return "frown";
-  return "closed";
-}
-
-// ─── Defaults ─────────────────────────────────────────────────────────────────
+import { puppetTransform } from "../styles";
+import { resolvedSpeaking, selectMouth } from "./puppet/mouth";
+import { resolveExpression } from "./puppet/expression";
+import { PuppetRig } from "./puppet/PuppetRig";
 
 const fallbackPuppet: PuppetManifest = {
   version: "1.0",
@@ -69,8 +21,6 @@ const fallbackPuppet: PuppetManifest = {
     arm_pivot: { x: 0.62, y: 0.74 },
   },
 };
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 interface ArchivistPuppetProps {
   layout: LayoutState;
@@ -98,28 +48,10 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
 
   if (cue.visible === false) return null;
 
-  const mouthAnchor   = activePuppet.anchors.mouth     ?? { x: 0.51, y: 0.62 };
-  const glassesAnchor = activePuppet.anchors.glasses   ?? { x: 0.50, y: 0.43 };
-
-  const red       = colorState === "red" || layout === "STATE_CRITICAL_ERROR";
-  const actionSip = sipping || cue.action === "sip_coffee";
-  const deadpan   = cue.action === "deadpan_stare" || cue.expression === "deadpan";
-  const flash     = cue.action === "glasses_flash" || (red && Math.sin((frame / fps) * 10) > 0.35);
   const expression = cue.expression ?? "neutral";
-
+  const expressionState = resolveExpression(colorState, layout, sipping, cue, frame, fps);
   const isSpeaking = resolvedSpeaking(speaking, frame, fps, wordTimestamps);
-  const mouthShape = selectMouth(isSpeaking && !deadpan, expression, frame, fps);
-  const mouthSrc   = MOUTH_SRC[mouthShape];
-
-  const visorFill = flash
-    ? "rgba(255,255,255,0.34)"
-    : isSpeaking
-    ? "rgba(246,244,234,0.20)"
-    : "rgba(246,244,234,0.10)";
-
-  // Mouth display dimensions — sized to match the portrait's face proportions
-  const MOUTH_W = 148;
-  const MOUTH_H = 72;
+  const mouthShape = selectMouth(isSpeaking && !expressionState.deadpan, expression, frame, fps);
 
   return (
     <div
@@ -134,103 +66,18 @@ export const ArchivistPuppet: React.FC<ArchivistPuppetProps> = ({
         transformOrigin: "center center",
         transition: "transform 600ms cubic-bezier(0.22, 1, 0.36, 1), opacity 260ms ease",
         zIndex: 10,
-        filter: red
+        filter: expressionState.red
           ? "drop-shadow(0 0 32px rgba(255,0,0,0.75))"
           : "drop-shadow(0 24px 42px rgba(0,0,0,0.38))",
       }}
     >
-      {/* Layer 1 — Body portrait */}
-      <Img
-        src={resolveAsset(activePuppet.layers.body)}
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          zIndex: 1,
-        }}
+      <PuppetRig
+        manifest={activePuppet}
+        expression={expressionState}
+        mouthShape={mouthShape}
+        expressionName={expression}
+        sipping={sipping}
       />
-
-      {/* Layer 2 — Glasses (SVG for flash/color animation) */}
-      <svg
-        viewBox="0 0 200 90"
-        style={{
-          position: "absolute",
-          left:  `${glassesAnchor.x * 100 - 15}%`,
-          top:   `${glassesAnchor.y * 100 - 7}%`,
-          width: "30%",
-          height: "15%",
-          zIndex: 2,
-          overflow: "visible",
-          filter: flash
-            ? `drop-shadow(0 0 18px ${red ? "#FF3333" : "#00FFFF"})`
-            : undefined,
-        }}
-      >
-        <g
-          fill="none"
-          stroke={red ? "#FF3333" : "var(--accent)"}
-          strokeWidth="7"
-          strokeLinecap="round"
-        >
-          <rect x="8"   y="16" width="74" height="48" rx="18" />
-          <rect x="118" y="16" width="74" height="48" rx="18" />
-          <path d="M82 40 C98 30 104 30 118 40" />
-          <path d="M8 36 L-20 24" />
-          <path d="M192 36 L220 24" />
-        </g>
-        <g fill={visorFill}>
-          <rect x="12"  y="20" width="66" height="40" rx="14" />
-          <rect x="122" y="20" width="66" height="40" rx="14" />
-        </g>
-      </svg>
-
-      {/* Layer 3 — Mouth phoneme PNG */}
-      <Img
-        src={resolveAsset(mouthSrc)}
-        style={{
-          position: "absolute",
-          left:      `${mouthAnchor.x * 100}%`,
-          top:       `${mouthAnchor.y * 100}%`,
-          width:     MOUTH_W,
-          height:    MOUTH_H,
-          transform: "translate(-50%, -50%)",
-          objectFit: "contain",
-          zIndex: 3,
-          opacity: actionSip ? 0 : 1,
-          transition: "opacity 100ms ease",
-          // Blend the cream-toned mouth assets into the dark portrait
-          mixBlendMode: "screen",
-          filter: red ? "hue-rotate(330deg) saturate(1.4)" : undefined,
-        }}
-      />
-
-      {/* Layer 4 — Mug with sip pivot animation */}
-      <div
-        style={{
-          position: "absolute",
-          right: 92,
-          bottom: 92,
-          width: 180,
-          height: 180,
-          transformOrigin: "80% 85%",
-          transform: actionSip
-            ? "rotate(-28deg) translate(-44px, -58px)"
-            : "rotate(8deg)",
-          transition: "transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-          zIndex: 4,
-        }}
-      >
-        {activePuppet.layers.mug ? (
-          <Img
-            src={resolveAsset(activePuppet.layers.mug)}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          />
-        ) : (
-          <div style={{ width: 120, height: 96, borderRadius: 18, border: "8px solid var(--accent)" }} />
-        )}
-      </div>
     </div>
   );
 };

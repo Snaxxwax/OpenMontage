@@ -164,11 +164,29 @@ export interface WordTimestamp {
   end: number;
 }
 
+export interface PuppetLayerEntry {
+  id: string;
+  src?: string;
+  group: string;
+  z: number;
+  anchor?: { x: number; y: number };
+  pivot?: { x: number; y: number };
+  bounds_required?: boolean;
+  status?: "production" | "placeholder";
+}
+
 export interface PuppetManifest {
   version: string;
   character_id: string;
   display_name?: string;
   temporary?: boolean;
+  // v2.0 fields
+  rig_contract?: string;
+  canvas?: { width: number; height: number };
+  palette_policy?: string;
+  layer_groups?: Record<string, string[]>;
+  layers_v2?: PuppetLayerEntry[];
+  // v1.x legacy fields (kept for backwards compatibility)
   layers: {
     body: string;
     mug?: string;
