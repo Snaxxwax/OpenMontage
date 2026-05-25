@@ -120,25 +120,31 @@ def _ffprobe(path: Path) -> dict[str, Any]:
         return {"ok": False, "error": str(exc)}
 
 
+VARIANT_PATCHES: dict[str, dict[str, Any]] = {
+    "baseline":          {},
+    "muted":             {},
+    "no-backdrop":       {"debug_disable_backdrop": True},
+    "no-puppet":         {"debug_disable_puppet": True},
+    "no-media":          {"debug_disable_media": True},
+    "no-audio":          {"debug_disable_audio": True},
+    # puppet sub-path profiling variants
+    "puppet-static":     {"debug_puppet_static": True},
+    "puppet-no-filters": {"debug_disable_puppet_filters": True},
+    "puppet-no-mouth":   {"debug_disable_puppet_mouth": True},
+    "source-plate-only": {"debug_disable_puppet": True, "debug_disable_audio": True},
+    "final-overlay":     {},
+}
+
+
 def _apply_variant(edit_decisions: dict[str, Any], variant: str) -> tuple[dict[str, Any], dict[str, Any]]:
     props = json.loads(json.dumps(edit_decisions))
     options: dict[str, Any] = {}
-    if variant == "baseline":
-        return props, options
+    if variant not in VARIANT_PATCHES:
+        raise ValueError(f"Unknown variant {variant!r}")
+    props.update(VARIANT_PATCHES[variant])
     if variant == "muted":
         options["muted"] = True
-        return props, options
-    flag_by_variant = {
-        "no-backdrop": "debug_disable_backdrop",
-        "no-puppet": "debug_disable_puppet",
-        "no-media": "debug_disable_media",
-        "no-audio": "debug_disable_audio",
-    }
-    flag = flag_by_variant.get(variant)
-    if flag is None:
-        raise ValueError(f"Unknown variant {variant!r}")
-    props[flag] = True
-    if variant == "no-audio":
+    if variant in ("no-audio", "source-plate-only"):
         options["muted"] = True
     return props, options
 
@@ -151,7 +157,15 @@ def main() -> int:
     parser.add_argument("--audio-path", type=Path, help="Optional current project narration audio path")
     parser.add_argument("--concurrency", type=int, default=0, help="Optional bounded Remotion concurrency")
     parser.add_argument("--port", type=int, default=0, help="Optional explicit Remotion dev-server port")
-    parser.add_argument("--variant", choices=["baseline", "muted", "no-backdrop", "no-puppet", "no-media", "no-audio"], default="baseline")
+    parser.add_argument(
+        "--variant",
+        choices=[
+            "baseline", "muted", "no-backdrop", "no-puppet", "no-media", "no-audio",
+            "puppet-static", "puppet-no-filters", "puppet-no-mouth",
+            "source-plate-only", "final-overlay",
+        ],
+        default="baseline",
+    )
     parser.add_argument("--mode", choices=["final", "preview"], default="final")
     parser.add_argument("--report", type=Path, help="JSON report path; defaults beside output")
     args = parser.parse_args()

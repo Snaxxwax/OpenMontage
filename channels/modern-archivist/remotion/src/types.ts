@@ -211,4 +211,7 @@ export interface ModernArchivistEpisode extends Record<string, unknown> {
   debug_disable_puppet?: boolean;
   debug_disable_media?: boolean;
   debug_disable_audio?: boolean;
+  debug_puppet_static?: boolean;      // show puppet body/glasses but no mouth/gesture animation
+  debug_disable_puppet_mouth?: boolean; // show puppet but freeze mouth (no phoneme cycle)
+  debug_disable_puppet_filters?: boolean; // disable drop-shadow/glow filters on puppet
 }
