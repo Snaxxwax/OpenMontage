@@ -109,9 +109,13 @@
     <div class="layer" style="z-index:20">
       <img src="head_neutral.svg" id="head-layer" />
     </div>
-    <!-- z=30: arm + mug -->
+    <!-- z=30: arm/hand reference layer (still a baked action composite; Phase 3 split target) -->
     <div class="layer" style="z-index:30">
       <img src="arm_mug_grip.svg" />
+    </div>
+    <!-- z=35: explicit mug layer so the grip no longer reads as a floating fist -->
+    <div class="layer" style="z-index:35; transform: translate(-7%, 20%) scale(0.92); transform-origin:center center;">
+      <img src="mug_code.png" id="mug-layer" />
     </div>
     <!-- z=45: glasses — canvas-registered RGBA PNG from source art, transparent bg -->
     <div class="layer" style="z-index:45">
@@ -161,7 +165,12 @@
   <div class="layer-card">
     <div class="layer-thumb"><img src="arm_mug_grip.svg" /></div>
     <div class="layer-name">arm_mug_grip</div>
-    <div class="layer-badge">z=30 · vectorize</div>
+    <div class="layer-badge">z=30 · split target</div>
+  </div>
+  <div class="layer-card">
+    <div class="layer-thumb"><img src="mug_code.png" /></div>
+    <div class="layer-name">mug_code</div>
+    <div class="layer-badge">z=35 · RGBA PNG</div>
   </div>
   <div class="layer-card">
     <div class="layer-thumb"><img src="glasses_canvas_reg.png" /></div>
@@ -187,7 +196,8 @@
 
 <p class="note">
   All layers vectorized from RGBA canvas-registered PNGs — transparent background, no compositing hacks.<br>
-  All share viewBox="0 0 2048 2048" — canvas-registered at the SVG coordinate level.<br>
+  Mug is now an explicit standalone PNG layer; arm_mug_grip remains a split target, not a final semantic hand layer.<br>
+  All share viewBox="0 0 2048 2048" or the same registered 1254×1254 canvas.<br>
   Glasses: vectorized from source art (glasses_round_black.png → glasses_round_black.svg).
 </p>
 

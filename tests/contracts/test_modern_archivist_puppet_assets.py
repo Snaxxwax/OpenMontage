@@ -16,6 +16,8 @@ SCHEMA_V2_PATH = ROOT / "channels" / "modern-archivist" / "schemas" / "puppet_ma
 REMOTION_TYPES_PATH = ROOT / "channels" / "modern-archivist" / "remotion" / "src" / "types.ts"
 ASSET_INVENTORY_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "asset-inventory.md"
 CHARACTER_README_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "character" / "README.md"
+SVG_LAYER_PREVIEW_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "preview.html"
+SVG_LAYER_MUG_PATH = ROOT / "channels" / "modern-archivist" / "assets" / "svg_layers" / "mug_code.png"
 
 
 def _alpha_stats(path: Path) -> tuple[float, tuple[int, int, int, int] | None]:
@@ -222,3 +224,10 @@ def test_character_readme_documents_promotion_rubric() -> None:
     ]
     for phrase in required_phrases:
         assert phrase in readme, f"character README missing rubric phrase: {phrase}"
+
+
+def test_svg_layer_preview_includes_explicit_mug_layer() -> None:
+    preview = SVG_LAYER_PREVIEW_PATH.read_text()
+    assert SVG_LAYER_MUG_PATH.exists(), "svg layer preview must include a standalone visible mug asset"
+    assert 'src="mug_code.png"' in preview, "preview must render the mug separately from the arm/hand layer"
+    assert "mug_code" in preview, "preview layer strip must expose the mug layer for visual QA"
