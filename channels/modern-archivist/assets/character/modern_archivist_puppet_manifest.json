@@ -144,7 +144,7 @@
       "group": "eyes",
       "z": 5,
       "bounds_required": true,
-      "status": "placeholder",
+      "status": "production",
       "coordinate_mode": "canvas_registered",
       "anchor": {
         "x": 0.5,
