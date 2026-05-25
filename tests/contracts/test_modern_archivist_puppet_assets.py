@@ -253,5 +253,28 @@ def test_svg_layer_preview_includes_explicit_mug_hand_and_shadow_layers() -> Non
     assert 'scale(0.82)' in preview, "preview mug should be scaled down to line up with the hand grip"
     assert 'src="hand_mug.png"' in preview, "preview must render hand/grip separately from the sleeve and mug"
     assert 'src="shadow.png"' in preview, "preview must render the Phase 3 contact shadow layer"
+    assert 'scale(0.96)' in preview, "preview glasses should be scaled down slightly for face fit"
+    assert 'scale(0.94)' in preview, "preview mouth should be scaled down slightly for face fit"
     assert "mug_code" in preview, "preview layer strip must expose the mug layer for visual QA"
     assert "hand_mug" in preview, "preview layer strip must expose the hand/grip layer for visual QA"
+
+
+def test_phase3_arm_and_hand_no_longer_have_white_outline() -> None:
+    manifest = json.loads(MANIFEST_V2_PATH.read_text())
+    layers = {layer["id"]: layer for layer in manifest["layers"]}
+    for layer_id in ["arm_right_idle", "hand_mug"]:
+        path = _resolve_layer_path(layers[layer_id]["src"])
+        img = Image.open(path).convert("RGBA")
+        near_white = 0
+        foreground = 0
+        pixels = img.load()
+        for y in range(img.height):
+            for x in range(img.width):
+                r, g, b, a = pixels[x, y]  # type: ignore[index,misc]
+                if a <= 10:
+                    continue
+                foreground += 1
+                if r >= 188 and g >= 188 and b >= 178 and max(r, g, b) - min(r, g, b) <= 55:
+                    near_white += 1
+        assert foreground > 0
+        assert near_white == 0, f"{layer_id} still has near-white outline pixels"

@@ -125,12 +125,12 @@
     <div class="layer" style="z-index:40; transform: translate(-7%, 20%) scale(0.92); transform-origin:center center;">
       <img src="hand_mug.png" />
     </div>
-    <!-- z=45: glasses — canvas-registered RGBA PNG from source art, transparent bg -->
-    <div class="layer" style="z-index:45">
+    <!-- z=45: glasses — canvas-registered RGBA PNG from source art, transparent bg; scaled down for face fit -->
+    <div class="layer" style="z-index:45; transform: scale(0.96); transform-origin:center center;">
       <img src="glasses_canvas_reg.png" id="glasses-layer" />
     </div>
-    <!-- z=50: mouth phoneme -->
-    <div class="layer" style="z-index:50">
+    <!-- z=50: mouth phoneme; scaled down slightly to match the reference face proportions -->
+    <div class="layer" style="z-index:50; transform: scale(0.94); transform-origin:center center;">
       <img src="mouth_neutral.svg" id="mouth-layer" />
     </div>
   </div>
