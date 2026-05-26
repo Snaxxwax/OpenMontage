@@ -180,6 +180,16 @@ export interface PuppetLayerEntry {
   bounds_required: boolean;
   expected_bbox?: [number, number, number, number];
   visible_when?: Record<string, string | boolean | string[]>;
+  /** Display scale multiplier for anchored_overlay layers (1.0 = natural size at 760px puppet). */
+  scale?: number;
+  /** Natural pixel width of the source image (used with scale to compute display size). */
+  naturalW?: number;
+  /** Natural pixel height of the source image (used with scale to compute display size). */
+  naturalH?: number;
+  /** Canvas-pixel offset applied to canvas_registered layers at display time (positive = down/right). */
+  displayOffsetX?: number;
+  /** Canvas-pixel offset applied to canvas_registered layers at display time (positive = down). */
+  displayOffsetY?: number;
 }
 
 export interface PuppetManifest {

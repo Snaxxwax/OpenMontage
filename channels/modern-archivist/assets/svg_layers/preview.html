@@ -17,7 +17,15 @@
   }
   h2 { color: #aaa; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; }
 
-  /* Channel frame: 640x360, STATE_MONOLOGUE colors */
+  /* Top row: frame + inspector side by side */
+  .top-row {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  /* Channel frame: 640x360 */
   .frame {
     position: relative;
     width: 640px;
@@ -26,19 +34,22 @@
     border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 8px 48px rgba(0,0,0,0.8);
+    flex-shrink: 0;
   }
   .chrome-top {
-    position: absolute; top: 13px; left: 18px; z-index: 20;
+    position: absolute; top: 13px; left: 18px; z-index: 100;
     color: #F6F4EA; font-size: 9px; letter-spacing: 4px; text-transform: uppercase; opacity: 0.88;
+    pointer-events: none;
   }
   .chrome-bottom {
-    position: absolute; bottom: 12px; left: 18px; right: 18px; z-index: 20;
+    position: absolute; bottom: 12px; left: 18px; right: 18px; z-index: 100;
     display: flex; justify-content: space-between;
     color: #F6F4EA; font-size: 8px; opacity: 0.72;
+    pointer-events: none;
   }
   .accent { color: #008080; }
 
-  /* Puppet container — matches Remotion: 760x760 centered at left:50% top:54% */
+  /* Puppet container */
   .puppet-wrap {
     position: absolute;
     left: 50%; top: 54%;
@@ -46,7 +57,7 @@
     transform: translate(-50%, -50%);
   }
 
-  /* Each layer fills the puppet-wrap */
+  /* Canvas-registered layers fill the puppet-wrap */
   .puppet-wrap .layer {
     position: absolute;
     inset: 0;
@@ -58,13 +69,91 @@
     display: block;
   }
 
+  /* Selection ring on active layer */
+  .layer-selected {
+    outline: 2px dashed #00ffcc;
+    outline-offset: 2px;
+    cursor: move;
+  }
+
+  /* Inspector panel */
+  #inspector {
+    width: 260px;
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: #aaa;
+  }
+  #inspector h3 {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #555;
+    border-bottom: 1px solid #222;
+    padding-bottom: 6px;
+  }
+  #inspector-empty { color: #444; font-size: 9px; line-height: 1.8; }
+  #inspector-form { display: flex; flex-direction: column; gap: 8px; }
+  #inspector-layer-id {
+    font-size: 11px; color: #00aaaa; letter-spacing: 1px;
+  }
+  #inspector-mode { font-size: 8px; color: #555; }
+  .field { display: flex; justify-content: space-between; align-items: center; }
+  .field label { color: #777; font-size: 9px; }
+  .field input[type=range] {
+    width: 100px; accent-color: #00aaaa; cursor: pointer;
+    height: 2px; background: #333;
+  }
+  .val-input {
+    width: 58px; text-align: right; font-size: 9px; color: #00ddaa;
+    font-family: 'Courier New', monospace;
+    background: transparent; border: none;
+    border-bottom: 1px solid #2a2a2a; outline: none;
+    padding: 1px 2px; cursor: text;
+    -moz-appearance: textfield; appearance: textfield;
+  }
+  .val-input:focus { border-bottom-color: #00aaaa; background: #0d0d0d; }
+  .val-input::-webkit-outer-spin-button,
+  .val-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .inspector-hint {
+    font-size: 8px; color: #444; line-height: 1.7;
+  }
+  #inspector-diff {
+    font-size: 8px; color: #556666; line-height: 1.7;
+    font-family: 'Courier New', monospace;
+    min-height: 14px;
+  }
+  #inspector-diff.changed { color: #cc8800; }
+  .inspector-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .inspector-btns button {
+    flex: 1; font-size: 9px; padding: 4px 6px;
+  }
+  #json-out {
+    background: #0a0a0a; border: 1px solid #222; border-radius: 2px;
+    padding: 8px; font-size: 8px; color: #00aaaa; white-space: pre-wrap;
+    max-height: 140px; overflow-y: auto; line-height: 1.5;
+    word-break: break-all;
+  }
+  #json-copy-btn { width: 100%; font-size: 9px; }
+  #json-copy-ok { color: #00ff99; font-size: 8px; text-align: center; min-height: 12px; }
+
   /* Layer strip */
   .section-label {
     color: #555; font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
     align-self: flex-start; margin-left: calc(50% - 320px);
   }
   .layer-strip { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 900px; }
-  .layer-card { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .layer-card {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    cursor: pointer;
+  }
+  .layer-card:hover .layer-thumb { border-color: #005555; }
   .layer-thumb {
     width: 110px; height: 110px;
     background: #2F4F4F;
@@ -77,6 +166,14 @@
   .layer-name { font-size: 8px; color: #555; letter-spacing: 1px; text-align: center; max-width: 110px; }
   .layer-badge { font-size: 7px; padding: 2px 5px; border-radius: 2px; background: #003333; color: #00aaaa; border: 1px solid #005555; }
   .layer-badge.ph { background: #1a1a1a; color: #444; border-color: #333; }
+  .layer-badge.selected-badge { background: #005555; color: #00ffcc; border-color: #00aaaa; }
+  .dirty-dot {
+    display: none;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #cc8800;
+    flex-shrink: 0;
+  }
+  .dirty-dot.active { display: inline-block; }
 
   /* Controls */
   .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
@@ -88,6 +185,7 @@
   button:hover { background: #005555; }
   .sep { color: #333; font-size: 10px; margin: 0 4px; }
   .note { color: #444; font-size: 10px; text-align: center; max-width: 640px; line-height: 1.7; }
+
   .compare-wrap { display: flex; gap: 18px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
   .compare-panel { width: 360px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
   .compare-title { color: #777; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
@@ -98,25 +196,98 @@
   .compare-puppet .layer img,
   .compare-puppet .layer svg { width: 100%; height: 100%; display: block; }
 
+  .group-tabs {
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+    max-width: 900px;
+  }
+  .group-tab {
+    background: #001a1a; color: #558888; border: 1px solid #003333;
+    padding: 3px 10px; font-family: inherit; font-size: 9px;
+    letter-spacing: 1px; cursor: pointer; border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .group-tab:hover { background: #003333; color: #00aaaa; }
+  .group-tab.active { background: #003333; color: #00ffcc; border-color: #00aaaa; }
+  .dimmed { opacity: 0.2 !important; }
+
   #load-error { color: #aa4444; font-size: 10px; text-align: center; display: none; }
+
+  #crosshair-overlay {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: visible;
+    transition: opacity 0.4s ease;
+  }
 </style>
 </head>
 <body>
 
 <h2>The Modern Archivist — Manifest-Driven SVG Puppet Preview</h2>
 
-<div class="frame" id="frame">
-  <div class="chrome-top">The Modern Archivist</div>
-  <div class="chrome-bottom">
-    <span>The App That Made Sharing Impossible</span>
-    <span class="accent" id="state-label">STATE_MONOLOGUE</span>
+<div class="top-row">
+  <div class="frame" id="frame">
+    <div class="chrome-top">The Modern Archivist</div>
+    <div class="chrome-bottom">
+      <span>The App That Made Sharing Impossible</span>
+      <span class="accent" id="state-label">STATE_MONOLOGUE</span>
+    </div>
+    <div class="puppet-wrap" id="main-puppet"></div>
   </div>
-  <div class="puppet-wrap" id="main-puppet"></div>
+
+  <!-- Layer editor inspector -->
+  <div id="inspector">
+    <h3>Layer Editor</h3>
+    <div id="inspector-empty">Click any layer in the frame<br>or the strip below to edit it.<br><br>Drag to reposition.<br>Scroll wheel to scale.</div>
+    <div id="inspector-form" style="display:none">
+      <div id="inspector-layer-id"></div>
+      <div id="inspector-mode"></div>
+
+      <div class="field">
+        <label>Anchor X</label>
+        <input type="range" id="sl-ax" min="0" max="100" step="0.5" oninput="onSliderChange()">
+        <input type="number" class="val-input" id="lbl-ax" step="0.1" oninput="onNumericInput('ax')" onblur="onNumericBlur()">
+      </div>
+      <div class="field">
+        <label>Anchor Y</label>
+        <input type="range" id="sl-ay" min="0" max="100" step="0.5" oninput="onSliderChange()">
+        <input type="number" class="val-input" id="lbl-ay" step="0.1" oninput="onNumericInput('ay')" onblur="onNumericBlur()">
+      </div>
+      <div class="field">
+        <label>Scale</label>
+        <input type="range" id="sl-sc" min="0.05" max="5.0" step="0.01" oninput="onSliderChange()">
+        <input type="number" class="val-input" id="lbl-sc" step="0.01" min="0.05" max="5.0" oninput="onNumericInput('sc')" onblur="onNumericBlur()">
+      </div>
+
+      <div id="inspector-diff"></div>
+
+      <div class="inspector-hint">Numbers are editable — type to set exact values.<br>Anchored: X/Y in % (0–100). Canvas: X/Y in px.<br>Scroll wheel over frame to scale. Drag to reposition.</div>
+
+      <div class="inspector-btns">
+        <button onclick="resetSelected()">Reset</button>
+        <button onclick="exportAllJSON()">Export all</button>
+        <button onclick="copyLayerJSON()">Copy layer</button>
+        <button onclick="exportFullJSON()">Export full</button>
+      </div>
+    </div>
+
+    <div id="json-section" style="display:none">
+      <div id="json-out"></div>
+      <button id="json-copy-btn" onclick="copyJSON()">Copy JSON</button>
+      <div id="json-copy-ok"></div>
+    </div>
+  </div>
 </div>
 
 <div id="load-error">Failed to load manifest — check console</div>
 
 <div class="controls">
+  <button id="zoom-btn" onclick="setZoom(zoomLevel === 1 ? 2 : 1)">Zoom 2×</button>
+  <span class="sep">|</span>
+  <button onclick="setSipState(false)">idle</button>
+  <button onclick="setSipState(true)">sipping</button>
+  <span class="sep">|</span>
   <button onclick="eyesOpen()">eyes open</button>
   <button onclick="eyesClosed()">eyes closed</button>
   <span class="sep">|</span>
@@ -130,6 +301,8 @@
   <span class="sep">|</span>
   <button onclick="autoTalk()">auto talk</button>
   <button onclick="stopTalk()">stop</button>
+  <span class="sep">|</span>
+  <button onclick="clearSavedState()">Clear saved</button>
 </div>
 
 <div class="section-label">Reference vs live composite</div>
@@ -145,44 +318,238 @@
 </div>
 
 <div class="section-label">Individual layers (manifest-driven)</div>
+<div class="group-tabs" id="group-tabs"></div>
 <div class="layer-strip" id="layer-strip"></div>
 
-<p class="note">Manifest-driven preview — all layers rendered from modern_archivist_puppet_manifest.json. Placeholder layers are skipped. Production layers are canvas-registered 1254x1254 RGBA.</p>
+<p class="note">Click any layer in the frame or strip to select. Drag to reposition. Scroll to scale. Hit "Export all" to get JSON for the manifest.</p>
 
 <script>
 const MANIFEST_URL = '../character/modern_archivist_puppet_manifest.json';
 const PUBLIC_PREFIX = '../../../../remotion-composer/public/';
+const PUPPET_DESIGN_PX = 760; // Remotion puppet container size
 
+let zoomLevel = 1; // 1 = 380px, 2 = 760px
 let manifestLayers = [];
+let filterGroup = 'all';
 let talkTimer = null;
 let talkMouths = [];
 let talkIdx = 0;
+let crosshairSvg = null; // module-scope so setZoom can re-append it after renderLayers
 
-// Resolve a manifest src to an actual URL relative to this HTML file.
+// ─── localStorage persistence ────────────────────────────────────────────────
+
+function saveEditorState() {
+  try { localStorage.setItem('puppet-editor-state', JSON.stringify(editorState)); } catch(e) {}
+}
+
+function loadEditorState() {
+  try {
+    const raw = localStorage.getItem('puppet-editor-state');
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    Object.assign(editorState, saved);
+  } catch(e) {}
+}
+
+function clearSavedState() {
+  try { localStorage.removeItem('puppet-editor-state'); } catch(e) {}
+  undoStack.length = 0;
+  redoStack.length = 0;
+  Object.keys(editorState).forEach(k => delete editorState[k]);
+  renderLayers(document.getElementById('main-puppet'), manifestLayers);
+  renderLayers(document.getElementById('compare-puppet'), manifestLayers);
+  setFilterGroup(filterGroup);
+  applyInitialState();
+  refreshDirtyDots();
+  deselect();
+}
+
+// ─── Editor state ────────────────────────────────────────────────────────────
+// Per-layer overrides. For anchored_overlay: { anchorX, anchorY, scale }.
+// For canvas_registered: { offsetX, offsetY, scale } (pixel offsets in puppet space).
+const editorState = {};
+let selectedId = null;
+const selectedIds = new Set(); // multi-select set
+let dragState = null; // { layerId, startMouseX, startMouseY, startAnchorX, startAnchorY, startOffsetX, startOffsetY, groupStarts }
+
+// ─── Undo / Redo stack ───────────────────────────────────────────────────────
+const undoStack = [];
+const redoStack = [];
+const UNDO_MAX = 50;
+
+function cloneState(state) {
+  return JSON.parse(JSON.stringify(state));
+}
+
+function pushUndo(layerId, stateBefore, stateAfter) {
+  undoStack.push({ layerId, stateBefore: cloneState(stateBefore), stateAfter: cloneState(stateAfter) });
+  if (undoStack.length > UNDO_MAX) undoStack.shift();
+  redoStack.length = 0;
+}
+
+function applyStateEntry(layerId, state) {
+  if (!editorState[layerId]) editorState[layerId] = {};
+  Object.assign(editorState[layerId], cloneState(state));
+  applyEditorState(layerId);
+  updateInspector();
+}
+
+function doUndo() {
+  if (!undoStack.length) return;
+  const entry = undoStack.pop();
+  redoStack.push(entry);
+  if (redoStack.length > UNDO_MAX) redoStack.shift();
+  if (entry.batch) {
+    entry.entries.forEach(e => applyStateEntry(e.layerId, e.stateBefore));
+  } else {
+    applyStateEntry(entry.layerId, entry.stateBefore);
+  }
+}
+
+function doRedo() {
+  if (!redoStack.length) return;
+  const entry = redoStack.pop();
+  undoStack.push(entry);
+  if (undoStack.length > UNDO_MAX) undoStack.shift();
+  if (entry.batch) {
+    entry.entries.forEach(e => applyStateEntry(e.layerId, e.stateAfter));
+  } else {
+    applyStateEntry(entry.layerId, entry.stateAfter);
+  }
+}
+
+function getState(layerId) {
+  if (!editorState[layerId]) {
+    const layer = manifestLayers.find(l => l.id === layerId);
+    if (!layer) return null;
+    if (layer.coordinate_mode === 'anchored_overlay') {
+      editorState[layerId] = {
+        anchorX: layer.anchor?.x ?? 0.5,
+        anchorY: layer.anchor?.y ?? 0.5,
+        scale: 1.0,
+      };
+    } else {
+      editorState[layerId] = { offsetX: 0, offsetY: 0, scale: 1.0 };
+    }
+  }
+  return editorState[layerId];
+}
+
+function getOriginalState(layerId) {
+  const layer = manifestLayers.find(l => l.id === layerId);
+  if (!layer) return null;
+  if (layer.coordinate_mode === 'anchored_overlay') {
+    return { anchorX: layer.anchor?.x ?? 0.5, anchorY: layer.anchor?.y ?? 0.5, scale: 1.0 };
+  }
+  return { offsetX: 0, offsetY: 0, scale: 1.0 };
+}
+
+// ─── DOM helpers ─────────────────────────────────────────────────────────────
+
 function resolveSrc(src) {
   return PUBLIC_PREFIX + src;
 }
 
-// Build a single layer div from a manifest layer entry.
-// Returns null for placeholder layers (caller decides what to do with null).
+function getPuppetPx(container) {
+  return container ? (container.offsetWidth || 380) : 380;
+}
+
+// Apply editor state for a layer to both puppet containers.
+function applyEditorState(layerId, skipSideEffects = false) {
+  const state = getState(layerId);
+  if (!state) return;
+  const layer = manifestLayers.find(l => l.id === layerId);
+  if (!layer) return;
+
+  ['main-puppet', 'compare-puppet'].forEach(cid => {
+    const container = document.getElementById(cid);
+    const el = getLayerById(container, layerId);
+    if (!el) return;
+
+    const puppetPx = getPuppetPx(container);
+
+    if (layer.coordinate_mode === 'anchored_overlay') {
+      el.style.left = `${state.anchorX * 100}%`;
+      el.style.top  = `${state.anchorY * 100}%`;
+      const img = el.querySelector('img');
+      if (img && img.naturalWidth) {
+        const base = puppetPx / PUPPET_DESIGN_PX;
+        img.style.width  = `${Math.round(img.naturalWidth  * base * state.scale)}px`;
+        img.style.height = `${Math.round(img.naturalHeight * base * state.scale)}px`;
+      }
+    } else {
+      const baseOX = (layer.displayOffsetX || 0) / 1254 * 100;
+      const baseOY = (layer.displayOffsetY || 0) / 1254 * 100;
+      const sx = baseOX + state.offsetX / puppetPx * 100;
+      const sy = baseOY + state.offsetY / puppetPx * 100;
+      el.style.transform = `translate(${sx.toFixed(3)}%, ${sy.toFixed(3)}%) scale(${state.scale})`;
+      el.style.transformOrigin = 'center center';
+    }
+  });
+
+  if (!skipSideEffects) {
+    updateCrosshair();
+    saveEditorState();
+    exportAllJSON();
+    refreshDirtyDots();
+  }
+}
+
+// ─── Layer building ───────────────────────────────────────────────────────────
+
 function buildLayerDiv(layer, container) {
   if (layer.status === 'placeholder') return null;
 
   const div = document.createElement('div');
-  div.className = 'layer';
-  div.style.zIndex = layer.z;
   div.dataset.layerId = layer.id;
   div.dataset.group = layer.group;
 
-  const img = document.createElement('img');
-  img.src = resolveSrc(layer.src);
-  img.onerror = function() { this.style.display = 'none'; };
+  const puppetPx = getPuppetPx(container);
 
-  div.appendChild(img);
+  if (layer.coordinate_mode === 'anchored_overlay' && layer.anchor) {
+    const state = getState(layer.id);
+    div.style.position = 'absolute';
+    div.style.left = `${(state?.anchorX ?? layer.anchor.x) * 100}%`;
+    div.style.top  = `${(state?.anchorY ?? layer.anchor.y) * 100}%`;
+    div.style.transform = 'translate(-50%, -50%)';
+    div.style.zIndex = layer.z;
+
+    const img = document.createElement('img');
+    img.src = resolveSrc(layer.src);
+    img.style.display = 'block';
+    img.onload = function() {
+      const s = getState(layer.id);
+      const base = puppetPx / PUPPET_DESIGN_PX;
+      const sc = s?.scale ?? 1.0;
+      this.style.width  = `${Math.round(this.naturalWidth  * base * sc)}px`;
+      this.style.height = `${Math.round(this.naturalHeight * base * sc)}px`;
+    };
+    img.onerror = function() { this.style.display = 'none'; };
+    div.appendChild(img);
+  } else {
+    div.className = 'layer';
+    div.style.zIndex = layer.z;
+    const state = getState(layer.id);
+    const baseOX = (layer.displayOffsetX || 0) / 1254 * 100;
+    const baseOY = (layer.displayOffsetY || 0) / 1254 * 100;
+    const editorOX = state ? state.offsetX / puppetPx * 100 : 0;
+    const editorOY = state ? state.offsetY / puppetPx * 100 : 0;
+    const totalOX = baseOX + editorOX;
+    const totalOY = baseOY + editorOY;
+    const sc = state?.scale ?? 1;
+    if (totalOX !== 0 || totalOY !== 0 || sc !== 1) {
+      div.style.transform = `translate(${totalOX.toFixed(3)}%, ${totalOY.toFixed(3)}%) scale(${sc})`;
+      div.style.transformOrigin = 'center center';
+    }
+    const img = document.createElement('img');
+    img.src = resolveSrc(layer.src);
+    img.onerror = function() { this.style.display = 'none'; };
+    div.appendChild(img);
+  }
+
   return div;
 }
 
-// Render all production layers (sorted by z ascending) into a container element.
 function renderLayers(container, layers) {
   container.innerHTML = '';
   const sorted = [...layers].sort((a, b) => a.z - b.z);
@@ -192,41 +559,610 @@ function renderLayers(container, layers) {
   }
 }
 
-// Collect all layer divs inside a container by data-group.
+// ─── Selection ────────────────────────────────────────────────────────────────
+
+function selectLayer(layerId, shift = false) {
+  // Remove selection ring from layers that should be deselected
+  document.querySelectorAll('.layer-selected').forEach(el => {
+    if (!shift || !selectedIds.has(el.dataset.layerId)) el.classList.remove('layer-selected');
+  });
+
+  if (shift && selectedIds.has(layerId)) {
+    // Shift-click on already-selected layer: deselect it
+    selectedIds.delete(layerId);
+    document.querySelectorAll(`[data-layer-id="${layerId}"]`).forEach(el => el.classList.remove('layer-selected'));
+    const oldBadge = document.querySelector(`.layer-card[data-layer-id="${layerId}"] .layer-badge`);
+    if (oldBadge) oldBadge.classList.remove('selected-badge');
+    // Update selectedId to another selected layer, or null
+    selectedId = selectedIds.size > 0 ? [...selectedIds][selectedIds.size - 1] : null;
+  } else {
+    if (!shift) {
+      // Normal click: clear multi-selection badges, start fresh
+      selectedIds.forEach(id => {
+        const badge = document.querySelector(`.layer-card[data-layer-id="${id}"] .layer-badge`);
+        if (badge) badge.classList.remove('selected-badge');
+      });
+      selectedIds.clear();
+    }
+    selectedIds.add(layerId);
+    selectedId = layerId;
+    // Apply selection ring and badge to all selected layers
+    selectedIds.forEach(id => {
+      const mainEl = getLayerById(document.getElementById('main-puppet'), id);
+      if (mainEl) mainEl.classList.add('layer-selected');
+      const badge = document.querySelector(`.layer-card[data-layer-id="${id}"] .layer-badge`);
+      if (badge) badge.classList.add('selected-badge');
+    });
+  }
+
+  updateInspector();
+  updateCrosshair();
+}
+
+function deselect() {
+  document.querySelectorAll('.layer-selected').forEach(el => el.classList.remove('layer-selected'));
+  selectedIds.forEach(id => {
+    const badge = document.querySelector(`.layer-card[data-layer-id="${id}"] .layer-badge`);
+    if (badge) badge.classList.remove('selected-badge');
+  });
+  selectedId = null;
+  selectedIds.clear();
+  updateInspector();
+  updateCrosshair();
+}
+
+// ─── Inspector ────────────────────────────────────────────────────────────────
+
+function updateInspector() {
+  const empty = document.getElementById('inspector-empty');
+  const form  = document.getElementById('inspector-form');
+
+  if (!selectedId) {
+    empty.style.display = '';
+    form.style.display = 'none';
+    return;
+  }
+
+  // Multi-select mode: show only Scale, X/Y meaningless across mixed coordinate modes
+  if (selectedIds.size > 1) {
+    empty.style.display = 'none';
+    form.style.display = 'flex';
+    document.getElementById('inspector-layer-id').textContent = `${selectedIds.size} layers selected`;
+    document.getElementById('inspector-mode').textContent = 'multi-select';
+    // Disable X/Y controls
+    document.getElementById('sl-ax').disabled = true;
+    document.getElementById('sl-ay').disabled = true;
+    document.getElementById('lbl-ax').disabled = true;
+    document.getElementById('lbl-ay').disabled = true;
+    document.getElementById('lbl-ax').value = '—';
+    document.getElementById('lbl-ay').value = '—';
+    // Scale shows the primary layer's scale
+    const primaryState = getState(selectedId);
+    if (primaryState) {
+      document.getElementById('sl-sc').value = primaryState.scale;
+      document.getElementById('lbl-sc').value = primaryState.scale.toFixed(3);
+    }
+    document.getElementById('lbl-sc').disabled = false;
+    document.getElementById('sl-sc').disabled = false;
+    document.getElementById('inspector-diff').textContent = '';
+    return;
+  }
+
+  const layer = manifestLayers.find(l => l.id === selectedId);
+  const state = getState(selectedId);
+  if (!layer || !state) return;
+
+  empty.style.display = 'none';
+  form.style.display = 'flex';
+
+  document.getElementById('inspector-layer-id').textContent = layer.id;
+  document.getElementById('inspector-mode').textContent = layer.coordinate_mode ?? 'canvas_registered';
+
+  const isAnchored = layer.coordinate_mode === 'anchored_overlay';
+
+  document.getElementById('sl-ax').disabled = !isAnchored;
+  document.getElementById('sl-ay').disabled = !isAnchored;
+  document.getElementById('lbl-ax').disabled = false;
+  document.getElementById('lbl-ay').disabled = false;
+  document.getElementById('sl-sc').disabled = false;
+  document.getElementById('lbl-sc').disabled = false;
+
+  if (isAnchored) {
+    document.getElementById('sl-ax').value = (state.anchorX * 100).toFixed(1);
+    document.getElementById('sl-ay').value = (state.anchorY * 100).toFixed(1);
+    document.getElementById('lbl-ax').value = (state.anchorX * 100).toFixed(4);
+    document.getElementById('lbl-ay').value = (state.anchorY * 100).toFixed(4);
+  } else {
+    document.getElementById('sl-ax').value = 50;
+    document.getElementById('lbl-ax').value = state.offsetX.toFixed(1);
+    document.getElementById('sl-ay').value = 50;
+    document.getElementById('lbl-ay').value = state.offsetY.toFixed(1);
+  }
+
+  document.getElementById('sl-sc').value = state.scale;
+  document.getElementById('lbl-sc').value = state.scale.toFixed(3);
+
+  updateInspectorDiff();
+}
+
+function onSliderChange() {
+  if (!selectedId) return;
+
+  // Multi-select: only scale slider is active; apply to all selected layers
+  if (selectedIds.size > 1) {
+    const newScale = parseFloat(document.getElementById('sl-sc').value);
+    const beforeStates = {};
+    selectedIds.forEach(lid => { const s = getState(lid); if (s) beforeStates[lid] = cloneState(s); });
+    selectedIds.forEach(lid => {
+      const s = getState(lid);
+      if (s) { s.scale = newScale; applyEditorState(lid, true); }
+    });
+    saveEditorState(); exportAllJSON(); refreshDirtyDots(); updateCrosshair();
+    // Push batch undo entry
+    const entries = [];
+    selectedIds.forEach(lid => { const s = editorState[lid]; if (s && beforeStates[lid]) entries.push({ layerId: lid, stateBefore: beforeStates[lid], stateAfter: cloneState(s) }); });
+    if (entries.length > 0) { undoStack.push({ batch: true, entries }); redoStack.length = 0; if (undoStack.length > UNDO_MAX) undoStack.shift(); }
+    updateInspector();
+    return;
+  }
+
+  const layer = manifestLayers.find(l => l.id === selectedId);
+  const state = getState(selectedId);
+  if (!layer || !state) return;
+
+  const isAnchored = layer.coordinate_mode === 'anchored_overlay';
+  if (isAnchored) {
+    state.anchorX = parseFloat(document.getElementById('sl-ax').value) / 100;
+    state.anchorY = parseFloat(document.getElementById('sl-ay').value) / 100;
+  }
+  state.scale = parseFloat(document.getElementById('sl-sc').value);
+
+  applyEditorState(selectedId);
+  updateInspector();
+}
+
+function onNumericInput(field) {
+  if (!selectedId) return;
+
+  const raw = parseFloat(document.getElementById(`lbl-${field}`).value);
+  if (isNaN(raw)) return;
+
+  // Multi-select: only scale field is active
+  if (selectedIds.size > 1) {
+    if (field === 'sc') {
+      const newScale = Math.max(0.05, Math.min(5.0, raw));
+      document.getElementById('sl-sc').value = newScale;
+      const beforeStates = {};
+      selectedIds.forEach(lid => { const s = getState(lid); if (s) beforeStates[lid] = cloneState(s); });
+      selectedIds.forEach(lid => {
+        const s = getState(lid);
+        if (s) { s.scale = newScale; applyEditorState(lid, true); }
+      });
+      saveEditorState(); exportAllJSON(); refreshDirtyDots(); updateCrosshair();
+      // Push batch undo entry
+      const entries = [];
+      selectedIds.forEach(lid => { const s = editorState[lid]; if (s && beforeStates[lid]) entries.push({ layerId: lid, stateBefore: beforeStates[lid], stateAfter: cloneState(s) }); });
+      if (entries.length > 0) { undoStack.push({ batch: true, entries }); redoStack.length = 0; if (undoStack.length > UNDO_MAX) undoStack.shift(); }
+      updateInspector();
+    }
+    return;
+  }
+
+  const layer = manifestLayers.find(l => l.id === selectedId);
+  const state = getState(selectedId);
+  if (!layer || !state) return;
+
+  const isAnchored = layer.coordinate_mode === 'anchored_overlay';
+
+  if (field === 'ax') {
+    if (isAnchored) {
+      state.anchorX = Math.max(0, Math.min(1, raw / 100));
+      document.getElementById('sl-ax').value = (state.anchorX * 100).toFixed(1);
+    } else {
+      state.offsetX = raw;
+    }
+  } else if (field === 'ay') {
+    if (isAnchored) {
+      state.anchorY = Math.max(0, Math.min(1, raw / 100));
+      document.getElementById('sl-ay').value = (state.anchorY * 100).toFixed(1);
+    } else {
+      state.offsetY = raw;
+    }
+  } else if (field === 'sc') {
+    state.scale = Math.max(0.05, Math.min(5.0, raw));
+    document.getElementById('sl-sc').value = state.scale;
+  }
+
+  applyEditorState(selectedId);
+}
+
+function onNumericBlur() {
+  updateInspector();
+}
+
+function resetSelected() {
+  if (!selectedId) return;
+  const orig = getOriginalState(selectedId);
+  if (!orig) return;
+  const state = getState(selectedId);
+  const before = state ? cloneState(state) : null;
+  Object.assign(editorState[selectedId] || (editorState[selectedId] = {}), orig);
+  applyEditorState(selectedId);
+  updateInspector();
+  if (before) pushUndo(selectedId, before, cloneState(editorState[selectedId]));
+}
+
+function updateInspectorDiff() {
+  const el = document.getElementById('inspector-diff');
+  if (!el) return;
+  if (!selectedId) { el.textContent = ''; el.className = ''; return; }
+
+  const layer = manifestLayers.find(l => l.id === selectedId);
+  const state = getState(selectedId);
+  const orig = getOriginalState(selectedId);
+  if (!layer || !state || !orig) { el.textContent = ''; return; }
+
+  const EPS = 0.001;
+  let changed = false;
+
+  if (layer.coordinate_mode === 'anchored_overlay') {
+    const ax = (orig.anchorX * 100).toFixed(2);
+    const ay = (orig.anchorY * 100).toFixed(2);
+    const sc = orig.scale.toFixed(2);
+    if (Math.abs(state.anchorX - orig.anchorX) > EPS ||
+        Math.abs(state.anchorY - orig.anchorY) > EPS ||
+        Math.abs(state.scale - orig.scale) > EPS) changed = true;
+    el.textContent = `manifest: X=${ax}% Y=${ay}% sc=${sc}`;
+  } else {
+    const ox = orig.offsetX.toFixed(1);
+    const oy = orig.offsetY.toFixed(1);
+    const sc = orig.scale.toFixed(2);
+    if (Math.abs(state.offsetX - orig.offsetX) > EPS ||
+        Math.abs(state.offsetY - orig.offsetY) > EPS ||
+        Math.abs(state.scale - orig.scale) > EPS) changed = true;
+    el.textContent = `manifest: X=${ox}px Y=${oy}px sc=${sc}`;
+  }
+
+  el.className = changed ? 'changed' : '';
+}
+
+function refreshDirtyDots() {
+  const EPS = 0.001;
+  for (const layer of manifestLayers) {
+    const dot = document.getElementById(`dot-${layer.id}`);
+    if (!dot) continue;
+    if (!editorState[layer.id]) { dot.classList.remove('active'); continue; }
+    const state = editorState[layer.id];
+    const orig = getOriginalState(layer.id);
+    if (!orig) { dot.classList.remove('active'); continue; }
+    let dirty = false;
+    if (layer.coordinate_mode === 'anchored_overlay') {
+      dirty = Math.abs(state.anchorX - orig.anchorX) > EPS ||
+              Math.abs(state.anchorY - orig.anchorY) > EPS ||
+              Math.abs(state.scale - orig.scale) > EPS;
+    } else {
+      dirty = Math.abs(state.offsetX - orig.offsetX) > EPS ||
+              Math.abs(state.offsetY - orig.offsetY) > EPS ||
+              Math.abs(state.scale - orig.scale) > EPS;
+    }
+    dot.classList.toggle('active', dirty);
+  }
+}
+
+// ─── Crosshair overlay ───────────────────────────────────────────────────────
+
+let crosshairFadeTimer = null;
+let crosshairH = null;  // horizontal arm <line>
+let crosshairV = null;  // vertical arm <line>
+let crosshairC = null;  // center dot <circle>
+
+function updateCrosshair() {
+  const overlay = document.getElementById('crosshair-overlay');
+  if (!overlay) return;
+
+  if (!selectedId) {
+    overlay.style.transition = 'none';
+    overlay.style.opacity = '0';
+    if (crosshairFadeTimer) { clearTimeout(crosshairFadeTimer); crosshairFadeTimer = null; }
+    return;
+  }
+
+  const layer = manifestLayers.find(l => l.id === selectedId);
+  const state = getState(selectedId);
+  if (!layer || !state) return;
+
+  const container = document.getElementById('main-puppet');
+  const containerW = container.offsetWidth || 380;
+  const containerH = container.offsetHeight || 380;
+
+  let x, y, color;
+  if (layer.coordinate_mode === 'anchored_overlay') {
+    x = state.anchorX * containerW;
+    y = state.anchorY * containerH;
+    color = '#00ffcc';
+  } else {
+    x = containerW / 2;
+    y = containerH / 2;
+    color = '#ff8800';
+  }
+
+  // Update cached child elements in-place (no DOM churn)
+  const arm = 20;
+  crosshairH.setAttribute('x1', x - arm); crosshairH.setAttribute('y1', y);
+  crosshairH.setAttribute('x2', x + arm); crosshairH.setAttribute('y2', y);
+  crosshairV.setAttribute('x1', x); crosshairV.setAttribute('y1', y - arm);
+  crosshairV.setAttribute('x2', x); crosshairV.setAttribute('y2', y + arm);
+  crosshairC.setAttribute('cx', x); crosshairC.setAttribute('cy', y);
+  crosshairH.setAttribute('stroke', color);
+  crosshairV.setAttribute('stroke', color);
+  crosshairC.setAttribute('stroke', color);
+
+  // Show fully, then start 2s fade timer
+  overlay.style.transition = 'none';
+  overlay.style.opacity = '1';
+
+  if (crosshairFadeTimer) { clearTimeout(crosshairFadeTimer); crosshairFadeTimer = null; }
+  crosshairFadeTimer = setTimeout(() => {
+    overlay.style.transition = 'opacity 0.4s ease';
+    overlay.style.opacity = '0';
+    crosshairFadeTimer = null;
+  }, 2000);
+}
+
+// ─── Drag interaction ─────────────────────────────────────────────────────────
+
+function initDragOnMainPuppet() {
+  const puppet = document.getElementById('main-puppet');
+
+  puppet.addEventListener('mousedown', e => {
+    const layerEl = e.target.closest('[data-layer-id]');
+    if (!layerEl) { deselect(); return; }
+
+    const layerId = layerEl.dataset.layerId;
+    selectLayer(layerId, e.shiftKey);
+    e.preventDefault();
+
+    const layer = manifestLayers.find(l => l.id === layerId);
+    const state = getState(layerId);
+    const rect = puppet.getBoundingClientRect();
+
+    dragState = {
+      layerId,
+      isAnchored: layer?.coordinate_mode === 'anchored_overlay',
+      startMouseX: e.clientX,
+      startMouseY: e.clientY,
+      startAnchorX: state?.anchorX ?? 0.5,
+      startAnchorY: state?.anchorY ?? 0.5,
+      startOffsetX: state?.offsetX ?? 0,
+      startOffsetY: state?.offsetY ?? 0,
+      puppetW: rect.width,
+      puppetH: rect.height,
+      stateBefore: cloneState(state),
+      groupStarts: {},
+    };
+
+    // Capture start positions for all other selected layers (for group drag)
+    selectedIds.forEach(lid => {
+      if (lid === layerId) return; // primary already captured above
+      const lstate = getState(lid);
+      const llayer = manifestLayers.find(l => l.id === lid);
+      if (!lstate || !llayer) return;
+      dragState.groupStarts[lid] = {
+        x: llayer.coordinate_mode === 'anchored_overlay' ? lstate.anchorX : lstate.offsetX,
+        y: llayer.coordinate_mode === 'anchored_overlay' ? lstate.anchorY : lstate.offsetY,
+      };
+    });
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!dragState) return;
+    const dx = e.clientX - dragState.startMouseX;
+    const dy = e.clientY - dragState.startMouseY;
+
+    // Move all selected layers by the same delta
+    const idsToMove = selectedIds.size > 1 ? [...selectedIds] : [dragState.layerId];
+
+    for (const lid of idsToMove) {
+      const state = getState(lid);
+      const layer = manifestLayers.find(l => l.id === lid);
+      if (!state || !layer) continue;
+
+      // Determine start position: primary layer uses dragState fields; others use groupStarts
+      const isPrimary = lid === dragState.layerId;
+      const startX = isPrimary
+        ? (dragState.isAnchored ? dragState.startAnchorX : dragState.startOffsetX)
+        : (dragState.groupStarts?.[lid]?.x ?? (layer.coordinate_mode === 'anchored_overlay' ? state.anchorX : state.offsetX));
+      const startY = isPrimary
+        ? (dragState.isAnchored ? dragState.startAnchorY : dragState.startOffsetY)
+        : (dragState.groupStarts?.[lid]?.y ?? (layer.coordinate_mode === 'anchored_overlay' ? state.anchorY : state.offsetY));
+
+      if (layer.coordinate_mode === 'anchored_overlay') {
+        state.anchorX = Math.max(0, Math.min(1, startX + dx / dragState.puppetW));
+        state.anchorY = Math.max(0, Math.min(1, startY + dy / dragState.puppetH));
+      } else {
+        state.offsetX = startX + dx;
+        state.offsetY = startY + dy;
+      }
+      applyEditorState(lid, true); // skip side effects — called once after the loop
+    }
+
+    updateInspector();
+    saveEditorState();
+    exportAllJSON();
+    refreshDirtyDots();
+    updateCrosshair();
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (!dragState) return;
+    const { layerId, stateBefore, groupStarts } = dragState;
+    dragState = null;
+
+    const primaryState = getState(layerId);
+    if (!primaryState) return;
+
+    const companionIds = Object.keys(groupStarts || {});
+
+    if (companionIds.length > 0) {
+      // Multi-layer drag: build a batch undo entry for all moved layers
+      const entries = [];
+      // Primary layer
+      const primaryBefore = cloneState(stateBefore);
+      const primaryAfter = cloneState(primaryState);
+      if (JSON.stringify(primaryBefore) !== JSON.stringify(primaryAfter)) {
+        entries.push({ layerId, stateBefore: primaryBefore, stateAfter: primaryAfter });
+      }
+      // Companion layers
+      for (const lid of companionIds) {
+        const lstate = editorState[lid];
+        const layer = manifestLayers.find(l => l.id === lid);
+        const gs = groupStarts[lid];
+        if (!lstate || !layer || !gs) continue;
+        // groupStarts only captured x/y at drag start; reconstruct full stateBefore for companion
+        const lbefore = cloneState(lstate); // copy current (after), then override with start position
+        if (layer.coordinate_mode === 'anchored_overlay') {
+          lbefore.anchorX = gs.x; lbefore.anchorY = gs.y;
+        } else {
+          lbefore.offsetX = gs.x; lbefore.offsetY = gs.y;
+        }
+        entries.push({ layerId: lid, stateBefore: lbefore, stateAfter: cloneState(lstate) });
+      }
+      if (entries.length > 0) {
+        undoStack.push({ batch: true, entries });
+        redoStack.length = 0;
+        if (undoStack.length > UNDO_MAX) undoStack.shift();
+      }
+    } else {
+      // Single-layer drag: existing behavior
+      if (JSON.stringify(stateBefore) !== JSON.stringify(primaryState)) {
+        pushUndo(layerId, stateBefore, cloneState(primaryState));
+      }
+    }
+  });
+}
+
+// ─── Scroll to scale ──────────────────────────────────────────────────────────
+
+function initScrollOnMainPuppet() {
+  const puppet = document.getElementById('main-puppet');
+  puppet.addEventListener('wheel', e => {
+    if (!selectedId) return;
+    e.preventDefault();
+    const state = getState(selectedId);
+    if (!state) return;
+    const delta = e.deltaY > 0 ? -0.02 : 0.02;
+    const before = cloneState(state);
+    state.scale = Math.max(0.1, Math.min(5.0, state.scale + delta));
+    applyEditorState(selectedId);
+    updateInspector();
+    pushUndo(selectedId, before, cloneState(state));
+  }, { passive: false });
+}
+
+// ─── JSON export ──────────────────────────────────────────────────────────────
+
+function buildLayerPatch(id, layer, state) {
+  const entry = {};
+  if (layer.coordinate_mode === 'anchored_overlay') {
+    entry.anchor = { x: +state.anchorX.toFixed(4), y: +state.anchorY.toFixed(4) };
+    if (Math.abs(state.scale - 1.0) > 0.001) entry.scale = +state.scale.toFixed(3);
+  } else {
+    if (Math.abs(state.offsetX) > 0.5 || Math.abs(state.offsetY) > 0.5) {
+      entry.offsetX = +state.offsetX.toFixed(1);
+      entry.offsetY = +state.offsetY.toFixed(1);
+    }
+    if (Math.abs(state.scale - 1.0) > 0.001) entry.scale = +state.scale.toFixed(3);
+  }
+  return entry;
+}
+
+function exportAllJSON() {
+  const patch = {};
+  for (const [id, state] of Object.entries(editorState)) {
+    const layer = manifestLayers.find(l => l.id === id);
+    if (!layer) continue;
+    const entry = buildLayerPatch(id, layer, state);
+    if (Object.keys(entry).length > 0) patch[id] = entry;
+  }
+  const out = JSON.stringify(patch, null, 2);
+  document.getElementById('json-out').textContent = out || '// No changes yet';
+  const section = document.getElementById('json-section');
+  if (Object.keys(patch).length > 0) {
+    section.style.display = 'flex';
+    section.style.flexDirection = 'column';
+    section.style.gap = '6px';
+  } else {
+    section.style.display = 'none';
+  }
+}
+
+function exportFullJSON() {
+  const all = {};
+  for (const layer of manifestLayers) {
+    // Direct lookup — do NOT call getState(), which would initialize editorState
+    const state = editorState[layer.id] || getOriginalState(layer.id);
+    if (!state) continue;
+    all[layer.id] = buildLayerPatch(layer.id, layer, state);
+  }
+  const out = JSON.stringify(all, null, 2);
+  document.getElementById('json-out').textContent = out;
+  const section = document.getElementById('json-section');
+  section.style.display = 'flex';
+  section.style.flexDirection = 'column';
+  section.style.gap = '6px';
+}
+
+function copyLayerJSON() {
+  if (!selectedId) return;
+  const layer = manifestLayers.find(l => l.id === selectedId);
+  const state = getState(selectedId);
+  if (!layer || !state) return;
+  const entry = buildLayerPatch(selectedId, layer, state);
+  const text = JSON.stringify({ [selectedId]: entry }, null, 2);
+  navigator.clipboard.writeText(text).then(() => {
+    const ok = document.getElementById('json-copy-ok');
+    ok.textContent = '✓ copied layer';
+    setTimeout(() => { ok.textContent = ''; }, 2000);
+  });
+}
+
+function copyJSON() {
+  const text = document.getElementById('json-out').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const ok = document.getElementById('json-copy-ok');
+    ok.textContent = '✓ copied';
+    setTimeout(() => { ok.textContent = ''; }, 2000);
+  });
+}
+
+// ─── Visibility controls ──────────────────────────────────────────────────────
+
 function getLayersByGroup(container, group) {
   return Array.from(container.querySelectorAll(`[data-group="${group}"]`));
 }
 
-// Collect all layer divs inside a container by data-layer-id.
 function getLayerById(container, id) {
   return container.querySelector(`[data-layer-id="${id}"]`);
 }
 
-// Apply visibility state to both puppet containers simultaneously.
 function applyToBoth(fn) {
   fn(document.getElementById('main-puppet'));
   fn(document.getElementById('compare-puppet'));
 }
 
-// --- Eye controls ---
-
 function eyesOpen() {
   applyToBoth(container => {
-    // Hide all eye group layers (eye_closed_l is the only production one)
     getLayersByGroup(container, 'eyes').forEach(el => el.style.display = 'none');
   });
 }
 
 function eyesClosed() {
   applyToBoth(container => {
-    // Show only eye_closed_l (the production layer); hide others
     getLayersByGroup(container, 'eyes').forEach(el => {
       el.style.display = (el.dataset.layerId === 'eye_closed_l') ? '' : 'none';
     });
   });
 }
-
-// --- Mouth controls ---
 
 function cycleMouth(targetId) {
   applyToBoth(container => {
@@ -250,7 +1186,25 @@ function stopTalk() {
   cycleMouth('mouth_closed');
 }
 
-// --- Layer strip ---
+const SIP_ONLY_IDS = new Set(['mug', 'hand_mug', 'arm_right_idle', 'steam_01', 'glasses_frame', 'lens_highlight']);
+
+function setSipState(sipping) {
+  applyToBoth(container => {
+    SIP_ONLY_IDS.forEach(id => {
+      const el = getLayerById(container, id);
+      if (el) el.style.display = sipping ? '' : 'none';
+    });
+  });
+  document.getElementById('state-label').textContent = sipping ? 'STATE_SIP' : 'STATE_MONOLOGUE';
+}
+
+function applyInitialState() {
+  eyesOpen();
+  cycleMouth('mouth_closed');
+  setSipState(false);
+}
+
+// ─── Layer strip ──────────────────────────────────────────────────────────────
 
 function buildLayerStrip(layers) {
   const strip = document.getElementById('layer-strip');
@@ -259,6 +1213,9 @@ function buildLayerStrip(layers) {
   for (const layer of sorted) {
     const card = document.createElement('div');
     card.className = 'layer-card';
+    card.dataset.layerId = layer.id;
+    card.dataset.group = layer.group;
+    card.onclick = (e) => selectLayer(layer.id, e.shiftKey);
 
     const thumb = document.createElement('div');
     thumb.className = 'layer-thumb' + (layer.status === 'placeholder' ? ' placeholder' : '');
@@ -278,24 +1235,198 @@ function buildLayerStrip(layers) {
     badge.className = 'layer-badge' + (layer.status === 'placeholder' ? ' ph' : '');
     badge.textContent = `z=${layer.z} · ${layer.status}`;
 
+    const dot = document.createElement('span');
+    dot.className = 'dirty-dot';
+    dot.id = `dot-${layer.id}`;
+
     card.appendChild(thumb);
     card.appendChild(name);
     card.appendChild(badge);
+    card.appendChild(dot);
     strip.appendChild(card);
   }
 }
 
-// --- Initial state after load ---
+// ─── Group filter tabs ────────────────────────────────────────────────────────
 
-function applyInitialState() {
-  // Eyes: open by default (hide eye_closed_l)
-  eyesOpen();
+function setFilterGroup(group) {
+  filterGroup = group;
 
-  // Mouths: show mouth_closed, hide all others
-  cycleMouth('mouth_closed');
+  // Update tab active state
+  document.querySelectorAll('.group-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.group === group);
+  });
+
+  // Filter layer strip cards
+  document.querySelectorAll('#layer-strip .layer-card').forEach(card => {
+    card.style.display = (group === 'all' || card.dataset.group === group) ? '' : 'none';
+  });
+
+  // Dim non-matching layers in main puppet frame only
+  const puppet = document.getElementById('main-puppet');
+  if (puppet) {
+    puppet.querySelectorAll('[data-layer-id]').forEach(el => {
+      const layerGroup = el.dataset.group;
+      el.classList.toggle('dimmed', group !== 'all' && layerGroup !== group);
+    });
+  }
 }
 
-// --- Boot ---
+function buildGroupTabs() {
+  const container = document.getElementById('group-tabs');
+  const groups = ['all', 'body', 'head', 'eyes', 'brows', 'mouths', 'glasses', 'arms', 'props'];
+  container.innerHTML = '';
+  groups.forEach(g => {
+    const btn = document.createElement('button');
+    btn.className = 'group-tab' + (g === filterGroup ? ' active' : '');
+    btn.dataset.group = g;
+    btn.textContent = g;
+    btn.onclick = () => setFilterGroup(g);
+    container.appendChild(btn);
+  });
+}
+
+// ─── Keyboard controls ────────────────────────────────────────────────────────
+
+function initKeyboardControls() {
+  window.addEventListener('keydown', e => {
+    const tag = document.activeElement ? document.activeElement.tagName : '';
+    const inputFocused = (tag === 'INPUT' || tag === 'TEXTAREA');
+
+    // Ctrl+Shift+Z — redo (must check before Ctrl+Z)
+    if (e.key === 'Z' && e.ctrlKey && e.shiftKey) {
+      if (inputFocused) return;
+      e.preventDefault();
+      doRedo();
+      return;
+    }
+
+    // Ctrl+Z — undo
+    if (e.key === 'z' && e.ctrlKey && !e.shiftKey) {
+      if (inputFocused) return;
+      e.preventDefault();
+      doUndo();
+      return;
+    }
+
+    // Escape — deselect (always)
+    if (e.key === 'Escape') {
+      deselect();
+      return;
+    }
+
+    // Tab — cycle layers
+    if (e.key === 'Tab') {
+      if (inputFocused) return;
+      e.preventDefault();
+      const sorted = [...manifestLayers].filter(l => l.status !== 'placeholder').sort((a, b) => a.z - b.z);
+      if (sorted.length === 0) return;
+      if (!selectedId) {
+        selectLayer(sorted[0].id);
+      } else {
+        const idx = sorted.findIndex(l => l.id === selectedId);
+        const next = sorted[(idx + 1) % sorted.length];
+        selectLayer(next.id);
+      }
+      return;
+    }
+
+    // R — reset selected
+    if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey) {
+      if (inputFocused) return;
+      if (!selectedId) return;
+      resetSelected();
+      return;
+    }
+
+    // [ and ] — scale
+    if ((e.key === '[' || e.key === ']') && !inputFocused) {
+      if (!selectedId) return;
+      const state = getState(selectedId);
+      if (!state) return;
+      const before = cloneState(state);
+      if (e.key === '[') {
+        state.scale = Math.max(0.05, +(state.scale - 0.01).toFixed(4));
+      } else {
+        state.scale = Math.min(5.0, +(state.scale + 0.01).toFixed(4));
+      }
+      pushUndo(selectedId, before, cloneState(state));
+      applyEditorState(selectedId);
+      updateInspector();
+      return;
+    }
+
+    // Arrow keys — nudge position
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+      if (inputFocused) return;
+      if (!selectedId) return;
+      e.preventDefault();
+
+      const layer = manifestLayers.find(l => l.id === selectedId);
+      if (!layer) return;
+      const state = getState(selectedId);
+      if (!state) return;
+      const before = cloneState(state);
+
+      const isAnchored = layer.coordinate_mode === 'anchored_overlay';
+
+      if (isAnchored) {
+        // Anchor nudge: ±0.5% (Shift → ±0.1%), stored as 0–1 fraction
+        const step = e.shiftKey ? 0.001 : 0.005;
+        if (e.key === 'ArrowLeft')  state.anchorX = Math.max(0, Math.min(1, +(state.anchorX - step).toFixed(5)));
+        if (e.key === 'ArrowRight') state.anchorX = Math.max(0, Math.min(1, +(state.anchorX + step).toFixed(5)));
+        if (e.key === 'ArrowUp')    state.anchorY = Math.max(0, Math.min(1, +(state.anchorY - step).toFixed(5)));
+        if (e.key === 'ArrowDown')  state.anchorY = Math.max(0, Math.min(1, +(state.anchorY + step).toFixed(5)));
+      } else {
+        // Offset nudge: ±2px (Shift → ±0.5px)
+        const step = e.shiftKey ? 0.5 : 2;
+        if (e.key === 'ArrowLeft')  state.offsetX -= step;
+        if (e.key === 'ArrowRight') state.offsetX += step;
+        if (e.key === 'ArrowUp')    state.offsetY -= step;
+        if (e.key === 'ArrowDown')  state.offsetY += step;
+      }
+
+      pushUndo(selectedId, before, cloneState(state));
+      applyEditorState(selectedId);
+      updateInspector();
+      return;
+    }
+  });
+}
+
+// ─── Zoom toggle ─────────────────────────────────────────────────────────────
+
+function setZoom(level) {
+  zoomLevel = level;
+  const px = level === 2 ? 760 : 380;
+  const framePx = level === 2 ? 800 : 640;
+  const frameH = level === 2 ? 800 : 360;
+
+  // Update puppet-wrap size
+  const puppet = document.getElementById('main-puppet');
+  puppet.style.width  = `${px}px`;
+  puppet.style.height = `${px}px`;
+
+  // Update frame size
+  const frame = document.getElementById('frame');
+  frame.style.width  = `${framePx}px`;
+  frame.style.height = `${frameH}px`;
+
+  // Update button label
+  const btn = document.getElementById('zoom-btn');
+  if (btn) btn.textContent = level === 2 ? 'Zoom 1×' : 'Zoom 2×';
+
+  // Re-render layers so anchored_overlay images resize to new puppet dimensions
+  renderLayers(puppet, manifestLayers);
+  // Re-append crosshair SVG — renderLayers wipes innerHTML, detaching it
+  if (crosshairSvg) puppet.appendChild(crosshairSvg);
+  applyInitialState();
+  if (selectedId) selectLayer(selectedId);
+  setFilterGroup(filterGroup);
+  refreshDirtyDots();
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
 
 fetch(MANIFEST_URL)
   .then(r => {
@@ -304,22 +1435,48 @@ fetch(MANIFEST_URL)
   })
   .then(manifest => {
     manifestLayers = manifest.layers;
+    loadEditorState();
 
-    // Collect mouth ids for auto-talk (production mouth layers only)
     talkMouths = manifestLayers
       .filter(l => l.group === 'mouths' && l.status === 'production')
       .sort((a, b) => a.id.localeCompare(b.id))
       .map(l => l.id);
 
-    // Render both puppet containers
     renderLayers(document.getElementById('main-puppet'), manifestLayers);
     renderLayers(document.getElementById('compare-puppet'), manifestLayers);
 
-    // Render layer strip
-    buildLayerStrip(manifestLayers);
+    // Inject crosshair SVG overlay into main puppet (after layers so z-index wins)
+    crosshairSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    crosshairSvg.id = 'crosshair-overlay';
+    crosshairSvg.setAttribute('style', 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:visible;opacity:0;');
 
-    // Set initial visibility state
+    // Pre-create and cache the three crosshair child elements so updateCrosshair()
+    // can update attributes in-place instead of removing/re-creating on every call.
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    crosshairH = document.createElementNS(SVG_NS, 'line');
+    crosshairV = document.createElementNS(SVG_NS, 'line');
+    crosshairC = document.createElementNS(SVG_NS, 'circle');
+    crosshairC.setAttribute('r', '4');
+    crosshairC.setAttribute('fill', 'none');
+    crosshairC.setAttribute('stroke-width', '1.5');
+    crosshairC.setAttribute('stroke-linecap', 'round');
+    crosshairH.setAttribute('stroke-width', '1.5');
+    crosshairH.setAttribute('stroke-linecap', 'round');
+    crosshairV.setAttribute('stroke-width', '1.5');
+    crosshairV.setAttribute('stroke-linecap', 'round');
+    crosshairSvg.appendChild(crosshairH);
+    crosshairSvg.appendChild(crosshairV);
+    crosshairSvg.appendChild(crosshairC);
+
+    document.getElementById('main-puppet').appendChild(crosshairSvg);
+
+    buildLayerStrip(manifestLayers);
+    buildGroupTabs();
     applyInitialState();
+
+    initDragOnMainPuppet();
+    initScrollOnMainPuppet();
+    initKeyboardControls();
   })
   .catch(err => {
     console.error('Manifest load failed:', err);

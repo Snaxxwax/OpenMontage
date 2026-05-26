@@ -105,7 +105,12 @@
               { "type": "array", "items": { "type": "string" } }
             ]
           }
-        }
+        },
+        "scale": { "type": "number", "exclusiveMinimum": 0 },
+        "naturalW": { "type": "integer", "minimum": 1 },
+        "naturalH": { "type": "integer", "minimum": 1 },
+        "displayOffsetX": { "type": "integer" },
+        "displayOffsetY": { "type": "integer" }
       }
     }
   }

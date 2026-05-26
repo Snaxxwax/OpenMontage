@@ -44,8 +44,9 @@ const PIVOT = {
 };
 
 // ─── Mouth display dimensions ──────────────────────────────────────────────────
-const MOUTH_W = 148;
-const MOUTH_H = 72;
+// Fallback used when the manifest layer has no naturalW/naturalH/scale fields.
+const MOUTH_W_FALLBACK = 148;
+const MOUTH_H_FALLBACK = 72;
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 const isLegacyManifest = (manifest: AnyPuppetManifest): manifest is LegacyPuppetManifest =>
@@ -121,7 +122,12 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
   );
 
-  const mouthAnchor  = legacyAnchor(manifest, "mouth", `mouth_${mouthShape === "closed" ? "closed" : mouthShape}`, DEFAULT_MOUTH_ANCHOR);
+  const mouthLayerId = `mouth_${mouthShape === "closed" ? "closed" : mouthShape}`;
+  const mouthLayerEntry = findLayer(manifest, mouthLayerId);
+  const mouthAnchor    = legacyAnchor(manifest, "mouth", mouthLayerId, DEFAULT_MOUTH_ANCHOR);
+  const mouthW = Math.round((mouthLayerEntry?.naturalW ?? MOUTH_W_FALLBACK) * (mouthLayerEntry?.scale ?? 1));
+  const mouthH = Math.round((mouthLayerEntry?.naturalH ?? MOUTH_H_FALLBACK) * (mouthLayerEntry?.scale ?? 1));
+
   const glassesAnchor = legacyAnchor(manifest, "glasses", "glasses_frame", DEFAULT_GLASSES_ANCHOR);
   const bodySrc    = legacyOrV2Src(manifest, "body", "body");
   const mugSrc     = legacyOrV2Src(manifest, "mug", "mug");
@@ -182,8 +188,8 @@ export const PuppetRig: React.FC<PuppetRigProps> = ({
           position: "absolute",
           left:      `${mouthAnchor.x * 100}%`,
           top:       `${mouthAnchor.y * 100}%`,
-          width:     MOUTH_W,
-          height:    MOUTH_H,
+          width:     mouthW,
+          height:    mouthH,
           transform: "translate(-50%, -50%)",
           objectFit: "contain",
           zIndex: 3,
