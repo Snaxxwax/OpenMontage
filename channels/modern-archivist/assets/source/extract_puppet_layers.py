@@ -242,30 +242,33 @@ def extract_brows_neutral():
 
 
 # ---------------------------------------------------------------------------
-# Body from full_body_mug_pose (below head area, ~y>450)
+# Body from torso_hoodie (canvas-registered with head_neutral)
 # ---------------------------------------------------------------------------
-# Using the full body pose gives more canvas coverage than the cropped torso
-# source, satisfying the >55% height contract test.
+# torso_hoodie.png is 2048×2048; load_rgb() resizes it to 1254×1254.
+# After resize, the torso occupies roughly y=645–1253 on the shared canvas.
+# full_body_mug_pose.png is a DIFFERENT canvas registration (face at y≈302)
+# and must NOT be used as the body source.
 
 def extract_body():
-    arr = load_rgb(SRC / "modern_archivist_full_body_mug_pose.png")
+    arr = load_rgb(SRC / "modern_archivist_torso_hoodie.png")
     fg = fg_mask(arr)
 
-    # Exclude head region: body starts below the neck (~y=450 in canvas space)
-    body_mask = fg.copy()
-    body_mask[:450, :] = False
-
-    save_layer(arr, body_mask, "body")
+    # torso_hoodie contains only the torso; no head cutoff needed.
+    save_layer(arr, fg, "body")
 
 
 # ---------------------------------------------------------------------------
-# Arm + hand from arm_mug_grip; mug from mug_code
+# Arm + hand + mug from arm_mug_grip (all canvas-registered)
 # ---------------------------------------------------------------------------
-# arm_mug_grip.png: canvas-registered, arm+hand at x=84-445, y=501-1220
-# mug_code.png:     canvas-registered, mug body at x=288-888, y=365-890
+# arm_mug_grip.png: canvas-registered, arm+hand+mug at x=84-445, y=501-1220
+# mug_code.png is NOT canvas-registered (mug centered at face position, not at
+# the arm's actual canvas position) — do NOT use it as the mug layer source.
 #
 # Puppet z-order: arm_right_idle(z=10) → mug(z=11) → hand_mug(z=12)
-# Split arm_mug_grip spatially: hand = upper grip (y<720), arm = sleeve below
+# Splits from arm_mug_grip:
+#   arm_right_idle  = sleeve pixels (y >= 720)
+#   mug             = dark pixels in upper grip zone (y < 720, brightness < 90)
+#   hand_mug        = remaining pixels in upper grip zone (y < 720, brightness >= 90)
 
 def extract_arm_layers():
     # Use a tighter threshold (40) for arm to avoid background-fringe near-white pixels.
@@ -276,21 +279,21 @@ def extract_arm_layers():
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     arm_fg_clean = cv2.erode(arm_fg.astype(np.uint8), kernel, iterations=1).astype(bool)
 
-    # Hand = top of arm_mug_grip (the grip/fingers)
-    hand_mask = arm_fg_clean.copy()
-    hand_mask[720:, :] = False   # mask out sleeve below the wrist
+    brightness = arm_arr.mean(axis=2)
+    row_idx = np.arange(CANVAS)[:, None]  # (1254, 1) for broadcasting
 
-    # Arm = sleeve portion (below wrist)
-    arm_mask = arm_fg_clean.copy()
-    arm_mask[:720, :] = False
+    # Arm = sleeve portion (below wrist split)
+    arm_mask = arm_fg_clean & (row_idx >= 720)
+
+    # Mug = dark pixels in the upper grip zone (the dark navy mug body)
+    mug_mask = arm_fg_clean & (row_idx < 720) & (brightness < 90)
+
+    # Hand = remaining fg pixels in the upper grip zone (sleeve/skin around mug)
+    hand_mask = arm_fg_clean & (row_idx < 720) & (brightness >= 90)
 
     save_layer(arm_arr, arm_mask,  "arm_right_idle")
+    save_layer(arm_arr, mug_mask,  "mug")
     save_layer(arm_arr, hand_mask, "hand_mug")
-
-    # Mug from its own canvas-registered source
-    mug_arr = load_rgb(SRC / "modern_archivist_mug_code.png")
-    mug_fg = fg_mask(mug_arr)
-    save_layer(mug_arr, mug_fg, "mug")
 
 
 # ---------------------------------------------------------------------------

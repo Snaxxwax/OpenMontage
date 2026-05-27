@@ -163,7 +163,10 @@ def test_body_layer_preserves_full_body_bounds() -> None:
     bbox = img.getchannel("A").getbbox()
     assert bbox is not None
     body_height = bbox[3] - bbox[1]
-    assert body_height > 0.55 * canvas_height, f"body layer height {body_height}px is too short for full-body contract"
+    # Body source is torso_hoodie.png (canvas-registered with head_neutral).
+    # The torso spans the lower ~48% of the canvas; 0.40 guards against
+    # accidentally using a small cropped torso or a misaligned source.
+    assert body_height > 0.40 * canvas_height, f"body layer height {body_height}px is too short (expected torso to cover >40% of canvas height)"
 
 
 def test_production_layers_have_valid_alpha_bbox() -> None:
