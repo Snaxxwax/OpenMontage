@@ -1,7 +1,6 @@
-import type { AudioAmplitudeSample, CharacterCue, ColorState, EpisodeSection, LayoutState, MediaItem, RetentionDevice, ScriptTag, VisualMode } from "./types";
+import type { ColorState, EpisodeSection, LayoutState, MediaItem, RetentionDevice, ScriptTag, VisualMode } from "./types";
 
 export const DEFAULT_LAYOUT: LayoutState = "STATE_MONOLOGUE";
-export const DEFAULT_CHARACTER_CUE: CharacterCue = { visible: true, action: "idle", expression: "neutral" };
 
 export function getActiveLayout(tags: ScriptTag[], time: number): LayoutState {
   const active = tags
@@ -21,34 +20,6 @@ export function getActiveMedia(tags: ScriptTag[], time: number): MediaItem | und
   return active[0]?.value;
 }
 
-export function isSipActive(tags: ScriptTag[], time: number, durationSeconds = 1.1): boolean {
-  return tags.some((tag) => tag.type === "sip" && time >= tag.at && time <= tag.at + durationSeconds);
-}
-
-export function isSpeaking(
-  amplitude: AudioAmplitudeSample[] | undefined,
-  time: number,
-  threshold = 0.08,
-): boolean {
-  if (!amplitude || amplitude.length === 0) {
-    return false;
-  }
-
-  let lo = 0;
-  let hi = amplitude.length - 1;
-  while (lo < hi) {
-    const mid = Math.floor((lo + hi) / 2);
-    if (amplitude[mid].time < time) lo = mid + 1;
-    else hi = mid;
-  }
-
-  const next = amplitude[lo];
-  const prev = amplitude[Math.max(0, lo - 1)];
-  const nearest = Math.abs(prev.time - time) <= Math.abs(next.time - time) ? prev : next;
-
-  return nearest.volume > threshold;
-}
-
 export function flattenTags(sections: { tags: ScriptTag[] }[]): ScriptTag[] {
   return sections.flatMap((section) => section.tags);
 }
@@ -66,18 +37,6 @@ export function getActiveVisualMode(sections: EpisodeSection[], time: number): V
   if (layout === "STATE_CRITICAL_ERROR") return "critical_error";
   if (layout === "STATE_DEEP_DIVE") return "case_file";
   return "monologue";
-}
-
-export function getActiveCharacterCue(sections: EpisodeSection[], time: number): CharacterCue {
-  const section = getActiveSection(sections, time);
-  if (section?.character) {
-    return { ...DEFAULT_CHARACTER_CUE, ...section.character };
-  }
-  const visualMode = getActiveVisualMode(sections, time);
-  if (["case_file", "source_montage", "recreated_ui", "failure_graph", "code_walkthrough", "data_sequence", "cinematic_metaphor"].includes(visualMode)) {
-    return { visible: false, action: "hidden", expression: "none" };
-  }
-  return DEFAULT_CHARACTER_CUE;
 }
 
 export function getActiveRetentionDevice(sections: EpisodeSection[], time: number): RetentionDevice | undefined {
