@@ -1,4 +1,4 @@
-import { Composition, CalculateMetadataFunction } from "remotion";
+import { AbsoluteFill, Composition, CalculateMetadataFunction, useCurrentFrame, useVideoConfig } from "remotion";
 import { Explainer, ExplainerProps } from "./Explainer";
 import {
   CinematicRenderer,
@@ -17,10 +17,26 @@ import { CaptionOverlay, WordCaption } from "./components/CaptionOverlay";
 import { CollageBurst, CollageBurstProps } from "./CollageBurst";
 import { LyricOverlay, LyricOverlayProps } from "./LyricOverlay";
 import {
-  ModernArchivistComposition,
-  calculateModernArchivistMetadata,
-  modernArchivistFixture,
-} from "./modern-archivist";
+  EvidenceRevealTest,
+  evidenceRevealTestProps,
+} from "./compositions/EvidenceRevealTest";
+import {
+  TimelineFlythroughTest,
+  timelineFlythroughTestProps,
+} from "./compositions/TimelineFlythroughTest";
+import {
+  DataVisualizationTest,
+  dataVisualizationTestProps,
+} from "./compositions/DataVisualizationTest";
+import {
+  KineticTypographyTest,
+  kineticTypographyTestProps,
+} from "./compositions/KineticTypographyTest";
+import { ModernArchivistComposition, calculateModernArchivistMetadata } from "../../channels/modern-archivist/remotion/src/ModernArchivistComposition";
+import {
+  ChannelFrameTest,
+  channelFrameTestProps,
+} from "./compositions/ChannelFrameTest";
 
 // ---------------------------------------------------------------------------
 // Theme System — prevents every video from looking like dark fintech
@@ -302,13 +318,66 @@ export const Root: React.FC = () => {
         } as LyricOverlayProps}
       />
       <Composition
-        id="ModernArchivist"
-        component={ModernArchivistComposition}
-        durationInFrames={30 * 60}
+        id="EvidenceRevealTest"
+        component={EvidenceRevealTest}
+        durationInFrames={30 * 11}
         fps={30}
         width={1920}
         height={1080}
-        defaultProps={modernArchivistFixture}
+        defaultProps={evidenceRevealTestProps}
+      />
+      <Composition
+        id="TimelineFlythroughTest"
+        component={TimelineFlythroughTest}
+        durationInFrames={30 * 18}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={timelineFlythroughTestProps}
+      />
+      <Composition
+        id="DataVisualizationTest"
+        component={DataVisualizationTest}
+        durationInFrames={30 * 23}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={dataVisualizationTestProps}
+      />
+      <Composition
+        id="KineticTypographyTest"
+        component={KineticTypographyTest}
+        durationInFrames={30 * 14}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={kineticTypographyTestProps}
+      />
+      <Composition
+        id="ChannelFrameTest"
+        component={ChannelFrameTest}
+        durationInFrames={30 * 21}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={channelFrameTestProps}
+      />
+      <Composition
+        id="ModernArchivist"
+        component={ModernArchivistComposition}
+        durationInFrames={30 * 120}
+        fps={30}
+        width={1920}
+        height={1080}
+        defaultProps={{
+          episode_id: "humane-ai-pin-autopsy-pilot",
+          title: "The $699 AI Pin That Needed a Server to Stay Alive",
+          duration_seconds: 90,
+          sections: [],
+          amplitude: [],
+          word_timings: [],
+          puppet: undefined,
+        }}
         calculateMetadata={calculateModernArchivistMetadata}
       />
       <Composition

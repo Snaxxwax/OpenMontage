@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Modern Archivist — Puppet Editor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    gap: 32px;
+    min-height: 100vh;
+  }
+  h2 { color: #aaa; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; }
+
+  .top-row {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .frame {
+    position: relative;
+    width: 640px;
+    height: 360px;
+    background: #2F4F4F;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.8);
+    flex-shrink: 0;
+  }
+  .chrome-top {
+    position: absolute; top: 13px; left: 18px; z-index: 100;
+    color: #F6F4EA; font-size: 9px; letter-spacing: 4px; text-transform: uppercase; opacity: 0.88;
+    pointer-events: none;
+  }
+  .chrome-bottom {
+    position: absolute; bottom: 12px; left: 18px; right: 18px; z-index: 100;
+    display: flex; justify-content: space-between;
+    color: #F6F4EA; font-size: 8px; opacity: 0.72;
+    pointer-events: none;
+  }
+  .accent { color: #008080; }
+
+  .puppet-wrap {
+    position: absolute;
+    left: 50%; top: 54%;
+    width: 380px; height: 380px;
+    transform: translate(-50%, -50%);
+  }
+
+  .puppet-wrap .layer {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+  }
+  .puppet-wrap .layer img,
+  .puppet-wrap .layer svg {
+    width: 100%; height: 100%;
+    display: block;
+  }
+
+  .layer-selected {
+    outline: 2px dashed #00ffcc;
+    outline-offset: 2px;
+    cursor: move;
+  }
+
+  #inspector {
+    width: 260px;
+    background: #161616;
+    border: 1px solid #2a2a2a;
+    border-radius: 4px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: #aaa;
+  }
+  #inspector h3 {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #555;
+    border-bottom: 1px solid #222;
+    padding-bottom: 6px;
+  }
+  #inspector-empty { color: #444; font-size: 9px; line-height: 1.8; }
+  #inspector-form { display: flex; flex-direction: column; gap: 8px; }
+  #inspector-layer-id {
+    font-size: 11px; color: #00aaaa; letter-spacing: 1px;
+  }
+  #inspector-mode { font-size: 8px; color: #555; }
+  .field { display: flex; justify-content: space-between; align-items: center; }
+  .field label { color: #777; font-size: 9px; }
+  .field input[type=range] {
+    width: 100px; accent-color: #00aaaa; cursor: pointer;
+    height: 2px; background: #333;
+  }
+  .val-input {
+    width: 58px; text-align: right; font-size: 9px; color: #00ddaa;
+    font-family: 'Courier New', monospace;
+    background: transparent; border: none;
+    border-bottom: 1px solid #2a2a2a; outline: none;
+    padding: 1px 2px; cursor: text;
+    -moz-appearance: textfield; appearance: textfield;
+  }
+  .val-input:focus { border-bottom-color: #00aaaa; background: #0d0d0d; }
+  .val-input::-webkit-outer-spin-button,
+  .val-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .inspector-hint {
+    font-size: 8px; color: #444; line-height: 1.7;
+  }
+  #inspector-diff {
+    font-size: 8px; color: #556666; line-height: 1.7;
+    font-family: 'Courier New', monospace;
+    min-height: 14px;
+  }
+  #inspector-diff.changed { color: #cc8800; }
+  .inspector-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .inspector-btns button {
+    flex: 1; font-size: 9px; padding: 4px 6px;
+  }
+  #json-out {
+    background: #0a0a0a; border: 1px solid #222; border-radius: 2px;
+    padding: 8px; font-size: 8px; color: #00aaaa; white-space: pre-wrap;
+    max-height: 140px; overflow-y: auto; line-height: 1.5;
+    word-break: break-all;
+  }
+  #json-copy-btn { width: 100%; font-size: 9px; }
+  #json-copy-ok { color: #00ff99; font-size: 8px; text-align: center; min-height: 12px; }
+
+  .section-label {
+    color: #555; font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    align-self: flex-start; margin-left: calc(50% - 320px);
+  }
+  .layer-strip { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; max-width: 900px; }
+  .layer-card {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    cursor: pointer;
+  }
+  .layer-card:hover .layer-thumb { border-color: #005555; }
+  .layer-card.dragging { opacity: 0.4; }
+  .layer-card.drag-over { outline: 2px dashed #00ffcc; outline-offset: -2px; }
+  .layer-thumb {
+    width: 110px; height: 110px;
+    background: #2F4F4F;
+    border: 1px solid #2a2a2a; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .layer-thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .layer-thumb.placeholder { background: #1a1a1a; border-color: #333; }
+  .layer-thumb.placeholder::after { content: 'placeholder'; font-size: 7px; color: #444; letter-spacing: 1px; }
+  .layer-name { font-size: 8px; color: #555; letter-spacing: 1px; text-align: center; max-width: 110px; }
+  .layer-badge { font-size: 7px; padding: 2px 5px; border-radius: 2px; background: #003333; color: #00aaaa; border: 1px solid #005555; }
+  .layer-badge.ph { background: #1a1a1a; color: #444; border-color: #333; }
+  .layer-badge.selected-badge { background: #005555; color: #00ffcc; border-color: #00aaaa; }
+  .dirty-dot {
+    display: none;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #cc8800;
+    flex-shrink: 0;
+  }
+  .dirty-dot.active { display: inline-block; }
+
+  .layer-eye {
+    cursor: pointer; font-size: 10px; line-height: 1;
+    color: #558888; transition: color 0.15s; user-select: none;
+  }
+  .layer-eye:hover { color: #00ffcc; }
+
+  .controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  button {
+    background: #003333; color: #00aaaa; border: 1px solid #005555;
+    padding: 4px 10px; font-family: inherit; font-size: 10px; letter-spacing: 1px;
+    cursor: pointer; border-radius: 2px;
+  }
+  button:hover { background: #005555; }
+  .sep { color: #333; font-size: 10px; margin: 0 4px; }
+  .note { color: #444; font-size: 10px; text-align: center; max-width: 640px; line-height: 1.7; }
+
+  .compare-wrap { display: flex; gap: 18px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+  .compare-panel { width: 360px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .compare-title { color: #777; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
+  .compare-canvas { position: relative; width: 360px; height: 360px; background: #2F4F4F; border-radius: 4px; overflow: hidden; box-shadow:0 4px 24px rgba(0,0,0,0.6); }
+  .compare-canvas > img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .compare-puppet { position: absolute; inset: 0; }
+  .compare-puppet .layer { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .compare-puppet .layer img,
+  .compare-puppet .layer svg { width: 100%; height: 100%; display: block; }
+
+  .group-tabs {
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
+    max-width: 900px;
+  }
+  .group-tab {
+    background: #001a1a; color: #558888; border: 1px solid #003333;
+    padding: 3px 10px; font-family: inherit; font-size: 9px;
+    letter-spacing: 1px; cursor: pointer; border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .group-tab:hover { background: #003333; color: #00aaaa; }
+  .group-tab.active { background: #003333; color: #00ffcc; border-color: #00aaaa; }
+  .dimmed { opacity: 0.2 !important; }
+
+  #load-error { color: #aa4444; font-size: 10px; text-align: center; display: none; }
+
+  #crosshair-overlay {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: visible;
+    transition: opacity 0.4s ease;
+  }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #003333; color: #00ffcc; border: 1px solid #005555;
+    padding: 8px 18px; font-size: 10px; letter-spacing: 1px;
+    border-radius: 4px; opacity: 0; transition: opacity 0.3s ease;
+    pointer-events: none; z-index: 99999;
+    font-family: 'Courier New', monospace;
+  }
+  .toast.toast-error { background: #330000; color: #ff6666; border-color: #550000; }
+
+  #dirty-indicator {
+    display: none; color: #cc8800; font-size: 12px; margin-left: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h2>The Modern Archivist — Manifest-Driven SVG Puppet Editor<span id="dirty-indicator">●</span></h2>
+
+<div class="top-row">
+  <div class="frame" id="frame">
+    <div class="chrome-top">The Modern Archivist</div>
+    <div class="chrome-bottom">
+      <span>The App That Made Sharing Impossible</span>
+      <span class="accent" id="state-label">STATE_MONOLOGUE</span>
+    </div>
+    <div class="puppet-wrap" id="main-puppet"></div>
+  </div>
+
+  <!-- Layer editor inspector -->
+  <div id="inspector">
+    <h3>Layer Editor</h3>
+    <div id="inspector-empty">Click any layer in the frame<br>or the strip below to edit it.<br><br>Drag to reposition.<br>Scroll wheel to scale.</div>
+    <div id="inspector-form" style="display:none">
+      <div id="inspector-layer-id"></div>
+      <div id="inspector-mode"></div>
+
+      <div class="field">
+        <label>Anchor X</label>
+        <input type="range" id="sl-ax" min="0" max="100" step="0.5">
+        <input type="number" class="val-input" id="lbl-ax" step="0.1">
+      </div>
+      <div class="field">
+        <label>Anchor Y</label>
+        <input type="range" id="sl-ay" min="0" max="100" step="0.5">
+        <input type="number" class="val-input" id="lbl-ay" step="0.1">
+      </div>
+      <div class="field">
+        <label>Scale</label>
+        <input type="range" id="sl-sc" min="0.05" max="5.0" step="0.01">
+        <input type="number" class="val-input" id="lbl-sc" step="0.01" min="0.05" max="5.0">
+      </div>
+
+      <div id="inspector-diff"></div>
+
+      <div class="inspector-hint">Numbers are editable — type to set exact values.<br>Anchored: X/Y in % (0–100). Canvas: X/Y in px.<br>Scroll wheel over frame to scale. Drag to reposition.</div>
+
+      <div class="inspector-btns">
+        <button id="btn-reset">Reset</button>
+        <button id="btn-export-diff">Export all</button>
+        <button id="btn-copy-layer">Copy layer</button>
+        <button id="btn-export-full">Export full</button>
+      </div>
+    </div>
+
+    <div id="json-section" style="display:none">
+      <div id="json-out"></div>
+      <button id="json-copy-btn">Copy JSON</button>
+      <div id="json-copy-ok"></div>
+    </div>
+  </div>
+</div>
+
+<div id="load-error">Failed to load manifest — check console</div>
+
+<div class="controls">
+  <button id="btn-zoom">Zoom 2×</button>
+  <span class="sep">|</span>
+  <button id="btn-idle">idle</button>
+  <button id="btn-sipping">sipping</button>
+  <span class="sep">|</span>
+  <button id="btn-eyes-open">eyes open</button>
+  <button id="btn-eyes-closed">eyes closed</button>
+  <span class="sep">|</span>
+  <button id="btn-mouth-neutral">neutral</button>
+  <button id="btn-mouth-a">talk A</button>
+  <button id="btn-mouth-e">talk E</button>
+  <button id="btn-mouth-o">talk O</button>
+  <button id="btn-mouth-slight">slight open</button>
+  <button id="btn-mouth-smirk">smirk</button>
+  <button id="btn-mouth-frown">frown</button>
+  <span class="sep">|</span>
+  <button id="btn-auto-talk">auto talk</button>
+  <button id="btn-stop">stop</button>
+  <span class="sep">|</span>
+  <button id="btn-clear-saved">Clear saved</button>
+  <span class="sep">|</span>
+  <button id="btn-save">Save to Manifest</button>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div class="section-label">Reference vs live composite</div>
+<div class="compare-wrap">
+  <div class="compare-panel">
+    <div class="compare-title">reference mug pose</div>
+    <div class="compare-canvas"><img src="reference_mug_pose.png" /></div>
+  </div>
+  <div class="compare-panel">
+    <div class="compare-title">live assembled layers</div>
+    <div class="compare-canvas"><div class="compare-puppet" id="compare-puppet"></div></div>
+  </div>
+</div>
+
+<div class="section-label">Individual layers (manifest-driven)</div>
+<div class="group-tabs" id="group-tabs"></div>
+<div class="layer-strip" id="layer-strip"></div>
+
+<p class="note">Click any layer in the frame or strip to select. Drag to reposition. Scroll to scale. Hit "Export all" to get JSON for the manifest.</p>
+
+<script type="module" src="js/editor-bootstrap.js"></script>
+</body>
+</html>

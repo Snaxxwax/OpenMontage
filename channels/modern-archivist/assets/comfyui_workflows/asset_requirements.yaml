@@ -118,6 +118,17 @@ generation_intents:
   arm_mug_poses:
     profile: arm_mug_upgrade
     template: arm_mug_poses
+    workflow_file: channels/modern-archivist/assets/comfyui_workflows/arm_mug_poses.json
+    workflow_mode: interactive  # requires human pose setup in ComfyUI browser UI
+    workflow_notes: >
+      VNCCS Pose Studio + QWEN Detailer workflow. Before running:
+      1. python3 scripts/comfyui/stage_reference_images.py
+      2. Ensure hand_yolov8n.pt is in ComfyUI models/ultralytics/bbox/
+         (ComfyUI Manager > Install Models > hand_yolov8n.pt, or download from
+         https://huggingface.co/Ultralytics/Assets/resolve/main/yolov8n.pt)
+      3. Load arm_mug_poses.json in ComfyUI browser UI (port 8188)
+      4. VNCCS_ModelManager will download QWEN model on first run (~7GB)
+      5. Set poses interactively in Pose Studio, then queue each pose
   props:
     profile: props_backgrounds
     template: props

@@ -1,0 +1,1052 @@
+{
+    "version": "3.0",
+    "character_id": "narrator",
+    "display_name": "The Narrator",
+    "rig_contract": "full_body_layered",
+    "canvas": {
+        "width": 1122,
+        "height": 1402
+    },
+    "palette_policy": "hard_alpha_limited_palette",
+    "coordinate_modes": [
+        "anchored_overlay"
+    ],
+    "layer_groups": {
+        "hair_back": [
+            "hair_back"
+        ],
+        "legs": [
+            "leg_left",
+            "leg_right"
+        ],
+        "boots": [
+            "boot_left",
+            "boot_right"
+        ],
+        "body": [
+            "waist_hips",
+            "torso"
+        ],
+        "arms_base": [
+            "arm_upper_right",
+            "arm_forearm_right",
+            "hand_right",
+            "arm_upper_left",
+            "arm_forearm_left",
+            "hand_left"
+        ],
+        "props": [
+            "prop_mug",
+            "prop_folder",
+            "prop_papers"
+        ],
+        "arms_gesture": [
+            "arm_point_left",
+            "arm_point_right",
+            "arm_present_left",
+            "arm_present_right",
+            "arm_mug_left",
+            "arm_mug_both",
+            "arm_mug_right",
+            "arm_folder_left",
+            "arm_folder_right",
+            "arm_open_left",
+            "arm_open_right"
+        ],
+        "head": [
+            "head"
+        ],
+        "hair_front": [
+            "hair_bangs",
+            "hair_curl_left",
+            "hair_curl_right"
+        ],
+        "glasses": [
+            "glasses_lenses",
+            "glasses_frame"
+        ],
+        "eyes": [
+            "eyes_open",
+            "eyes_half_lid",
+            "eyes_closed",
+            "eyes_look_left",
+            "eyes_look_right"
+        ],
+        "brows": [
+            "brows_neutral",
+            "brows_skeptical",
+            "brows_furrowed"
+        ],
+        "mouths": [
+            "mouth_closed",
+            "mouth_small_open",
+            "mouth_open",
+            "mouth_wide_open",
+            "mouth_o",
+            "mouth_flat",
+            "mouth_smirk"
+        ]
+    },
+    "layers": [
+        {
+            "id": "hair_back",
+            "src": "narrator/narrator_hair_back.png",
+            "group": "hair_back",
+            "z": 5,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.4987,
+                "y": 0.1316
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 365,
+            "naturalH": 413
+        },
+        {
+            "id": "leg_left",
+            "src": "narrator/narrator_leg_left.png",
+            "group": "legs",
+            "z": 10,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.4398,
+                "y": 0.5357
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 255,
+            "naturalH": 258
+        },
+        {
+            "id": "leg_right",
+            "src": "narrator/narrator_leg_right.png",
+            "group": "legs",
+            "z": 10,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5606,
+                "y": 0.5357
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 272,
+            "naturalH": 258
+        },
+        {
+            "id": "boot_left",
+            "src": "narrator/narrator_boot_left.png",
+            "group": "boots",
+            "z": 15,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.4398,
+                "y": 0.679
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 297,
+            "naturalH": 258
+        },
+        {
+            "id": "boot_right",
+            "src": "narrator/narrator_boot_right.png",
+            "group": "boots",
+            "z": 15,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5606,
+                "y": 0.6776
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 298,
+            "naturalH": 258
+        },
+        {
+            "id": "waist_hips",
+            "src": "narrator/narrator_waist_hips.png",
+            "group": "body",
+            "z": 20,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5628
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 1.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 280,
+            "naturalH": 304
+        },
+        {
+            "id": "arm_upper_right",
+            "src": "narrator/narrator_arm_upper_right.png",
+            "group": "arms_base",
+            "z": 22,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5624,
+                "y": 0.2233
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 248,
+            "naturalH": 204
+        },
+        {
+            "id": "arm_forearm_right",
+            "src": "narrator/narrator_arm_forearm_right.png",
+            "group": "arms_base",
+            "z": 23,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5838,
+                "y": 0.3402
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 218,
+            "naturalH": 204
+        },
+        {
+            "id": "hand_right",
+            "src": "narrator/narrator_hand_right.png",
+            "group": "arms_base",
+            "z": 24,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5816,
+                "y": 0.4322
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 215,
+            "naturalH": 204
+        },
+        {
+            "id": "torso",
+            "src": "narrator/narrator_torso.png",
+            "group": "body",
+            "z": 25,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5004,
+                "y": 0.413
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 1.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 325,
+            "naturalH": 304
+        },
+        {
+            "id": "arm_upper_left",
+            "src": "narrator/narrator_arm_upper_left.png",
+            "group": "arms_base",
+            "z": 27,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.4603,
+                "y": 0.2211
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 309,
+            "naturalH": 304
+        },
+        {
+            "id": "arm_forearm_left",
+            "src": "narrator/narrator_arm_forearm_left.png",
+            "group": "arms_base",
+            "z": 28,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.4688,
+                "y": 0.378
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 224,
+            "naturalH": 204
+        },
+        {
+            "id": "hand_left",
+            "src": "narrator/narrator_hand_left.png",
+            "group": "arms_base",
+            "z": 29,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.4701,
+                "y": 0.4786
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 201,
+            "naturalH": 204
+        },
+        {
+            "id": "prop_mug",
+            "src": "narrator/narrator_prop_mug.png",
+            "group": "props",
+            "z": 30,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.3044,
+                "y": 0.525
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.5,
+            "naturalW": 420,
+            "naturalH": 268
+        },
+        {
+            "id": "prop_folder",
+            "src": "narrator/narrator_prop_folder.png",
+            "group": "props",
+            "z": 30,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.6787,
+                "y": 0.4137
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.5,
+            "naturalW": 445,
+            "naturalH": 268
+        },
+        {
+            "id": "prop_papers",
+            "src": "narrator/narrator_prop_papers.png",
+            "group": "props",
+            "z": 30,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.6787,
+                "y": 0.4601
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.5,
+            "naturalW": 444,
+            "naturalH": 268
+        },
+        {
+            "id": "arm_point_left",
+            "src": "narrator/narrator_arm_point_left.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.3044,
+                "y": 0.2026
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 662,
+            "naturalH": 161
+        },
+        {
+            "id": "arm_point_right",
+            "src": "narrator/narrator_arm_point_right.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.6783,
+                "y": 0.2047
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 661,
+            "naturalH": 161
+        },
+        {
+            "id": "arm_present_left",
+            "src": "narrator/narrator_arm_present_left.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.3044,
+                "y": 0.2026
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 662,
+            "naturalH": 155
+        },
+        {
+            "id": "arm_present_right",
+            "src": "narrator/narrator_arm_present_right.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.6783,
+                "y": 0.2047
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 661,
+            "naturalH": 155
+        },
+        {
+            "id": "arm_mug_left",
+            "src": "narrator/narrator_arm_mug_left.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.3044,
+                "y": 0.2026
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 446,
+            "naturalH": 166
+        },
+        {
+            "id": "arm_mug_both",
+            "src": "narrator/narrator_arm_mug_both.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.3
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 394,
+            "naturalH": 166
+        },
+        {
+            "id": "arm_mug_right",
+            "src": "narrator/narrator_arm_mug_right.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.6783,
+                "y": 0.2047
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 450,
+            "naturalH": 166
+        },
+        {
+            "id": "arm_folder_left",
+            "src": "narrator/narrator_arm_folder_left.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.3044,
+                "y": 0.2026
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 661,
+            "naturalH": 189
+        },
+        {
+            "id": "arm_folder_right",
+            "src": "narrator/narrator_arm_folder_right.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.6783,
+                "y": 0.2047
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 660,
+            "naturalH": 189
+        },
+        {
+            "id": "arm_open_left",
+            "src": "narrator/narrator_arm_open_left.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.3044,
+                "y": 0.2026
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 660,
+            "naturalH": 127
+        },
+        {
+            "id": "arm_open_right",
+            "src": "narrator/narrator_arm_open_right.png",
+            "group": "arms_gesture",
+            "z": 35,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.6783,
+                "y": 0.2047
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.55,
+            "naturalW": 660,
+            "naturalH": 127
+        },
+        {
+            "id": "head",
+            "src": "narrator/narrator_head.png",
+            "group": "head",
+            "z": 40,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.2418
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 1.0
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 274,
+            "naturalH": 304
+        },
+        {
+            "id": "hair_bangs",
+            "src": "narrator/narrator_hair_bangs.png",
+            "group": "hair_front",
+            "z": 45,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5049,
+                "y": 0.1352
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 339,
+            "naturalH": 413
+        },
+        {
+            "id": "hair_curl_left",
+            "src": "narrator/narrator_hair_curl_left.png",
+            "group": "hair_front",
+            "z": 45,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.4906,
+                "y": 0.1366
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 281,
+            "naturalH": 413
+        },
+        {
+            "id": "hair_curl_right",
+            "src": "narrator/narrator_hair_curl_right.png",
+            "group": "hair_front",
+            "z": 45,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5227,
+                "y": 0.1359
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 1.0,
+            "naturalW": 297,
+            "naturalH": 413
+        },
+        {
+            "id": "glasses_lenses",
+            "src": "narrator/narrator_glasses_lenses.png",
+            "group": "glasses",
+            "z": 48,
+            "status": "placeholder",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1091
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.25,
+            "naturalW": 669,
+            "naturalH": 173
+        },
+        {
+            "id": "glasses_frame",
+            "src": "narrator/narrator_glasses_frame.png",
+            "group": "glasses",
+            "z": 49,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1091
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.25,
+            "naturalW": 667,
+            "naturalH": 173
+        },
+        {
+            "id": "eyes_open",
+            "src": "narrator/narrator_eyes_open.png",
+            "group": "eyes",
+            "z": 50,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1091
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.3,
+            "naturalW": 468,
+            "naturalH": 149
+        },
+        {
+            "id": "eyes_half_lid",
+            "src": "narrator/narrator_eyes_half_lid.png",
+            "group": "eyes",
+            "z": 50,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1091
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.3,
+            "naturalW": 448,
+            "naturalH": 149
+        },
+        {
+            "id": "eyes_closed",
+            "src": "narrator/narrator_eyes_closed.png",
+            "group": "eyes",
+            "z": 50,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1091
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.3,
+            "naturalW": 417,
+            "naturalH": 149
+        },
+        {
+            "id": "eyes_look_left",
+            "src": "narrator/narrator_eyes_look_left.png",
+            "group": "eyes",
+            "z": 50,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1091
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.3,
+            "naturalW": 678,
+            "naturalH": 118
+        },
+        {
+            "id": "eyes_look_right",
+            "src": "narrator/narrator_eyes_look_right.png",
+            "group": "eyes",
+            "z": 50,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1091
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.3,
+            "naturalW": 680,
+            "naturalH": 118
+        },
+        {
+            "id": "brows_neutral",
+            "src": "narrator/narrator_brows_neutral.png",
+            "group": "brows",
+            "z": 55,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.0842
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.3,
+            "naturalW": 453,
+            "naturalH": 122
+        },
+        {
+            "id": "brows_skeptical",
+            "src": "narrator/narrator_brows_skeptical.png",
+            "group": "brows",
+            "z": 55,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.0842
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.3,
+            "naturalW": 436,
+            "naturalH": 122
+        },
+        {
+            "id": "brows_furrowed",
+            "src": "narrator/narrator_brows_furrowed.png",
+            "group": "brows",
+            "z": 55,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.0842
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.3,
+            "naturalW": 437,
+            "naturalH": 122
+        },
+        {
+            "id": "mouth_closed",
+            "src": "narrator/narrator_mouth_closed.png",
+            "group": "mouths",
+            "z": 60,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1576
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.22,
+            "naturalW": 453,
+            "naturalH": 107
+        },
+        {
+            "id": "mouth_small_open",
+            "src": "narrator/narrator_mouth_small_open.png",
+            "group": "mouths",
+            "z": 60,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1576
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.22,
+            "naturalW": 436,
+            "naturalH": 107
+        },
+        {
+            "id": "mouth_open",
+            "src": "narrator/narrator_mouth_open.png",
+            "group": "mouths",
+            "z": 60,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1576
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.22,
+            "naturalW": 437,
+            "naturalH": 107
+        },
+        {
+            "id": "mouth_wide_open",
+            "src": "narrator/narrator_mouth_wide_open.png",
+            "group": "mouths",
+            "z": 60,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1576
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.22,
+            "naturalW": 341,
+            "naturalH": 119
+        },
+        {
+            "id": "mouth_o",
+            "src": "narrator/narrator_mouth_o.png",
+            "group": "mouths",
+            "z": 60,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1576
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.22,
+            "naturalW": 291,
+            "naturalH": 119
+        },
+        {
+            "id": "mouth_flat",
+            "src": "narrator/narrator_mouth_flat.png",
+            "group": "mouths",
+            "z": 60,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1576
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.22,
+            "naturalW": 325,
+            "naturalH": 119
+        },
+        {
+            "id": "mouth_smirk",
+            "src": "narrator/narrator_mouth_smirk.png",
+            "group": "mouths",
+            "z": 60,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "anchor": {
+                "x": 0.5045,
+                "y": 0.1576
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": false,
+            "scale": 0.22,
+            "naturalW": 329,
+            "naturalH": 119
+        }
+    ]
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Narrator Sample Animation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  #stage {
+    position: relative;
+    width: 640px; height: 360px;
+    background: #2F4F4F;
+    overflow: hidden;
+  }
+  .layer {
+    position: absolute;
+  }
+  .layer img { display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- Body base (full character with arm holes inpainted) -->
+  <div class="layer" id="body_base" style="left:0;top:0;width:100%;height:100%;">
+    <img src="/layers/narrator/narrator_neutral_base_layer.png" style="width:100%;height:100%;object-fit:contain;" />
+  </div>
+
+  <!-- Head -->
+  <div class="layer" id="head" style="left:50%;top:12%;transform:translate(-50%,-50%);">
+    <img src="/layers/narrator/narrator_neutral_head.png" style="width:124px;height:126px;" />
+  </div>
+
+  <!-- Eyes open -->
+  <div class="layer" id="eyes_open" style="left:50%;top:10%;transform:translate(-50%,-50%);">
+    <img src="/layers/narrator/narrator_eyes_open.png" style="width:80px;height:28px;" />
+  </div>
+
+  <!-- Eyes closed (hidden initially) -->
+  <div class="layer" id="eyes_closed" style="left:50%;top:10%;transform:translate(-50%,-50%);display:none;">
+    <img src="/layers/narrator/narrator_eyes_closed.png" style="width:80px;height:28px;" />
+  </div>
+
+  <!-- Mouth closed -->
+  <div class="layer" id="mouth_closed" style="left:50%;top:15.5%;transform:translate(-50%,-50%);">
+    <img src="/layers/narrator/narrator_mouth_closed.png" style="width:42px;height:18px;" />
+  </div>
+
+  <!-- Mouth open (hidden initially) -->
+  <div class="layer" id="mouth_open" style="left:50%;top:15.5%;transform:translate(-50%,-50%);display:none;">
+    <img src="/layers/narrator/narrator_mouth_open.png" style="width:42px;height:18px;" />
+  </div>
+
+  <!-- Mouth smirk (hidden initially) -->
+  <div class="layer" id="mouth_smirk" style="left:50%;top:15.5%;transform:translate(-50%,-50%);display:none;">
+    <img src="/layers/narrator/narrator_mouth_smirk.png" style="width:42px;height:18px;" />
+  </div>
+
+  <!-- Left arm -->
+  <div class="layer" id="arm_left" style="left:38%;top:35%;transform:translate(-50%,-50%);transform-origin:center bottom;">
+    <img src="/layers/narrator/narrator_neutral_left_arm.png" style="width:82px;height:335px;" />
+  </div>
+
+  <!-- Right arm -->
+  <div class="layer" id="arm_right" style="left:55%;top:35%;transform:translate(-50%,-50%);transform-origin:center bottom;">
+    <img src="/layers/narrator/narrator_neutral_right_arm.png" style="width:32px;height:56px;" />
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+// Wait for all images to load
+const images = document.querySelectorAll('img');
+let loaded = 0;
+images.forEach(img => {
+  if (img.complete) loaded++;
+  else img.onload = () => { loaded++; if (loaded === images.length) startAnim(); };
+});
+if (loaded === images.length) startAnim();
+
+function startAnim() {
+  // ─── Action: Blink then talk with arm gesture ──────────────────────────
+  const tl = gsap.timeline({ repeat: 0 });
+
+  // Frame 0-20: Idle
+  tl.set({}, {}, 0);
+
+  // Frame 24-30: First blink
+  tl.set('#eyes_open', { display: 'none' }, 24/30);
+  tl.set('#eyes_closed', { display: 'block' }, 24/30);
+  tl.set('#eyes_open', { display: 'block' }, 26/30);
+  tl.set('#eyes_closed', { display: 'none' }, 26/30);
+
+  // Frame 36-60: Talk "aa" sound
+  tl.set('#mouth_closed', { display: 'none' }, 36/30);
+  tl.set('#mouth_open', { display: 'block' }, 36/30);
+  tl.to('#arm_left', { rotation: -8, transformOrigin: '50% 100%', duration: 0.2 }, 36/30);
+
+  // Frame 48: mouth closed
+  tl.set('#mouth_open', { display: 'none' }, 48/30);
+  tl.set('#mouth_closed', { display: 'block' }, 48/30);
+
+  // Frame 54: mouth open again
+  tl.set('#mouth_closed', { display: 'none' }, 54/30);
+  tl.set('#mouth_open', { display: 'block' }, 54/30);
+
+  // Frame 66: smirk
+  tl.set('#mouth_open', { display: 'none' }, 66/30);
+  tl.set('#mouth_smirk', { display: 'block' }, 66/30);
+  tl.to('#arm_left', { rotation: 0, transformOrigin: '50% 100%', duration: 0.3 }, 66/30);
+
+  // Frame 78: back to closed
+  tl.set('#mouth_smirk', { display: 'none' }, 78/30);
+  tl.set('#mouth_closed', { display: 'block' }, 78/30);
+
+  // Frame 84-86: Second blink
+  tl.set('#eyes_open', { display: 'none' }, 84/30);
+  tl.set('#eyes_closed', { display: 'block' }, 84/30);
+  tl.set('#eyes_open', { display: 'block' }, 86/30);
+  tl.set('#eyes_closed', { display: 'none' }, 86/30);
+
+  // Frame 96-102: Wave/gesture with other arm
+  tl.to('#arm_right', { rotation: -15, transformOrigin: '50% 100%', duration: 0.3 }, 96/30);
+  tl.to('#arm_right', { rotation: 0, transformOrigin: '50% 100%', duration: 0.3 }, 102/30);
+
+  // End at 108 frames (3.6s)
+  console.log('Animation timeline ready');
+}
+</script>
+</body>
+</html>

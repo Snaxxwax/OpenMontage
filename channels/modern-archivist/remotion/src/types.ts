@@ -165,7 +165,7 @@ export interface WordTimestamp {
 }
 
 export type PuppetCoordinateMode = "canvas_registered" | "anchored_overlay";
-export type PuppetLayerStatus = "production" | "placeholder";
+export type PuppetLayerStatus = "production" | "placeholder" | "disabled";
 export interface PuppetPoint { x: number; y: number }
 
 export interface PuppetLayerEntry {

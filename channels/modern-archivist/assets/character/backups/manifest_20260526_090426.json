@@ -1,0 +1,538 @@
+{
+    "version": "2.0",
+    "character_id": "modern_archivist",
+    "display_name": "The Archivist",
+    "rig_contract": "full_body_layered",
+    "canvas": {
+        "width": 1254,
+        "height": 1254
+    },
+    "palette_policy": "hard_alpha_limited_palette",
+    "layer_groups": {
+        "body": [
+            "body"
+        ],
+        "head": [
+            "head",
+            "hair_back",
+            "hair_front"
+        ],
+        "eyes": [
+            "eye_open_l",
+            "eye_open_r",
+            "eye_closed_l",
+            "eye_closed_r"
+        ],
+        "brows": [
+            "brow_neutral_l",
+            "brow_neutral_r",
+            "brow_skeptical_l",
+            "brow_skeptical_r"
+        ],
+        "mouths": [
+            "mouth_closed",
+            "mouth_slight_open",
+            "mouth_open_a",
+            "mouth_open_e",
+            "mouth_open_o",
+            "mouth_smirk",
+            "mouth_frown"
+        ],
+        "glasses": [
+            "glasses_frame",
+            "lens_highlight"
+        ],
+        "arms": [
+            "arm_right_idle",
+            "hand_mug"
+        ],
+        "props": [
+            "mug",
+            "steam_01",
+            "shadow"
+        ]
+    },
+    "layers": [
+        {
+            "id": "body",
+            "src": "modern-archivist/layers/modern_archivist_body.png",
+            "group": "body",
+            "z": 1,
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.75
+            },
+            "displayOffsetY": 30
+        },
+        {
+            "id": "hair_back",
+            "src": "modern-archivist/layers/modern_archivist_hair_back.png",
+            "group": "head",
+            "z": 2,
+            "bounds_required": false,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "head",
+            "src": "modern-archivist/layers/modern_archivist_head.png",
+            "group": "head",
+            "z": 3,
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "pivot": {
+                "x": 0.5,
+                "y": 0.72
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "hair_front",
+            "src": "modern-archivist/layers/modern_archivist_hair_front.png",
+            "group": "head",
+            "z": 4,
+            "bounds_required": false,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "eye_open_l",
+            "src": "modern-archivist/layers/modern_archivist_eye_open_l.png",
+            "group": "eyes",
+            "z": 5,
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "eye_open_r",
+            "src": "modern-archivist/layers/modern_archivist_eye_open_r.png",
+            "group": "eyes",
+            "z": 5,
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "eye_closed_l",
+            "src": "modern-archivist/layers/modern_archivist_eye_closed_l.png",
+            "group": "eyes",
+            "z": 5,
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "eye_closed_r",
+            "src": "modern-archivist/layers/modern_archivist_eye_closed_r.png",
+            "group": "eyes",
+            "z": 5,
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "brow_neutral_l",
+            "src": "modern-archivist/layers/modern_archivist_brow_neutral_l.png",
+            "group": "brows",
+            "z": 6,
+            "bounds_required": false,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "brow_neutral_r",
+            "src": "modern-archivist/layers/modern_archivist_brow_neutral_r.png",
+            "group": "brows",
+            "z": 6,
+            "bounds_required": false,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "brow_skeptical_l",
+            "src": "modern-archivist/layers/modern_archivist_brow_skeptical_l.png",
+            "group": "brows",
+            "z": 6,
+            "bounds_required": false,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "brow_skeptical_r",
+            "src": "modern-archivist/layers/modern_archivist_brow_skeptical_r.png",
+            "group": "brows",
+            "z": 6,
+            "bounds_required": false,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "mouth_closed",
+            "src": "modern-archivist/mouth-closed.png",
+            "group": "mouths",
+            "z": 7,
+            "anchor": {
+                "x": 0.41,
+                "y": 0.615
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "pivot": {
+                "x": 0.41,
+                "y": 0.615
+            },
+            "scale": 0.6,
+            "naturalW": 130,
+            "naturalH": 115
+        },
+        {
+            "id": "mouth_slight_open",
+            "src": "modern-archivist/mouth-slight-open.png",
+            "group": "mouths",
+            "z": 7,
+            "anchor": {
+                "x": 0.3971,
+                "y": 0.6092
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "pivot": {
+                "x": 0.3971,
+                "y": 0.6092
+            },
+            "scale": 0.6,
+            "naturalW": 130,
+            "naturalH": 115
+        },
+        {
+            "id": "mouth_open_a",
+            "src": "modern-archivist/mouth-open-a.png",
+            "group": "mouths",
+            "z": 7,
+            "anchor": {
+                "x": 0.4095,
+                "y": 0.6103
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "pivot": {
+                "x": 0.4095,
+                "y": 0.6103
+            },
+            "scale": 0.6,
+            "naturalW": 157,
+            "naturalH": 111
+        },
+        {
+            "id": "mouth_open_e",
+            "src": "modern-archivist/mouth-open-e.png",
+            "group": "mouths",
+            "z": 7,
+            "anchor": {
+                "x": 0.3955,
+                "y": 0.6047
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "pivot": {
+                "x": 0.3955,
+                "y": 0.6047
+            },
+            "scale": 0.6,
+            "naturalW": 130,
+            "naturalH": 115
+        },
+        {
+            "id": "mouth_open_o",
+            "src": "modern-archivist/mouth-open-o.png",
+            "group": "mouths",
+            "z": 7,
+            "anchor": {
+                "x": 0.3979,
+                "y": 0.61
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "pivot": {
+                "x": 0.3979,
+                "y": 0.61
+            },
+            "scale": 0.6,
+            "naturalW": 113,
+            "naturalH": 120
+        },
+        {
+            "id": "mouth_smirk",
+            "src": "modern-archivist/mouth-smirk.png",
+            "group": "mouths",
+            "z": 7,
+            "anchor": {
+                "x": 0.3995,
+                "y": 0.61
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "pivot": {
+                "x": 0.3995,
+                "y": 0.61
+            },
+            "scale": 0.6,
+            "naturalW": 130,
+            "naturalH": 115
+        },
+        {
+            "id": "mouth_frown",
+            "src": "modern-archivist/mouth-frown.png",
+            "group": "mouths",
+            "z": 7,
+            "anchor": {
+                "x": 0.405,
+                "y": 0.6126
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "anchored_overlay",
+            "pivot": {
+                "x": 0.405,
+                "y": 0.6126
+            },
+            "scale": 0.6,
+            "naturalW": 130,
+            "naturalH": 115
+        },
+        {
+            "id": "glasses_frame",
+            "src": "modern-archivist/layers/modern_archivist_glasses_frame.png",
+            "group": "glasses",
+            "z": 8,
+            "anchor": {
+                "x": 0.5,
+                "y": 0.43
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "pivot": {
+                "x": 0.5,
+                "y": 0.43
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "lens_highlight",
+            "src": "modern-archivist/layers/modern_archivist_lens_highlight.png",
+            "group": "glasses",
+            "z": 9,
+            "bounds_required": false,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "displayOffsetY": -20
+        },
+        {
+            "id": "arm_right_idle",
+            "src": "modern-archivist/layers/modern_archivist_arm_right_idle.png",
+            "group": "arms",
+            "z": 10,
+            "pivot": {
+                "x": 0.62,
+                "y": 0.74
+            },
+            "bounds_required": false,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "id": "hand_mug",
+            "src": "modern-archivist/layers/modern_archivist_hand_mug.png",
+            "group": "arms",
+            "z": 12,
+            "pivot": {
+                "x": 0.62,
+                "y": 0.74
+            },
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "id": "mug",
+            "src": "modern-archivist/layers/modern_archivist_mug.png",
+            "group": "props",
+            "z": 11,
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "id": "steam_01",
+            "src": "modern-archivist/layers/modern_archivist_steam_01.png",
+            "group": "props",
+            "z": 13,
+            "bounds_required": false,
+            "status": "placeholder",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "id": "shadow",
+            "src": "modern-archivist/layers/modern_archivist_shadow.png",
+            "group": "props",
+            "z": 0,
+            "bounds_required": true,
+            "status": "production",
+            "coordinate_mode": "canvas_registered",
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            },
+            "pivot": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "coordinate_modes": [
+        "canvas_registered",
+        "anchored_overlay"
+    ]
+}

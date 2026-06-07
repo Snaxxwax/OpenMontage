@@ -1,10 +1,56 @@
-import type { ModernArchivistEpisode } from "./types";
+import type { ModernArchivistEpisode, PuppetManifest } from "./types";
+
+const ARCHIVIST_V2_MANIFEST: PuppetManifest = {
+  version: "2.0",
+  character_id: "modern_archivist",
+  display_name: "The Archivist",
+  rig_contract: "full_body_layered",
+  canvas: { width: 1254, height: 1254 },
+  palette_policy: "hard_alpha_limited_palette",
+  coordinate_modes: ["canvas_registered", "anchored_overlay"],
+  layer_groups: {
+    body: ["body"], head: ["head", "hair_back", "hair_front"],
+    eyes: ["eye_open_l", "eye_open_r", "eye_closed_l", "eye_closed_r"],
+    brows: ["brow_neutral_l", "brow_neutral_r", "brow_skeptical_l", "brow_skeptical_r"],
+    mouths: ["mouth_closed", "mouth_slight_open", "mouth_open_a", "mouth_open_e", "mouth_open_o", "mouth_smirk", "mouth_frown"],
+    glasses: ["glasses_frame", "lens_highlight"],
+    arms: ["arm_right_idle", "hand_mug"],
+    props: ["mug", "shadow"],
+  },
+  layers: [
+    { id: "shadow",          src: "modern-archivist/layers/modern_archivist_shadow.png",          group: "props",  z: 0,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: true },
+    { id: "body",            src: "modern-archivist/layers/modern_archivist_body.png",             group: "body",   z: 1,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.75 }, bounds_required: true },
+    { id: "hair_back",       src: "modern-archivist/layers/modern_archivist_hair_back.png",        group: "head",   z: 2,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: false },
+    { id: "head",            src: "modern-archivist/layers/modern_archivist_head.png",             group: "head",   z: 3,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.72 }, bounds_required: true },
+    { id: "hair_front",      src: "modern-archivist/layers/modern_archivist_hair_front.png",       group: "head",   z: 4,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: false },
+    { id: "eye_open_l",      src: "modern-archivist/layers/modern_archivist_eye_open_l.png",       group: "eyes",   z: 5,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: true },
+    { id: "eye_open_r",      src: "modern-archivist/layers/modern_archivist_eye_open_r.png",       group: "eyes",   z: 5,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: true },
+    { id: "eye_closed_l",    src: "modern-archivist/layers/modern_archivist_eye_closed_l.png",     group: "eyes",   z: 5,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: true },
+    { id: "eye_closed_r",    src: "modern-archivist/layers/modern_archivist_eye_closed_r.png",     group: "eyes",   z: 5,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: true },
+    { id: "brow_neutral_l",  src: "modern-archivist/layers/modern_archivist_brow_neutral_l.png",   group: "brows",  z: 6,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: false },
+    { id: "brow_neutral_r",  src: "modern-archivist/layers/modern_archivist_brow_neutral_r.png",   group: "brows",  z: 6,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: false },
+    { id: "brow_skeptical_l",src: "modern-archivist/layers/modern_archivist_brow_skeptical_l.png", group: "brows",  z: 6,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: false },
+    { id: "brow_skeptical_r",src: "modern-archivist/layers/modern_archivist_brow_skeptical_r.png", group: "brows",  z: 6,  status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: false },
+    { id: "mouth_closed",    src: "modern-archivist/mouth-closed.png",     group: "mouths", z: 7, status: "production", coordinate_mode: "anchored_overlay", anchor: { x: 0.41,   y: 0.615  }, pivot: { x: 0.41,   y: 0.615  }, bounds_required: true, scale: 0.6, naturalW: 130, naturalH: 115 },
+    { id: "mouth_slight_open",src:"modern-archivist/mouth-slight-open.png",group: "mouths", z: 7, status: "production", coordinate_mode: "anchored_overlay", anchor: { x: 0.3971, y: 0.6092 }, pivot: { x: 0.3971, y: 0.6092 }, bounds_required: true, scale: 0.6, naturalW: 130, naturalH: 115 },
+    { id: "mouth_open_a",    src: "modern-archivist/mouth-open-a.png",     group: "mouths", z: 7, status: "production", coordinate_mode: "anchored_overlay", anchor: { x: 0.4095, y: 0.6103 }, pivot: { x: 0.4095, y: 0.6103 }, bounds_required: true, scale: 0.6, naturalW: 157, naturalH: 111 },
+    { id: "mouth_open_e",    src: "modern-archivist/mouth-open-e.png",     group: "mouths", z: 7, status: "production", coordinate_mode: "anchored_overlay", anchor: { x: 0.3955, y: 0.6047 }, pivot: { x: 0.3955, y: 0.6047 }, bounds_required: true, scale: 0.6, naturalW: 130, naturalH: 115 },
+    { id: "mouth_open_o",    src: "modern-archivist/mouth-open-o.png",     group: "mouths", z: 7, status: "production", coordinate_mode: "anchored_overlay", anchor: { x: 0.3979, y: 0.61   }, pivot: { x: 0.3979, y: 0.61   }, bounds_required: true, scale: 0.6, naturalW: 113, naturalH: 120 },
+    { id: "mouth_smirk",     src: "modern-archivist/mouth-smirk.png",      group: "mouths", z: 7, status: "production", coordinate_mode: "anchored_overlay", anchor: { x: 0.3995, y: 0.61   }, pivot: { x: 0.3995, y: 0.61   }, bounds_required: true, scale: 0.6, naturalW: 130, naturalH: 115 },
+    { id: "mouth_frown",     src: "modern-archivist/mouth-frown.png",      group: "mouths", z: 7, status: "production", coordinate_mode: "anchored_overlay", anchor: { x: 0.405,  y: 0.6126 }, pivot: { x: 0.405,  y: 0.6126 }, bounds_required: true, scale: 0.6, naturalW: 130, naturalH: 115 },
+    { id: "glasses_frame",   src: "modern-archivist/layers/modern_archivist_glasses_frame.png",    group: "glasses", z: 8, status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.43 }, pivot: { x: 0.5, y: 0.43 }, bounds_required: true },
+    { id: "lens_highlight",  src: "modern-archivist/layers/modern_archivist_lens_highlight.png",   group: "glasses", z: 9, status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: false },
+    { id: "arm_right_idle",  src: "modern-archivist/layers/modern_archivist_arm_right_idle.png",   group: "arms",   z: 10, status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.62, y: 0.74 }, bounds_required: false },
+    { id: "mug",             src: "modern-archivist/layers/modern_archivist_mug.png",              group: "props",  z: 11, status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.5, y: 0.5 }, bounds_required: true },
+    { id: "hand_mug",        src: "modern-archivist/layers/modern_archivist_hand_mug.png",         group: "arms",   z: 12, status: "production", coordinate_mode: "canvas_registered", anchor: { x: 0.5, y: 0.5 }, pivot: { x: 0.62, y: 0.74 }, bounds_required: true },
+  ],
+};
 
 export const modernArchivistFixture: ModernArchivistEpisode = {
   episode_id: "modern-archivist-retention-demo",
   title: "The Backup That Never Existed",
   duration_seconds: 42,
-  puppet: { version: "1.0", character_id: "modern_archivist", display_name: "The Archivist", temporary: true, layers: { body: "modern-archivist/archivist-body.png", mug: "modern-archivist/archivist-mug.png" }, anchors: { mouth: { x: 0.51, y: 0.62 }, glasses: { x: 0.5, y: 0.43 }, arm_pivot: { x: 0.62, y: 0.74 } } },
+  puppet: ARCHIVIST_V2_MANIFEST,
   sections: [
     { id: "s01_hook", start: 0, end: 6, text: "The company said every customer file was backed up. The logs said otherwise.", tags: [{ at: 0, type: "layout", value: "STATE_MONOLOGUE" }], narrative_phase: "hook", retention_device: "cold_open_shock", visual_mode: "monologue", layout: "anchor_center", color_state: "teal", character: { visible: true, action: "glasses_flash", expression: "skeptical" }, evidence_refs: ["claim_001", "source_001"], evidence_role: "derived_analysis", estimated_duration_seconds: 6 },
     { id: "s02_case_file", start: 6, end: 13, text: "First, the pitch deck promised redundant backups. Then the incident report quietly removed the word redundant.", tags: [], narrative_phase: "context", retention_device: "contradiction_reveal", visual_mode: "case_file", layout: "evidence_board", color_state: "teal", character: { visible: false, action: "hidden", expression: "none" }, evidence_refs: ["source_001", "source_002"], evidence_role: "primary_evidence", estimated_duration_seconds: 7, media_overlay: { id: "case-001", kind: "case_file_sequence", title: "The backup claim", evidence_role: "primary_evidence", evidence_refs: ["source_001", "source_002"], stamp: "CONTRADICTION", beats: [{ label: "CLAIM", claim: "Redundant daily backups" }, { label: "RECEIPT", claim: "Only one storage region configured" }, { label: "CONTRADICTION", claim: "Incident report deletes redundancy language" }], motion_plan: [{ at_seconds: 0, action: "show_claim_card" }, { at_seconds: 2, action: "reveal_contradiction" }] } },
@@ -99,14 +145,7 @@ export const puppetPipelineFixture: ModernArchivistEpisode = {
   title: "Puppet Pipeline Fixture",
   duration_seconds: 7,
   audio_src: "",
-  puppet: {
-    version: "1.0",
-    character_id: "modern_archivist",
-    display_name: "The Archivist",
-    temporary: true,
-    layers: { body: "modern-archivist/archivist-body.png", mug: "modern-archivist/archivist-mug.png" },
-    anchors: { mouth: { x: 0.51, y: 0.62 }, glasses: { x: 0.5, y: 0.43 }, arm_pivot: { x: 0.62, y: 0.74 } },
-  },
+  puppet: ARCHIVIST_V2_MANIFEST,
   sections: [
     {
       id: "pp_s01_monologue",
