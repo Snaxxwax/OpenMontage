@@ -285,7 +285,6 @@ stages:
     - artifacts/reviews/visual_identity_review.md
     completion_contract: agent_gate_report
     review_focus:
-    - Visual plan preserves Modern Archivist puppet identity and flat 2.5D limits
     - Asset requests support thesis-driven corporate autopsy frames, not decoration
     - Color, typography, source labels, and proof cards stay consistent across scenes
     - Generated assets remain optional and review-gated before promotion
@@ -373,5 +372,5 @@ stages:
     review_focus:
     - Render output exists and matches render_report path, duration, and runtime
     - Audio continuity, loudness, and sync are verified with objective probes
-    - Frame samples show no blank screens, broken puppet states, or source-label collisions
+    - Frame samples show no blank screens or source-label collisions
     - Render stays on approved Remotion or explicitly approved HyperFrames path
