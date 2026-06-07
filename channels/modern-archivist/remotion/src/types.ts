@@ -57,11 +57,6 @@ export type EvidenceRole =
   | "illustrative_only"
   | "brand_interstitial";
 
-export interface CharacterCue {
-  visible: boolean;
-  action?: "hidden" | "idle" | "sip_coffee" | "deadpan_stare" | "glasses_flash" | string;
-  expression?: "none" | "neutral" | "deadpan" | "skeptical" | "alarm" | string;
-}
 
 export interface MotionPlanStep {
   at_seconds: number;
@@ -129,7 +124,6 @@ export type MediaItem =
 
 export type ScriptTag =
   | { at: number; type: "layout"; value: LayoutState }
-  | { at: number; type: "sip" }
   | { at: number; type: "media"; value: MediaItem }
   | { at: number; type: "emphasis"; value?: string };
 
@@ -145,7 +139,6 @@ export interface EpisodeSection {
   visual_mode?: VisualMode;
   layout?: SectionLayout;
   color_state?: ColorState;
-  character?: CharacterCue;
   evidence_refs?: string[];
   content_opportunity_refs?: string[];
   evidence_role?: EvidenceRole;
@@ -164,78 +157,6 @@ export interface WordTimestamp {
   end: number;
 }
 
-export type PuppetCoordinateMode = "canvas_registered" | "anchored_overlay";
-export type PuppetLayerStatus = "production" | "placeholder" | "disabled";
-export interface PuppetPoint { x: number; y: number }
-
-export interface PuppetLayerEntry {
-  id: string;
-  src: string;
-  group: string;
-  z: number;
-  status: PuppetLayerStatus;
-  coordinate_mode: PuppetCoordinateMode;
-  anchor: PuppetPoint;
-  pivot: PuppetPoint;
-  bounds_required: boolean;
-  expected_bbox?: [number, number, number, number];
-  visible_when?: Record<string, string | boolean | string[]>;
-  /** Display scale multiplier for anchored_overlay layers (1.0 = natural size at 760px puppet). */
-  scale?: number;
-  /** Natural pixel width of the source image (used with scale to compute display size). */
-  naturalW?: number;
-  /** Natural pixel height of the source image (used with scale to compute display size). */
-  naturalH?: number;
-  /** Canvas-pixel offset applied to canvas_registered layers at display time (positive = down/right). */
-  displayOffsetX?: number;
-  /** Canvas-pixel offset applied to canvas_registered layers at display time (positive = down). */
-  displayOffsetY?: number;
-}
-
-export interface PuppetManifest {
-  version: string;
-  character_id: string;
-  display_name?: string;
-  rig_contract: "full_body_layered";
-  canvas: { width: number; height: number };
-  palette_policy: "hard_alpha_limited_palette";
-  coordinate_modes?: PuppetCoordinateMode[];
-  layer_groups: Record<string, string[]>;
-  layers: PuppetLayerEntry[];
-}
-
-export interface LegacyPuppetManifest {
-  version: string;
-  character_id: string;
-  display_name?: string;
-  temporary?: boolean;
-  layers: {
-    body: string;
-    mug?: string;
-    mouth?: Record<string, string>;
-    glasses?: string;
-  };
-  anchors: {
-    mouth?: PuppetPoint;
-    glasses?: PuppetPoint;
-    arm_pivot?: PuppetPoint;
-  };
-}
-
-export type AnyPuppetManifest = PuppetManifest | LegacyPuppetManifest;
-
-export interface PuppetTimelineTrack {
-  type: "action" | "expression" | "eyes" | "mouth";
-  from: number;  // seconds
-  to: number;    // seconds
-  value: string;
-}
-
-export interface PuppetActionTimeline {
-  character_id: string;
-  fps: number;
-  tracks: PuppetTimelineTrack[];
-}
 
 export interface ModernArchivistEpisode extends Record<string, unknown> {
   episode_id: string;
@@ -245,12 +166,7 @@ export interface ModernArchivistEpisode extends Record<string, unknown> {
   sections: EpisodeSection[];
   amplitude?: AudioAmplitudeSample[];
   word_timings?: WordTimestamp[];
-  puppet?: AnyPuppetManifest;
   debug_disable_backdrop?: boolean;
-  debug_disable_puppet?: boolean;
   debug_disable_media?: boolean;
   debug_disable_audio?: boolean;
-  debug_puppet_static?: boolean;      // show puppet body/glasses but no mouth/gesture animation
-  debug_disable_puppet_mouth?: boolean; // show puppet but freeze mouth (no phoneme cycle)
-  debug_disable_puppet_filters?: boolean; // disable drop-shadow/glow filters on puppet
 }
