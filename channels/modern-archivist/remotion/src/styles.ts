@@ -20,12 +20,6 @@ export const stateCssVars: Record<LayoutState, CSSProperties> = {
   } as CSSProperties,
 };
 
-export const puppetTransform: Record<LayoutState, string> = {
-  STATE_MONOLOGUE: "translate(-50%, -50%) scale(0.6)",
-  STATE_DEEP_DIVE: "translate(-150vw, -50%) scale(0)",
-  STATE_CRITICAL_ERROR: "translate(30vw, 30vh) scale(0.2)",
-};
-
 export function resolveAsset(src: string): string {
   if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:")) {
     return src;
