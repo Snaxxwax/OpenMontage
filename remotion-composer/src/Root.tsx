@@ -1,4 +1,4 @@
-import { AbsoluteFill, Composition, CalculateMetadataFunction, useCurrentFrame, useVideoConfig } from "remotion";
+import { Composition, CalculateMetadataFunction } from "remotion";
 import { Explainer, ExplainerProps } from "./Explainer";
 import {
   CinematicRenderer,
@@ -376,7 +376,6 @@ export const Root: React.FC = () => {
           sections: [],
           amplitude: [],
           word_timings: [],
-          puppet: undefined,
         }}
         calculateMetadata={calculateModernArchivistMetadata}
       />
