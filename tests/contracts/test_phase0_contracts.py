@@ -515,12 +515,14 @@ class TestCostTracker:
     def test_persistence(self, tmp_path):
         log_path = tmp_path / "cost_log.json"
         t1 = CostTracker(budget_total_usd=10.0, mode=BudgetMode.OBSERVE, cost_log_path=log_path)
+        t1.approve_tool("paid_tool")
         eid = t1.estimate("tool", "op", 0.10)
         t1.reserve(eid)
         t1.reconcile(eid, 0.08)
 
         t2 = CostTracker(cost_log_path=log_path)
         assert t2.budget_spent_usd == 0.08
+        assert "paid_tool" in t2._approved_tools
 
     def test_reference_estimate_falls_back_when_scene_types_are_unclassified(self):
         tracker = CostTracker(mode=BudgetMode.OBSERVE)

@@ -1,0 +1,182 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "Modern Archivist Publish Packet",
+    "description": "Schema for packaging video publication metadata for YouTube",
+    "required": ["title_variants", "thumbnail_selection", "chapters", "description", "pinned_comment", "end_screen_target", "teaser", "ai_disclosure_review"],
+    "properties": {
+        "title_variants": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string", "minLength": 1, "maxLength": 100},
+                    "priority": {"type": "number", "minimum": 0, "maximum": 1},
+                    "platform_specific": {"type": "object"}
+                },
+                "required": ["text"]
+            }
+        },
+        "thumbnail_selection": {
+            "type": "object",
+            "properties": {
+                "primary_variant": {"type": "string"},
+                "fallback_variants": {"type": "array", "items": {"type": "string"}},
+                "selection_criteria": {"type": "string"}
+            },
+            "required": ["primary_variant"]
+        },
+        "chapters": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "timestamp": {"type": "string"},
+                    "title": {"type": "string"},
+                    "description": {"type": "string", "maxLength": 250}
+                },
+                "required": ["timestamp", "title"]
+            }
+        },
+        "description": {
+            "type": "string",
+            "maxLength": 5000
+        },
+        "pinned_comment": {
+            "type": "object",
+            "properties": {
+                "text": {"type": "string", "maxLength": 500},
+                "call_to_action": {"type": "string"},
+                "links": {"type": "array", "items": {"type": "string"}}
+            }
+        },
+        "end_screen_target": {
+            "type": "object",
+            "properties": {
+                "type": {"enum": ["playlist", "channel", "video"]},
+                "target_id": {"type": "string"}
+            }
+        },
+        "teaser": {
+            "type": "object",
+            "properties": {
+                "text": {"type": "string", "maxLength": 200},
+                "duration": {"type": "number", "minimum": 0, "maximum": 60},
+                "style": {"type": "string"}
+            }
+        },
+        "ai_disclosure_review": {
+            "type": "object", 
+            "description": "YouTube AI/Synthetic Content Disclosure Review for Modern Archivist Evidence Cinema",
+            "properties": {
+                "realistic_synthetic_media_present": {
+                    "type": "boolean",
+                    "description": "Whether the video contains photorealistic synthetic media that could be mistaken for real content"
+                },
+                "simulated_real_person_voice_or_likeness": {
+                    "type": "boolean", 
+                    "description": "Whether a real person's voice or likeness is simulated"
+                },
+                "altered_real_event_or_place": {
+                    "type": "boolean",
+                    "description": "Whether a real event or place is significantly altered"
+                },
+                "realistic_fake_scene": {
+                    "type": "boolean", 
+                    "description": "Whether the video contains a photorealistic fictitious scene"
+                },
+                "youtube_disclosure_required": {
+                    "type": "boolean",
+                    "description": "Whether YouTube's synthetic content disclosure rules require action"
+                },
+                "ai_content_types": {
+                    "type": "array",
+                    "description": "Categories of AI/synthetic content used in the video",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "narration_audio",
+                            "b_roll_visuals",
+                            "case_board_graphics",
+                            "ui_reconstruction",
+                            "visual_annotation",
+                            "evidence_card",
+                            "timeline_visualization",
+                            "background_assets",
+                            "scene_transition"
+                        ]
+                    }
+                },
+                "generation_strategy": {
+                    "type": "string",
+                    "description": "High-level strategy for how AI/synthetic content was generated",
+                    "enum": [
+                        "local_generation",
+                        "api_service",
+                        "saved_asset_reuse", 
+                        "manual_reconstruction",
+                        "mixed_method"
+                    ]
+                },
+                "rationale": {
+                    "type": "string", 
+                    "maxLength": 500,
+                    "description": "Comprehensive explanation of synthetic/AI content's purpose and generation approach"
+                },
+                "provenance_metadata": {
+                    "type": "object",
+                    "description": "Detailed tracking of AI/synthetic content generation",
+                    "properties": {
+                        "tool_names": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "Specific tools used in content generation"
+                        },
+                        "model_versions": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "AI model versions used"
+                        },
+                        "generation_parameters": {
+                            "type": "object",
+                            "description": "Key generation settings that influenced the output"
+                        }
+                    }
+                },
+                "provenance_notes": {
+                    "type": "array", 
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Detailed notes on generated/recreated assets, their sources, and editorial intent"
+                },
+                "risk_assessment": {
+                    "type": "object", 
+                    "description": "Risk evaluation for AI-generated content",
+                    "properties": {
+                        "visual_accuracy": {
+                            "type": "number", 
+                            "minimum": 0,
+                            "maximum": 1,
+                            "description": "Confidence in visual fidelity and absence of artifacts"
+                        },
+                        "contextual_accuracy": {
+                            "type": "number", 
+                            "minimum": 0,
+                            "maximum": 1,
+                            "description": "Confidence that generated content accurately represents source material"
+                        }
+                    }
+                }
+            },
+            "required": [
+                "realistic_synthetic_media_present", 
+                "youtube_disclosure_required", 
+                "ai_content_types", 
+                "generation_strategy", 
+                "rationale"
+            ]
+        }
+    }
+}

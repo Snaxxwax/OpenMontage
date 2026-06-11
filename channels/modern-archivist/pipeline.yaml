@@ -24,11 +24,16 @@ metadata:
     media_manifest: artifacts/media_manifest.json
     asset_manifest: artifacts/asset_manifest.json
     render_report: artifacts/render_report.json
+    thumbnail_manifest: artifacts/thumbnail_manifest.json
+    publish_packet: artifacts/publish_packet.json
+    retention_analysis: artifacts/retention_analysis.json
     content_collection: artifacts/content_collection.json
   schemas:
     episode: channels/modern-archivist/schemas/episode.schema.json
     media_manifest: channels/modern-archivist/schemas/media.schema.json
     content_collection: channels/modern-archivist/schemas/content_collection.schema.json
+    publish_packet: channels/modern-archivist/schemas/publish_packet.schema.json
+    retention_analysis: channels/modern-archivist/schemas/retention_analysis.schema.json
   constraints:
     no_webgl: true
     no_canvas_skeletal_rigging: true
@@ -70,6 +75,9 @@ required_skills:
 - channels/modern-archivist/skills/media-director.md
 - channels/modern-archivist/skills/asset-generation-director.md
 - channels/modern-archivist/skills/render-director.md
+- channels/modern-archivist/skills/thumbnail-director.md
+- channels/modern-archivist/skills/youtube-metadata.md
+- channels/modern-archivist/skills/retention-analyst.md
 - channels/modern-archivist/skills/review/evidence-auditor.md
 - channels/modern-archivist/skills/review/failure-thesis-critic.md
 - channels/modern-archivist/skills/review/voice-consistency-critic.md
@@ -79,9 +87,10 @@ required_skills:
 - meta/checkpoint-protocol
 compatible_playbooks:
   recommended:
-  - broadcast-investigative
+  - modern-archivist
   - flat-motion-graphics
   also_works:
+  - broadcast-investigative
   - clean-professional
   - minimalist-diagram
   custom_allowed: true
@@ -213,6 +222,7 @@ stages:
   tools_available:
   - tts_selector
   - fish_speech_tts
+  - f5_tts
   - piper_tts
   - openai_tts
   - google_tts
@@ -298,10 +308,14 @@ stages:
   optional_tools:
   - image_selector
   - local_diffusion
+  - comfyui_status
+  - comfyui_lifecycle
   tools_available:
   - image_selector
   - image_gen
   - local_diffusion
+  - comfyui_status
+  - comfyui_lifecycle
   - openai_image
   - google_imagen
   - grok_image
@@ -374,3 +388,63 @@ stages:
     - Audio continuity, loudness, and sync are verified with objective probes
     - Frame samples show no blank screens or source-label collisions
     - Render stays on approved Remotion or explicitly approved HyperFrames path
+
+- name: thumbnail
+  skill: channels/modern-archivist/skills/thumbnail-director.md
+  required_artifacts_in:
+  - episode
+  - render_report
+  produces:
+  - thumbnail_manifest
+  tools_available: []
+  checkpoint_required: true
+  human_approval_default: true
+  review_focus:
+  - Generates three ranked thumbnail concepts for YouTube Test & Compare
+  - Checks mobile/TV safe-zone readability and shelf contrast
+  - Ensures title/thumbnail promise matches the cold open and evidence thesis
+  success_criteria:
+  - thumbnail_manifest artifact is produced
+  - Three ranked variants are documented with rationale
+  - Recommended upload candidate and test candidates are identified
+  - Safe-zone and readability checks are recorded
+- name: publish_prep
+  skill: channels/modern-archivist/skills/youtube-metadata.md
+  required_artifacts_in:
+  - render_report
+  - thumbnail_manifest
+  produces:
+  - publish_packet
+  tools_available: []
+  checkpoint_required: true
+  human_approval_default: true
+  review_focus:
+  - Validation of structured YouTube publication metadata
+  - Checks for title variants, chapters, description quality
+  - Comprehensive AI/synthetic content disclosure review
+  - Validates AI content provenance and disclosure requirements
+  success_criteria:
+  - Full publish_packet artifact generated according to schema
+  - Title variants pass validation
+  - Description meets platform requirements
+  - Pinned comment strategy defined
+  - AI disclosure review is complete and accurate
+  - Synthetic content provenance is fully documented
+- name: retention_review
+  skill: channels/modern-archivist/skills/retention-analyst.md
+  required_artifacts_in:
+  - publish_packet
+  - render_report
+  produces:
+  - retention_analysis
+  tools_available: []
+  checkpoint_required: false
+  human_approval_default: false
+  review_focus:
+  - Converts CTR, thumbnail/title fit, intro retention, spikes, and dips into durable channel learning
+  - Identifies whether shelf promise matched cold-open payoff
+  - Records playbook or scripting adjustments for future episodes
+  success_criteria:
+  - retention_analysis artifact is produced after publish data is available
+  - Intro retention notes, spikes, dips, and packaging fit are documented
+  - Future playbook/script recommendations are explicit and evidence-based

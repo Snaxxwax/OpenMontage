@@ -15,6 +15,7 @@ export interface CinematicVideoScene extends CinematicBaseScene {
   filter?: string;
   fadeInFrames?: number;
   fadeOutFrames?: number;
+  playbackRate?: number;
 }
 
 export interface CinematicTitleScene extends CinematicBaseScene {
@@ -28,7 +29,24 @@ export interface CinematicTitleScene extends CinematicBaseScene {
   variant?: "plate" | "overlay";
 }
 
-export type CinematicScene = CinematicVideoScene | CinematicTitleScene;
+export interface TerminalLogEntry {
+  day: number | null;
+  type: "crew" | "autonomous" | "gap";
+  text: string;
+}
+
+export interface CinematicTerminalLogScene extends CinematicBaseScene {
+  kind: "terminal_log";
+  entries: TerminalLogEntry[];
+  /** If true, start mid-scroll at the autonomous entries (for flash cut reprises) */
+  flash?: boolean;
+  stationId?: string;
+}
+
+export type CinematicScene =
+  | CinematicVideoScene
+  | CinematicTitleScene
+  | CinematicTerminalLogScene;
 
 export interface CinematicSoundtrack {
   src: string;

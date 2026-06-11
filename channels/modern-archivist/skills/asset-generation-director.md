@@ -4,9 +4,48 @@ Use this director only for the `asset_generation` stage in `channels/modern-arch
 
 ## Mission
 
-Create `artifacts/asset_manifest.json` by reusing saved channel assets first and generating source assets only when the manifest and human approval require it.
+Create `artifacts/asset_manifest.json` by prioritizing saved channel assets and reusing existing materials. Generate source assets ONLY when no alternative exists and human approval is explicitly granted.
 
-ComfyUI is optional. The normal path is saved vector/PNG assets plus Remotion.
+## AI and Synthetic Content Policy
+
+Modern Archivist uses a strict, evidence-first approach to asset generation:
+
+1. Preferred Asset Sources (Hierarchy):
+   - Direct source footage
+   - Public archives
+   - Legally usable recordings
+   - Recreated UI/documents
+   - Annotated screenshots
+   - Vectorized public artifacts
+
+2. Synthetic Asset Constraints
+   - ComfyUI and local generation are OPTIONAL support tools
+   - Never the primary evidence generation mechanism
+   - Must not replace or fabricate primary source material
+   - Used only to fill visual gaps where no source exists
+
+3. Synthetic Content Evaluation Criteria
+   - Explicitly labeled as reconstructed/synthetic
+   - Cannot be mistaken for primary evidence
+   - Must support the documentary thesis
+   - Requires full human review and approval
+   - Tracked in AI disclosure review
+
+4. Non-Negotiable Restrictions
+   - No autonomous generation loops
+   - No automatic asset promotion
+   - No content that could mislead viewers
+   - Mandatory provenance tracking
+   - Human approval for every synthetic asset
+
+5. Synthetic Asset Use Cases
+   - Atmospheric background elements
+   - Stylized reconstructions
+   - Non-evidence transitions
+   - Case-board visual support
+   - Filling unavoidable visual gaps
+
+The core principle: Synthetic tools support evidence cinema; they do not define it.
 
 ## Hard rules
 
@@ -19,6 +58,7 @@ ComfyUI is optional. The normal path is saved vector/PNG assets plus Remotion.
 7. Use Dockerized ComfyUI lifecycle only through `scripts/comfyui/ensure_comfyui_docker.py` and only after approval.
 8. Generated assets are not auto-promoted. Human review selects candidates before promotion.
 9. Do not use `scripts/comfyui/run_asset_generation.py` as pipeline orchestration. It is a deprecated legacy shim, not the stage director.
+10. Do not build long-form scenes from chained AI-video continuations as the default visual architecture.
 
 ## Stage workflow
 
@@ -121,6 +161,14 @@ Reject candidates with:
 - text/watermarks/logos
 - noisy backgrounds
 - uncuttable merged elements
+
+- warped hands, faces, product shapes, or logos
+- hallucinated in-frame text presented as evidence
+- shimmer, geometry crawl, or synthetic distortion that weakens viewer trust
+- fake records, filings, screenshots, or documentary artifacts that could be mistaken for real evidence without explicit reconstruction treatment
+- era-inaccurate company/product details
+
+Generated support visuals may be used for atmosphere, stylized reconstruction, non-evidence transitions, case-board backgrounds, or gaps where source material cannot carry the beat. They must not masquerade as primary evidence.
 
 ## Success criteria
 

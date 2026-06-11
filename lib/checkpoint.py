@@ -67,8 +67,9 @@ def get_pipeline_stages(pipeline_type: str | None) -> list[str]:
         return list(STAGES)
 
     try:
-        from lib.pipeline_loader import load_pipeline, get_stage_order
-        manifest = load_pipeline(pipeline_type)
+        from lib.pipeline_loader import load_pipeline, get_stage_order, list_channel_pipelines
+        source = "channel" if pipeline_type in list_channel_pipelines() else "core"
+        manifest = load_pipeline(pipeline_type, source=source)
         return get_stage_order(manifest)
     except (FileNotFoundError, Exception):
         # Graceful fallback: return all known stages in canonical order

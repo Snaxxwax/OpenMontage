@@ -42,7 +42,7 @@ def check_scene_variation(scenes: list[dict[str, Any]]) -> dict[str, Any]:
 
     # --- Check 1: Shot size variety ---
     shot_sizes = [
-        s.get("shot_language", {}).get("shot_size", "unspecified")
+        (s.get("shot_language") or {}).get("shot_size", "unspecified")
         for s in scenes
     ]
     size_counts = Counter(shot_sizes)
@@ -56,19 +56,23 @@ def check_scene_variation(scenes: list[dict[str, Any]]) -> dict[str, Any]:
             suggestions.append("Mix wide establishing shots with close-ups for visual rhythm.")
 
     # --- Check 2: Consecutive same-size shots ---
-    consecutive_same = 0
+    max_run = 1
+    current_run = 1
     for i in range(1, len(shot_sizes)):
         if shot_sizes[i] == shot_sizes[i-1] and shot_sizes[i] != "unspecified":
-            consecutive_same += 1
-    if consecutive_same >= 3:
+            current_run += 1
+            max_run = max(max_run, current_run)
+        else:
+            current_run = 1
+    if max_run >= 3:
         violations.append(
-            f"{consecutive_same} consecutive same-size shots. "
+            f"Found {max_run} consecutive same-size shots. "
             f"Vary shot sizes between scenes for editorial rhythm."
         )
 
     # --- Check 3: Static shot overuse ---
     movements = [
-        s.get("shot_language", {}).get("camera_movement", "unspecified")
+        (s.get("shot_language") or {}).get("camera_movement", "unspecified")
         for s in scenes
     ]
     static_count = sum(1 for m in movements if m in ("static", "unspecified"))
@@ -81,9 +85,9 @@ def check_scene_variation(scenes: list[dict[str, Any]]) -> dict[str, Any]:
 
     # --- Check 4: Lighting variety ---
     lightings = {
-        s.get("shot_language", {}).get("lighting_key")
+        (s.get("shot_language") or {}).get("lighting_key")
         for s in scenes
-        if s.get("shot_language", {}).get("lighting_key")
+        if (s.get("shot_language") or {}).get("lighting_key")
     }
     if len(scenes) >= 4 and len(lightings) <= 1:
         violations.append(
@@ -102,12 +106,12 @@ def check_scene_variation(scenes: list[dict[str, Any]]) -> dict[str, Any]:
     if hero_scenes:
         for hero in hero_scenes:
             hero_idx = scenes.index(hero)
-            hero_size = hero.get("shot_language", {}).get("shot_size")
+            hero_size = (hero.get("shot_language") or {}).get("shot_size")
             # Check neighbors
             for offset in (-1, 1):
                 neighbor_idx = hero_idx + offset
                 if 0 <= neighbor_idx < len(scenes):
-                    neighbor_size = scenes[neighbor_idx].get("shot_language", {}).get("shot_size")
+                    neighbor_size = (scenes[neighbor_idx].get("shot_language") or {}).get("shot_size")
                     if hero_size and neighbor_size and hero_size == neighbor_size:
                         violations.append(
                             f"Hero scene '{hero.get('id')}' has same shot size as neighbor. "

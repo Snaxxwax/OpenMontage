@@ -31,26 +31,39 @@
           "start",
           "end",
           "text",
-          "tags"
+          "tags",
+          "narrative_phase",
+          "retention_device",
+          "visual_mode",
+          "layout",
+          "color_state",
+          "evidence_role",
+          "estimated_duration_seconds"
         ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique identifier for the section"
           },
           "start": {
-            "type": "number"
+            "type": "number",
+            "description": "Start time of the section in seconds"
           },
           "end": {
-            "type": "number"
+            "type": "number",
+            "description": "End time of the section in seconds"
           },
           "text": {
-            "type": "string"
+            "type": "string",
+            "description": "Descriptive text for the section"
           },
           "narration": {
-            "type": "string"
+            "type": "string",
+            "description": "Spoken narration for the section"
           },
           "tags": {
-            "type": "array"
+            "type": "array",
+            "description": "Descriptive tags for the section"
           },
           "narrative_phase": {
             "enum": [

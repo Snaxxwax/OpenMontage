@@ -23,6 +23,8 @@ PLAYBOOK_SCHEMA_PATH = (
 STYLES_DIR = Path(__file__).resolve().parent.parent / "styles"
 CUSTOM_STYLES_DIR = STYLES_DIR / "custom"
 
+_FALLBACK_CHART_COLORS = _FALLBACK_CHART_COLORS
+
 
 def _load_playbook_schema() -> dict:
     with open(PLAYBOOK_SCHEMA_PATH) as f:
@@ -107,6 +109,10 @@ def generate_playbook(
             cp["background"] = colors["background"]
         if colors.get("text"):
             cp["text"] = colors["text"]
+
+        primary_list = cp["primary"]
+        accent_list = cp["accent"]
+        playbook["chart_palette"] = primary_list + accent_list + _FALLBACK_CHART_COLORS
 
     # Override fonts if provided
     if context.get("fonts"):
@@ -193,7 +199,7 @@ def _create_minimal_playbook(name: str, context: dict[str, Any]) -> dict[str, An
             "Text must be legible on all backgrounds",
             "Transitions should be purposeful, not decorative",
         ],
-        "chart_palette": primary + accent + ["#10B981", "#EF4444", "#8B5CF6"],
+        "chart_palette": primary + accent + _FALLBACK_CHART_COLORS,
     }
 
 

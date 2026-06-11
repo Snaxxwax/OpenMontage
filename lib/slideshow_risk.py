@@ -103,7 +103,7 @@ def _score_repetition(scenes: list[dict]) -> dict[str, Any]:
     unique_desc_ratio = len(set(descriptions)) / len(descriptions)
 
     # Check shot size repetition
-    sizes = [s.get("shot_language", {}).get("shot_size", "none") for s in scenes]
+    sizes = [(s.get("shot_language") or {}).get("shot_size", "none") for s in scenes]
     size_ratio = Counter(sizes).most_common(1)[0][1] / len(scenes)
 
     score = 0.0
@@ -153,7 +153,7 @@ def _score_weak_motion(scenes: list[dict]) -> dict[str, Any]:
     purposeless_moving = 0
 
     for scene in scenes:
-        sl = scene.get("shot_language", {})
+        sl = scene.get("shot_language") or {}
         movement = sl.get("camera_movement", "static")
         if movement not in ("static", "unspecified", None):
             total_moving += 1
@@ -237,14 +237,14 @@ def _score_cinematic_claims(
 
     has_movement = sum(
         1 for s in scenes
-        if s.get("shot_language", {}).get("camera_movement", "static") != "static"
+        if (s.get("shot_language") or {}).get("camera_movement", "static") != "static"
     )
     if has_movement < len(scenes) * 0.3:
         issues.append(f"Claims cinematic but only {has_movement}/{len(scenes)} scenes have camera movement")
 
     has_lighting = sum(
         1 for s in scenes
-        if s.get("shot_language", {}).get("lighting_key")
+        if (s.get("shot_language") or {}).get("lighting_key")
     )
     if has_lighting < len(scenes) * 0.3:
         issues.append(f"Claims cinematic but only {has_lighting}/{len(scenes)} scenes define lighting")

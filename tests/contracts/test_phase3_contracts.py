@@ -30,6 +30,7 @@ from tools.audio.elevenlabs_tts import ElevenLabsTTS
 from tools.audio.openai_tts import OpenAITTS
 from tools.audio.piper_tts import PiperTTS
 from tools.audio.fish_speech_tts import FishSpeechTTS
+from tools.audio.f5_tts import F5TTS
 from tools.audio.tts_selector import TTSSelector
 
 
@@ -99,6 +100,49 @@ class TestFishSpeechTTS:
         assert payload["normalize"] is True
 
 
+class TestF5TTS:
+    def test_identity(self):
+        tool = F5TTS()
+        info = tool.get_info()
+        assert info["name"] == "f5_tts"
+        assert info["tier"] == "voice"
+        assert info["capability"] == "tts"
+        assert info["provider"] == "f5_tts"
+        assert info["runtime"] == "local_gpu"
+
+    def test_cost_is_free(self):
+        tool = F5TTS()
+        assert tool.estimate_cost({"text": "anything"}) == 0.0
+
+    def test_build_command_uses_f5_cli_contract(self, tmp_path):
+        tool = F5TTS()
+        ref_audio = tmp_path / "ref.wav"
+        ref_audio.write_bytes(b"RIFF")
+        output_path = tmp_path / "out.wav"
+        cmd = tool.build_command({
+            "text": "The contradiction was already in the launch demo.",
+            "reference_audio_path": str(ref_audio),
+            "reference_text": "This is the reference narrator.",
+            "output_path": str(output_path),
+            "device": "cuda",
+            "model": "F5TTS_v1_Base",
+            "speed": 0.95,
+            "remove_silence": True,
+        })
+        assert cmd[0] == "f5-tts_infer-cli"
+        assert "--ref_audio" in cmd
+        assert str(ref_audio) in cmd
+        assert "--ref_text" in cmd
+        assert "This is the reference narrator." in cmd
+        assert "--gen_text" in cmd
+        assert "The contradiction was already in the launch demo." in cmd
+        assert "--output_dir" in cmd
+        assert str(output_path.parent) in cmd
+        assert "--output_file" in cmd
+        assert output_path.name in cmd
+        assert "--remove_silence" in cmd
+
+
 class TestMusicGen:
     def test_identity(self):
         tool = MusicGen()
@@ -131,10 +175,11 @@ class TestNewToolsRegistry:
         reg.register(OpenAITTS())
         reg.register(PiperTTS())
         reg.register(FishSpeechTTS())
+        reg.register(F5TTS())
         voice_tools = reg.get_by_tier(ToolTier.VOICE)
-        assert len(voice_tools) == 4
+        assert len(voice_tools) == 5
         names = {t.name for t in voice_tools}
-        assert names == {"elevenlabs_tts", "openai_tts", "piper_tts", "fish_speech_tts"}
+        assert names == {"elevenlabs_tts", "openai_tts", "piper_tts", "fish_speech_tts", "f5_tts"}
 
 
 class TestCapabilityMetadata:
@@ -153,9 +198,11 @@ class TestCapabilityMetadata:
         reg.register(OpenAITTS())
         reg.register(PiperTTS())
         reg.register(FishSpeechTTS())
+        reg.register(F5TTS())
         reg.register(TTSSelector())
         assert {tool.name for tool in reg.get_by_capability("tts")} == {
             "elevenlabs_tts",
+            "f5_tts",
             "fish_speech_tts",
             "openai_tts",
             "piper_tts",
@@ -169,10 +216,11 @@ class TestCapabilityMetadata:
         reg.register(OpenAITTS())
         reg.register(PiperTTS())
         reg.register(FishSpeechTTS())
+        reg.register(F5TTS())
         catalog = reg.capability_catalog()
         assert "tts" in catalog
         providers = {item["provider"] for item in catalog["tts"] if item["provider"] != "selector"}
-        assert providers == {"doubao", "elevenlabs", "fish_speech", "google_tts", "openai", "piper"}
+        assert providers == {"doubao", "elevenlabs", "f5_tts", "fish_speech", "google_tts", "openai", "piper"}
 
 
 # ---- Animated Explainer Pipeline ----

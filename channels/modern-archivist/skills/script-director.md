@@ -19,13 +19,106 @@ Produce `artifacts/episode.json` conforming to `channels/modern-archivist/schema
 
 Dry, forensic, and precise. The Archivist should sound like a skeptical narrator opening a case file, not a hype channel. Use phrases that imply evidence handling: "the record says", "the promise was", "the failure mode was", "the receipt is".
 
-## Structure
+Sound like you're following a trail, not teaching a class. Let the evidence feel dangerous. Use silence and short lines before major reveals.
 
-1. Cold open: the promise or contradiction.
-2. Context: why people believed it could work.
-3. Evidence: the decisions, incentives, and missing assumptions.
-4. Failure mode: the point where the story becomes inevitable.
-5. Autopsy: what the case reveals about markets, platforms, or institutions.
+## Long-form narration and local TTS guardrails
+
+Modern Archivist is local-first, but long narration must not be generated as one uninterrupted TTS pass.
+
+- Plan narration in section-sized blocks that can be generated, reviewed, and replaced independently.
+- Preserve short intentional silences before major reveals; do not let silence removal flatten documentary tension into jump-cut pacing.
+- Each narration block must be listenable for prosody, emphasis, pacing, and voice consistency before concatenation.
+- Final narration must be loudness-normalized and probed by the audio/audio-analysis stages before render.
+- Any cloned, synthetic, or non-original voice path must carry consent/provenance notes so publish_prep can complete `ai_disclosure_review` accurately.
+
+**Good style examples:**
+- "The demo looked harmless. That was the problem."
+- "For a few weeks, everyone wanted to believe it."
+- "Then the receipts started appearing."
+- "The company did not fail because nobody understood the future. It failed because too many people did."
+- "This was not a bug. It was the business model showing through."
+
+**Bad style — never write this:**
+- "In today's video we are going to talk about..."
+- "First, let's define..."
+- "This is an important topic because..."
+- "To understand this, we need to go back to..."
+- "There are many factors..."
+- "Overall, it is clear that..."
+
+## Cold Open Rules
+
+The cold open is the only line of defense against the back button.
+
+- Open with stakes, not context. The first 20 seconds must create an unanswered question.
+- Acceptable cold open hooks: a bizarre failure nobody can explain yet; a company promise that aged terribly; a quote that sounds fake but is real; a product demo that reveals the whole lie; a strange artifact from an old forum, lawsuit, repo, ad, keynote, or leaked document; a contradiction between what the public was told and what actually happened.
+- Do not start with definitions.
+- Do not begin with "To understand this, we need to go back." Earn the flashback first.
+- The cold open ends on a question or contradiction — not an answer.
+
+## Narrative Structure
+
+1. Cold open: the strange artifact or failure
+2. Title sting: bold thesis line
+3. Setup: what people thought this was
+4. First crack: the first sign something was wrong
+5. Incentives: who benefited from the illusion
+6. Escalation: how the system got bigger than the truth
+7. Evidence sequence: documents, demos, posts, timelines, contradictions
+8. Reversal: the thing everyone missed
+9. Collapse or consequence: what broke, who paid, what changed
+10. Final thesis: what this reveals about the internet, tech, AI, or culture
+
+## Retention Loop Rules
+
+These are hard constraints, not suggestions:
+
+### Quantitative Retention Guidelines
+
+- **Words Per Minute (WPM)**:
+  - Target: 130-150 WPM average
+  - Peaks/valleys allowed: 90-180 WPM for specific dramatic moments
+  - No more than 3 consecutive sentences above 180 WPM
+
+- **Tension Introduction Cadence**:
+  - Mandatory: Introduce a new tension element every 60-90 seconds
+  - Tension types (must rotate):
+    1. Money dynamics
+    2. Power structures
+    3. Ego/reputation
+    4. Technological failure
+    5. Systemic deception
+    6. Unintended consequences
+
+- **Section Ending Contract**:
+  - Prohibited: Neutral summary endings
+  - Required: Each section must end with one of:
+    1. A revealing contradiction (mandatory escalation)
+    2. An unexpected pivot
+    3. A stakes-raising question
+    4. A dramatic reversal
+
+- **Visual State Transition**:
+  - Mandatory visual mode change every 3-6 sections
+  - No more than 2 consecutive sections in the same visual mode
+  - Enforce visual rhythm: `monologue` → `case_file` → `source_montage` → repeat
+
+### Qualitative Retention Principles
+
+- Plant unanswered questions before giving background.
+- Delay the full explanation until the viewer understands why it matters.
+- Avoid long neutral chronology unless each beat changes the viewer's understanding.
+- Use evidence cards as payoff moments, not as visual filler.
+
+### Retention Tracking
+
+Each section MUST include:
+- `narrative_phase`
+- `retention_device`
+- Explicit `estimated_duration_seconds`
+- At least one `evidence_ref`
+
+Violation of these rules requires human review and explicit override.
 
 ## Visual mapping
 

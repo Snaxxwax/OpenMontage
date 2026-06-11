@@ -24,6 +24,7 @@ function resolveAsset(src: string): string {
   return staticFile(clean);
 }
 import { CinematicRendererProps, CinematicTone, CinematicVideoScene } from "./cinematic/types";
+import { TerminalLogScene } from "./cinematic/TerminalLogScene";
 import { CaptionOverlay } from "./components/CaptionOverlay";
 
 const FPS = 30;
@@ -505,6 +506,12 @@ export const CinematicRenderer: React.FC<CinematicRendererProps> = ({
         >
           {scene.kind === "video" ? (
             <SceneVideo scene={scene} />
+          ) : scene.kind === "terminal_log" ? (
+            <TerminalLogScene
+              entries={scene.entries}
+              flash={scene.flash}
+              stationId={scene.stationId}
+            />
           ) : (
             <TitleCard
               text={scene.text}

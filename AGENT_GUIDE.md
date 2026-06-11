@@ -262,6 +262,8 @@ If the folder has tracks, the proposal and asset stages should present them as o
 | `cinematic` | Trailer, teaser, and mood-led edits | production |
 | `animation` | Motion-graphics and animation-first videos | production |
 | `character-animation` | Local rigged cartoon characters and reusable character acting | beta |
+| `svg-character` | SVG rigged character animation via HyperFrames/Remotion | beta |
+| `documentary-montage` | Retrieval-first thematic montage from archival/public-domain footage | beta |
 | `hybrid` | Source footage plus support visuals | production |
 | `avatar-spokesperson` | Presenter-led avatar or lip-sync videos | production |
 | `localization-dub` | Subtitle, dub, and translated variants | beta |

@@ -354,6 +354,46 @@ For each candidate story, collect:
 
 The script must be written around available visual evidence, not abstract ideas.
 
+## Local-First Architecture Principles
+
+The Modern Archivist is a local-first but not synthetic-first production system:
+
+- Local generation is used to reduce cost, improve privacy, and create repeatable outputs.
+- Local tools are means to an end, not the primary story mechanism.
+- Local TTS is acceptable only if it passes voice consistency and disclosure checks.
+- ComfyUI and local video diffusion are optional source-asset support only, not the foundation of the episode.
+- Real source footage, public artifacts, archived pages, product UI, filings, launch demos, and recreated evidence cards remain the default visual language.
+- Remotion remains the canonical final assembler for deterministic, evidence-driven narrative.
+
+### Local Tool Principles
+
+1. Cost and Privacy: Use local tools to reduce per-call API costs and protect iterative work privacy.
+2. Determinism: Local generation provides repeatable, controlled outputs.
+3. Provenance: Any AI/generated content must be explicitly disclosed and reviewed.
+4. Evidence Primacy: Local tools support the evidence chain; they do not replace it.
+
+### AI and Synthetic Content Policy
+
+- Generated assets must not replace real evidence or source material.
+- All synthetic or AI-generated content requires:
+  - Explicit provenance tracking
+  - Disclosure review before publication
+  - Clear labeling when used
+- Reject content that could mislead viewers about its synthetic nature
+- Use generated visuals only when:
+  - They support the evidence thesis
+  - Cannot be mistaken for real footage
+  - Are clearly labeled as recreations
+
+### Tooling Constraints
+
+- Avoid autonomous generation loops
+- Require human review for all generated content
+- Preserve the editorial intent of evidence-cinema
+- Prioritize source material over synthetic reconstruction
+
+Do not pivot the channel into a chained AI video generation system. The goal is evidence-cinema: thesis-driven, source-footage-first, deterministic, and credible.
+
 ## Acceptance bar for future development
 
 A development change supports the channel only if it improves at least one of these:
@@ -365,5 +405,7 @@ A development change supports the channel only if it improves at least one of th
 5. Runtime selection clarity and HyperFrames/Remotion handoff
 6. Render speed and objective QC
 7. Repeatable topic selection and episode franchising
+8. Local tool integration without compromising evidence discipline
+9. AI/generative technology provenance and disclosure practices
 
-If a change only makes it easier to produce charts, static documents, or generic explainer scenes, it is not aligned with this source of truth.
+If a change only makes it easier to produce charts, static documents, generic explainer scenes, or unchecked synthetic media, it is not aligned with this source of truth.

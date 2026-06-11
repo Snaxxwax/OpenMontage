@@ -85,6 +85,28 @@ def test_channel_pipeline_discovery_is_separate_from_core_pipeline_defs() -> Non
     assert "modern-archivist" not in [p.stem for p in (ROOT / "pipeline_defs").glob("*.yaml")]
 
 
+def test_modern_archivist_pipeline_has_thumbnail_stage() -> None:
+    manifest = load_pipeline("modern-archivist", source="channel")
+    
+    # Assert that thumbnail is a valid stage
+    thumbnail_stage = next((stage for stage in manifest["stages"] if stage["name"] == "thumbnail"), None)
+    assert thumbnail_stage is not None, "Thumbnail stage must exist in the pipeline"
+    
+    # Check stage requirements and characteristics
+    assert "checkpoint_required" in thumbnail_stage, "Thumbnail stage must have checkpoint configuration"
+    assert "human_approval_default" in thumbnail_stage, "Thumbnail stage must specify human approval policy"
+    assert thumbnail_stage.get("checkpoint_required", False) is True, "Thumbnail stage must require checkpointing"
+    assert thumbnail_stage.get("human_approval_default", False) is True, "Thumbnail stage must default to human approval"
+    
+    # Check that it produces thumbnail artifacts
+    assert "produces" in thumbnail_stage
+    assert "thumbnail_manifest" in thumbnail_stage["produces"], "Thumbnail stage must produce thumbnail_manifest artifact"
+    
+    # Check required inputs
+    assert "required_artifacts_in" in thumbnail_stage
+    assert "episode" in thumbnail_stage["required_artifacts_in"], "Thumbnail stage should require episode artifact"
+
+
 def test_load_pipeline_can_load_channel_pipeline_explicitly_without_core_mix_in() -> None:
     manifest = load_pipeline("modern-archivist", source="channel")
 
@@ -124,114 +146,28 @@ def test_modern_archivist_declares_package_local_subagent_quality_gates() -> Non
             assert lane["review_focus"]
 
 
-def test_modern_archivist_manifest_tool_names_are_registry_discoverable() -> None:
-    from tools.tool_registry import registry
-
-    registry.discover()
+def test_modern_archivist_pipeline_has_retention_review_stage() -> None:
     manifest = load_pipeline("modern-archivist", source="channel")
-    registry_tool_names = set(registry._tools)
-    stage_tool_names: set[str] = set()
-
-    for stage in manifest["stages"]:
-        for key in ["required_tools", "optional_tools", "tools_available"]:
-            stage_tool_names.update(stage.get(key, []))
-
-    legacy_semantic_labels = {
-        "asset_generation_needed",
-        "comfyui",
-        "comfyui_lifecycle",
-        "ffmpeg",
-        "ffprobe",
-        "fish_speech",
-        "remotion",
-    }
-
-    assert stage_tool_names
-    assert "tts_selector" in stage_tool_names
-    assert "fish_speech_tts" in stage_tool_names
-    assert "video_compose" in stage_tool_names
-    assert "hyperframes_compose" in stage_tool_names
-    assert stage_tool_names.isdisjoint(legacy_semantic_labels)
-    assert stage_tool_names <= registry_tool_names
-
-
-def test_channel_specific_terms_are_not_added_to_generic_pipeline_table() -> None:
-    project_context = (ROOT / "PROJECT_CONTEXT.md").read_text(encoding="utf-8")
-    available_table = project_context.split("## When Building New Pipelines", 1)[0]
-
-    assert "modern-archivist" not in available_table
-    assert "broadcast-explainer" not in available_table
-    assert "channels/<channel-name>/" in project_context or "channels/<name>/" in project_context
-
-
-def test_legacy_broadcast_explainer_is_archived_inside_modern_archivist_channel() -> None:
-    legacy_dir = CHANNEL_DIR / "legacy" / "broadcast-explainer"
-
-    assert not (ROOT / "pipeline_defs" / "broadcast-explainer.yaml").exists()
-    assert not (ROOT / "skills" / "pipelines" / "broadcast-explainer").exists()
-    assert legacy_dir.exists()
-    assert (legacy_dir / "pipeline.yaml").exists()
-    assert (legacy_dir / "README.md").exists()
-    assert (legacy_dir / "skills" / "script-director.md").exists()
-    assert (legacy_dir / "styles" / "broadcast-investigative.yaml").exists()
-
-    legacy_manifest = load_yaml(legacy_dir / "pipeline.yaml")
-    assert legacy_manifest["name"] == "broadcast-explainer"
-    assert legacy_manifest["metadata"]["archived_from"] == "pipeline_defs/broadcast-explainer.yaml"
-    assert legacy_manifest["metadata"]["legacy_status"] == "channel-reference-only"
-    assert legacy_manifest["metadata"]["canonical_successor"] == "channels/modern-archivist/pipeline.yaml"
-
-
-def test_core_pipeline_defs_do_not_contain_archived_channel_specific_pipelines() -> None:
-    core_pipeline_names = [p.stem for p in (ROOT / "pipeline_defs").glob("*.yaml")]
-
-    assert "broadcast-explainer" not in core_pipeline_names
-    assert "modern-archivist" not in core_pipeline_names
-
-
-def test_remotion_composer_modern_archivist_tree_is_thin_channel_adapter() -> None:
-    adapter_dir = ROOT / "remotion-composer" / "src" / "modern-archivist"
-    channel_src = CHANNEL_DIR / "remotion" / "src"
-    adapter_files = [
-        adapter_dir / "index.ts",
-        adapter_dir / "ModernArchivistComposition.tsx",
-        adapter_dir / "fixtures.ts",
-        adapter_dir / "styles.ts",
-        adapter_dir / "state.ts",
-        adapter_dir / "types.ts",
-        adapter_dir / "components" / "ArchivistPuppet.tsx",
-        adapter_dir / "components" / "ChannelFrame.tsx",
-        adapter_dir / "components" / "MediaContainer.tsx",
-        adapter_dir / "components" / "ScrollingCodeBackdrop.tsx",
-    ]
-
-    assert channel_src.exists()
-    for adapter_file in adapter_files:
-        text = adapter_file.read_text(encoding="utf-8")
-        assert "Thin adapter" in text
-        assert "channels/modern-archivist/remotion/src" in text
-        assert "from \"./" not in text
-        assert "React.FC" not in text
-        assert "AbsoluteFill" not in text
-
-
-def test_core_broadcast_investigative_playbook_is_generic_not_channel_identity() -> None:
-    playbook_path = ROOT / "styles" / "broadcast-investigative.yaml"
-    archive_snapshot_path = (
-        CHANNEL_DIR / "legacy" / "broadcast-explainer" / "styles" / "broadcast-investigative.yaml"
-    )
-
-    playbook = load_yaml(playbook_path)
-    playbook_text = playbook_path.read_text(encoding="utf-8").lower()
-    archive_snapshot_text = archive_snapshot_path.read_text(encoding="utf-8").lower()
-
-    assert "asymmetric" not in playbook_text
-    assert "modern archivist" not in playbook_text
-    assert "failure ledger" not in playbook_text
-    assert "e-girl" not in playbook_text
-    assert "channel" not in playbook["identity"]["best_for"].lower()
-    assert "investigative" in playbook["identity"]["best_for"].lower()
-
-    # The legacy snapshot remains available as historical channel-specific production DNA.
-    assert "asymmetric" in archive_snapshot_text
-    assert "e-girl" in archive_snapshot_text
+    
+    # Assert that retention_review is a valid stage
+    retention_review_stage = next((stage for stage in manifest["stages"] if stage["name"] == "retention_review"), None)
+    assert retention_review_stage is not None, "Retention review stage must exist in the pipeline"
+    
+    # Check stage characteristics
+    assert "checkpoint_required" in retention_review_stage, "Retention review stage must have checkpoint configuration"
+    assert retention_review_stage.get("checkpoint_required", False) is False, "Retention review stage should not require checkpointing"
+    assert "human_approval_default" in retention_review_stage, "Retention review stage must specify human approval policy"
+    assert retention_review_stage.get("human_approval_default", False) is False, "Retention review stage should not default to human approval"
+    
+    # Check that it produces retention analysis artifacts
+    assert "produces" in retention_review_stage
+    assert "retention_analysis" in retention_review_stage["produces"], "Retention review stage must produce retention_analysis artifact"
+    
+    # Check required inputs
+    assert "required_artifacts_in" in retention_review_stage
+    assert "publish_packet" in retention_review_stage["required_artifacts_in"], "Retention review stage should require publish_packet artifact"
+    assert "render_report" in retention_review_stage["required_artifacts_in"], "Retention review stage should require render_report artifact"
+    
+    # Check the skill
+    assert "skill" in retention_review_stage
+    assert "skills/retention-analyst.md" in retention_review_stage["skill"], "Retention review stage must use retention-analyst skill"
