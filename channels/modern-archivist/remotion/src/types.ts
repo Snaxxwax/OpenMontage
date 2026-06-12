@@ -100,6 +100,17 @@ export interface SourceAsset {
   absolute_path?: string;
   render_src?: string;
   poster_src?: string;
+  preprocessed?: {
+    remotion_safe?: boolean;
+    video_codec?: string;
+    pixel_format?: string;
+    fps?: number;
+    max_width?: number;
+    audio?: string;
+    source_path?: string;
+    output_path?: string;
+    poster_path?: string;
+  };
   asset_type: "video_clip" | "webpage_screenshot" | "video_frame" | "image" | "screenshot" | string;
   duration_sec?: string | number | null;
   rights_status: string;
