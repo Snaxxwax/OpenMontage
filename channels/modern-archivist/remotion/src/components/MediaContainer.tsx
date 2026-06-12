@@ -10,6 +10,7 @@ import { FailureGraph } from "./media/FailureGraph";
 import { KineticTypography } from "./media/KineticTypography";
 import { RecreatedUI } from "./media/RecreatedUI";
 import { SourceMontage } from "./media/SourceMontage";
+import { SourceSequence } from "./media/SourceSequence";
 
 interface MediaContainerProps { layout: LayoutState; media?: MediaItem; visualMode?: VisualMode; }
 
@@ -32,6 +33,7 @@ const MediaBody: React.FC<{ media: MediaItem }> = ({ media }) => {
   if (media.kind === "data_sequence") return <DataSequence media={media} />;
   if (media.kind === "code_walkthrough") return <CodeWalkthrough media={media} />;
   if (media.kind === "source_montage") return <SourceMontage media={media} />;
+  if (media.kind === "source_sequence") return <SourceSequence media={media} />;
   if (media.kind === "recreated_ui") return <RecreatedUI media={media} />;
   if (media.kind === "code") return <CodeWalkthrough media={{ ...media, kind: "code_walkthrough", title: media.title ?? "Code Artifact" }} />;
   if (media.kind === "article") return <div><Header title={media.title ?? "Article"} eyebrow={media.source ?? "source"} /><p style={{ color: "var(--text)", fontSize: 50, lineHeight: 1.16, maxWidth: 1400 }}>{media.body}</p></div>;

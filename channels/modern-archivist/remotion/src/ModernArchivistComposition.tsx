@@ -15,7 +15,15 @@ export const ModernArchivistComposition: React.FC<ModernArchivistEpisode> = (epi
   const visualMode = getActiveVisualMode(episode.sections, time);
   const colorState = getActiveColorState(episode.sections, time);
   const layout = layoutForColorState(colorState, visualMode);
-  const media = getActiveMediaSequence(episode.sections, tags, time);
+  const mediaBase = getActiveMediaSequence(episode.sections, tags, time);
+  const media = useMemo(() => {
+    if (mediaBase?.kind !== "source_sequence") return mediaBase;
+    return {
+      ...mediaBase,
+      assets: mediaBase.assets ?? episode.source_assets,
+      cues: mediaBase.cues ?? episode.visual_cues,
+    };
+  }, [episode.source_assets, episode.visual_cues, mediaBase]);
   const audioSrc = episode.audio_src && !episode.debug_disable_audio
     ? (episode.audio_src.startsWith("/") ? resolveAsset(episode.audio_src) : staticFile(episode.audio_src))
     : null;

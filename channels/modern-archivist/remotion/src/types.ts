@@ -92,6 +92,32 @@ export interface Provenance {
   note?: string;
 }
 
+export interface SourceAsset {
+  asset_id: string;
+  source_url: string;
+  source_owner: string;
+  local_path: string;
+  absolute_path?: string;
+  render_src?: string;
+  asset_type: "video_clip" | "webpage_screenshot" | "video_frame" | "image" | "screenshot" | string;
+  duration_sec?: string | number | null;
+  rights_status: string;
+  fair_use_justification?: string;
+  evidence_role?: EvidenceRole;
+  used_in_beats?: string[];
+}
+
+export interface VisualCue {
+  at: number;
+  end: number;
+  asset_id: string;
+  visual_treatment: string;
+  overlay_text?: string;
+  sfx?: string;
+  evidence_refs?: string[];
+  retention_role?: string;
+}
+
 interface MediaBase {
   id: string;
   kind: string;
@@ -120,6 +146,7 @@ export type MediaItem =
   | (MediaBase & { kind: "data_sequence"; title: string; chart_type?: "line" | "bar" | string; data?: Array<Record<string, unknown>> })
   | (MediaBase & { kind: "code_walkthrough"; language?: string; filename?: string; content: string; highlights?: Array<Record<string, unknown>> })
   | (MediaBase & { kind: "source_montage"; title: string; sources?: Array<Record<string, unknown>> })
+  | (MediaBase & { kind: "source_sequence"; title?: string; assets?: SourceAsset[]; cues?: VisualCue[]; cue_range?: [number, number] })
   | (MediaBase & { kind: "recreated_ui"; title: string; url?: string; claim_highlight?: string; before_after?: Array<Record<string, unknown>> });
 
 export type ScriptTag =
@@ -166,6 +193,8 @@ export interface ModernArchivistEpisode extends Record<string, unknown> {
   sections: EpisodeSection[];
   amplitude?: AudioAmplitudeSample[];
   word_timings?: WordTimestamp[];
+  source_assets?: SourceAsset[];
+  visual_cues?: VisualCue[];
   debug_disable_backdrop?: boolean;
   debug_disable_media?: boolean;
   debug_disable_audio?: boolean;
