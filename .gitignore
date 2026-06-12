@@ -20,6 +20,7 @@ htmlcov/
 output/
 pipeline/
 renders/
+logs/latest_experiment.json
 tests/qa/output/
 channels/*/renders/
 channels/*/assets/audio/
@@ -68,6 +69,15 @@ internal/
 .claude/memory/
 .claude/settings.local.json
 .hermes/
+!.hermes/
+.hermes/*
+!.hermes/soul.md
+!.hermes/skills/
+.hermes/skills/*
+!.hermes/skills/montage_optimization.md
+!.hermes/crons/
+.hermes/crons/*
+!.hermes/crons/overnight_loop.json
 .playwright-mcp/
 .superpowers/
 

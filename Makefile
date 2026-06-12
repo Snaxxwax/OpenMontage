@@ -1,4 +1,4 @@
-.PHONY: setup install install-dev install-gpu test test-contracts lint clean preflight demo demo-list hyperframes-doctor hyperframes-warm
+.PHONY: setup install install-dev install-gpu test test-contracts lint validate clean preflight demo demo-list hyperframes-doctor hyperframes-warm
 
 # ---- One-command setup ----
 
@@ -44,7 +44,9 @@ test:
 	python -m pytest tests/ -v
 
 test-contracts:
-	python -m pytest tests/contracts/ -v
+	python3 -m pytest tests/contracts/ -v
+
+validate: lint test-contracts
 
 # ---- Utilities ----
 
@@ -71,10 +73,11 @@ demo-list:
 	@python render_demo.py --list
 
 lint:
-	python -m py_compile tools/base_tool.py
-	python -m py_compile tools/tool_registry.py
-	python -m py_compile tools/cost_tracker.py
-	python -m py_compile tools/composition_validator.py
+	python3 -m py_compile tools/base_tool.py
+	python3 -m py_compile tools/tool_registry.py
+	python3 -m py_compile tools/cost_tracker.py
+	python3 -m py_compile tools/analysis/composition_validator.py
+	python3 -m py_compile pipeline_mutator.py prepare.py
 
 clean:
 	python -c "import pathlib, shutil; [shutil.rmtree(p) for p in pathlib.Path('.').rglob('__pycache__')]; [p.unlink() for p in pathlib.Path('.').rglob('*.pyc')]"

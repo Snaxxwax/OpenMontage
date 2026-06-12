@@ -1,0 +1,19 @@
+{
+  "name": "openmontage-autoresearch-overnight-loop",
+  "cron": "0 1 * * *",
+  "schedule": "0 1 * * *",
+  "workdir": "/home/pop/repos/openmontage-asymmetric",
+  "skills": [
+    "run_montage_experiment"
+  ],
+  "model": "gpt-5.5",
+  "provider": "openai-codex",
+  "goal": "Run up to 50 consecutive OpenMontage autoresearch optimization cycles using the run_montage_experiment skill. Each cycle must mutate only pipeline_mutator.py, test exactly one hypothesis, run python3 prepare.py --evaluate-latest, read logs/latest_experiment.json, commit only SDS improvements, and roll back every regression or crash. Target a reduction of the baseline Structural Dissimilarity Score by at least 20%. Stop early if the budget, runtime, or safety guardrails are reached. Report the final delta score and an executive summary of committed code changes when completed.",
+  "prompt": "Run up to 50 consecutive OpenMontage autoresearch optimization cycles using the run_montage_experiment skill. Each cycle must mutate only pipeline_mutator.py, test exactly one hypothesis, run python3 prepare.py --evaluate-latest, read logs/latest_experiment.json, commit only SDS improvements, and roll back every regression or crash. Target a reduction of the baseline Structural Dissimilarity Score by at least 20%. Stop early if the budget, runtime, or safety guardrails are reached. Report the final delta score and an executive summary of committed code changes when completed.",
+  "max_cycles": 50,
+  "max_runtime_minutes": 240,
+  "budget_cap_usd": 15.0,
+  "delivery": "origin",
+  "enabled": false,
+  "activation_note": "Declarative project-local cron spec only. The Hermes CLI currently lacks --model/--provider flags for cron create, but the cron backend supports per-job model/provider fields. Register with hermes cron create, then patch ~/.hermes/cron/jobs.json so this job has provider=openai-codex and model=gpt-5.5."
+}
