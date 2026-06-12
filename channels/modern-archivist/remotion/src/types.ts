@@ -99,6 +99,7 @@ export interface SourceAsset {
   local_path: string;
   absolute_path?: string;
   render_src?: string;
+  poster_src?: string;
   asset_type: "video_clip" | "webpage_screenshot" | "video_frame" | "image" | "screenshot" | string;
   duration_sec?: string | number | null;
   rights_status: string;

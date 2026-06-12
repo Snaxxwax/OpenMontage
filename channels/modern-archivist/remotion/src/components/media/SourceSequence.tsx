@@ -1,5 +1,5 @@
 import React from "react";
-import { Img, interpolate, useCurrentFrame, useVideoConfig, Video } from "remotion";
+import { Img, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import type { MediaItem, SourceAsset, VisualCue } from "../../types";
 import { resolveAsset } from "../../styles";
 import { labelStyle, valueText } from "./mediaStyles";
@@ -9,7 +9,9 @@ type SourceSequenceMedia = Extract<MediaItem, { kind: "source_sequence" }>;
 const SOURCE_DERIVED_TYPES = new Set(["video_clip", "video_frame", "webpage_screenshot", "image", "screenshot"]);
 
 function assetSrc(asset?: SourceAsset): string | undefined {
-  const src = asset?.render_src ?? asset?.absolute_path ?? asset?.local_path;
+  const src = asset?.asset_type === "video_clip"
+    ? (asset.poster_src ?? asset.render_src ?? asset.absolute_path ?? asset.local_path)
+    : (asset?.render_src ?? asset?.absolute_path ?? asset?.local_path);
   return src ? resolveAsset(src) : undefined;
 }
 
@@ -48,8 +50,7 @@ export const SourceSequence: React.FC<{ media: SourceSequenceMedia }> = ({ media
   return <div style={{ height: "100%", position: "relative", overflow: "hidden", borderRadius: 24, background: "#05090f" }}>
     <div style={{ position: "absolute", inset: 0, opacity: 0.28, background: "radial-gradient(circle at 32% 28%, var(--accent), transparent 34%), linear-gradient(135deg, rgba(255,255,255,0.08), transparent 52%)" }} />
     <div style={{ position: "absolute", inset: 0, transform: `scale(${push})`, transition: "transform 180ms linear", opacity: reveal }}>
-      {src && asset?.asset_type === "video_clip" ? <Video src={src} startFrom={Math.max(0, Math.floor(localCueTime * fps))} muted style={{ width: "100%", height: "100%", objectFit: "cover", filter: "contrast(1.08) saturate(0.92) brightness(0.82)" }} /> : null}
-      {src && asset?.asset_type !== "video_clip" ? <Img src={src} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "contrast(1.1) saturate(0.9) brightness(0.78)" }} /> : null}
+      {src ? <Img src={src} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "contrast(1.1) saturate(0.9) brightness(0.78)" }} /> : null}
       {!src ? <div style={{ width: "100%", height: "100%", display: "grid", placeItems: "center", color: "rgba(255,255,255,0.72)", fontSize: 54, fontWeight: 800 }}>MISSING SOURCE ASSET</div> : null}
     </div>
 

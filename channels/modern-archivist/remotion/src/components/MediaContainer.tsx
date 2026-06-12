@@ -38,7 +38,8 @@ const MediaBody: React.FC<{ media: MediaItem }> = ({ media }) => {
   if (media.kind === "code") return <CodeWalkthrough media={{ ...media, kind: "code_walkthrough", title: media.title ?? "Code Artifact" }} />;
   if (media.kind === "article") return <div><Header title={media.title ?? "Article"} eyebrow={media.source ?? "source"} /><p style={{ color: "var(--text)", fontSize: 50, lineHeight: 1.16, maxWidth: 1400 }}>{media.body}</p></div>;
   if (media.kind === "quote") return <KineticTypography media={{ id: media.id, kind: "kinetic_typography", text: media.quote, attribution: media.attribution, evidence_refs: media.evidence_refs }} />;
-  return <div style={{ height: "100%", display: "grid", gridTemplateRows: "1fr auto", gap: 24 }}><Img src={resolveAsset(media.src)} style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: 22 }} />{media.caption ? <div style={{ color: "var(--text)", fontSize: 34 }}>{media.caption}</div> : null}</div>;
+  if ("src" in media && typeof media.src === "string") return <div style={{ height: "100%", display: "grid", gridTemplateRows: "1fr auto", gap: 24 }}><Img src={resolveAsset(media.src)} style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: 22 }} />{"caption" in media && media.caption ? <div style={{ color: "var(--text)", fontSize: 34 }}>{media.caption}</div> : null}</div>;
+  return <KineticTypography media={{ id: media.id, kind: "kinetic_typography", text: media.title ?? "Evidence packet pending", attribution: media.kind.replace(/_/g, " ") }} />;
 };
 
 const Header: React.FC<{ title: string; eyebrow: string }> = ({ title, eyebrow }) => <div style={{ marginBottom: 32 }}><div style={{ color: "var(--accent)", fontSize: 24, letterSpacing: 8, textTransform: "uppercase", marginBottom: 12 }}>{eyebrow}</div><div style={{ color: "var(--text)", fontSize: 72, lineHeight: 0.95, fontWeight: 800 }}>{title}</div></div>;
