@@ -7,7 +7,7 @@ Dissimilarity Score (SDS); lower is better.
 
 # Visual structure controls. Keep values numeric and JSON-serializable.
 MOTION_DENSITY = 0.58
-CUT_RHYTHM = 0.52
+CUT_RHYTHM = 0.61
 EVIDENCE_CARD_SCALE = 0.44
 TYPOGRAPHY_WEIGHT = 0.62
 CONTRAST_BALANCE = 0.68
