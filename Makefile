@@ -37,6 +37,9 @@ install-dev:
 install-gpu:
 	pip install -r requirements-gpu.txt
 	pip install diffusers transformers accelerate
+	@python -c "import torch; ok=bool(torch.cuda.is_available() and getattr(torch.version,'cuda',None)); print(f'==> torch cuda_available={torch.cuda.is_available()} cuda_ver={getattr(torch.version,\"cuda\",None)}'); raise SystemExit(0 if ok else 1)" \
+	  && echo "==> CUDA PyTorch looks good." \
+	  || echo "==> [warn] CUDA PyTorch not detected. Local GPU tools will stay unavailable. Install a CUDA-enabled PyTorch build (see pytorch.org) and re-run: make install-gpu"
 
 # ---- Testing ----
 
