@@ -24,19 +24,19 @@ Each option must include:
 
 Read `skills/meta/animation-runtime-selector.md` before recommending a runtime.
 
-Per AGENT_GUIDE.md HARD RULE: **present both runtimes** to the user when both
-Remotion and hyperframes are available. Do not silently default to either.
+When both Remotion and HyperFrames are available:
 
 - Remotion: best when the final composition needs deterministic React-rendered
   video, captions, audio, scene JSON, and final MP4 governance.
-- HyperFrames (hyperframes): best when the character scene is HTML/SVG/GSAP-heavy
-  and benefits from web-native authoring, lint, validate, and registry blocks.
+- HyperFrames: best when the character scene is HTML/SVG/GSAP-heavy and benefits
+  from web-native authoring, lint, validate, and registry blocks.
 - FFmpeg: post-processing only. Do not pick FFmpeg as the primary runtime for
   character acting.
 
-Present the tradeoffs above, recommend one based on the brief, then wait for user
-approval before locking `render_runtime`. Record a `render_runtime_selection` entry
-in `decision_log` listing both runtimes considered.
+Present both Remotion and HyperFrames to the user before recommending one.
+Record the alternatives considered in the decision log as
+`render_runtime_selection`, including why `hyperframes` was accepted or rejected.
+Wait for user approval before locking `render_runtime`.
 
 ## Sample-First Rule
 
@@ -59,3 +59,12 @@ Report the difference:
 - TTS/music cost,
 - local render cost,
 - manual complexity risk.
+
+---
+
+## Gate Reminder (Binding)
+
+This stage gates on human approval (`human_approval_default: true`). After review passes:
+checkpoint with `status="awaiting_human"`, present the summary (the Backlot board renders
+the artifact), and **END YOUR TURN**. Do not start the next stage in the same response.
+Approval is per-gate — an earlier "go ahead" does not cover this gate.

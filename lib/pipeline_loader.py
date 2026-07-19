@@ -12,112 +12,66 @@ from typing import Any, Optional
 import yaml
 import jsonschema
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-PIPELINE_DEFS_DIR = PROJECT_ROOT / "pipeline_defs"
-CHANNEL_PACKAGES_DIR = PROJECT_ROOT / "channels"
-SCHEMA_PATH = PROJECT_ROOT / "schemas" / "pipelines" / "pipeline_manifest.schema.json"
-CHANNEL_PACKAGE_SCHEMA_PATH = PROJECT_ROOT / "schemas" / "channels" / "channel_package.schema.json"
+PIPELINE_DEFS_DIR = Path(__file__).resolve().parent.parent / "pipeline_defs"
+SCHEMA_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "schemas"
+    / "pipelines"
+    / "pipeline_manifest.schema.json"
+)
 
 
+from functools import lru_cache
+
+
+@lru_cache(maxsize=1)
 def _load_manifest_schema() -> dict:
     with open(SCHEMA_PATH) as f:
         return json.load(f)
 
 
-def _load_channel_package_schema() -> dict:
-    with open(CHANNEL_PACKAGE_SCHEMA_PATH) as f:
-        return json.load(f)
+@lru_cache(maxsize=64)
+def _load_pipeline_cached(name: str, defs_dir_key: str) -> dict[str, Any]:
+    """Cached manifest load. Treat the returned dict as READ-ONLY."""
+    return load_pipeline(name, Path(defs_dir_key) if defs_dir_key else None)
 
 
-def _load_yaml(path: Path) -> dict[str, Any]:
-    with open(path) as f:
-        return yaml.safe_load(f)
+def load_pipeline_readonly(name: str, defs_dir: Optional[Path] = None) -> dict[str, Any]:
+    """Load a manifest through a cache. The result MUST NOT be mutated.
+
+    Manifests are immutable within a run; hot paths (gate checks on every
+    checkpoint write, board state derivation) should use this instead of
+    re-parsing YAML + re-validating the schema each call.
+    """
+    return _load_pipeline_cached(name, str(defs_dir) if defs_dir else "")
 
 
-def _validate_pipeline_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
-    schema = _load_manifest_schema()
-    jsonschema.validate(instance=manifest, schema=schema)
-    return manifest
-
-
-def _channel_dir(name: str, channels_dir: Optional[Path] = None) -> Path:
-    channels_dir = channels_dir or CHANNEL_PACKAGES_DIR
-    return channels_dir / name
-
-
-def load_channel_package(name: str, channels_dir: Optional[Path] = None) -> dict[str, Any]:
-    """Load and validate channel package metadata by channel name."""
-    path = _channel_dir(name, channels_dir) / "package.yaml"
-    if not path.exists():
-        raise FileNotFoundError(f"Channel package metadata not found: {path}")
-
-    package = _load_yaml(path)
-    schema = _load_channel_package_schema()
-    jsonschema.validate(instance=package, schema=schema)
-    return package
-
-
-def discover_channel_packages(channels_dir: Optional[Path] = None) -> dict[str, dict[str, Any]]:
-    """Discover channel packages without mixing them into core pipeline_defs/."""
-    channels_dir = channels_dir or CHANNEL_PACKAGES_DIR
-    discovered: dict[str, dict[str, Any]] = {}
-    if not channels_dir.exists():
-        return discovered
-
-    for package_path in sorted(channels_dir.glob("*/package.yaml")):
-        package_dir = package_path.parent
-        package = load_channel_package(package_dir.name, channels_dir=channels_dir)
-        pipeline_path = package_dir / package["canonical_pipeline"]
-        discovered[package["name"]] = {
-            "source": "channel_package",
-            "package_path": package_path,
-            "package_dir": package_dir,
-            "pipeline_path": pipeline_path,
-            "package": package,
-        }
-    return discovered
-
-
-def list_channel_pipelines(channels_dir: Optional[Path] = None) -> list[str]:
-    """List pipeline names provided by channel packages."""
-    return sorted(discover_channel_packages(channels_dir).keys())
-
-
-def load_pipeline(
-    name: str,
-    defs_dir: Optional[Path] = None,
-    *,
-    source: str = "core",
-    channels_dir: Optional[Path] = None,
-) -> dict[str, Any]:
+def load_pipeline(name: str, defs_dir: Optional[Path] = None) -> dict[str, Any]:
     """Load and validate a pipeline manifest by name.
 
     Args:
         name: Pipeline name (without .yaml extension).
-        defs_dir: Override directory for core pipeline definitions.
-        source: "core" for pipeline_defs/ or "channel" for channels/<name>/.
-        channels_dir: Override directory for channel package discovery.
+        defs_dir: Override directory for pipeline definitions.
 
     Returns:
         Validated pipeline manifest dict.
     """
-    if source == "channel":
-        package = load_channel_package(name, channels_dir=channels_dir)
-        path = _channel_dir(name, channels_dir) / package["canonical_pipeline"]
-    elif source == "core":
-        defs_dir = defs_dir or PIPELINE_DEFS_DIR
-        path = defs_dir / f"{name}.yaml"
-    else:
-        raise ValueError("source must be 'core' or 'channel'")
-
+    defs_dir = defs_dir or PIPELINE_DEFS_DIR
+    path = defs_dir / f"{name}.yaml"
     if not path.exists():
         raise FileNotFoundError(f"Pipeline manifest not found: {path}")
 
-    return _validate_pipeline_manifest(_load_yaml(path))
+    with open(path) as f:
+        manifest = yaml.safe_load(f)
+
+    schema = _load_manifest_schema()
+    jsonschema.validate(instance=manifest, schema=schema)
+
+    return manifest
 
 
 def list_pipelines(defs_dir: Optional[Path] = None) -> list[str]:
-    """List all available core pipeline manifest names."""
+    """List all available pipeline manifest names."""
     defs_dir = defs_dir or PIPELINE_DEFS_DIR
     return [p.stem for p in defs_dir.glob("*.yaml")]
 
@@ -213,6 +167,18 @@ def get_stage_skill(manifest: dict, stage_name: str) -> Optional[str]:
     for stage in manifest["stages"]:
         if stage["name"] == stage_name:
             return stage.get("skill")
+    return None
+
+
+def get_stage_human_approval_default(manifest: dict, stage_name: str) -> Optional[bool]:
+    """Whether a stage gates on human approval. None if the stage isn't declared.
+
+    This is the single lookup used by gate enforcement (lib/checkpoint.py)
+    and the Backlot board — keep them reading the same field the same way.
+    """
+    for stage in manifest["stages"]:
+        if stage["name"] == stage_name:
+            return bool(stage.get("human_approval_default", False))
     return None
 
 
