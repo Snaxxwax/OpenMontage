@@ -32,7 +32,7 @@ import {
   KineticTypographyTest,
   kineticTypographyTestProps,
 } from "./compositions/KineticTypographyTest";
-import { ModernArchivistComposition, calculateModernArchivistMetadata } from "../../channels/modern-archivist/remotion/src/ModernArchivistComposition";
+
 import {
   ChannelFrameTest,
   channelFrameTestProps,
@@ -362,23 +362,7 @@ export const Root: React.FC = () => {
         height={1080}
         defaultProps={channelFrameTestProps}
       />
-      <Composition
-        id="ModernArchivist"
-        component={ModernArchivistComposition}
-        durationInFrames={30 * 120}
-        fps={30}
-        width={1920}
-        height={1080}
-        defaultProps={{
-          episode_id: "humane-ai-pin-autopsy-pilot",
-          title: "The $699 AI Pin That Needed a Server to Stay Alive",
-          duration_seconds: 90,
-          sections: [],
-          amplitude: [],
-          word_timings: [],
-        }}
-        calculateMetadata={calculateModernArchivistMetadata}
-      />
+
       <Composition
         id="EndTag"
         component={EndTag}

@@ -1,11 +1,7 @@
 # ComfyUI helper scripts
 
-These scripts are tools, not the Modern Archivist pipeline.
-
-Pipeline orchestration lives in:
-
-- `channels/modern-archivist/pipeline.yaml`
-- `channels/modern-archivist/skills/asset-generation-director.md`
+These scripts are generic tools. Pipeline orchestration lives in the selected
+core pipeline manifest and its director skills.
 
 ## Script classification
 
@@ -30,12 +26,12 @@ Contract:
 - Allowed behavior: report ComfyUI/GPU state, safely ensure the configured Dockerized ComfyUI service, free ComfyUI memory.
 - Forbidden behavior: deciding whether a pipeline stage should run, choosing asset intent/workflow/model, promoting assets, killing unknown GPU processes.
 
-## Correct Modern Archivist flow
+## Correct asset-generation flow
 
-1. Read `channels/modern-archivist/pipeline.yaml`.
+1. Read the selected core pipeline manifest.
 2. Enter `asset_generation` stage.
-3. Read `channels/modern-archivist/skills/asset-generation-director.md`.
-4. Run `asset_generation_needed.py` for the director-selected profile/intent.
+3. Read the selected asset-generation director skill.
+4. Run `asset_generation_needed.py --requirements <policy.yaml>` for the director-selected profile/intent.
 5. If saved assets satisfy the request, write/reuse `artifacts/asset_manifest.json` and skip ComfyUI.
 6. If assets are missing, present a generation plan and wait for human approval.
 7. Only after approval, use `ensure_comfyui_docker.py status|ensure` and a narrow provider submission helper.

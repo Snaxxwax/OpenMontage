@@ -56,13 +56,3 @@ def test_enrich_source_assets_marks_video_assets_as_remotion_safe(tmp_path: Path
     assert asset["preprocessed"]["remotion_safe"] is True
     assert asset["preprocessed"]["video_codec"] == "h264"
     assert asset["preprocessed"]["audio"] == "stripped_for_narration_mix"
-
-
-def test_source_sequence_uses_timed_offthread_video_only_for_preprocessed_clips() -> None:
-    source = (Path(__file__).resolve().parents[2] / "channels/modern-archivist/remotion/src/components/media/SourceSequence.tsx").read_text(encoding="utf-8")
-
-    assert "OffthreadVideo" in source
-    assert "Sequence" in source
-    assert "remotion_safe" in source
-    assert "from={Math.round(cue.at * fps)}" in source
-    assert "durationInFrames={Math.max(1, Math.round((cue.end - cue.at) * fps))}" in source

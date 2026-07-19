@@ -1,6 +1,0 @@
-import React from "react";
-import { Img, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import type { MediaItem } from "../../types";
-import { resolveAsset } from "../../styles";
-import { labelStyle } from "./mediaStyles";
-export const CinematicMetaphor: React.FC<{ media: Extract<MediaItem, { kind: "cinematic_metaphor" }> }> = ({ media }) => { const frame=useCurrentFrame(); const {fps}=useVideoConfig(); const pulse=interpolate(Math.sin(frame/fps*2),[-1,1],[.2,.75]); return <div style={{height:"100%",position:"relative",overflow:"hidden",borderRadius:24,background:"radial-gradient(circle at 50% 20%, rgba(0,128,128,.32), rgba(0,0,0,.92))"}}>{media.asset_src ? <Img src={resolveAsset(media.asset_src)} style={{width:"100%",height:"100%",objectFit:"cover",opacity:.62}}/> : <div style={{position:"absolute",inset:0,background:`repeating-linear-gradient(105deg, rgba(0,128,128,${pulse}) 0 3px, transparent 3px 54px)`}}/>}<div style={{position:"absolute",left:42,top:36,...labelStyle,color:"#FFCC66"}}>{media.label ?? "ILLUSTRATIVE"}</div><div style={{position:"absolute",left:60,bottom:70,color:"var(--text)",fontSize:78,fontWeight:900,maxWidth:1100,lineHeight:.95}}>{media.title}</div><div style={{position:"absolute",right:50,bottom:50,color:"rgba(246,244,234,.68)",fontSize:28}}>not evidence · {media.mood ?? "metaphor"}</div></div> };

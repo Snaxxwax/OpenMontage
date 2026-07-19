@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-import yaml
+
 
 from tools.base_tool import ToolRuntime, ToolTier
 from tools.tool_registry import ToolRegistry
@@ -80,13 +80,3 @@ def test_comfyui_lifecycle_tool_only_allows_safe_actions_and_preserves_dry_run(m
     freed = ComfyUILifecycle().execute({"action": "free"})
     assert freed.success
     assert calls[-1][-1] == "free"
-
-
-def test_modern_archivist_asset_generation_lists_comfyui_infrastructure_tools():
-    manifest = yaml.safe_load((ROOT / "channels/modern-archivist/pipeline.yaml").read_text())
-    asset_stage = next(stage for stage in manifest["stages"] if stage["name"] == "asset_generation")
-
-    assert "comfyui_status" in asset_stage["tools_available"]
-    assert "comfyui_lifecycle" in asset_stage["tools_available"]
-    assert "comfyui_status" in asset_stage["optional_tools"]
-    assert "comfyui_lifecycle" in asset_stage["optional_tools"]

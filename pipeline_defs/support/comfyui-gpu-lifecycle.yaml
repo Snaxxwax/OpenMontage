@@ -29,7 +29,7 @@ comfyui:
     input: /home/pop/ComfyUI/input
     output: /home/pop/ComfyUI/output
     custom_nodes: /home/pop/ComfyUI/custom_nodes
-    openmontage_outputs: /home/pop/repos/openmontage-asymmetric/channels/modern-archivist/assets/source/comfyui_generated
+
 
 # Processes/container workloads that should never be stopped by the pipeline.
 gpu_never_kill:

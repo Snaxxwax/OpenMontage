@@ -85,18 +85,6 @@ Python:
 
 If a new Python script decides creative intent, provider/model/workflow selection, GPU service flow, asset promotion, checkpoint policy, or review outcome, it is architecture drift. Move that logic into the pipeline manifest/director skill and reduce Python to an explicit-input JSON/tool utility.
 
-For Modern Archivist specifically, the authoritative flow is `channels/modern-archivist/pipeline.yaml` plus `channels/modern-archivist/skills/asset-generation-director.md`. Do not add a Python orchestration runner for asset generation.
-
-## Channel Package Boundary
-
-Generic OpenMontage pipelines live in `pipeline_defs/` with director skills under `skills/pipelines/`.
-Specialized vertical channels live under `channels/<channel-name>/` and must declare a `package.yaml`
-plus a canonical `pipeline.yaml`. Channel packages own channel identity, channel schemas, channel
-skills, design docs, templates, and channel-specific render contracts. OpenMontage core provides the
-shared engine: tools, provider plumbing, checkpoint utilities, schemas, and renderer infrastructure.
-
-Do not move channel-specific assumptions into `pipeline_defs/` or `skills/pipelines/` unless they are
-intentionally genericized for all OpenMontage users.
 
 ## What OpenMontage Is
 

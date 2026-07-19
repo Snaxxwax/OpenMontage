@@ -12,7 +12,7 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[2]
 PIPELINE_SCHEMA = ROOT / "schemas/pipelines/pipeline_manifest.schema.json"
-MODERN_ARCHIVIST_PIPELINE = ROOT / "channels/modern-archivist/pipeline.yaml"
+
 
 REQUIRED_STAGE_FIELDS = {
     "name",
@@ -49,32 +49,6 @@ ALLOWED_SCRIPT_EXCEPTIONS = set()
 def load_yaml(path: Path) -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
-
-def test_modern_archivist_pipeline_is_full_manifest() -> None:
-    manifest = load_yaml(MODERN_ARCHIVIST_PIPELINE)
-    schema = json.loads(PIPELINE_SCHEMA.read_text(encoding="utf-8"))
-    Draft202012Validator(schema).validate(manifest)
-
-    for top_level in [
-        "version",
-        "category",
-        "stability",
-        "default_checkpoint_policy",
-        "orchestration",
-        "required_skills",
-        "extensions",
-        "stages",
-    ]:
-        assert top_level in manifest
-
-    for stage in manifest["stages"]:
-        missing = REQUIRED_STAGE_FIELDS - set(stage)
-        assert not missing, f"stage {stage.get('name')} is missing required contract fields: {sorted(missing)}"
-        forbidden = FORBIDDEN_STAGE_FIELDS & set(stage)
-        assert not forbidden, f"stage {stage.get('name')} still has prototype/script-flow fields: {sorted(forbidden)}"
-        assert stage["produces"], f"stage {stage['name']} must declare produced artifacts"
-        assert stage["review_focus"], f"stage {stage['name']} must declare review focus"
-        assert stage["success_criteria"], f"stage {stage['name']} must declare success criteria"
 
 
 def test_pipeline_schema_supports_explicit_subagent_review_lanes() -> None:
@@ -117,28 +91,6 @@ def test_pipeline_schema_supports_explicit_subagent_review_lanes() -> None:
 
     Draft202012Validator(schema).validate(minimal_manifest)
 
-
-def test_modern_archivist_required_skills_exist() -> None:
-    manifest = load_yaml(MODERN_ARCHIVIST_PIPELINE)
-    for skill_ref in manifest["required_skills"]:
-        if skill_ref.startswith("meta/"):
-            path = ROOT / "skills" / f"{skill_ref}.md"
-        else:
-            path = ROOT / skill_ref
-        assert path.exists(), f"required skill missing: {skill_ref} -> {path}"
-
-
-def test_modern_archivist_manifest_does_not_route_through_deprecated_runner() -> None:
-    text = MODERN_ARCHIVIST_PIPELINE.read_text(encoding="utf-8")
-    manifest = load_yaml(MODERN_ARCHIVIST_PIPELINE)
-
-    assert "run_asset_generation.py" not in text
-    asset_stage = next(stage for stage in manifest["stages"] if stage["name"] == "asset_generation")
-    assert asset_stage["skill"] == "channels/modern-archivist/skills/asset-generation-director.md"
-    for routing_field in ["required_tools", "optional_tools", "tools_available"]:
-        assert "run_asset_generation.py" not in asset_stage.get(routing_field, [])
-    for legacy_field in ["provider", "lifecycle", "should_run_check", "saved_assets_policy", "output"]:
-        assert legacy_field not in asset_stage
 
 
 def iter_project_scripts() -> list[Path]:

@@ -16,7 +16,6 @@ services:
       - ${COMFYUI_WORKSPACE:-/home/pop/ComfyUI}/input:/opt/ComfyUI/input
       - ${COMFYUI_WORKSPACE:-/home/pop/ComfyUI}/output:/opt/ComfyUI/output
       - ${COMFYUI_WORKSPACE:-/home/pop/ComfyUI}/custom_nodes:/opt/ComfyUI/custom_nodes
-      - ${OPENMONTAGE_ROOT:-/home/pop/repos/openmontage-asymmetric}/channels/modern-archivist/assets/source/comfyui_generated:/opt/ComfyUI/output/comfyui_generated
     deploy:
       resources:
         reservations:

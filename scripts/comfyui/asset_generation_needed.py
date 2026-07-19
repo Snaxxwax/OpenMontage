@@ -6,9 +6,8 @@ models, or modify files. Pipeline agents should run it before touching the
 Dockerized ComfyUI lifecycle.
 
 Examples:
-    python3 scripts/comfyui/asset_generation_needed.py --profile mvp
-    python3 scripts/comfyui/asset_generation_needed.py --profile props_backgrounds
-    python3 scripts/comfyui/asset_generation_needed.py --intent props --intent thumbnail_base
+    python3 scripts/comfyui/asset_generation_needed.py --requirements path/to/asset_requirements.yaml --profile mvp
+    python3 scripts/comfyui/asset_generation_needed.py --requirements path/to/asset_requirements.yaml --intent thumbnail_base
 """
 from __future__ import annotations
 
@@ -21,7 +20,6 @@ from typing import Any
 import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_REQUIREMENTS = ROOT / "channels" / "modern-archivist" / "assets" / "comfyui_workflows" / "asset_requirements.yaml"
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -128,7 +126,7 @@ def evaluate(config: dict[str, Any], profiles: list[str], intents: list[str]) ->
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--requirements", type=Path, default=DEFAULT_REQUIREMENTS)
+    parser.add_argument("--requirements", type=Path, required=True, help="Asset requirements policy YAML to evaluate")
     parser.add_argument("--profile", action="append", default=[], help="Asset profile to require; defaults to mvp")
     parser.add_argument("--intent", action="append", default=[], help="Named generation intent from asset_requirements.yaml")
     parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output")

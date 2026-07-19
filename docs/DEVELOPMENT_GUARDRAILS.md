@@ -43,10 +43,9 @@ Do not add Python that decides:
 
 Those decisions belong in the pipeline manifest and director skills.
 
-## Required shape for new pipeline/channel work
+## Required shape for new pipeline work
 
-Every new generic pipeline in `pipeline_defs/` or channel-specific pipeline under
-`channels/<channel-name>/` must include:
+Every new pipeline in `pipeline_defs/` must include:
 
 - `version`
 - `category`
@@ -66,10 +65,7 @@ Every new generic pipeline in `pipeline_defs/` or channel-specific pipeline unde
 
 If a stage needs a new behavior, first update the stage director skill. Add Python only after the skill defines the contract and only for the narrow utility/tool portion.
 
-Channel-specific work belongs in `channels/<channel-name>/package.yaml`, `pipeline.yaml`, channel
-skills, schemas, design docs, templates, and render contracts. Do not place channel-specific identity,
-voice, assets, or render assumptions in generic `pipeline_defs/` or `skills/pipelines/` unless the
-behavior has been intentionally generalized for all OpenMontage users.
+Pipeline-specific work belongs in its manifest, skills, schemas, design docs, templates, and render contracts. Do not place pipeline-specific identity, voice, assets, or render assumptions in unrelated manifests or skills unless the behavior has been intentionally generalized for all OpenMontage users.
 
 ## Required review questions for new scripts
 
@@ -84,16 +80,6 @@ Before adding or keeping a Python script, answer yes to all:
 
 If any answer is no, move that logic into YAML/Markdown and reduce the Python to a narrow helper.
 
-## Modern Archivist specific rule
-
-For `channels/modern-archivist`:
-
-- Remotion is the canonical final renderer.
-- Saved vector/PNG assets are the normal asset path.
-- ComfyUI is optional source-asset generation only.
-- `scripts/comfyui/asset_generation_needed.py` is a preflight validator.
-- `scripts/comfyui/ensure_comfyui_docker.py` is a lifecycle utility.
-- Do not add a Python orchestration runner for asset generation. The channel pipeline manifest and asset-generation director own intent, workflow selection, approval, and promotion policy.
 
 ## Validation
 
