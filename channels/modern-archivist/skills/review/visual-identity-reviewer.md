@@ -20,7 +20,6 @@ Return `GATE RESULT: FAIL` only if the visual plan would force a channel-breakin
 
 Channel-breaking issues include:
 
-- Replacing the established Modern Archivist puppet identity without explicit approval.
 - Depending on image-to-video character motion, soft shaded 3D, WebGL, or non-deterministic render-time fetches.
 - Requesting assets that violate the flat 2.5D / hard-alpha / limited-palette asset style.
 - Using visuals as decoration rather than proof, evidence, diagrams, documents, or contextual pressure.
@@ -29,7 +28,7 @@ Channel-breaking issues include:
 ## Review procedure
 
 1. Read the media manifest, episode, and research packet from disk.
-2. Identify each major visual asset class: puppet, documents, diagrams, proof cards, backgrounds, source labels, and generated candidates.
+2. Identify each major visual asset class: documents, diagrams, proof cards, backgrounds, source labels, and generated candidates.
 3. Check that each asset has a purpose tied to evidence, mechanism, consequence, or channel identity.
 4. Check that all generated assets remain review-gated and are not auto-promoted.
 5. Flag any source-label, color, typography, or frame-design consistency risks.
@@ -66,7 +65,6 @@ OPERATOR ACTION REQUIRED:
 - Does the sequence feel like cinematic case-building, not a research deck?
 - Are receipts transformed into editorial story objects with readable labels, reveals, and source context?
 - Are illustrative metaphors clearly separate from evidence?
-- Is character absence/presence intentional rather than a permanent mascot layout?
 - Does red state remain scarce and tied to true contradiction/stakes moments?
 - Does the visual plan avoid long static source screens?
 - Does the style stay Modern Archivist — teal archive, crimson error, dry forensic UI — rather than generic finance/crime documentary?
@@ -75,18 +73,16 @@ OPERATOR ACTION REQUIRED:
 
 Review `content_collection`, episode, and media_manifest together. Flag document-only or chart-only visual plans, high boring visual risk hidden behind attractive copy, and any retreat from source-footage/artifact-first case-building. Source footage, archived web, recreated UI, source_montage, and case-board scenes should carry the episode whenever available. Generic stock, naked filing screenshots, and puppet-over-text filler are advisory warnings at minimum and channel-breaking if they dominate the proof path.
 
-## Puppet Visual Identity Checks
+## Asset Style Checks
 
 During visual identity review, raise a **critical** finding for any of the following:
 
-1. **White or opaque background box around puppet.** The puppet must composite transparently over the background. A rectangular white/light box is an alpha defect — the PNG lacks hard alpha. Check `archivist-body.png` and any new layers.
+1. **Soft edges or feathered alpha on evidence assets.** All evidence cards, proof cards, and document recreations must use hard alpha edges. No soft shadows, fades, or feathered transparent edges.
 
-2. **Partial or head-only puppet.** If the puppet anchor is visible and the character is not full-body (torso + head visible), that is a head-only regression. This violates `rig_contract: full_body_layered`.
+2. **Excessive color palette.** Asset requests must adhere to the channel's limited palette: black/charcoal base, teal accent, bone/off-white text, crimson for critical error only. No gradient backgrounds, no full-color illustrations unless they are source footage.
 
-3. **Mouth/glasses/mug misaligned from face.** The mouth phoneme PNG must align to the face via the manifest `anchors.mouth` position. The glasses SVG must align to `anchors.glasses`. The mug must align near `anchors.arm_pivot`.
+3. **Missing source labels.** Every visual asset that represents evidence must have a provenance label (CLAIM, RECEIPT, CONTRADICTION, VERIFIED, OPEN QUESTION) and a source reference.
 
 Raise a **suggestion** for:
 
-4. **Excessive mouth jitter.** If the mouth snaps between open/closed on every frame without following word timing, the `WORD_SLOP_SEC` boundary may be too tight or word timings may be missing.
-
-5. **Puppet expression not matching scene tone.** A `skeptical` expression on an `alarm` cue, or a `neutral` expression on a `case_closed` cue, should be flagged as a mismatch.
+4. **Visual monotony.** If the same visual mode repeats for more than 35 seconds without a sequence-type change, recommend inserting a case-board transition, kinetic typography beat, or source montage.

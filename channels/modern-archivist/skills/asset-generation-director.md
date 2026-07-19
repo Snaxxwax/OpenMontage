@@ -57,8 +57,7 @@ The core principle: Synthetic tools support evidence cinema; they do not define 
 6. Never kill desktop/display/compositor processes.
 7. Use Dockerized ComfyUI lifecycle only through `scripts/comfyui/ensure_comfyui_docker.py` and only after approval.
 8. Generated assets are not auto-promoted. Human review selects candidates before promotion.
-9. Do not use `scripts/comfyui/run_asset_generation.py` as pipeline orchestration. It is a deprecated legacy shim, not the stage director.
-10. Do not build long-form scenes from chained AI-video continuations as the default visual architecture.
+9. Do not build long-form scenes from chained AI-video continuations as the default visual architecture.
 
 ## Stage workflow
 
@@ -78,8 +77,7 @@ Use the deterministic checker only:
 
 ```bash
 python3 scripts/comfyui/asset_generation_needed.py --profile mvp --pretty
-python3 scripts/comfyui/asset_generation_needed.py --profile production_puppet --pretty
-python3 scripts/comfyui/asset_generation_needed.py --intent expression_sheet --pretty
+python3 scripts/comfyui/asset_generation_needed.py --intent props --pretty
 ```
 
 Pick the profile/intent based on the media manifest and approved production need.
@@ -143,25 +141,17 @@ Review generated candidates against the quality bar. Present candidates for sele
 
 Generated candidates must preserve:
 
-- current Archivist silhouette and face
-- wavy medium-brown hair
-- round black glasses
-- tired/deadpan expression language
-- dark hoodie identity
 - flat 2.5D vector/anime-hybrid style
 - hard alpha-friendly edges
-- minimal color palette
+- minimal color palette (black/charcoal base, teal accent, bone/off-white text, crimson for critical error only)
 
 Reject candidates with:
 
-- changed character identity
-- missing/duplicated glasses
 - photorealism
 - soft painterly shading
 - text/watermarks/logos
 - noisy backgrounds
 - uncuttable merged elements
-
 - warped hands, faces, product shapes, or logos
 - hallucinated in-frame text presented as evidence
 - shimmer, geometry crawl, or synthetic distortion that weakens viewer trust

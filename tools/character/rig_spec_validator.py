@@ -41,7 +41,9 @@ def _find_repo_root(start: Path) -> Path | None:
 # Path helpers
 # ---------------------------------------------------------------------------
 
-_RIG_SPEC_REL = "channels/modern-archivist/assets/character/rig/rig_spec.json"
+# No default rig spec — callers must provide --rig-spec explicitly.
+# Generic character-library rigs remain valid inputs.
+_RIG_SPEC_REL = ""
 _SCHEMA_REL = "channels/modern-archivist/schemas/puppet_action_timeline.schema.json"
 
 _VALIDATED_TRACK_TYPES = {"action", "expression", "eyes", "mouth"}
@@ -328,11 +330,11 @@ def main(argv: list[str] | None = None) -> int:
     # Resolve rig_spec
     if args.rig_spec:
         rig_spec_path = Path(args.rig_spec)
-    elif repo_root:
+    elif repo_root and _RIG_SPEC_REL:
         rig_spec_path = repo_root / _RIG_SPEC_REL
     else:
         print(
-            "Error: could not auto-discover repo root; "
+            "Error: no default rig_spec configured; "
             "please supply --rig-spec explicitly.",
             file=sys.stderr,
         )

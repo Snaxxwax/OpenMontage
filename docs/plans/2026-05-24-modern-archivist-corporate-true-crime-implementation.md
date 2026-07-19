@@ -1,12 +1,17 @@
 # Modern Archivist Corporate True Crime End-to-End Implementation Plan
 
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
-
 **Goal:** Convert Modern Archivist / Failure Ledger into a source-footage/artifact-first Corporate True Crime pipeline, with content collection before scriptwriting, cinematic case-building visual contracts, Remotion-final assembly, optional HyperFrames segment generation, and objective render QC.
-
 **Architecture:** Preserve OpenMontage's instruction-driven architecture. YAML manifests and Markdown director skills own stage order, runtime policy, visual policy, approval gates, review criteria, and fallback behavior. Python/TypeScript changes are limited to deterministic schemas, validators, renderer components, prop normalization, local asset materialization, and tests.
-
 **Tech Stack:** Channel package under `channels/modern-archivist/`, YAML pipeline manifest, Markdown director skills, JSON schemas, pytest/jsonschema contract tests, TypeScript/React/Remotion renderer, optional HyperFrames via `hyperframes_compose`, FFmpeg/ffprobe for verification.
+
+---
+
+## ⚠️ Note: Character Rig Removed (2026-06-14)
+
+The Modern Archivist character rig and puppet assets have been removed from the repository. The channel now operates as **evidence-cinema without a permanent puppet character** — using source footage, archived web, recreated UI, case-board sequences, kinetic typography, and evidence cards as the primary visual language. The Archivist identity persists through the channel frame (teal/crimson palette, typography, branding) but not as a full-body puppet layer.
+
+Tasks 7.1 and 7.2 (puppet alpha fixes, full-body puppet contract) in Phase 7 are **obsolete** and should be skipped. The `visual-identity-reviewer.md` skill has been updated to reflect evidence-first visual checks without puppet-specific validations.
 
 ---
 

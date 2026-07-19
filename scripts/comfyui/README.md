@@ -30,14 +30,6 @@ Contract:
 - Allowed behavior: report ComfyUI/GPU state, safely ensure the configured Dockerized ComfyUI service, free ComfyUI memory.
 - Forbidden behavior: deciding whether a pipeline stage should run, choosing asset intent/workflow/model, promoting assets, killing unknown GPU processes.
 
-### `run_asset_generation.py`
-
-Status: deprecated legacy orchestration shim.
-
-Do not use this as the `asset_generation` pipeline. It previously combined intent selection, workflow selection, ComfyUI lifecycle, generation execution, manifest writing, and optional promotion. Those decisions belong in the YAML pipeline manifest and the stage director skill.
-
-It is retained only as a temporary manual compatibility helper for an already-approved workflow submission. Non-dry-run execution now requires `--allow-deprecated-orchestration` so accidental pipeline use is blocked.
-
 ## Correct Modern Archivist flow
 
 1. Read `channels/modern-archivist/pipeline.yaml`.

@@ -4,6 +4,8 @@ Stage Modern Archivist reference images into ComfyUI's input directory.
 Run before submitting any archivist ComfyUI workflow. ComfyUI LoadImage nodes
 can only read from the input directory, so reference images must be copied there
 first. This script is idempotent — safe to run multiple times.
+
+Currently no reference images are required for props/backgrounds/thumbnails generation.
 """
 import shutil
 from pathlib import Path
@@ -12,11 +14,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 COMFYUI_INPUT = Path.home() / "ComfyUI" / "input" / "modern_archivist"
 
 SOURCES = {
-    "modern_archivist_arm_mug_grip.png": "channels/modern-archivist/assets/source/modern_archivist_arm_mug_grip.png",
-    "modern_archivist_full_body_mug_pose.png": "channels/modern-archivist/assets/source/modern_archivist_full_body_mug_pose.png",
-    "modern_archivist_mug_code.png": "channels/modern-archivist/assets/source/modern_archivist_mug_code.png",
-    "modern_archivist_head_neutral.png": "channels/modern-archivist/assets/source/modern_archivist_head_neutral.png",
-    "modern_archivist_torso_hoodie.png": "channels/modern-archivist/assets/source/modern_archivist_torso_hoodie.png",
+    # No character rig reference images remain after character rig removal.
+    # Props/backgrounds/thumbnails workflows use prompt-only generation.
 }
 
 

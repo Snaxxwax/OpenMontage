@@ -1,35 +1,6 @@
 {
-  "expression_sheet": {
-    "reference_images": [
-      "channels/modern-archivist/assets/source/modern_archivist_head_neutral.png",
-      "channels/modern-archivist/assets/source/modern_archivist_full_body_mug_pose.png"
-    ],
-    "prompt": "Create a 3x3 expression reference sheet for the same Archivist character. Bust/head only. Expressions: neutral, skeptical, tired, annoyed, eyes closed sigh, half-lidded deadpan, slight smirk, concerned, critical-error red-lit stare. Keep the same face, hair, glasses, and drawing style. Separate each head with whitespace. Transparent or easy-to-mask background. No labels.",
-    "output_subdir": "raw/expression_sheet"
-  },
-  "mouth_phonemes": {
-    "reference_images": [
-      "channels/modern-archivist/assets/source/modern_archivist_mouth_neutral.png",
-      "channels/modern-archivist/assets/source/modern_archivist_mouth_talk_a.png",
-      "channels/modern-archivist/assets/source/modern_archivist_mouth_talk_b.png",
-      "channels/modern-archivist/assets/source/modern_archivist_head_neutral.png"
-    ],
-    "prompt": "Create a clean mouth phoneme asset sheet matching the provided character. Mouth only, no full face. Include 8 separated mouth shapes: closed, slight open, A, E, O, wide, frown, smirk. Same line weight and color style as the source. Transparent or easy-to-mask background. No labels.",
-    "output_subdir": "raw/mouth_phonemes"
-  },
-  "arm_mug_poses": {
-    "reference_images": [
-      "channels/modern-archivist/assets/source/modern_archivist_arm_mug_grip.png",
-      "channels/modern-archivist/assets/source/modern_archivist_mug_code.png",
-      "channels/modern-archivist/assets/source/modern_archivist_full_body_mug_pose.png"
-    ],
-    "prompt": "Create a puppet pose reference sheet for the Archivist's right arm, hand, and black code mug. Include 5 separated pose elements: idle hand, mug grip low, mug halfway up, sip pose, lowered mug after sip. Preserve hoodie sleeve color and mug design. Clean separation for layer cutting. No labels.",
-    "output_subdir": "raw/arm_mug_poses"
-  },
   "props": {
-    "reference_images": [
-      "channels/modern-archivist/assets/source/modern_archivist_full_body_mug_pose.png"
-    ],
+    "reference_images": [],
     "prompt": "Create a reusable prop sheet for The Failure Ledger in the same flat 2.5D vector style: red filing stamp, bankruptcy folder, SEC filing page, court exhibit binder, evidence box, old CRT monitor, server rack, stock ticker strip, shredded document pile, desk lamp. Isolated elements, no labels, no real company logos.",
     "output_subdir": "raw/props"
   },

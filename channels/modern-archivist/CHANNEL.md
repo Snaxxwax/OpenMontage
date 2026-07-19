@@ -2,7 +2,7 @@
 
 Autonomous YouTube channel package for DOM-rendered, thesis-driven corporate and product failure autopsies.
 
-This channel is intentionally separate from the generic OpenMontage pipeline set. OpenMontage provides shared tools, rendering infrastructure, checkpoints, and provider plumbing; this directory owns the channel identity, puppet contract, episode schemas, retention doctrine, and Remotion-first rendering rules.
+This channel is intentionally separate from the generic OpenMontage pipeline set. OpenMontage provides shared tools, rendering infrastructure, checkpoints, and provider plumbing; this directory owns the channel identity, episode schemas, retention doctrine, and Remotion-first rendering rules.
 
 ## Channel premise
 
@@ -14,7 +14,7 @@ The continuing source of truth for channel strategy and development is `design/c
 
 ## Retention format
 
-The channel follows `design/retention-doctrine.md`: Coffeezilla credibility, MagnatesMedia pacing, and Modern Archivist identity. Receipts remain the backbone, but the visual surface should be cinematic case-building: case-file boards, contradiction reveals, failure graphs, kinetic text, code walkthroughs, source montages, and scarce critical-error interrupts. The Archivist is an anchor and punctuation device, not a permanent mascot.
+The channel follows `design/retention-doctrine.md`: Coffeezilla credibility, MagnatesMedia pacing, and Modern Archivist identity. Receipts remain the backbone, but the visual surface should be cinematic case-building: case-file boards, contradiction reveals, failure graphs, kinetic text, code walkthroughs, source montages, and scarce critical-error interrupts. The channel frame and evidence treatment carry the identity; there is no permanent mascot layer.
 
 ## Renderer contract
 
@@ -28,10 +28,10 @@ The channel follows `design/retention-doctrine.md`: Coffeezilla credibility, Mag
 
 ## Core visual states
 
-- `STATE_MONOLOGUE`: Archivist centered, slate/teal palette.
-- `STATE_DEEP_DIVE`: Archivist exits; MediaContainer owns the frame.
-- `STATE_CRITICAL_ERROR`: pattern interrupt; crimson/red palette; Archivist as purposeful interruption.
+- `STATE_CASE_OPEN`: case-file premise, slate/teal palette, and the first verifiable receipt.
+- `STATE_DEEP_DIVE`: source montage, recreated UI, documents, or diagrams own the frame.
+- `STATE_CRITICAL_ERROR`: pattern interrupt; crimson/red palette reserved for a material contradiction or failure point.
 
 ## Asset status
 
-The current character asset in `channels/modern-archivist/assets/source/` is a temporary transparent portrait source. It is not yet a final layered puppet because it lacks glasses, cutout lenses, separated mouth layers, and separated arm/mug layers. The MVP renderer overlays synthetic mouth/glasses/mug layers until final assets are prepared.
+The legacy character rig, puppet assets, and puppet-specific ComfyUI workflow were removed. Episode visuals use source footage, archived web, recreated UI, evidence cards, diagrams, and approved props/backgrounds/thumbnails. Generated assets must remain review-gated and must not impersonate sourced evidence.

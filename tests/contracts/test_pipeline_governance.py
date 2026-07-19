@@ -13,7 +13,6 @@ from jsonschema import Draft202012Validator
 ROOT = Path(__file__).resolve().parents[2]
 PIPELINE_SCHEMA = ROOT / "schemas/pipelines/pipeline_manifest.schema.json"
 MODERN_ARCHIVIST_PIPELINE = ROOT / "channels/modern-archivist/pipeline.yaml"
-RUN_ASSET_GENERATION = ROOT / "scripts/comfyui/run_asset_generation.py"
 
 REQUIRED_STAGE_FIELDS = {
     "name",
@@ -44,9 +43,7 @@ FORBIDDEN_PYTHON_ORCHESTRATION_TERMS = {
     "auto-select-first",
 }
 
-ALLOWED_SCRIPT_EXCEPTIONS = {
-    ROOT / "scripts/comfyui/run_asset_generation.py",
-}
+ALLOWED_SCRIPT_EXCEPTIONS = set()
 
 
 def load_yaml(path: Path) -> dict:
@@ -135,29 +132,13 @@ def test_modern_archivist_manifest_does_not_route_through_deprecated_runner() ->
     text = MODERN_ARCHIVIST_PIPELINE.read_text(encoding="utf-8")
     manifest = load_yaml(MODERN_ARCHIVIST_PIPELINE)
 
-    assert "run_asset_generation.py" not in text or "deprecated_orchestration_shim" in text
-
+    assert "run_asset_generation.py" not in text
     asset_stage = next(stage for stage in manifest["stages"] if stage["name"] == "asset_generation")
     assert asset_stage["skill"] == "channels/modern-archivist/skills/asset-generation-director.md"
     for routing_field in ["required_tools", "optional_tools", "tools_available"]:
         assert "run_asset_generation.py" not in asset_stage.get(routing_field, [])
     for legacy_field in ["provider", "lifecycle", "should_run_check", "saved_assets_policy", "output"]:
         assert legacy_field not in asset_stage
-
-
-def test_deprecated_runner_blocks_non_dry_run_without_explicit_override() -> None:
-    proc = subprocess.run(
-        [sys.executable, str(RUN_ASSET_GENERATION), "--intent", "expression_sheet"],
-        cwd=ROOT,
-        text=True,
-        capture_output=True,
-        timeout=30,
-        check=False,
-    )
-    assert proc.returncode == 2
-    payload = json.loads(proc.stdout)
-    assert payload["status"] == "blocked"
-    assert "deprecated" in payload["reason"]
 
 
 def iter_project_scripts() -> list[Path]:

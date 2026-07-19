@@ -35,7 +35,7 @@ def test_channel_docs_and_directors_reference_retention_contract() -> None:
         assert term in media
     for term in ["cinematic case-building", "research deck", "illustrative", "red state"]:
         assert term in visual
-    for term in ["static visual", "Character returns", "Critical-error", "Illustrative"]:
+    for term in ["static visual", "No mascot substitution", "Critical-error", "Illustrative"]:
         assert term in render
 
 

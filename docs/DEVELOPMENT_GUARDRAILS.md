@@ -93,7 +93,7 @@ For `channels/modern-archivist`:
 - ComfyUI is optional source-asset generation only.
 - `scripts/comfyui/asset_generation_needed.py` is a preflight validator.
 - `scripts/comfyui/ensure_comfyui_docker.py` is a lifecycle utility.
-- `scripts/comfyui/run_asset_generation.py` is deprecated as orchestration and must not be referenced by the pipeline manifest as the preferred path.
+- Do not add a Python orchestration runner for asset generation. The channel pipeline manifest and asset-generation director own intent, workflow selection, approval, and promotion policy.
 
 ## Validation
 

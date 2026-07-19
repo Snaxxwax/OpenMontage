@@ -1,7 +1,7 @@
 # Puppet Removal — Design Spec
 
 **Date:** 2026-06-07
-**Status:** Approved
+**Status:** Implemented and superseded by the evidence-cinema cleanup (2026-07-19)
 
 ## Goal
 
@@ -67,9 +67,7 @@ Remove all puppet rendering infrastructure and character-cue data model from the
 4. Existing fixtures (`modernArchivistFixture`, `nikolaContentFixture`) still satisfy the `ModernArchivistEpisode` type after the type changes.
 5. The `ModernArchivistComposition` still renders correctly (backdrop + media + frame) — no import errors introduced.
 
-## Out of Scope
+## Historical scope note
 
-- `channels/modern-archivist/assets/character/` — PNG layer assets are kept; they may be reused elsewhere.
-- `channels/modern-archivist/assets/comfyui_workflows/arm_mug_poses.json` — ComfyUI workflow file, kept.
-- `channels/modern-archivist/assets/narrator_manifest.json` — kept (external asset manifest, not code).
+- The original plan retained the character assets, narrator manifest, and `arm_mug_poses.json` workflow. The later cleanup removed them because their only consumer was the retired permanent-puppet path.
 - The `character-animation` pipeline in `pipeline_defs/` — that is a generic OpenMontage pipeline, not Modern Archivist specific.

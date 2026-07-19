@@ -44,7 +44,6 @@ metadata:
     saved_assets_policy: channels/modern-archivist/assets/comfyui_workflows/asset_requirements.yaml
     saved_assets_check: scripts/comfyui/asset_generation_needed.py
     comfyui_lifecycle_tool: scripts/comfyui/ensure_comfyui_docker.py
-    deprecated_orchestration_shim: scripts/comfyui/run_asset_generation.py
 orchestration:
   mode: executive-producer
   skill: channels/modern-archivist/skills/executive-producer.md
@@ -326,7 +325,6 @@ stages:
   - ComfyUI is skipped if saved assets satisfy the requested profile
   - Provider/model/workflow choice is proposed by the stage director, not Python
   - Generated assets are not auto-promoted without review and approval
-  - run_asset_generation.py is not used as pipeline orchestration
   success_criteria:
   - artifacts/asset_manifest.json exists
   - Saved-assets check result is recorded in asset_manifest

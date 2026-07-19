@@ -124,15 +124,8 @@ VARIANT_PATCHES: dict[str, dict[str, Any]] = {
     "baseline":          {},
     "muted":             {},
     "no-backdrop":       {"debug_disable_backdrop": True},
-    "no-puppet":         {"debug_disable_puppet": True},
     "no-media":          {"debug_disable_media": True},
     "no-audio":          {"debug_disable_audio": True},
-    # puppet sub-path profiling variants
-    "puppet-static":     {"debug_puppet_static": True},
-    "puppet-no-filters": {"debug_disable_puppet_filters": True},
-    "puppet-no-mouth":   {"debug_disable_puppet_mouth": True},
-    "source-plate-only": {"debug_disable_puppet": True, "debug_disable_audio": True},
-    "final-overlay":     {},
 }
 
 
@@ -144,7 +137,7 @@ def _apply_variant(edit_decisions: dict[str, Any], variant: str) -> tuple[dict[s
     props.update(VARIANT_PATCHES[variant])
     if variant == "muted":
         options["muted"] = True
-    if variant in ("no-audio", "source-plate-only"):
+    if variant == "no-audio":
         options["muted"] = True
     return props, options
 
@@ -160,9 +153,7 @@ def main() -> int:
     parser.add_argument(
         "--variant",
         choices=[
-            "baseline", "muted", "no-backdrop", "no-puppet", "no-media", "no-audio",
-            "puppet-static", "puppet-no-filters", "puppet-no-mouth",
-            "source-plate-only", "final-overlay",
+            "baseline", "muted", "no-backdrop", "no-media", "no-audio",
         ],
         default="baseline",
     )

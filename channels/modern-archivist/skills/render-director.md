@@ -17,7 +17,7 @@ Render the approved Modern Archivist episode through registry-discoverable compo
 
 Use `video_compose` as the manifest-level render tool. Remotion / React is the canonical final assembler for Modern Archivist, not a rule that every pixel must originate in Remotion. Declared mixed-runtime production is allowed and encouraged when it improves quality: HyperFrames may render approved segment assets, FFmpeg may provide probe/transcode/mux utility work, and Remotion assembles the final episode. Do not switch the approved final assembler, add a new visual paradigm (image-to-video, WebGL, canvas skeletal rigging), or downgrade to FFmpeg-only unless the user explicitly approves a material runtime change.
 
-Remotion remains the canonical final renderer. Read `runtime_affinity` from `content_collection` and `media_manifest` as planning input and segment-routing guidance: Remotion handles final assembly, puppet timing, case-file scenes, receipts, source montage integration, and deterministic React/SVG/CSS scenes; HyperFrames may produce approved local segment assets for source-rich motion, website-to-video, recreated UI, or kinetic HTML/CSS sequences. Do not silently swap runtimes. Record a `render_runtime_selection` decision with options considered, rejected options, whether mixed-runtime segment rendering is part of the approved plan, and whether any HyperFrames segment was rendered as a local asset.
+Remotion remains the canonical final renderer. Read `runtime_affinity` from `content_collection` and `media_manifest` as planning input and segment-routing guidance: Remotion handles final assembly, case-file scenes, receipts, source montage integration, and deterministic React/SVG/CSS scenes; HyperFrames may produce approved local segment assets for source-rich motion, website-to-video, recreated UI, or kinetic HTML/CSS sequences. Do not silently swap runtimes. Record a `render_runtime_selection` decision with options considered, rejected options, whether mixed-runtime segment rendering is part of the approved plan, and whether any HyperFrames segment was rendered as a local asset.
 
 Development previews may pass explicit `video_compose` render options such as bounded `concurrency` or `muted=true` for faster iteration. Final deliverables must render with audio unless the approved episode is intentionally silent; never make muted output the default.
 
@@ -51,29 +51,11 @@ Development previews may pass explicit `video_compose` render options such as bo
 - Report records inputs and verification notes.
 - No hidden network, provider, or runtime substitution occurred.
 
-## Puppet Rendering Policy
+## Evidence-cinema sequencing policy
 
-### Sequencing
-
-1. **Plan puppet visibility early.** Decide at scene-plan time whether each section uses `MONOLOGUE` layout (puppet visible) or `SOURCE_MONTAGE`/`FULLSCREEN` (puppet hidden). This drives the `characterCue.visible` flag.
+1. **Plan visual modes early.** Assign each section an evidence purpose: source montage, recreated UI, case-board sequence, document reveal, diagram, or kinetic typography. Do not add an unsourced character substitute as filler.
 2. **Render source-heavy plates first.** If the episode uses pre-rendered source clips, render/cache those before the final Remotion assembly pass.
-3. **Puppet and captions in the final overlay pass.** Run the full puppet + captions + word-timing pass after narration and timing are locked. Do not render puppet before audio timing is final.
+3. **Lock narration and captions before final assembly.** Run the final caption and word-timing pass after narration timing is final.
+4. **Benchmark the active composition path before changing runtime limits.** Use a representative source-rich case-board or montage fixture; do not resurrect removed puppet variants as a performance workaround.
 
-### Benchmark requirement
-
-4. **Run benchmarks before changing timeouts or disabling the puppet.** If render time is the concern, run `bench_modern_archivist_render.py` with `--variant source-plate-only`, `--variant puppet-static`, and `--variant puppet-no-filters` to isolate which sub-path is the bottleneck before making a decision.
-5. **No head-only puppet variants unless the user explicitly approves.** Replacing the full-body puppet with a head-only or face-only crop breaks the `rig_contract: full_body_layered` policy. Raise a critical review finding if this occurs.
-
-### Debug flags (explicit use only)
-
-These flags are available for benchmarking and debugging — not for production workarounds:
-
-| flag | effect |
-|------|--------|
-| `debug_disable_puppet` | hide puppet entirely |
-| `debug_puppet_static` | show puppet, no mouth/gesture animation |
-| `debug_disable_puppet_mouth` | show puppet, freeze mouth |
-| `debug_disable_puppet_filters` | disable drop-shadow/glow filters |
-| `debug_disable_audio` | mute audio track |
-
-Never set these flags in a production episode props without user approval.
+Debug rendering options are for bounded previews and diagnostics only. Never mute final audio or suppress source/provenance labels in a production episode without explicit approval.

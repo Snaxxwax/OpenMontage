@@ -6,63 +6,15 @@
 
 profiles:
   mvp:
-    description: Current renderable MVP puppet. ComfyUI is not needed if these exist.
+    description: Minimal assets for evidence-cinema episodes (no puppet character).
     requirements:
-      - id: body
+      - id: thumbnail_base
         min_count: 1
         paths:
-          - channels/modern-archivist/remotion/public/archivist-body.png
-          - channels/modern-archivist/assets/source/modern_archivist_full_body_mug_pose.png
-          - channels/modern-archivist/assets/source/modern_archivist_torso_hoodie.png
-      - id: mug
-        min_count: 1
-        paths:
-          - channels/modern-archivist/remotion/public/archivist-mug.png
-          - channels/modern-archivist/assets/source/modern_archivist_mug_code.png
-      - id: puppet_manifest
-        min_count: 1
-        paths:
-          - channels/modern-archivist/assets/character/puppet_manifest.json
-
-  expression_upgrade:
-    description: Needs generated expression references before Krita cleanup.
-    requirements:
-      - id: expression_sheet
-        min_count: 1
-        paths:
-          - channels/modern-archivist/assets/source/comfyui_generated/selected/modern_archivist_expression_sheet.png
-          - channels/modern-archivist/assets/source/comfyui_generated/final_png/modern_archivist_expression_sheet.png
-          - channels/modern-archivist/assets/source/openai_generated/modern_archivist_expression_sheet_openai.png
-
-  mouth_upgrade:
-    description: Needs generated/cleaned mouth phoneme references.
-    requirements:
-      - id: mouth_phoneme_sheet
-        min_count: 1
-        paths:
-          - channels/modern-archivist/assets/source/comfyui_generated/selected/modern_archivist_mouth_phoneme_sheet.png
-          - channels/modern-archivist/assets/source/comfyui_generated/final_png/modern_archivist_mouth_phoneme_sheet.png
-          - channels/modern-archivist/assets/source/openai_generated/modern_archivist_mouth_phoneme_sheet_openai.png
-          - channels/modern-archivist/assets/source/production_trace_trial/clean_semantic/png/modern_archivist_mouth_closed.png
-      - id: mouth_variants
-        min_count: 4
-        glob:
-          - channels/modern-archivist/assets/source/production_trace_trial/clean_semantic/png/modern_archivist_mouth_*.png
-          - channels/modern-archivist/assets/source/comfyui_generated/final_png/modern_archivist_mouth_*.png
-
-  arm_mug_upgrade:
-    description: Needs generated/cleaned arm and mug pose references.
-    requirements:
-      - id: arm_mug_pose_sheet
-        min_count: 1
-        paths:
-          - channels/modern-archivist/assets/source/comfyui_generated/selected/modern_archivist_arm_mug_pose_sheet.png
-          - channels/modern-archivist/assets/source/comfyui_generated/final_png/modern_archivist_arm_mug_pose_sheet.png
-          - channels/modern-archivist/assets/source/openai_generated/modern_archivist_arm_mug_pose_sheet_openai.png
-          - channels/modern-archivist/assets/source/modern_archivist_arm_mug_grip.png
+          - channels/modern-archivist/assets/source/comfyui_generated/selected/failure_ledger_thumbnail_base.png
 
   props_backgrounds:
-    description: Needs channel-world props/backgrounds beyond the saved character puppet.
+    description: Channel-world props and backgrounds for case-file visual language.
     requirements:
       - id: props_sheet
         min_count: 1
@@ -77,58 +29,19 @@ profiles:
           - channels/modern-archivist/assets/source/comfyui_generated/final_png/failure_ledger_archive_room_background.png
           - channels/modern-archivist/assets/source/openai_generated/failure_ledger_archive_room_background_openai.png
 
-  production_puppet:
-    description: Target production-ready puppet asset pack. ComfyUI/Krita needed until all are satisfied.
-    includes:
-      - mvp
-      - expression_upgrade
-      - mouth_upgrade
-      - arm_mug_upgrade
+  thumbnails:
+    description: Thumbnail base art for packaging stage.
     requirements:
-      - id: head_neutral
+      - id: thumbnail_base
         min_count: 1
         paths:
-          - channels/modern-archivist/assets/source/modern_archivist_head_neutral.png
-          - channels/modern-archivist/assets/source/production_trace_trial/outline_enforced/png/modern_archivist_head_neutral.png
-      - id: eyes_closed
-        min_count: 1
-        paths:
-          - channels/modern-archivist/assets/source/modern_archivist_head_eyes_closed.png
-          - channels/modern-archivist/assets/source/production_trace_trial/outline_enforced/png/modern_archivist_head_eyes_closed.png
-      - id: glasses_frame
-        min_count: 1
-        paths:
-          - channels/modern-archivist/assets/source/modern_archivist_glasses_round_black.png
-          - channels/modern-archivist/assets/source/production_trace_trial/clean_semantic/png/modern_archivist_glasses_frame.png
-      - id: mouth_variants
-        min_count: 6
-        glob:
-          - channels/modern-archivist/assets/source/production_trace_trial/clean_semantic/png/modern_archivist_mouth_*.png
-          - channels/modern-archivist/assets/source/comfyui_generated/final_png/modern_archivist_mouth_*.png
+          - channels/modern-archivist/assets/source/comfyui_generated/selected/failure_ledger_thumbnail_base.png
+          - channels/modern-archivist/assets/source/comfyui_generated/final_png/failure_ledger_thumbnail_base.png
+          - channels/modern-archivist/assets/source/openai_generated/failure_ledger_thumbnail_base_openai.png
 
 # Optional named generation intents. The agent can pass one or more of these
 # when an episode/shot planner requests new material.
 generation_intents:
-  expression_sheet:
-    profile: expression_upgrade
-    template: expression_sheet
-  mouth_phonemes:
-    profile: mouth_upgrade
-    template: mouth_phonemes
-  arm_mug_poses:
-    profile: arm_mug_upgrade
-    template: arm_mug_poses
-    workflow_file: channels/modern-archivist/assets/comfyui_workflows/arm_mug_poses.json
-    workflow_mode: interactive  # requires human pose setup in ComfyUI browser UI
-    workflow_notes: >
-      VNCCS Pose Studio + QWEN Detailer workflow. Before running:
-      1. python3 scripts/comfyui/stage_reference_images.py
-      2. Ensure hand_yolov8n.pt is in ComfyUI models/ultralytics/bbox/
-         (ComfyUI Manager > Install Models > hand_yolov8n.pt, or download from
-         https://huggingface.co/Ultralytics/Assets/resolve/main/yolov8n.pt)
-      3. Load arm_mug_poses.json in ComfyUI browser UI (port 8188)
-      4. VNCCS_ModelManager will download QWEN model on first run (~7GB)
-      5. Set poses interactively in Pose Studio, then queue each pose
   props:
     profile: props_backgrounds
     template: props
@@ -136,5 +49,5 @@ generation_intents:
     profile: props_backgrounds
     template: archive_background
   thumbnail_base:
-    profile: props_backgrounds
+    profile: thumbnails
     template: thumbnail_base

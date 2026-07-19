@@ -68,28 +68,25 @@ The Executive Producer must verify this review independently before presenting t
 ## Retention and motion-density render checks
 
 - No static visual holds longer than doctrine allows unless explicitly justified by the motion plan.
-- Character returns are visible, purposeful, and not used as a permanent mascot fallback.
 - Critical-error red moments are short, legible, and connected to a real interruption.
 - Evidence labels/source IDs remain readable in frame samples.
 - Illustrative scenes do not impersonate evidence.
-- Audio-reactive/character effects do not obscure comprehension.
+- Audio-reactive effects do not obscure comprehension.
 - Frame samples must not reveal a document-only or chart-only channel drift from the approved `content_collection` packet.
 - Source-footage/artifact-first opportunities should materialize on screen as source_montage, recreated UI, case-file, or public artifact scenes rather than boring visual risk hidden under narration.
 
-## Puppet Render QC Checks
+## Evidence-cinema render QC checks
 
 After rendering, run the following checks:
 
-### Alpha and compositing
+1. **Hard-edge evidence treatment.** Sample five frames containing evidence cards, document recreations, or labels. Soft feathered alpha, decorative gradients, or opaque placeholder boxes around those assets are critical defects unless they are part of cited source footage.
 
-1. **No near-white rectangular region.** Sample 5 frames from `MONOLOGUE`-layout segments. If any frame has a rectangular region of pixels with RGB > (240, 240, 240) and alpha = 255 covering > 10% of the frame area, raise a critical alpha defect.
+2. **Provenance is visible.** Every frame that presents a claim, receipt, contradiction, or recreated evidence object must retain a readable source/provenance label or must be traceable to a labeled adjacent sequence in the approved media manifest.
 
-2. **Puppet region is non-background.** In frames where `characterCue.visible=true`, the puppet region (left half or right half of frame depending on layout) must have pixels that differ from the background plate. Fully transparent or fully matching puppet is a defect.
-
-3. **No head-only crop regression.** If the puppet bounding box height is less than 55% of the frame height when the puppet is visible, flag as a partial-puppet regression.
+3. **No mascot substitution.** Flag an unsourced permanent-character layer or generated talking-head substitute used in place of the approved evidence/case-building visual plan.
 
 ### Render report
 
-4. **Include benchmark variant if performance warning.** If render wall-clock time exceeds `duration × 120` seconds (2 minutes of render per second of output), the render report must include results from at least the `puppet-static` and `source-plate-only` variants to identify the bottleneck.
+4. **Include an active-path benchmark when performance is abnormal.** If render wall-clock time exceeds `duration × 120` seconds (two minutes of render per second of output), the render report must include results from a representative source-rich case-board or source-montage variant to identify the bottleneck.
 
 5. **Output duration matches expected.** Use `ffprobe` to confirm output duration is within ±0.5s of the expected episode `duration_seconds`.

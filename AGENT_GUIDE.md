@@ -85,7 +85,7 @@ Python:
 
 If a new Python script decides creative intent, provider/model/workflow selection, GPU service flow, asset promotion, checkpoint policy, or review outcome, it is architecture drift. Move that logic into the pipeline manifest/director skill and reduce Python to an explicit-input JSON/tool utility.
 
-For Modern Archivist specifically, `scripts/comfyui/run_asset_generation.py` is a deprecated compatibility shim, not a pipeline. The authoritative flow is `channels/modern-archivist/pipeline.yaml` plus `channels/modern-archivist/skills/asset-generation-director.md`.
+For Modern Archivist specifically, the authoritative flow is `channels/modern-archivist/pipeline.yaml` plus `channels/modern-archivist/skills/asset-generation-director.md`. Do not add a Python orchestration runner for asset generation.
 
 ## Channel Package Boundary
 

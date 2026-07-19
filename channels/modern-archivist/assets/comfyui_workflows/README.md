@@ -4,16 +4,15 @@ This directory holds workflow templates, prompts, and generated output for the C
 
 ComfyUI's role in this channel is constrained:
 
-- generate source/reference sheets for the existing Archivist character
 - generate props, backgrounds, and thumbnail base art
-- inpaint or upscale source assets before Krita cleanup
-- never generate final image-to-video character shots
+- inpaint or upscale source assets before cleanup
+- never generate image-to-video character shots
 - never fetch/generate during the final Remotion render
 
 Final video remains deterministic:
 
 ```text
-research/evidence JSON -> script -> Fish Speech -> media manifest -> optional ComfyUI source assets -> Krita cleanup -> Remotion render
+research/evidence JSON -> script -> Fish Speech -> media manifest -> optional ComfyUI source assets -> cleanup -> Remotion render
 ```
 
 ## Runtime contract
@@ -37,44 +36,40 @@ Decision order:
 
 Lifecycle files:
 
-- `channels/modern-archivist/assets/source/comfyui_workflows/asset_requirements.yaml`
+- `channels/modern-archivist/assets/comfyui_workflows/asset_requirements.yaml`
 - `scripts/comfyui/asset_generation_needed.py`
-- `scripts/comfyui/run_asset_generation.py`
+- `scripts/comfyui/ensure_comfyui_docker.py`
 - `pipeline_defs/support/comfyui-gpu-lifecycle.yaml`
 - `docker-compose.comfyui.yml`
-- `scripts/comfyui/ensure_comfyui_docker.py`
 - `channels/modern-archivist/skills/asset-generation-director.md`
 
 ## Saved asset check
 
-Default MVP check. This should normally return `needs_generation=false` while the current saved puppet assets exist:
+Props/backgrounds check:
+
+```bash
+python3 scripts/comfyui/asset_generation_needed.py --profile props_backgrounds --pretty
+```
+
+Thumbnail check:
+
+```bash
+python3 scripts/comfyui/asset_generation_needed.py --profile thumbnails --pretty
+```
+
+MVP check (minimal):
 
 ```bash
 python3 scripts/comfyui/asset_generation_needed.py --profile mvp --pretty
 ```
 
-Production puppet check. This returns `needs_generation=true` until the production-ready mouth/arm/expression layers are saved:
-
-```bash
-python3 scripts/comfyui/asset_generation_needed.py --profile production_puppet --pretty
-```
-
 Intent-based check for a new requested asset batch:
 
 ```bash
-python3 scripts/comfyui/asset_generation_needed.py --intent expression_sheet --pretty
+python3 scripts/comfyui/asset_generation_needed.py --intent props --pretty
 ```
 
 Only run the ComfyUI lifecycle commands below when the check reports `needs_generation=true`.
-
-Preferred stage runner for a missing intent:
-
-```bash
-python3 scripts/comfyui/run_asset_generation.py --intent expression_sheet --count 4 --dry-run
-python3 scripts/comfyui/run_asset_generation.py --intent expression_sheet --count 4
-```
-
-The runner re-checks saved assets before lifecycle operations. If the executable API-format workflow is missing, it blocks without launching ComfyUI and reports the expected workflow path.
 
 ## Commands
 
@@ -113,14 +108,10 @@ python3 scripts/comfyui/ensure_comfyui_docker.py stop
 ```text
 channels/modern-archivist/assets/source/comfyui_generated/
   raw/
-    expression_sheet/
-    mouth_phonemes/
-    arm_mug_poses/
     props/
     backgrounds/
     thumbnails/
   selected/
-  krita_work/
   final_png/
   manifests/
 ```
@@ -129,21 +120,9 @@ channels/modern-archivist/assets/source/comfyui_generated/
 
 First workflows to build:
 
-1. expression sheet preserving current Archivist design
-2. mouth phoneme sheet
-3. arm/mug pose sheet
-4. Failure Ledger prop sheet
-5. archive-room background
-6. thumbnail base art
-
-Use reference assets from:
-
-```text
-channels/modern-archivist/assets/source/modern_archivist_head_neutral.png
-channels/modern-archivist/assets/source/modern_archivist_full_body_mug_pose.png
-channels/modern-archivist/assets/source/modern_archivist_mug_code.png
-channels/modern-archivist/assets/source/modern_archivist_torso_hoodie.png
-```
+1. Failure Ledger prop sheet
+2. archive-room background
+3. thumbnail base art
 
 ## Safety notes
 

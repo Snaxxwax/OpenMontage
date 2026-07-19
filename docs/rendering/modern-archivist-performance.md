@@ -38,7 +38,6 @@ Run variants only to identify bottlenecks; they are not creative options for fin
 python scripts/render/bench_modern_archivist_render.py --props ... --output /tmp/ma-baseline.mp4 --concurrency 4 --variant baseline
 python scripts/render/bench_modern_archivist_render.py --props ... --output /tmp/ma-muted.mp4 --concurrency 4 --variant muted --mode preview
 python scripts/render/bench_modern_archivist_render.py --props ... --output /tmp/ma-no-backdrop.mp4 --concurrency 4 --variant no-backdrop --mode preview
-python scripts/render/bench_modern_archivist_render.py --props ... --output /tmp/ma-no-puppet.mp4 --concurrency 4 --variant no-puppet --mode preview
 python scripts/render/bench_modern_archivist_render.py --props ... --output /tmp/ma-no-media.mp4 --concurrency 4 --variant no-media --mode preview
 python scripts/render/bench_modern_archivist_render.py --props ... --output /tmp/ma-no-audio.mp4 --concurrency 4 --variant no-audio --mode preview
 ```
@@ -47,7 +46,6 @@ Interpretation:
 
 - `muted` / `no-audio` isolates audio mux/decoding cost.
 - `no-backdrop` isolates the scrolling CSS/code backdrop.
-- `no-puppet` isolates puppet layer and word-timing animation cost.
 - `no-media` isolates evidence/media overlay rendering cost.
 
 Only apply production optimizations to a component after the variant data shows it is a meaningful bottleneck.
@@ -66,7 +64,6 @@ Fixture: `/tmp/ma-smoke-props.json`, 1.267 seconds rendered, preview/muted, conc
 | --- | ---: | ---: | --- |
 | baseline | 34.084s | 1.115 | Official `video_compose` route, no audio stream |
 | no-backdrop | 26.903s | 1.413 | Fastest smoke variant; backdrop is a likely bottleneck candidate |
-| no-puppet | 33.599s | 1.131 | Similar to baseline on smoke fixture |
 | no-media | 30.407s | 1.250 | Mild improvement on smoke fixture |
 | no-audio | 34.593s | 1.099 | Similar to baseline because smoke was already muted/no-audio |
 
