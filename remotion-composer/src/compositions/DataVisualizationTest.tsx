@@ -10,7 +10,7 @@ const NETWORK_DURATION = 270;
 
 const flowProps: DataVisualizationProps = {
   type: "flow",
-  title: "MODERN ARCHIVIST / FLOW",
+  title: "EVIDENCE LEDGER / FLOW",
   subtitle: "Humane AI Pin funding, operating burn, refunds, and acquisition residue",
   layout: "horizontal",
   nodes: [
@@ -71,7 +71,7 @@ const flowProps: DataVisualizationProps = {
 
 const orgProps: DataVisualizationProps = {
   type: "org",
-  title: "MODERN ARCHIVIST / ORG",
+  title: "EVIDENCE LEDGER / ORG",
   subtitle: "A launch structure cascading from founders to contractors",
   layout: "vertical",
   activeNodeId: "founders",
@@ -106,7 +106,7 @@ const orgProps: DataVisualizationProps = {
 
 const networkProps: DataVisualizationProps = {
   type: "network",
-  title: "MODERN ARCHIVIST / NETWORK",
+  title: "EVIDENCE LEDGER / NETWORK",
   subtitle: "Dependencies around the AI Pin launch narrative",
   layout: "force",
   nodes: [

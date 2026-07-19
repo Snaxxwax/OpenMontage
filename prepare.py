@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parent
 LOG_PATH = ROOT / "logs" / "latest_experiment.json"
 MUTATOR_MODULE = "pipeline_mutator"
 
-# Target values encode the current Modern Archivist render-structure preference:
+# Target values encode the current evidence-cinema render-structure preference:
 # steady evidence cadence, readable cards, restrained texture, strong but not
 # overwhelming channel accent. The agent's job is to tune the exposed config
 # values toward this target without touching this evaluator.

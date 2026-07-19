@@ -4,7 +4,7 @@ import TimelineFlythrough, {
 } from "../components/TimelineFlythrough";
 
 export const timelineFlythroughTestProps: TimelineFlythroughProps = {
-  title: "MODERN ARCHIVIST / FAILURE LEDGER",
+  title: "EVIDENCE LEDGER",
   subtitle: "Humane AI Pin: a launch timeline reconstructed from public evidence",
   flySpeed: 260,
   pauseDuration: 2.15,

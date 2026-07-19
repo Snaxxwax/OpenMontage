@@ -70,7 +70,7 @@ class FishSpeechTTS(BaseTool):
         "prosody_tags": True,
     }
     best_for = [
-        "Modern Archivist / Failure Ledger narration",
+        "evidence-led documentary narration",
         "local voice-cloned production with reference_id voices",
         "expressive narration with lightweight prosody tags",
     ]

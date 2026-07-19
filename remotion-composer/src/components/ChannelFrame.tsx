@@ -250,7 +250,7 @@ export const ChannelFrame: React.FC<ChannelFrameProps> = memo(
                 color: "rgba(245,240,225,0.32)",
               }}
             >
-              Modern Archivist / Failure Ledger
+              Evidence Ledger
             </div>
           </footer>
         </div>
