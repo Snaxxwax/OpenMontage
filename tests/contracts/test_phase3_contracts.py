@@ -683,6 +683,8 @@ class TestCapabilityMetadata:
             "dashscope",
             "doubao",
             "elevenlabs",
+            "f5_tts",
+            "fish_speech",
             "google_tts",
             "kling_official",
             "openai",

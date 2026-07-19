@@ -696,6 +696,7 @@ class VideoCompose(BaseTool):
         "screen-demo": "Explainer",
         "presenter": "TalkingHead",
         "animation-first": "Explainer",
+        "modern-archivist": "ModernArchivist",
     }
 
     @classmethod
