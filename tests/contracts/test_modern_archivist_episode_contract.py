@@ -47,7 +47,6 @@ def test_episode_contract_requires_retention_devices() -> None:
             "visual_mode": "source_montage",
             "layout": "media_full",
             "color_state": "teal",
-            "character": {"visible": False, "action": "hidden", "expression": "none"},
             "evidence_role": "primary_evidence",
             "evidence_refs": ["claim_001"],
             "estimated_duration_seconds": 10
@@ -89,7 +88,6 @@ def test_episode_section_enforces_retention_constraints() -> None:
             "visual_mode": "source_montage",
             "layout": "media_full",
             "color_state": "teal",
-            "character": {"visible": False, "action": "hidden", "expression": "none"},
             "evidence_role": "primary_evidence",
             "evidence_refs": ["claim_001"],
             "estimated_duration_seconds": 10
@@ -133,11 +131,6 @@ def test_episode_section_ensures_minimal_retention_metadata() -> None:
                 "visual_mode": "source_montage",
                 "layout": "media_full",
                 "color_state": "teal",
-                "character": {
-                    "visible": False,
-                    "action": "hidden",
-                    "expression": "none"
-                },
                 "evidence_role": "primary_evidence",
                 "evidence_refs": ["claim_001"],
                 "content_opportunity_refs": ["opp_001"],
@@ -160,11 +153,6 @@ def test_episode_section_ensures_minimal_retention_metadata() -> None:
                 "visual_mode": "case_file",
                 "layout": "split_screen_left",
                 "color_state": "teal",
-                "character": {
-                    "visible": True,
-                    "action": "pointing",
-                    "expression": "serious"
-                },
                 "evidence_role": "secondary_evidence",
                 "evidence_refs": ["claim_002", "claim_003"],
                 "estimated_duration_seconds": 90

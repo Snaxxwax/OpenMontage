@@ -71,7 +71,7 @@ OPERATOR ACTION REQUIRED:
 
 ## Corporate True Crime drift checks
 
-Review `content_collection`, episode, and media_manifest together. Flag document-only or chart-only visual plans, high boring visual risk hidden behind attractive copy, and any retreat from source-footage/artifact-first case-building. Source footage, archived web, recreated UI, source_montage, and case-board scenes should carry the episode whenever available. Generic stock, naked filing screenshots, and puppet-over-text filler are advisory warnings at minimum and channel-breaking if they dominate the proof path.
+Review `content_collection`, episode, and media_manifest together. Flag document-only or chart-only visual plans, high boring visual risk hidden behind attractive copy, and any retreat from source-footage/artifact-first case-building. Source footage, archived web, recreated UI, source_montage, and case-board scenes should carry the episode whenever available. Generic stock, naked filing screenshots, and mascot-over-text filler are advisory warnings at minimum and channel-breaking if they dominate the proof path.
 
 ## Asset Style Checks
 

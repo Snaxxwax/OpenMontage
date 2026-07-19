@@ -7,8 +7,8 @@ Dockerized ComfyUI lifecycle.
 
 Examples:
     python3 scripts/comfyui/asset_generation_needed.py --profile mvp
-    python3 scripts/comfyui/asset_generation_needed.py --profile production_puppet
-    python3 scripts/comfyui/asset_generation_needed.py --intent expression_sheet --intent props
+    python3 scripts/comfyui/asset_generation_needed.py --profile props_backgrounds
+    python3 scripts/comfyui/asset_generation_needed.py --intent props --intent thumbnail_base
 """
 from __future__ import annotations
 

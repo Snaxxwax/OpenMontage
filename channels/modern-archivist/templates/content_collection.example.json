@@ -77,16 +77,16 @@
     },
     {
       "id": "opp_004",
-      "kind": "puppet_interaction",
-      "title": "Archivist pins the demo to the ledger",
-      "description": "Full-body Modern Archivist returns at the act break, pointing to the evidence board and moving the truck demo from promise to receipt.",
+      "kind": "cinematic_metaphor",
+      "title": "Case board pins the demo to the ledger",
+      "description": "An evidence-board act break moves the truck demo from promise to receipt without introducing an unsourced mascot layer.",
       "evidence_refs": ["claim_001", "claim_003"],
       "rights_status": "usable",
       "evidence_role": "illustrative_only",
       "runtime_affinity": "remotion",
-      "visual_mode": "monologue",
+      "visual_mode": "case_file_sequence",
       "motion_plan": [
-        {"at_seconds": 0, "action": "character_return"},
+        {"at_seconds": 0, "action": "pin_claim_to_case_board"},
         {"at_seconds": 2, "action": "point_to_case_board"}
       ],
       "script_use": "act_break"

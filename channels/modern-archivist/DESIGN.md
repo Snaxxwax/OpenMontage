@@ -2,7 +2,7 @@
 
 ## Palette
 
-Default monologue:
+Default evidence-cinema frame:
 - Background: `#2F4F4F` slate gray
 - Accent: `#008080` teal
 - Text: `#F6F4EA` archival off-white
@@ -21,16 +21,8 @@ Critical error:
 
 - Script tags choose high-level states.
 - Components consume state; do not hand-keyframe individual scene timings.
-- Character motion is CSS transform only.
 - MediaContainer accepts typed JSON props.
 - Background code is deterministic local text, not live network fetch during render.
-
-## Puppet z-index
-
-- Z-0: scrolling `<pre><code>` data backdrop.
-- Z-1: character body/head.
-- Z-2: audio-reactive mouth and glasses overlay.
-- Z-3: action arm/mug layer for `[sip]`.
 
 ## Case-file UI
 
@@ -48,7 +40,7 @@ Critical error:
 
 ## Motion density
 
-- No static card longer than 6 seconds without crop, zoom, highlight, reveal, graph motion, typography motion, or character punctuation.
+- No static card longer than 6 seconds without crop, zoom, highlight, reveal, graph motion, or typography motion.
 - Target a visual change every 3-6 seconds and a sequence-type change every 20-35 seconds in dense sections.
 - Motion should clarify the evidence path rather than decorate it.
 

@@ -50,7 +50,7 @@ motion:
     # New Performance Metrics
     total_motion_changes_per_minute: 12
     visual_beat_frequency_seconds: 4
-    character_visibility_percent: 25  # Percentage of episode showing character
+    source_artifact_coverage_percent: 70  # Minimum episode time led by source/artifact evidence
     critical_error_time_limit_seconds: 10
   entrance: "cut or fast cross-dissolve (0.3s); slow push-in (1.5–2.5s) for evidence reveals"
   exit: "cut or fast fade-out (0.25s)"

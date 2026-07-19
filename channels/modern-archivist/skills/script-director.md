@@ -101,7 +101,7 @@ These are hard constraints, not suggestions:
 - **Visual State Transition**:
   - Mandatory visual mode change every 3-6 sections
   - No more than 2 consecutive sections in the same visual mode
-  - Enforce visual rhythm: `monologue` → `case_file` → `source_montage` → repeat
+  - Enforce visual rhythm: `case_file` → `source_montage` → `recreated_ui` → repeat
 
 ### Qualitative Retention Principles
 

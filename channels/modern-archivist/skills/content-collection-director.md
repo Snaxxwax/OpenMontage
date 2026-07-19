@@ -6,7 +6,7 @@ Turn an approved `research_packet` into a `content_collection` artifact before s
 
 **What can we actually show?**
 
-This stage prevents the channel from drifting into a document-summary or chart-explainer format. It identifies the source footage, public video, archived web, product UI, recreated digital artifacts, legal/SEC receipt moments, and puppet interaction opportunities that the script must be written around.
+This stage prevents the channel from drifting into a document-summary or chart-explainer format. It identifies the source footage, public video, archived web, product UI, recreated digital artifacts, legal/SEC receipt moments, and case-board opportunities that the script must be written around.
 
 ## Inputs
 
@@ -28,9 +28,8 @@ Prefer, in order:
 1. source footage and public video that create pressure;
 2. recreated digital artifacts such as websites, apps, dashboards, social posts, archived pages, emails, and status pages;
 3. cinematic case-board/source-montage sequences that turn receipts into scenes;
-4. full-body Modern Archivist puppet interactions at openings, act breaks, contradiction reveals, and verdict moments;
-5. legal, court, SEC, or filing material only as short receipt beats with motion, crop, highlight, or contradiction reveals;
-6. charts only when they explain a specific narrative turn and change state quickly.
+4. legal, court, SEC, or filing material only as short receipt beats with motion, crop, highlight, or contradiction reveals;
+5. charts only when they explain a specific narrative turn and change state quickly.
 
 Reject or park a topic if it only has filings and charts.
 
@@ -65,7 +64,7 @@ Each opportunity must use one of these `kind` values:
 - `github_artifact`
 - `status_page`
 - `cinematic_metaphor`
-- `puppet_interaction`
+
 
 Each opportunity must include:
 
@@ -103,13 +102,13 @@ Use `evidence_role` to prevent overclaiming:
 - `admission`: direct acknowledgement by a company, founder, officer, regulator, or court record.
 - `finding`: regulator, court, official investigation, or settled finding.
 - `settlement`, `conviction`, `dismissal`: legal outcome classifications.
-- `illustrative_only`: visual metaphor, reenactment, generic B-roll, or puppet action. It must never impersonate evidence.
+- `illustrative_only`: visual metaphor, reenactment, or generic B-roll. It must never impersonate evidence.
 
 ## Runtime affinity guidance
 
 Use `runtime_affinity` to inform later media/render planning. It is not a silent runtime-selection decision.
 
-- `remotion`: final assembly, puppet interaction, case-board layout, receipts, deterministic React/SVG/CSS scenes.
+- `remotion`: final assembly, case-board layout, receipts, deterministic React/SVG/CSS scenes.
 - `hyperframes`: source-rich motion sequences, website-to-video treatments, GSAP kinetic typography, HTML/CSS artifact motion segments.
 - `either`: feasible in both; final runtime decision belongs to the render director and operator-visible `render_runtime_selection` policy.
 
@@ -137,7 +136,7 @@ Block or revise if the packet contains:
 - long SEC/court/PDF screenshots without scene treatment;
 - source footage that merely confirms narration but creates no pressure;
 - unlabelled illustrative visuals;
-- puppet-only monologues used to cover missing visuals;
+- permanent mascot or talking-head substitutes used to cover missing visuals;
 - HyperFrames or Remotion runtime preference chosen without artifact rationale.
 
 ## Review checklist

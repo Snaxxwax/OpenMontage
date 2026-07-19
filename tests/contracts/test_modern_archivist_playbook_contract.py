@@ -18,7 +18,7 @@ def test_motion_performance_metrics_exist() -> None:
     motion_keys = [
         "total_motion_changes_per_minute",
         "visual_beat_frequency_seconds",
-        "character_visibility_percent",
+        "source_artifact_coverage_percent",
         "critical_error_time_limit_seconds"
     ]
     
@@ -60,7 +60,7 @@ def test_playbook_performance_constraints() -> None:
     # Validate specific values
     constraints = {
         'motion.pacing_rules.total_motion_changes_per_minute': (10, 15),  # 12 is the current value
-        'motion.pacing_rules.character_visibility_percent': (20, 30),
+        'motion.pacing_rules.source_artifact_coverage_percent': (60, 85),
         'motion.pacing_rules.critical_error_time_limit_seconds': (5, 15),
         'audio.narration.words_per_minute': (100, 140),
         'audio.narration.pause_frequency_seconds': (30, 60)

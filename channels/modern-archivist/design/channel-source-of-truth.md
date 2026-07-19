@@ -137,7 +137,7 @@ Default structure:
    State the mystery and the failure mechanism the episode will solve.
 
 3. The machine, 0:45-2:30
-   Explain how the company/product/bank/platform was supposed to work using recreated UI, source footage, artifact boards, and puppet framing.
+   Explain how the company/product/bank/platform was supposed to work using recreated UI, source footage, and artifact boards.
 
 4. The first crack, 2:30-4:30
    Introduce the first dated warning sign.
@@ -152,7 +152,7 @@ Default structure:
    Timeline accelerates. Use news-style source montage, social posts, status pages, shutdown pages, legal filings, and customer consequences.
 
 8. The verdict, 12:30-14:00
-   The Modern Archivist closes the ledger: what failed, who paid, and what the machine was actually optimized for.
+   Close the ledger: what failed, who paid, and what the machine was actually optimized for.
 
 ## Repeatable franchises
 
@@ -237,20 +237,7 @@ Modern digital case board, not a literal corkboard:
 - deleted-claim overlays
 - consequence maps
 
-4. Full-body Modern Archivist puppet
-
-The Archivist is the recurring investigator/anchor:
-
-- opens the case
-- returns at act breaks
-- points to evidence
-- walks through the case room
-- reacts to contradictions
-- closes with the verdict
-
-Preserve a consistent full-body puppet rig. Do not use floating-head, portrait-only, or partial puppet variants unless explicitly approved.
-
-5. Motion language
+4. Motion language
 
 Use motion to create case-building, not decoration:
 
@@ -268,7 +255,6 @@ Use motion to create case-building, not decoration:
 
 Remotion remains the canonical final renderer for:
 
-- full-body Archivist puppet
 - narration sync
 - deterministic React state
 - channel frame
@@ -286,7 +272,7 @@ HyperFrames is a first-class optional runtime for:
 
 Do not silently swap runtimes. At proposal time, present Remotion and HyperFrames if both are available, recommend one, and record the runtime selection.
 
-Preferred near-term architecture: HyperFrames can generate local motion-rich segment assets; Remotion composes those assets with the puppet-led channel frame.
+Preferred near-term architecture: HyperFrames can generate local motion-rich segment assets; Remotion composes those assets into the evidence-cinema channel frame.
 
 ## Evidence rules
 
@@ -326,7 +312,7 @@ Avoid:
 - generic line charts or KPI grids unless they reveal a story turn
 - permanent bottom-right mascot
 - unlabeled illustrative material
-- image-to-video puppet workarounds
+- image-to-video mascot or talking-head workarounds
 - live network fetches during render
 - visual choices that weaken source provenance
 
@@ -348,7 +334,7 @@ For each candidate story, collect:
 - social posts
 - legal/SEC evidence
 - visual metaphors
-- puppet interaction opportunities
+- case-board and evidence-sequence opportunities
 - copyright/provenance status
 - runtime affinity: remotion, hyperframes, or either
 
@@ -401,7 +387,7 @@ A development change supports the channel only if it improves at least one of th
 1. Source-footage/artifact collection
 2. Evidence provenance and claim safety
 3. Cinematic case-building visual modes
-4. Full-body puppet consistency
+4. Evidence-cinema visual consistency
 5. Runtime selection clarity and HyperFrames/Remotion handoff
 6. Render speed and objective QC
 7. Repeatable topic selection and episode franchising

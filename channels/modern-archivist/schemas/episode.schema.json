@@ -93,7 +93,6 @@
           },
           "visual_mode": {
             "enum": [
-              "monologue",
               "case_file",
               "cinematic_metaphor",
               "failure_graph",
@@ -107,7 +106,6 @@
           },
           "layout": {
             "enum": [
-              "anchor_center",
               "media_full",
               "split_screen_left",
               "split_screen_right",
@@ -124,21 +122,7 @@
               "red"
             ]
           },
-          "character": {
-            "type": "object",
-            "properties": {
-              "visible": {
-                "type": "boolean"
-              },
-              "action": {
-                "type": "string"
-              },
-              "expression": {
-                "type": "string"
-              }
-            },
-            "additionalProperties": true
-          },
+
           "evidence_refs": {
             "type": "array",
             "items": {
@@ -190,10 +174,6 @@
         },
         "additionalProperties": true
       }
-    },
-    "puppet": {
-      "type": "object",
-      "additionalProperties": true
     }
   },
   "additionalProperties": true

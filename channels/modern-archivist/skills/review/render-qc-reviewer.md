@@ -24,7 +24,7 @@ Return `GATE RESULT: FAIL` if any of these are true:
 - The rendered video file is missing, zero bytes, unreadable, or not the path recorded in `render_report.json`.
 - `ffprobe` cannot read duration, streams, or audio/video metadata.
 - Audio has silence gaps over the stage tolerance or loudness outside the approved range.
-- Frame samples show blank screens, broken puppet state, missing source labels, or source-label collisions.
+- Frame samples show blank screens, missing source labels, or source-label collisions.
 - The render used an unapproved runtime or silently substituted HyperFrames for Remotion.
 - The render report does not name input artifacts, runtime, output path, duration, and verification notes.
 

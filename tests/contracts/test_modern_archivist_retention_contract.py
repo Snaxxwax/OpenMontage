@@ -49,7 +49,6 @@ def test_modern_archivist_episode_schema_accepts_retention_timeline_block() -> N
             "id": "b001", "start": 0, "end": 8, "text": "The receipt was worse than the pitch.", "tags": [],
             "narrative_phase": "hook", "retention_device": "cold_open_shock", "visual_mode": "source_montage",
             "layout": "media_full", "color_state": "teal",
-            "character": {"visible": False, "action": "hidden", "expression": "none"},
             "evidence_role": "primary_evidence", "evidence_refs": ["claim_001", "source_001"],
             "content_opportunity_refs": ["opp_001"],
             "media_overlay": {"type": "case_file_sequence", "beats": []}, "estimated_duration_seconds": 8,
@@ -106,7 +105,7 @@ def test_channel_manifest_mentions_retention_case_file_and_motion_gates() -> Non
     assert "structured retention timeline" in script_text
     assert "case-file" in media_text
     assert "Motion plans" in media_text or "motion" in media_text.lower()
-    assert "visual variety" in render_text and "character returns" in render_text
+    assert "visual variety" in render_text and "evidence-driven visual modes" in render_text
 
 
 def test_retention_fixture_keeps_critical_error_red_state_short() -> None:

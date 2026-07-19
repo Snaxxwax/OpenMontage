@@ -12,11 +12,11 @@ The guardrail is no hidden runtime substitution and no unapproved visual-paradig
 
 ## Render sequencing
 
-1. Plan puppet layout early.
+1. Plan evidence visual modes early.
 2. Collect/source/stage public footage, artifacts, archived pages, and UI recreation opportunities.
 3. Render/cache source-heavy scenes or HyperFrames premium inserts as local assets when useful.
 4. Lock narration and section timings.
-5. Run final Remotion assembly with cached source/background plates, puppet, captions, audio, and final labels.
+5. Run final Remotion assembly with cached source/background plates, captions, audio, and final labels.
 6. Run evidence, visual identity, and render-QC gates.
 
 ## Why this exists

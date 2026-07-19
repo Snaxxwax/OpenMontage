@@ -84,8 +84,7 @@
               "sec_evidence",
               "github_artifact",
               "status_page",
-              "cinematic_metaphor",
-              "puppet_interaction"
+              "cinematic_metaphor"
             ]
           },
           "title": {
@@ -149,7 +148,6 @@
               "code_walkthrough",
               "cinematic_metaphor",
               "critical_error",
-              "monologue",
               "recreated_ui"
             ]
           },

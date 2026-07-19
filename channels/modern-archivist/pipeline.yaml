@@ -161,7 +161,7 @@ stages:
   - Scene beats map to visual slots and deterministic render states
   - Claims in narration trace back to research_packet evidence IDs
   - Episode contains structured retention timeline fields
-  - Hook, stakes, and character returns are explicit
+  - Hook, stakes, and evidence-driven visual turns are explicit
   - Red critical-error beats are scarce and justified
   - Every factual beat has evidence refs
   - Script scenes use content_collection opportunity IDs for visual-dependent beats
@@ -172,7 +172,7 @@ stages:
   - Every scene has a visual slot, state tag, and evidence linkage where factual
   - User approval or approved-with-changes is recorded before audio
   - Structured retention timeline fields validate against the channel episode schema
-  - Hook, stakes, character returns, and visual modes are explicit
+  - Hook, stakes, visual modes, and evidence linkage are explicit
   - Red critical-error beats are scarce and justified
   - Every factual beat has evidence refs
   - Visual-dependent scenes map to content_collection opportunity IDs
@@ -357,14 +357,14 @@ stages:
   - Remotion remains the canonical runtime unless user approves a material change
   - HyperFrames is included in the runtime shortlist when available and must not be silently substituted
   - Output file, duration, audio sync, and keyframes are verified
-  - Final render uses visual variety and character returns as planned
+  - Final render uses visual variety and evidence-driven visual modes as planned
   - Render report notes visual modes used and any deviations
   - Motion density and critical-error timing are reviewed against retention doctrine
   success_criteria:
   - Final video file exists
   - audio_probe validates the rendered video
   - render_report records input artifacts, runtime, output path, duration, and verification notes
-  - Final render uses visual variety and character returns as planned
+  - Final render uses visual variety and evidence-driven visual modes as planned
   - Render report notes visual modes used and any deviations
   - Motion density and critical-error timing are reviewed against retention doctrine
   subagents:

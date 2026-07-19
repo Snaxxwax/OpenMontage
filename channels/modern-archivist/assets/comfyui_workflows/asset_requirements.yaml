@@ -6,7 +6,7 @@
 
 profiles:
   mvp:
-    description: Minimal assets for evidence-cinema episodes (no puppet character).
+    description: Minimal assets for evidence-cinema episodes (no permanent character layer).
     requirements:
       - id: thumbnail_base
         min_count: 1
